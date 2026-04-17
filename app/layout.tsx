@@ -52,6 +52,9 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: 'Tools Lucasqc',
   },
+  verification: {
+    google: 'cRhqoljDPEALmSgabr8emNGbUeWjHqUUbv_rmZ5r1jI',
+  },
   robots: {
     index: true,
     follow: true,
