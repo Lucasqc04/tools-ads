@@ -11,16 +11,20 @@ import { siteConfig } from '@/lib/site-config';
 
 export const dynamicParams = false;
 
+const ADSENSE_CLIENT_ID = 'ca-pub-7845590634125025';
+const ADSENSE_SCRIPT_SRC =
+  'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7845590634125025';
+
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-type LocaleLayoutProps = {
+type LocaleLayoutProps = Readonly<{
   children: React.ReactNode;
   params: Promise<{
     locale: string;
   }>;
-};
+}>;
 
 export const viewport: Viewport = {
   themeColor: '#1d67d6',
@@ -75,6 +79,10 @@ export default async function LocaleLayout({
 
   return (
     <html lang={localeMetadata[locale].htmlLang}>
+      <head>
+        <meta name="google-adsense-account" content={ADSENSE_CLIENT_ID} />
+        <script async src={ADSENSE_SCRIPT_SRC} crossOrigin="anonymous"></script>
+      </head>
       <body className="min-h-screen bg-slate-50 text-slate-900">
         <div className="flex min-h-screen flex-col">
           <JsonLd data={organizationJsonLd} />

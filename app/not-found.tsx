@@ -1,8 +1,16 @@
 import Link from 'next/link';
 
+const ADSENSE_CLIENT_ID = 'ca-pub-7845590634125025';
+const ADSENSE_SCRIPT_SRC =
+  'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7845590634125025';
+
 export default function NotFound() {
   return (
     <html lang="en">
+      <head>
+        <meta name="google-adsense-account" content={ADSENSE_CLIENT_ID} />
+        <script async src={ADSENSE_SCRIPT_SRC} crossOrigin="anonymous"></script>
+      </head>
       <body className="min-h-screen bg-slate-50 text-slate-900">
         <div className="mx-auto max-w-xl px-4 py-16">
           <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
