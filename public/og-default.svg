@@ -1,0 +1,14 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0F172A"/>
+  <rect x="40" y="40" width="1120" height="550" rx="28" fill="url(#bg)"/>
+  <image href="/image.png" x="90" y="185" width="260" height="260"/>
+  <text x="390" y="280" fill="#F8FAFC" font-family="Verdana, sans-serif" font-size="64" font-weight="700">Tools Lucasqc</text>
+  <text x="390" y="338" fill="#CBD5E1" font-family="Verdana, sans-serif" font-size="30">Ferramentas Online</text>
+  <text x="390" y="388" fill="#94A3B8" font-family="Verdana, sans-serif" font-size="24">SEO • Performance • UX</text>
+  <defs>
+    <linearGradient id="bg" x1="40" y1="40" x2="1160" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+  </defs>
+</svg>

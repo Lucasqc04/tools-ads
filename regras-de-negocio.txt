@@ -1,0 +1,577 @@
+========================================
+REGRAS DE NEGÓCIO - SITE DE TOOLS
+========================================
+
+Este documento define os padrões obrigatórios para criação de qualquer nova ferramenta no site.
+
+O objetivo é:
+- Maximizar SEO no Google
+- Garantir compatibilidade com Google AdSense
+- Manter consistência entre todas as tools
+- Garantir UX limpa, rápida e útil
+- Evitar conteúdo raso (thin content)
+
+========================================
+1. PRINCÍPIO FUNDAMENTAL
+========================================
+
+Cada ferramenta deve ser tratada como:
+
+> UMA LANDING PAGE INDEPENDENTE
+
+Isso significa:
+- Deve rankear sozinha no Google
+- Deve fazer sentido sem o usuário visitar a home
+- Deve ter conteúdo suficiente sem depender de outras páginas
+
+========================================
+2. ESTRUTURA OBRIGATÓRIA DE CADA TOOL
+========================================
+
+Toda ferramenta DEVE seguir esta estrutura:
+
+1. TÍTULO PRINCIPAL (H1)
+2. DESCRIÇÃO CURTA (logo abaixo do título)
+3. TOOL (interface funcional)
+4. BLOCO DE CONTEÚDO EXPLICATIVO
+5. FAQ
+6. LINKS INTERNOS (discretos)
+7. RODAPÉ
+
+NUNCA criar página apenas com input + botão.
+
+========================================
+3. SEO - REGRAS OBRIGATÓRIAS
+========================================
+
+Cada página deve conter:
+
+- 1 H1 único e claro
+- Subtítulos (H2, H3) bem organizados
+- Texto original (mínimo recomendado: 300–800 palavras)
+- Meta title otimizado
+- Meta description clara
+- URL amigável (slug simples e direto)
+
+EXEMPLO:
+✔ /btc-para-satoshis
+✔ /remover-objeto-imagem
+✖ /page?id=123
+
+----------------------------------------
+
+Palavras-chave:
+- Deve haver uma keyword principal
+- Deve haver variações naturais no texto
+- NÃO fazer keyword stuffing
+
+----------------------------------------
+
+Conteúdo:
+- Explicar o que a ferramenta faz
+- Explicar quando usar
+- Explicar exemplos reais
+- Explicar limitações
+
+----------------------------------------
+
+Proibido:
+- conteúdo genérico vazio
+- lorem ipsum
+- texto duplicado entre páginas
+- páginas extremamente curtas
+
+========================================
+4. UX (EXPERIÊNCIA DO USUÁRIO)
+========================================
+
+A página deve:
+
+- carregar rápido
+- funcionar bem no mobile
+- ter layout limpo
+- ter foco na ação principal
+- não ter scroll horizontal (nunca)
+
+----------------------------------------
+
+Regra obrigatória de responsividade:
+- a página deve abrir corretamente em 320px e 375px de largura
+- nenhum bloco pode ultrapassar a viewport horizontalmente
+- previews e tabelas devem se adaptar com max-width: 100%
+- se houver conteúdo grande, o ajuste deve ser interno ao componente, nunca no body
+
+----------------------------------------
+
+Evitar:
+- excesso de menus
+- header gigante
+- poluição visual
+- excesso de anúncios
+
+----------------------------------------
+
+Permitir:
+- logo simples clicável
+- navegação mínima
+- foco total na ferramenta
+
+========================================
+5. GOOGLE ADS / ADSENSE
+========================================
+
+Cada página deve ser preparada para anúncios, mas sem exagero.
+
+Posições recomendadas:
+- 1 anúncio no topo
+- 1 anúncio após a ferramenta
+- 1 anúncio após conteúdo
+
+----------------------------------------
+
+Proibido:
+- colocar anúncios antes do conteúdo carregado
+- excesso de anúncios
+- layout que engane o usuário
+
+----------------------------------------
+
+IMPORTANTE:
+A página deve ter conteúdo real além de anúncios.
+
+========================================
+6. LINKS INTERNOS
+========================================
+
+Cada página deve ter links internos leves, por exemplo:
+
+- "Outras ferramentas úteis"
+- 2 a 4 links no máximo
+
+----------------------------------------
+
+Evitar:
+- lista gigante de links
+- navegação pesada
+
+----------------------------------------
+
+Objetivo:
+- ajudar o Google a rastrear o site
+- melhorar SEO sem atrapalhar UX
+
+========================================
+7. FAQ (OBRIGATÓRIO)
+========================================
+
+Toda tool deve conter FAQ com 3 a 5 perguntas.
+
+Exemplo:
+- O que essa ferramenta faz?
+- É gratuita?
+- Precisa enviar dados?
+- Funciona no celular?
+
+----------------------------------------
+
+Objetivo:
+- aumentar SEO
+- pegar buscas long-tail
+- melhorar entendimento do usuário
+
+========================================
+8. SEGURANÇA E PRIVACIDADE
+========================================
+
+Sempre deixar claro quando:
+
+- dados não são enviados para servidor
+- processamento é local (frontend)
+
+Isso aumenta:
+- confiança
+- aprovação no AdSense
+
+========================================
+9. PERFORMANCE (IMPORTANTE)
+========================================
+
+Evitar:
+- JS desnecessário
+- re-renderizações pesadas
+- dependências grandes
+
+Priorizar:
+- componentes server quando possível
+- lazy loading
+- carregamento rápido
+
+========================================
+10. PADRÃO VISUAL
+========================================
+
+Toda tool deve seguir padrão:
+
+- título grande
+- descrição curta
+- card da ferramenta centralizado
+- espaçamento consistente
+- botões claros
+- inputs bem definidos
+
+========================================
+11. PADRÃO DE COMPONENTES
+========================================
+
+Sempre reutilizar:
+
+- AdSlot (anúncios)
+- FAQ component
+- Tool container
+- Buttons
+- Inputs
+
+========================================
+12. CONTEÚDO EXPLICATIVO (CRÍTICO)
+========================================
+
+Após a ferramenta, SEMPRE adicionar:
+
+- explicação detalhada
+- exemplos de uso
+- contexto real
+
+----------------------------------------
+
+Isso é o que diferencia:
+
+❌ site que não rankeia  
+✅ site que ganha tráfego
+
+========================================
+13. NOMES E SLUGS
+========================================
+
+Regras:
+- usar hífen (-)
+- usar termos simples
+- evitar palavras técnicas demais
+
+----------------------------------------
+
+Exemplos:
+✔ btc-para-sats
+✔ formatador-json
+✔ remover-objeto-imagem
+
+========================================
+14. EXPANSÃO FUTURA
+========================================
+
+Toda nova tool deve:
+
+- seguir este padrão
+- não quebrar layout existente
+- não duplicar código
+- ser adicionada facilmente ao sistema
+
+========================================
+15. O QUE NÃO FAZER
+========================================
+
+- criar páginas sem conteúdo
+- criar páginas só com tool
+- copiar conteúdo
+- exagerar em anúncios
+- criar navegação confusa
+- ignorar SEO
+- ignorar mobile
+
+========================================
+16. CHECKLIST FINAL (OBRIGATÓRIO)
+========================================
+
+Antes de considerar a tool pronta:
+
+[ ] Tem H1 claro
+[ ] Tem meta title
+[ ] Tem meta description
+[ ] Tem conteúdo explicativo
+[ ] Tem FAQ
+[ ] Tem links internos
+[ ] Funciona no mobile
+[ ] Não tem scroll horizontal no mobile (320px/375px)
+[ ] Está rápida
+[ ] Tem estrutura limpa
+[ ] Está pronta para ads
+[ ] Não é thin content
+
+========================================
+17. ESTRUTURA PADRÃO DO PROJETO E COMO CRIAR NOVAS TOOLS
+========================================
+
+Toda nova ferramenta criada neste projeto DEVE respeitar a arquitetura existente do site.
+
+O objetivo é:
+- manter consistência
+- facilitar manutenção
+- facilitar SEO
+- facilitar expansão futura
+- evitar duplicação de código
+- garantir que cada tool siga o mesmo padrão de qualidade
+
+----------------------------------------
+17.1. PRINCÍPIO DE ORGANIZAÇÃO
+----------------------------------------
+
+Este projeto separa responsabilidades em camadas:
+
+- app/ = rotas e páginas
+- components/ = componentes visuais reutilizáveis
+- lib/ = lógica, cálculos, validações e helpers
+- data/ = conteúdo estático, textos e registro das tools
+- types/ = tipos TypeScript
+- public/ = arquivos estáticos
+
+NUNCA misturar tudo em um único arquivo grande sem necessidade.
+
+A regra é:
+- interface visual deve ficar nas páginas e componentes
+- lógica deve ficar em lib/
+- conteúdo textual deve ficar em data/content/
+- cadastro central da tool deve ficar em data/tools-registry.ts
+
+----------------------------------------
+17.2. TODA TOOL NOVA DEVE TER ESTES ELEMENTOS
+----------------------------------------
+
+Ao criar uma nova ferramenta, normalmente devem ser criados ou atualizados os seguintes arquivos:
+
+1. Registro da tool
+   - arquivo: data/tools-registry.ts
+   - função: cadastrar nome, slug, descrição curta, categoria, links relacionados e demais metadados estruturais
+
+2. Conteúdo textual da tool
+   - arquivo: data/content/nome-da-tool.ts
+   - função: armazenar título, descrição, blocos explicativos, FAQ, exemplos e textos auxiliares
+
+3. Lógica da ferramenta
+   - arquivo: lib/nome-da-tool.ts
+   - função: armazenar cálculos, transformações, parse, validações e regras puras de negócio
+
+4. Página da ferramenta
+   - arquivo: app/ferramentas/slug-da-tool/page.tsx
+   - função: montar a página usando os componentes padrão do projeto e conectar a interface com a lógica
+
+5. Metadata SEO
+   - no próprio page.tsx ou no padrão adotado pelo projeto
+   - função: definir title, description, canonical, open graph e demais metadados
+
+----------------------------------------
+17.3. FLUXO OBRIGATÓRIO PARA CRIAR UMA NOVA TOOL
+----------------------------------------
+
+Sempre seguir esta ordem:
+
+PASSO 1:
+Definir claramente:
+- nome da ferramenta
+- slug da rota
+- keyword principal
+- palavras-chave secundárias
+- intenção de busca
+- problema real que a tool resolve
+- público-alvo
+
+PASSO 2:
+Cadastrar a nova tool no tools-registry.ts
+
+PASSO 3:
+Criar o conteúdo textual em data/content/
+Esse conteúdo deve incluir:
+- título principal
+- descrição curta
+- explicação do que a tool faz
+- quando usar
+- exemplos reais
+- limitações
+- FAQ com 3 a 5 perguntas
+
+PASSO 4:
+Criar a lógica em lib/ quando houver cálculo, transformação, parsing, validação ou regra de negócio
+
+PASSO 5:
+Criar a página em app/ferramentas/slug/page.tsx
+
+PASSO 6:
+Montar a página usando os componentes padrão do projeto, sempre que possível:
+- ToolLayout
+- ToolHero
+- ToolContent
+- ToolFaq
+- RelatedTools
+- AdSlotTop
+- AdSlotInContent
+- AdSlotFooter
+
+PASSO 7:
+Adicionar metadados SEO
+
+PASSO 8:
+Revisar mobile, performance, usabilidade e consistência visual
+
+----------------------------------------
+17.4. PADRÃO VISUAL E ESTRUTURAL DE CADA TOOL
+----------------------------------------
+
+Cada página de ferramenta deve seguir, em geral, esta ordem visual:
+
+1. Breadcrumbs ou navegação discreta
+2. Hero da ferramenta
+   - H1
+   - descrição curta
+3. Bloco principal da tool
+4. Primeiro espaço de anúncio discreto
+5. Conteúdo explicativo
+6. FAQ
+7. Links internos leves para ferramentas relacionadas
+8. Segundo espaço de anúncio discreto
+9. Rodapé
+
+A página NÃO deve parecer vazia.
+A página NÃO deve parecer apenas um formulário.
+A página NÃO deve depender da home para fazer sentido.
+
+----------------------------------------
+17.5. REGRA DE REUTILIZAÇÃO
+----------------------------------------
+
+Antes de criar qualquer componente novo, verificar se já existe algo reutilizável em:
+
+- components/ui/
+- components/shared/
+- components/tools/
+
+Antes de criar lógica nova, verificar se já existe helper semelhante em:
+- lib/
+
+Antes de criar textos diretamente no page.tsx, verificar se o conteúdo deveria ficar em:
+- data/content/
+
+Evitar duplicação.
+Evitar copiar e colar blocos inteiros entre ferramentas.
+
+----------------------------------------
+17.6. REGRA DE SEO ESTRUTURAL
+----------------------------------------
+
+Toda nova tool deve ser criada para poder rankear sozinha.
+
+Isso significa:
+- rota amigável
+- metadata própria
+- conteúdo original
+- FAQ própria
+- texto suficiente
+- links internos discretos
+- headings bem definidos
+
+A home e a página /ferramentas ajudam, mas NÃO podem ser a única porta de entrada.
+
+Cada ferramenta deve ser boa o suficiente para receber tráfego direto do Google.
+
+----------------------------------------
+17.7. REGRA DE ADSENSE E MONETIZAÇÃO
+----------------------------------------
+
+A estrutura da página deve prever anúncios, mas os anúncios nunca podem ser o conteúdo principal.
+
+Toda ferramenta deve ter:
+- conteúdo útil real
+- contexto
+- explicações
+- boa experiência mobile
+- aparência profissional
+
+Os componentes de anúncio devem ser mantidos separados em components/ads/
+Nunca espalhar lógica de anúncio de forma desorganizada pela página.
+
+----------------------------------------
+17.8. REGRA DE CONSISTÊNCIA ENTRE TOOLS
+----------------------------------------
+
+Mesmo que os assuntos sejam diferentes, todas as ferramentas devem transmitir a sensação de pertencer ao mesmo projeto.
+
+Isso deve acontecer através de:
+- tipografia consistente
+- espaçamento consistente
+- componentes reutilizados
+- padrão de hero
+- padrão de FAQ
+- padrão de conteúdo
+- padrão de links relacionados
+- padrão de anúncios
+
+Cada tool pode ter foco isolado, mas não deve parecer feita em outro site.
+
+----------------------------------------
+17.9. O QUE A IA DEVE FAZER SEMPRE AO GERAR UMA NOVA TOOL
+----------------------------------------
+
+Ao criar uma nova ferramenta, a IA deve:
+
+- ler este documento antes de gerar qualquer código
+- respeitar a arquitetura existente
+- cadastrar a tool no registry
+- criar conteúdo útil e original
+- criar FAQ
+- criar estrutura SEO-friendly
+- prever área de ads
+- manter consistência com as outras tools
+- evitar thin content
+- evitar soluções improvisadas
+- evitar poluir a interface
+
+----------------------------------------
+17.10. O QUE A IA NÃO DEVE FAZER
+----------------------------------------
+
+A IA NÃO deve:
+
+- criar uma página gigante e desorganizada
+- colocar toda lógica dentro do page.tsx se puder separar
+- repetir textos genéricos iguais em várias tools
+- ignorar tools-registry
+- ignorar data/content
+- criar páginas sem FAQ
+- criar páginas sem explicação
+- inventar estrutura diferente sem necessidade
+- quebrar o padrão visual do projeto
+- criar rotas confusas
+- focar só na tool e esquecer SEO
+- focar só em SEO e esquecer UX
+
+----------------------------------------
+17.11. CHECKLIST ESPECÍFICO DE NOVA TOOL
+----------------------------------------
+
+Antes de finalizar uma nova ferramenta, verificar:
+
+[ ] A tool foi adicionada no tools-registry.ts
+[ ] A tool tem slug amigável
+[ ] A tool tem conteúdo em data/content/
+[ ] A tool tem lógica separada em lib/ quando necessário
+[ ] A página foi criada em app/ferramentas/slug/page.tsx
+[ ] A página usa componentes padrão do projeto
+[ ] A página tem FAQ
+[ ] A página tem conteúdo explicativo
+[ ] A página tem links internos leves
+[ ] A página tem metadata própria
+[ ] A página está boa no mobile
+[ ] A página não gera scroll horizontal no mobile
+[ ] A página está preparada para ads
+[ ] A página parece parte do mesmo site
+
+========================================
+FIM
+========================================
