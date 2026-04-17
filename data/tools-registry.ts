@@ -13,6 +13,8 @@ import {
   qrCodeGeneratorFaq,
   qrCodeGeneratorIntro,
 } from '@/data/content/qr-code-generator';
+import { getToolTranslation } from '@/data/i18n/tool-translations';
+import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ToolDefinition } from '@/types/tool';
 
 export const toolsRegistry: ToolDefinition[] = [
@@ -123,3 +125,76 @@ export const getRelatedTools = (toolId: string): ToolDefinition[] => {
     .map((relatedId) => getToolById(relatedId))
     .filter((tool): tool is ToolDefinition => Boolean(tool));
 };
+
+type LocalizableToolId =
+  | 'crypto-unit-converter'
+  | 'html-pdf-json'
+  | 'qr-code-generator';
+
+const localizableToolIds = new Set<LocalizableToolId>([
+  'crypto-unit-converter',
+  'html-pdf-json',
+  'qr-code-generator',
+]);
+
+const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>
+  localizableToolIds.has(toolId as LocalizableToolId);
+
+const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition => {
+  if (locale === 'pt-br') {
+    return {
+      ...tool,
+      canonicalPath: localizePath(locale, tool.canonicalPath),
+    };
+  }
+
+  if (!isLocalizableToolId(tool.id)) {
+    return {
+      ...tool,
+      canonicalPath: localizePath(locale, tool.canonicalPath),
+    };
+  }
+
+  const translation = getToolTranslation(locale, tool.id);
+
+  return {
+    ...tool,
+    ...translation,
+    canonicalPath: localizePath(locale, tool.canonicalPath),
+  };
+};
+
+export const getLocalizedToolsRegistry = (locale: AppLocale): ToolDefinition[] =>
+  toolsRegistry.map((tool) => localizeTool(tool, locale));
+
+export const getLocalizedToolBySlug = (
+  locale: AppLocale,
+  slug: string,
+): ToolDefinition | undefined => {
+  const baseTool = getToolBySlug(slug);
+
+  if (!baseTool) {
+    return undefined;
+  }
+
+  return localizeTool(baseTool, locale);
+};
+
+export const getLocalizedToolById = (
+  locale: AppLocale,
+  id: string,
+): ToolDefinition | undefined => {
+  const baseTool = getToolById(id);
+
+  if (!baseTool) {
+    return undefined;
+  }
+
+  return localizeTool(baseTool, locale);
+};
+
+export const getLocalizedRelatedTools = (
+  locale: AppLocale,
+  toolId: string,
+): ToolDefinition[] =>
+  getRelatedTools(toolId).map((tool) => localizeTool(tool, locale));

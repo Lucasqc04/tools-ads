@@ -5,12 +5,14 @@ type CryptoConversionLinksProps = {
   title: string;
   description?: string;
   links: CryptoConversionLinkItem[];
+  fromToConnector?: string;
 };
 
 export function CryptoConversionLinks({
   title,
   description,
   links,
+  fromToConnector = 'para',
 }: CryptoConversionLinksProps) {
   if (!links.length) {
     return null;
@@ -35,7 +37,7 @@ export function CryptoConversionLinks({
             className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-card"
           >
             <p className="text-base font-semibold text-slate-900">
-              {link.fromLabel} para {link.toLabel}
+              {link.fromLabel} {fromToConnector} {link.toLabel}
             </p>
             <p className="mt-1 text-sm text-slate-600">{link.assetName}</p>
           </Link>

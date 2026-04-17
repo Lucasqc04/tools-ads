@@ -1,4 +1,5 @@
 import { makeAbsoluteUrl, siteConfig } from '@/lib/site-config';
+import { localeMetadata, localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { FaqItem } from '@/types/content';
 
 export const organizationJsonLd = {
@@ -14,17 +15,18 @@ export const organizationJsonLd = {
   },
 };
 
-export const websiteJsonLd = {
+export const buildWebsiteJsonLd = (locale: AppLocale) => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: siteConfig.siteName,
-  url: siteConfig.url,
+  url: makeAbsoluteUrl(localizePath(locale, '/')),
+  inLanguage: localeMetadata[locale].htmlLang,
   potentialAction: {
     '@type': 'SearchAction',
-    target: `${siteConfig.url}/tools?search={search_term_string}`,
+    target: `${makeAbsoluteUrl(localizePath(locale, '/tools'))}?search={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
-};
+});
 
 export const buildBreadcrumbJsonLd = (
   items: Array<{ name: string; path: string }>,
@@ -56,6 +58,7 @@ export const buildToolWebPageJsonLd = (input: {
   name: string;
   description: string;
   path: string;
+  locale?: AppLocale;
   keywords: string[];
 }) => ({
   '@context': 'https://schema.org',
@@ -63,7 +66,7 @@ export const buildToolWebPageJsonLd = (input: {
   name: input.name,
   description: input.description,
   url: makeAbsoluteUrl(input.path),
-  inLanguage: 'pt-BR',
+  inLanguage: localeMetadata[input.locale ?? 'pt-br'].htmlLang,
   keywords: input.keywords.join(', '),
   isPartOf: {
     '@type': 'WebSite',

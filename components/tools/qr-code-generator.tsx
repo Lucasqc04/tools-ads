@@ -21,6 +21,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { type AppLocale } from '@/lib/i18n/config';
 import {
   blobToDataUrl,
   buildQrFileBaseName,
@@ -165,7 +166,313 @@ function SectionCard({
   );
 }
 
-export function QrCodeGeneratorTool() {
+type QrCodeGeneratorToolProps = {
+  locale?: AppLocale;
+};
+
+const qrUi = {
+  'pt-br': {
+    loadEngineError: 'Falha ao carregar o motor do QR Code.',
+    loadEngineWithReason: 'Falha ao carregar o motor do QR Code:',
+    missingContent: 'Digite um conteúdo para gerar o QR Code.',
+    generateFileError: 'Não foi possível gerar o arquivo do QR Code.',
+    invalidLogo: 'Selecione uma imagem válida para o logo.',
+    logoApplied: 'Logo aplicado ao QR Code.',
+    logoLoadError: 'Falha ao carregar logo.',
+    genericActionError: 'Não foi possível concluir a ação.',
+    downloadSuccessPrefix: 'Arquivo',
+    downloadSuccessSuffix: 'baixado.',
+    pdfTitle: 'QR Code gerado localmente',
+    pdfSuccess: 'PDF baixado com sucesso.',
+    copySuccess: 'Imagem copiada para a área de transferência.',
+    contentLabel: 'Conteúdo do QR Code',
+    contentPlaceholder: 'Cole um texto, URL, payload PIX ou qualquer conteúdo',
+    contentNote:
+      'Ferramenta gratuita, sem cadastro e sem login. O QR é gerado localmente no navegador.',
+    previewTitle: 'Preview e exportação',
+    previewDescription: 'Visualize o resultado e baixe no formato desejado.',
+    previewEmpty: 'A prévia aparece automaticamente após inserir conteúdo.',
+    copyImageButton: 'Copiar imagem',
+    emptyWarning: 'Digite um conteúdo para gerar o QR Code.',
+    presetsTitle: 'Pré-estilos',
+    presetsDescription:
+      'Escolha um estilo pronto para começar e depois ajuste os detalhes finos.',
+    customMode: 'Você está em modo personalizado.',
+    customizationTitle: 'Personalização do QR',
+    customizationDescription: 'Ajuste cor, formato dos módulos e parâmetros de leitura.',
+    qrColor: 'Cor do QR',
+    backgroundColor: 'Cor de fundo',
+    dotStyle: 'Estilo dos pontos',
+    errorCorrection: 'Correção de erro',
+    outerCornerStyle: 'Estilo do canto externo',
+    cornerDotStyle: 'Estilo do ponto de canto',
+    sizeLabel: 'Tamanho',
+    marginLabel: 'Margem',
+    logoScaleLabel: 'Escala do logo',
+    logoSectionTitle: 'Logo central (opcional)',
+    logoSectionDescription: 'Arraste e solte uma imagem ou selecione manualmente.',
+    dragHint: 'Arraste sua imagem aqui ou clique para selecionar',
+    supportedFormats: 'PNG, JPG, SVG e WEBP são suportados.',
+    chooseImage: 'Escolher imagem',
+    logoMarginLabel: 'Margem interna do logo',
+    logoPreviewAlt: 'Preview do logo',
+    logoLoadedFallback: 'Logo carregado',
+    logoAppliedCenter: 'Logo aplicado no centro do QR Code.',
+    removeLogo: 'Remover logo',
+  },
+  en: {
+    loadEngineError: 'Failed to load QR Code engine.',
+    loadEngineWithReason: 'Failed to load QR Code engine:',
+    missingContent: 'Enter content to generate the QR Code.',
+    generateFileError: 'Could not generate the QR Code file.',
+    invalidLogo: 'Select a valid image file for the logo.',
+    logoApplied: 'Logo applied to the QR Code.',
+    logoLoadError: 'Failed to load logo image.',
+    genericActionError: 'Could not complete this action.',
+    downloadSuccessPrefix: 'File',
+    downloadSuccessSuffix: 'downloaded.',
+    pdfTitle: 'QR Code generated locally',
+    pdfSuccess: 'PDF downloaded successfully.',
+    copySuccess: 'Image copied to clipboard.',
+    contentLabel: 'QR Code content',
+    contentPlaceholder: 'Paste text, URL, payment payload, or any content',
+    contentNote:
+      'Free tool with no sign-up. The QR is generated locally in your browser.',
+    previewTitle: 'Preview and export',
+    previewDescription: 'Preview the result and download in your preferred format.',
+    previewEmpty: 'The preview appears automatically after you enter content.',
+    copyImageButton: 'Copy image',
+    emptyWarning: 'Enter content to generate the QR Code.',
+    presetsTitle: 'Style presets',
+    presetsDescription: 'Start with a preset style and fine-tune the details.',
+    customMode: 'You are using custom mode.',
+    customizationTitle: 'QR customization',
+    customizationDescription: 'Adjust colors, module style, and scanning parameters.',
+    qrColor: 'QR color',
+    backgroundColor: 'Background color',
+    dotStyle: 'Dot style',
+    errorCorrection: 'Error correction',
+    outerCornerStyle: 'Outer corner style',
+    cornerDotStyle: 'Corner dot style',
+    sizeLabel: 'Size',
+    marginLabel: 'Margin',
+    logoScaleLabel: 'Logo scale',
+    logoSectionTitle: 'Center logo (optional)',
+    logoSectionDescription: 'Drag and drop an image or select one manually.',
+    dragHint: 'Drop your image here or click to choose one',
+    supportedFormats: 'PNG, JPG, SVG, and WEBP are supported.',
+    chooseImage: 'Choose image',
+    logoMarginLabel: 'Logo inner margin',
+    logoPreviewAlt: 'Logo preview',
+    logoLoadedFallback: 'Logo loaded',
+    logoAppliedCenter: 'Logo applied to QR center.',
+    removeLogo: 'Remove logo',
+  },
+  es: {
+    loadEngineError: 'No se pudo cargar el motor de QR.',
+    loadEngineWithReason: 'No se pudo cargar el motor de QR:',
+    missingContent: 'Ingresa contenido para generar el código QR.',
+    generateFileError: 'No fue posible generar el archivo QR.',
+    invalidLogo: 'Selecciona una imagen válida para el logo.',
+    logoApplied: 'Logo aplicado al código QR.',
+    logoLoadError: 'No se pudo cargar el logo.',
+    genericActionError: 'No fue posible completar la acción.',
+    downloadSuccessPrefix: 'Archivo',
+    downloadSuccessSuffix: 'descargado.',
+    pdfTitle: 'Código QR generado localmente',
+    pdfSuccess: 'PDF descargado con éxito.',
+    copySuccess: 'Imagen copiada al portapapeles.',
+    contentLabel: 'Contenido del código QR',
+    contentPlaceholder: 'Pega texto, URL, payload de pago o cualquier contenido',
+    contentNote:
+      'Herramienta gratuita y sin registro. El QR se genera localmente en tu navegador.',
+    previewTitle: 'Vista previa y exportación',
+    previewDescription: 'Visualiza el resultado y descárgalo en el formato deseado.',
+    previewEmpty: 'La vista previa aparece automáticamente al ingresar contenido.',
+    copyImageButton: 'Copiar imagen',
+    emptyWarning: 'Ingresa contenido para generar el código QR.',
+    presetsTitle: 'Preestilos',
+    presetsDescription:
+      'Elige un estilo inicial y después ajusta los detalles finos.',
+    customMode: 'Estás en modo personalizado.',
+    customizationTitle: 'Personalización del QR',
+    customizationDescription: 'Ajusta color, forma de módulos y parámetros de lectura.',
+    qrColor: 'Color del QR',
+    backgroundColor: 'Color de fondo',
+    dotStyle: 'Estilo de puntos',
+    errorCorrection: 'Corrección de error',
+    outerCornerStyle: 'Estilo de esquina externa',
+    cornerDotStyle: 'Estilo del punto de esquina',
+    sizeLabel: 'Tamaño',
+    marginLabel: 'Margen',
+    logoScaleLabel: 'Escala del logo',
+    logoSectionTitle: 'Logo central (opcional)',
+    logoSectionDescription: 'Arrastra una imagen o selecciónala manualmente.',
+    dragHint: 'Arrastra tu imagen aquí o haz clic para seleccionarla',
+    supportedFormats: 'Se admiten PNG, JPG, SVG y WEBP.',
+    chooseImage: 'Elegir imagen',
+    logoMarginLabel: 'Margen interno del logo',
+    logoPreviewAlt: 'Vista previa del logo',
+    logoLoadedFallback: 'Logo cargado',
+    logoAppliedCenter: 'Logo aplicado en el centro del QR.',
+    removeLogo: 'Quitar logo',
+  },
+} as const;
+
+const presetLabelsByLocale = {
+  'pt-br': {
+    basico: { label: 'Básico', description: 'Visual limpo, neutro e seguro para uso geral.' },
+    redondo: { label: 'Redondo', description: 'Curvas suaves, bom para branding moderno.' },
+    quadrado: {
+      label: 'Quadrado',
+      description: 'Visual técnico e alto contraste para leitura rápida.',
+    },
+    contraste: {
+      label: 'Alto contraste',
+      description: 'Prioriza escaneamento em telas e impressão.',
+    },
+  },
+  en: {
+    basico: { label: 'Basic', description: 'Clean neutral look for broad usage.' },
+    redondo: {
+      label: 'Rounded',
+      description: 'Smooth curves, useful for modern brand identity.',
+    },
+    quadrado: {
+      label: 'Squared',
+      description: 'Technical style with high contrast for fast scanning.',
+    },
+    contraste: {
+      label: 'High contrast',
+      description: 'Optimized for screens and print readability.',
+    },
+  },
+  es: {
+    basico: { label: 'Básico', description: 'Estilo limpio y neutro para uso general.' },
+    redondo: {
+      label: 'Redondeado',
+      description: 'Curvas suaves, ideal para branding moderno.',
+    },
+    quadrado: {
+      label: 'Cuadrado',
+      description: 'Apariencia técnica con alto contraste para lectura rápida.',
+    },
+    contraste: {
+      label: 'Alto contraste',
+      description: 'Prioriza escaneo en pantalla y en impresión.',
+    },
+  },
+} as const;
+
+const dotTypeLabelsByLocale: Record<AppLocale, Record<DotType, string>> = {
+  'pt-br': {
+    square: 'Quadrado',
+    rounded: 'Arredondado',
+    dots: 'Pontos',
+    classy: 'Elegante',
+    'classy-rounded': 'Elegante arredondado',
+    'extra-rounded': 'Extra arredondado',
+  },
+  en: {
+    square: 'Square',
+    rounded: 'Rounded',
+    dots: 'Dots',
+    classy: 'Classy',
+    'classy-rounded': 'Classy rounded',
+    'extra-rounded': 'Extra rounded',
+  },
+  es: {
+    square: 'Cuadrado',
+    rounded: 'Redondeado',
+    dots: 'Puntos',
+    classy: 'Elegante',
+    'classy-rounded': 'Elegante redondeado',
+    'extra-rounded': 'Extra redondeado',
+  },
+};
+
+const cornerSquareLabelsByLocale: Record<
+  AppLocale,
+  Partial<Record<CornerSquareType, string>>
+> = {
+  'pt-br': {
+    square: 'Quadrado',
+    dot: 'Circular',
+    'extra-rounded': 'Extra arredondado',
+    classy: 'Elegante',
+    'classy-rounded': 'Elegante arredondado',
+  },
+  en: {
+    square: 'Square',
+    dot: 'Circle',
+    'extra-rounded': 'Extra rounded',
+    classy: 'Classy',
+    'classy-rounded': 'Classy rounded',
+  },
+  es: {
+    square: 'Cuadrado',
+    dot: 'Circular',
+    'extra-rounded': 'Extra redondeado',
+    classy: 'Elegante',
+    'classy-rounded': 'Elegante redondeado',
+  },
+};
+
+const cornerDotLabelsByLocale: Record<
+  AppLocale,
+  Partial<Record<CornerDotType, string>>
+> = {
+  'pt-br': {
+    square: 'Quadrado',
+    dot: 'Ponto',
+    rounded: 'Arredondado',
+    classy: 'Elegante',
+  },
+  en: {
+    square: 'Square',
+    dot: 'Dot',
+    rounded: 'Rounded',
+    classy: 'Classy',
+  },
+  es: {
+    square: 'Cuadrado',
+    dot: 'Punto',
+    rounded: 'Redondeado',
+    classy: 'Elegante',
+  },
+};
+
+const errorCorrectionLabelsByLocale: Record<
+  AppLocale,
+  Record<ErrorCorrectionLevel, string>
+> = {
+  'pt-br': {
+    L: 'Baixa (L)',
+    M: 'Média (M)',
+    Q: 'Alta (Q)',
+    H: 'Muito alta (H)',
+  },
+  en: {
+    L: 'Low (L)',
+    M: 'Medium (M)',
+    Q: 'High (Q)',
+    H: 'Very high (H)',
+  },
+  es: {
+    L: 'Baja (L)',
+    M: 'Media (M)',
+    Q: 'Alta (Q)',
+    H: 'Muy alta (H)',
+  },
+};
+
+export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolProps) {
+  const ui = qrUi[locale];
+  const presetLabels = presetLabelsByLocale[locale];
+  const dotTypeLabels = dotTypeLabelsByLocale[locale];
+  const cornerSquareLabels = cornerSquareLabelsByLocale[locale];
+  const cornerDotLabels = cornerDotLabelsByLocale[locale];
+  const errorCorrectionLabels = errorCorrectionLabelsByLocale[locale];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const logoInputRef = useRef<HTMLInputElement | null>(null);
   const qrRef = useRef<QrCodeStylingInstance | null>(null);
@@ -303,8 +610,8 @@ export function QrCodeGeneratorTool() {
           type: 'error',
           message:
             error instanceof Error
-              ? `Falha ao carregar o motor do QR Code: ${error.message}`
-              : 'Falha ao carregar o motor do QR Code.',
+              ? `${ui.loadEngineWithReason} ${error.message}`
+              : ui.loadEngineError,
         });
       }
     };
@@ -314,7 +621,7 @@ export function QrCodeGeneratorTool() {
     return () => {
       cancelled = true;
     };
-  }, [margin, size, trimmedContent]);
+  }, [margin, size, trimmedContent, ui.loadEngineError, ui.loadEngineWithReason]);
 
   useEffect(() => {
     if (!containerRef.current || !qrRef.current) {
@@ -343,13 +650,13 @@ export function QrCodeGeneratorTool() {
 
   const getRawBlob = async (format: QrImageFormat): Promise<Blob> => {
     if (!qrRef.current || !hasContent) {
-      throw new Error('Digite um conteúdo para gerar o QR Code.');
+      throw new Error(ui.missingContent);
     }
 
     const raw = await qrRef.current.getRawData(format as FileExtension);
 
     if (!raw) {
-      throw new Error('Não foi possível gerar o arquivo do QR Code.');
+      throw new Error(ui.generateFileError);
     }
 
     return normalizeRawDataToBlob(raw as QrRawData, getMimeForQrFormat(format));
@@ -361,7 +668,7 @@ export function QrCodeGeneratorTool() {
     }
 
     if (!file.type.startsWith('image/')) {
-      setFeedback({ type: 'error', message: 'Selecione uma imagem válida para o logo.' });
+      setFeedback({ type: 'error', message: ui.invalidLogo });
       return;
     }
 
@@ -369,11 +676,11 @@ export function QrCodeGeneratorTool() {
       const dataUrl = await readImageFileAsDataUrl(file);
       setLogoDataUrl(dataUrl);
       setLogoFileName(file.name);
-      setFeedback({ type: 'success', message: 'Logo aplicado ao QR Code.' });
-    } catch (error) {
+      setFeedback({ type: 'success', message: ui.logoApplied });
+    } catch {
       setFeedback({
         type: 'error',
-        message: error instanceof Error ? error.message : 'Falha ao carregar logo.',
+        message: ui.logoLoadError,
       });
     }
   };
@@ -399,10 +706,10 @@ export function QrCodeGeneratorTool() {
     try {
       setBusyAction(actionLabel);
       await action();
-    } catch (error) {
+    } catch {
       setFeedback({
         type: 'error',
-        message: error instanceof Error ? error.message : 'Não foi possível concluir a ação.',
+        message: ui.genericActionError,
       });
     } finally {
       setBusyAction(null);
@@ -414,7 +721,10 @@ export function QrCodeGeneratorTool() {
       const blob = await getRawBlob(format);
       const baseName = buildQrFileBaseName(trimmedContent);
       downloadBlob(blob, `${baseName}.${format}`);
-      setFeedback({ type: 'success', message: `Arquivo ${format.toUpperCase()} baixado.` });
+      setFeedback({
+        type: 'success',
+        message: `${ui.downloadSuccessPrefix} ${format.toUpperCase()} ${ui.downloadSuccessSuffix}`,
+      });
     });
   };
 
@@ -437,12 +747,12 @@ export function QrCodeGeneratorTool() {
       const y = 72;
 
       pdf.setFontSize(14);
-      pdf.text('QR Code gerado localmente', x, 42);
+      pdf.text(ui.pdfTitle, x, 42);
       pdf.addImage(dataUrl, 'PNG', x, y, drawSize, drawSize);
 
       const baseName = buildQrFileBaseName(trimmedContent);
       pdf.save(`${baseName}.pdf`);
-      setFeedback({ type: 'success', message: 'PDF baixado com sucesso.' });
+      setFeedback({ type: 'success', message: ui.pdfSuccess });
     });
   };
 
@@ -450,7 +760,7 @@ export function QrCodeGeneratorTool() {
     await runAction('copy-image', async () => {
       const pngBlob = await getRawBlob('png');
       await copyImageBlobToClipboard(pngBlob);
-      setFeedback({ type: 'success', message: 'Imagem copiada para a área de transferência.' });
+      setFeedback({ type: 'success', message: ui.copySuccess });
     });
   };
 
@@ -458,28 +768,26 @@ export function QrCodeGeneratorTool() {
     <Card className="space-y-6">
       <div className="space-y-2">
         <label htmlFor="qr-content" className="text-sm font-semibold text-slate-800">
-          Conteúdo do QR Code
+          {ui.contentLabel}
         </label>
         <Textarea
           id="qr-content"
           value={content}
           onChange={(event) => setContent(event.target.value)}
           className="min-h-[120px]"
-          placeholder="Cole um texto, URL, payload PIX ou qualquer conteúdo"
+          placeholder={ui.contentPlaceholder}
         />
-        <p className="text-xs text-slate-600">
-          Ferramenta gratuita, sem cadastro e sem login. O QR é gerado localmente no navegador.
-        </p>
+        <p className="text-xs text-slate-600">{ui.contentNote}</p>
       </div>
 
-      <SectionCard title="Preview e exportação" description="Visualize o resultado e baixe no formato desejado.">
+      <SectionCard title={ui.previewTitle} description={ui.previewDescription}>
         <div className="flex min-h-[280px] items-center justify-center overflow-hidden rounded-xl border border-dashed border-slate-300 bg-white p-4">
           {hasContent ? (
             <div className="w-full">
               <div ref={containerRef} className="qr-preview-render mx-auto max-w-full" />
             </div>
           ) : (
-            <p className="text-sm text-slate-500">A prévia aparece automaticamente após inserir conteúdo.</p>
+            <p className="text-sm text-slate-500">{ui.previewEmpty}</p>
           )}
         </div>
 
@@ -500,12 +808,12 @@ export function QrCodeGeneratorTool() {
             PDF
           </Button>
           <Button variant="secondary" disabled={!hasContent || Boolean(busyAction)} onClick={handleCopyImage}>
-            Copiar imagem
+            {ui.copyImageButton}
           </Button>
         </div>
 
         {!hasContent ? (
-          <p className="text-xs font-medium text-amber-700">Digite um conteúdo para gerar o QR Code.</p>
+          <p className="text-xs font-medium text-amber-700">{ui.emptyWarning}</p>
         ) : null}
 
         {status ? (
@@ -524,8 +832,8 @@ export function QrCodeGeneratorTool() {
       </SectionCard>
 
       <SectionCard
-        title="Pré-estilos"
-        description="Escolha um estilo pronto para começar e depois ajuste os detalhes finos."
+        title={ui.presetsTitle}
+        description={ui.presetsDescription}
       >
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {STYLE_PRESETS.map((preset) => {
@@ -543,27 +851,29 @@ export function QrCodeGeneratorTool() {
                 }`}
                 aria-pressed={active}
               >
-                <p className="text-sm font-semibold text-slate-900">{preset.label}</p>
-                <p className="mt-1 text-xs text-slate-600">{preset.description}</p>
+                <p className="text-sm font-semibold text-slate-900">
+                  {presetLabels[preset.id].label}
+                </p>
+                <p className="mt-1 text-xs text-slate-600">
+                  {presetLabels[preset.id].description}
+                </p>
               </button>
             );
           })}
         </div>
 
         {selectedPresetId === 'custom' ? (
-          <p className="text-xs font-medium text-brand-700">
-            Você está em modo personalizado.
-          </p>
+          <p className="text-xs font-medium text-brand-700">{ui.customMode}</p>
         ) : null}
       </SectionCard>
 
       <SectionCard
-        title="Personalização do QR"
-        description="Ajuste cor, formato dos módulos e parâmetros de leitura."
+        title={ui.customizationTitle}
+        description={ui.customizationDescription}
       >
         <div className="grid gap-4 md:grid-cols-2">
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">Cor do QR</span>
+            <span className="text-sm font-semibold text-slate-800">{ui.qrColor}</span>
             <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-2">
               <Input
                 type="color"
@@ -581,7 +891,7 @@ export function QrCodeGeneratorTool() {
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">Cor de fundo</span>
+            <span className="text-sm font-semibold text-slate-800">{ui.backgroundColor}</span>
             <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-2">
               <Input
                 type="color"
@@ -599,7 +909,7 @@ export function QrCodeGeneratorTool() {
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">Estilo dos pontos</span>
+            <span className="text-sm font-semibold text-slate-800">{ui.dotStyle}</span>
             <Select
               value={dotType}
               onChange={(event) => {
@@ -609,14 +919,14 @@ export function QrCodeGeneratorTool() {
             >
               {DOT_TYPE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {dotTypeLabels[option.value]}
                 </option>
               ))}
             </Select>
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">Correção de erro</span>
+            <span className="text-sm font-semibold text-slate-800">{ui.errorCorrection}</span>
             <Select
               value={errorLevel}
               onChange={(event) => {
@@ -626,14 +936,14 @@ export function QrCodeGeneratorTool() {
             >
               {ERROR_LEVEL_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {errorCorrectionLabels[option.value]}
                 </option>
               ))}
             </Select>
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">Estilo do canto externo</span>
+            <span className="text-sm font-semibold text-slate-800">{ui.outerCornerStyle}</span>
             <Select
               value={cornerSquareType}
               onChange={(event) => {
@@ -643,14 +953,14 @@ export function QrCodeGeneratorTool() {
             >
               {CORNER_SQUARE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {cornerSquareLabels[option.value] ?? option.label}
                 </option>
               ))}
             </Select>
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">Estilo do ponto de canto</span>
+            <span className="text-sm font-semibold text-slate-800">{ui.cornerDotStyle}</span>
             <Select
               value={cornerDotType}
               onChange={(event) => {
@@ -660,7 +970,7 @@ export function QrCodeGeneratorTool() {
             >
               {CORNER_DOT_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {cornerDotLabels[option.value] ?? option.label}
                 </option>
               ))}
             </Select>
@@ -669,7 +979,9 @@ export function QrCodeGeneratorTool() {
 
         <div className="grid gap-4 md:grid-cols-3">
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">Tamanho: {size}px</span>
+            <span className="text-sm font-semibold text-slate-800">
+              {ui.sizeLabel}: {size}px
+            </span>
             <input
               type="range"
               min={220}
@@ -682,7 +994,9 @@ export function QrCodeGeneratorTool() {
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">Margem: {margin}px</span>
+            <span className="text-sm font-semibold text-slate-800">
+              {ui.marginLabel}: {margin}px
+            </span>
             <input
               type="range"
               min={0}
@@ -699,7 +1013,7 @@ export function QrCodeGeneratorTool() {
 
           <label className="space-y-2">
             <span className="text-sm font-semibold text-slate-800">
-              Escala do logo: {(logoScale * 100).toFixed(0)}%
+              {ui.logoScaleLabel}: {(logoScale * 100).toFixed(0)}%
             </span>
             <input
               type="range"
@@ -715,8 +1029,8 @@ export function QrCodeGeneratorTool() {
       </SectionCard>
 
       <SectionCard
-        title="Logo central (opcional)"
-        description="Arraste e solte uma imagem ou selecione manualmente."
+        title={ui.logoSectionTitle}
+        description={ui.logoSectionDescription}
       >
         <input
           ref={logoInputRef}
@@ -739,19 +1053,19 @@ export function QrCodeGeneratorTool() {
           }`}
         >
           <p className="text-sm font-medium text-slate-800">
-            Arraste sua imagem aqui ou clique para selecionar
+            {ui.dragHint}
           </p>
-          <p className="mt-1 text-xs text-slate-600">PNG, JPG, SVG e WEBP são suportados.</p>
+          <p className="mt-1 text-xs text-slate-600">{ui.supportedFormats}</p>
           <div className="mt-3">
             <Button variant="secondary" onClick={() => logoInputRef.current?.click()}>
-              Escolher imagem
+              {ui.chooseImage}
             </Button>
           </div>
         </div>
 
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-800">
-            Margem interna do logo: {logoMargin}px
+            {ui.logoMarginLabel}: {logoMargin}px
           </span>
           <input
             type="range"
@@ -768,15 +1082,17 @@ export function QrCodeGeneratorTool() {
           <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white p-3">
             <Image
               src={logoDataUrl}
-              alt="Preview do logo"
+              alt={ui.logoPreviewAlt}
               width={56}
               height={56}
               unoptimized
               className="h-14 w-14 rounded-lg border border-slate-200 bg-white object-contain"
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-slate-900">{logoFileName ?? 'Logo carregado'}</p>
-              <p className="text-xs text-slate-600">Logo aplicado no centro do QR Code.</p>
+              <p className="truncate text-sm font-semibold text-slate-900">
+                {logoFileName ?? ui.logoLoadedFallback}
+              </p>
+              <p className="text-xs text-slate-600">{ui.logoAppliedCenter}</p>
             </div>
             <Button
               variant="ghost"
@@ -785,7 +1101,7 @@ export function QrCodeGeneratorTool() {
                 setLogoFileName(null);
               }}
             >
-              Remover logo
+              {ui.removeLogo}
             </Button>
           </div>
         ) : null}

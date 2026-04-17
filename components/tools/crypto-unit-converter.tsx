@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
+import { type AppLocale } from '@/lib/i18n/config';
 import {
   assets,
   convertCryptoAmount,
@@ -15,16 +16,92 @@ import {
 } from '@/lib/crypto-units';
 
 type CryptoUnitConverterToolProps = {
+  locale?: AppLocale;
   initialAssetId?: CryptoAssetId;
   initialFromUnitId?: string;
   initialToUnitId?: string;
 };
 
+const cryptoConverterUi = {
+  'pt-br': {
+    asset: 'Ativo',
+    value: 'Valor',
+    valuePlaceholder: 'Ex.: 0.015',
+    precision: 'Precisão do ativo:',
+    decimalsLabel: 'casas decimais',
+    baseUnitSuffix: 'como unidade base',
+    sourceUnit: 'Unidade de origem',
+    targetUnit: 'Unidade de destino',
+    invert: 'Inverter',
+    result: 'Resultado',
+    copied: 'Copiado',
+    copyResult: 'Copiar resultado',
+    source: 'Origem:',
+    target: 'Destino:',
+    conversionMessages: {
+      invalidNumber: 'Digite um número válido para converter.',
+      invalidUnits: 'Selecione unidades válidas para o ativo escolhido.',
+      truncated: 'Resultado muito longo. Exibindo com corte após 18 casas decimais.',
+      offchain:
+        'Conversão envolve unidade off-chain (Lightning), útil para contexto técnico e não liquidação on-chain direta.',
+    },
+  },
+  en: {
+    asset: 'Asset',
+    value: 'Amount',
+    valuePlaceholder: 'Example: 0.015',
+    precision: 'Asset precision:',
+    decimalsLabel: 'decimal places',
+    baseUnitSuffix: 'as base unit',
+    sourceUnit: 'Source unit',
+    targetUnit: 'Target unit',
+    invert: 'Invert',
+    result: 'Result',
+    copied: 'Copied',
+    copyResult: 'Copy result',
+    source: 'Source:',
+    target: 'Target:',
+    conversionMessages: {
+      invalidNumber: 'Enter a valid number to convert.',
+      invalidUnits: 'Select valid units for the chosen asset.',
+      truncated: 'Result is very long. Display truncated after 18 decimal places.',
+      offchain:
+        'This conversion includes an off-chain unit (Lightning). Useful for technical context, not direct on-chain settlement.',
+    },
+  },
+  es: {
+    asset: 'Activo',
+    value: 'Valor',
+    valuePlaceholder: 'Ej.: 0.015',
+    precision: 'Precisión del activo:',
+    decimalsLabel: 'decimales',
+    baseUnitSuffix: 'como unidad base',
+    sourceUnit: 'Unidad de origen',
+    targetUnit: 'Unidad de destino',
+    invert: 'Invertir',
+    result: 'Resultado',
+    copied: 'Copiado',
+    copyResult: 'Copiar resultado',
+    source: 'Origen:',
+    target: 'Destino:',
+    conversionMessages: {
+      invalidNumber: 'Ingresa un número válido para convertir.',
+      invalidUnits: 'Selecciona unidades válidas para el activo elegido.',
+      truncated: 'Resultado muy largo. Se muestra truncado después de 18 decimales.',
+      offchain:
+        'La conversión incluye unidad off-chain (Lightning). Es útil para contexto técnico, no para liquidación on-chain directa.',
+    },
+  },
+} as const;
+
 export function CryptoUnitConverterTool({
+  locale = 'pt-br',
   initialAssetId = 'BTC',
   initialFromUnitId,
   initialToUnitId,
 }: CryptoUnitConverterToolProps) {
+  const ui = cryptoConverterUi[locale];
+
   const initialSelection = resolveUnitSelection(
     initialAssetId,
     initialFromUnitId,
@@ -46,8 +123,8 @@ export function CryptoUnitConverterTool({
         assetId,
         fromUnitId,
         toUnitId,
-      }),
-    [assetId, fromUnitId, toUnitId, value],
+      }, ui.conversionMessages),
+    [assetId, fromUnitId, toUnitId, ui.conversionMessages, value],
   );
 
   const handleAssetChange = (nextAsset: CryptoAssetId) => {
@@ -85,7 +162,7 @@ export function CryptoUnitConverterTool({
     <Card className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
         <label className="space-y-2">
-          <span className="text-sm font-semibold text-slate-800">Ativo</span>
+          <span className="text-sm font-semibold text-slate-800">{ui.asset}</span>
           <Select
             value={assetId}
             onChange={(event) => handleAssetChange(event.target.value as CryptoAssetId)}
@@ -99,10 +176,10 @@ export function CryptoUnitConverterTool({
         </label>
 
         <label className="space-y-2">
-          <span className="text-sm font-semibold text-slate-800">Valor</span>
+          <span className="text-sm font-semibold text-slate-800">{ui.value}</span>
           <Input
             inputMode="decimal"
-            placeholder="Ex.: 0.015"
+            placeholder={ui.valuePlaceholder}
             value={value}
             onChange={(event) => {
               setValue(event.target.value);
@@ -114,17 +191,17 @@ export function CryptoUnitConverterTool({
 
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
         <p>
-          <strong>Precisão do ativo:</strong> {selectedAsset.decimals} casas decimais
+          <strong>{ui.precision}</strong> {selectedAsset.decimals} {ui.decimalsLabel}
           ({' '}
           {selectedAsset.units.find((unit) => unit.id === selectedAsset.baseUnitId)?.label ??
             selectedAsset.baseUnitId}{' '}
-          como unidade base).
+          {ui.baseUnitSuffix}).
         </p>
       </div>
 
       <div className="grid items-end gap-4 md:grid-cols-[1fr_auto_1fr]">
         <label className="space-y-2">
-          <span className="text-sm font-semibold text-slate-800">Unidade de origem</span>
+          <span className="text-sm font-semibold text-slate-800">{ui.sourceUnit}</span>
           <Select value={fromUnitId} onChange={(event) => setFromUnitId(event.target.value)}>
             {selectedAsset.units.map((unit) => (
               <option key={unit.id} value={unit.id}>
@@ -135,11 +212,11 @@ export function CryptoUnitConverterTool({
         </label>
 
         <Button variant="secondary" className="w-full md:w-auto" onClick={handleInvert}>
-          Inverter
+          {ui.invert}
         </Button>
 
         <label className="space-y-2">
-          <span className="text-sm font-semibold text-slate-800">Unidade de destino</span>
+          <span className="text-sm font-semibold text-slate-800">{ui.targetUnit}</span>
           <Select value={toUnitId} onChange={(event) => setToUnitId(event.target.value)}>
             {selectedAsset.units.map((unit) => (
               <option key={unit.id} value={unit.id}>
@@ -151,7 +228,7 @@ export function CryptoUnitConverterTool({
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Resultado</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{ui.result}</p>
         {conversion.ok ? (
           <p className="mt-2 break-all text-2xl font-bold text-slate-900">
             {conversion.display} {toUnit?.label}
@@ -166,17 +243,19 @@ export function CryptoUnitConverterTool({
 
         <div className="mt-4 flex flex-wrap gap-2">
           <Button variant="secondary" onClick={handleCopy} disabled={!conversion.ok}>
-            {copied ? 'Copiado' : 'Copiar resultado'}
+            {copied ? ui.copied : ui.copyResult}
           </Button>
         </div>
       </div>
 
       <div className="grid gap-3 text-sm text-slate-700 md:grid-cols-2">
         <p>
-          <strong>Origem:</strong> {fromUnit?.description}
+          <strong>{ui.source}</strong>{' '}
+          {locale === 'pt-br' ? fromUnit?.description : fromUnit?.label}
         </p>
         <p>
-          <strong>Destino:</strong> {toUnit?.description}
+          <strong>{ui.target}</strong>{' '}
+          {locale === 'pt-br' ? toUnit?.description : toUnit?.label}
         </p>
       </div>
     </Card>

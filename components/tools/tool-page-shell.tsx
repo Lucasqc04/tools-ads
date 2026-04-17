@@ -9,6 +9,8 @@ import { ContentBlocks } from '@/components/shared/content-blocks';
 import { Faq } from '@/components/shared/faq';
 import { RelatedTools } from '@/components/shared/related-tools';
 import { TrustNote } from '@/components/shared/trust-note';
+import { localizePath, type AppLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/dictionary';
 import type { ToolDefinition } from '@/types/tool';
 
 type ToolPageShellProps = {
@@ -16,6 +18,7 @@ type ToolPageShellProps = {
   relatedTools: ToolDefinition[];
   toolUi: ReactNode;
   afterToolSection?: ReactNode;
+  locale?: AppLocale;
 };
 
 export function ToolPageShell({
@@ -23,13 +26,16 @@ export function ToolPageShell({
   relatedTools,
   toolUi,
   afterToolSection,
+  locale = 'pt-br',
 }: ToolPageShellProps) {
+  const dictionary = getDictionary(locale);
+
   return (
     <Container className="py-8 md:py-10">
       <Breadcrumbs
         items={[
-          { name: 'Home', href: '/' },
-          { name: 'Ferramentas', href: '/tools' },
+          { name: dictionary.common.home, href: localizePath(locale, '/') },
+          { name: dictionary.common.tools, href: localizePath(locale, '/tools') },
           { name: tool.name },
         ]}
       />
@@ -47,7 +53,7 @@ export function ToolPageShell({
         <main className="space-y-8">
           <section aria-labelledby="tool-interface-title" className="space-y-3">
             <h2 id="tool-interface-title" className="text-2xl font-bold tracking-tight text-slate-900">
-              Use a ferramenta
+              {dictionary.toolShell.useToolTitle}
             </h2>
             {toolUi}
           </section>
@@ -56,15 +62,18 @@ export function ToolPageShell({
 
           <AdSlotInContent />
 
-          <ContentBlocks blocks={tool.contentBlocks} />
+          <ContentBlocks
+            blocks={tool.contentBlocks}
+            title={dictionary.toolShell.contentTitle}
+          />
 
-          <Faq items={tool.faq} />
+          <Faq items={tool.faq} title={dictionary.toolShell.faqTitle} />
 
-          <RelatedTools tools={relatedTools} />
+          <RelatedTools tools={relatedTools} locale={locale} />
 
           <TrustNote
-            title="Privacidade e processamento local"
-            text="As ferramentas desta página rodam no navegador e não enviam o conteúdo digitado para backend. Isso melhora privacidade, reduz latência e ajuda na experiência mobile."
+            title={dictionary.toolShell.trustTitle}
+            text={dictionary.toolShell.trustText}
           />
 
           <AdSlotFooter />

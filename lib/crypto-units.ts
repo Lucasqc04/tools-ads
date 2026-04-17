@@ -418,12 +418,27 @@ export type ConversionResult = {
   warning?: string;
 };
 
+export type ConversionMessages = {
+  invalidNumber: string;
+  invalidUnits: string;
+  truncated: string;
+  offchain: string;
+};
+
+const DEFAULT_CONVERSION_MESSAGES: ConversionMessages = {
+  invalidNumber: 'Digite um número válido para converter.',
+  invalidUnits: 'Selecione unidades válidas para o ativo escolhido.',
+  truncated: 'Resultado muito longo. Exibindo com corte após 18 casas decimais.',
+  offchain:
+    'Conversão envolve unidade off-chain (Lightning), útil para contexto técnico e não liquidação on-chain direta.',
+};
+
 export const convertCryptoAmount = (input: {
   value: string;
   assetId: CryptoAssetId;
   fromUnitId: string;
   toUnitId: string;
-}): ConversionResult => {
+}, messages: ConversionMessages = DEFAULT_CONVERSION_MESSAGES): ConversionResult => {
   const parsed = parseDecimal(input.value);
 
   if (!parsed) {
@@ -431,7 +446,7 @@ export const convertCryptoAmount = (input: {
       ok: false,
       raw: '',
       display: '',
-      error: 'Digite um número válido para converter.',
+      error: messages.invalidNumber,
     };
   }
 
@@ -443,7 +458,7 @@ export const convertCryptoAmount = (input: {
       ok: false,
       raw: '',
       display: '',
-      error: 'Selecione unidades válidas para o ativo escolhido.',
+      error: messages.invalidUnits,
     };
   }
 
@@ -460,11 +475,11 @@ export const convertCryptoAmount = (input: {
   const warnings: string[] = [];
 
   if (result.truncated) {
-    warnings.push('Resultado muito longo. Exibindo com corte após 18 casas decimais.');
+    warnings.push(messages.truncated);
   }
 
   if (fromUnit.isOffchain || toUnit.isOffchain) {
-    warnings.push('Conversão envolve unidade off-chain (Lightning), útil para contexto técnico e não liquidação on-chain direta.');
+    warnings.push(messages.offchain);
   }
 
   return {

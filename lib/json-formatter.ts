@@ -4,16 +4,29 @@ export type JsonFormatResult =
   | { ok: true; value: string }
   | { ok: false; error: string };
 
+export type JsonFormatterMessages = {
+  emptyInput: string;
+  invalidPrefix: string;
+  invalidFallback: string;
+};
+
+const DEFAULT_JSON_FORMATTER_MESSAGES: JsonFormatterMessages = {
+  emptyInput: 'Cole um JSON válido antes de formatar.',
+  invalidPrefix: 'JSON inválido:',
+  invalidFallback: 'JSON inválido. Revise a sintaxe e tente novamente.',
+};
+
 export const formatJsonText = (
   input: string,
   mode: JsonFormatMode,
+  messages: JsonFormatterMessages = DEFAULT_JSON_FORMATTER_MESSAGES,
 ): JsonFormatResult => {
   const trimmed = input.trim();
 
   if (!trimmed) {
     return {
       ok: false,
-      error: 'Cole um JSON válido antes de formatar.',
+      error: messages.emptyInput,
     };
   }
 
@@ -35,13 +48,13 @@ export const formatJsonText = (
     if (error instanceof Error) {
       return {
         ok: false,
-        error: `JSON inválido: ${error.message}`,
+        error: `${messages.invalidPrefix} ${error.message}`,
       };
     }
 
     return {
       ok: false,
-      error: 'JSON inválido. Revise a sintaxe e tente novamente.',
+      error: messages.invalidFallback,
     };
   }
 };

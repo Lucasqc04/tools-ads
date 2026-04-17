@@ -2,13 +2,17 @@ import type { ContentBlock } from '@/types/content';
 
 type ContentBlocksProps = {
   blocks: ContentBlock[];
+  title?: string;
 };
 
-export function ContentBlocks({ blocks }: ContentBlocksProps) {
+export function ContentBlocks({
+  blocks,
+  title = 'Guia rápido e contexto de uso',
+}: ContentBlocksProps) {
   return (
     <section aria-labelledby="tool-content-title" className="prose-lite space-y-8">
       <h2 id="tool-content-title" className="text-2xl font-bold tracking-tight text-slate-900">
-        Guia rápido e contexto de uso
+        {title}
       </h2>
 
       {blocks.map((block) => (
