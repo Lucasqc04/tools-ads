@@ -96,12 +96,12 @@ const conversionSeeds: CryptoConversionSeed[] = [
 const sanitizeSlugToken = (value: string): string =>
   value
     .trim()
-    .replace(/μ/g, 'u')
+    .replaceAll('μ', 'u')
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replaceAll(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replaceAll(/^-+|-+$/g, '');
 
 const toTechnicalSlug = (fromUnitId: string, toUnitId: string): string =>
   `${fromUnitId}-to-${toUnitId}`;
@@ -110,6 +110,84 @@ const toPtBrSlug = (fromUnit: UnitDefinition, toUnit: UnitDefinition): string =>
   const fromToken = sanitizeSlugToken(fromUnit.label);
   const toToken = sanitizeSlugToken(toUnit.label);
   return `${fromToken}-para-${toToken}`;
+};
+
+const TECHNICAL_UNIT_ALIASES: Record<string, string[]> = {
+  sat: ['sat', 'sats', 'satoshi', 'satoshis'],
+  msat: ['msat', 'msats', 'millisatoshi', 'millisatoshis'],
+};
+
+const PTBR_UNIT_ALIASES: Record<string, string[]> = {
+  satoshi: ['satoshi', 'satoshis', 'sat', 'sats'],
+  msat: ['msat', 'msats', 'millisatoshi', 'millisatoshis'],
+};
+
+const normalizeTechnicalToken = (token: string): string => {
+  const normalized = sanitizeSlugToken(token);
+
+  if (['sats', 'satoshi', 'satoshis'].includes(normalized)) {
+    return 'sat';
+  }
+
+  if (['msats', 'millisatoshi', 'millisatoshis'].includes(normalized)) {
+    return 'msat';
+  }
+
+  return normalized;
+};
+
+const normalizePtBrToken = (token: string): string => {
+  const normalized = sanitizeSlugToken(token);
+
+  if (['sat', 'sats', 'satoshis'].includes(normalized)) {
+    return 'satoshi';
+  }
+
+  if (['msats', 'millisatoshi', 'millisatoshis'].includes(normalized)) {
+    return 'msat';
+  }
+
+  return normalized;
+};
+
+const parseSlugByDelimiter = (
+  slug: string,
+  delimiter: '-to-' | '-para-',
+): { from: string; to: string } | null => {
+  const index = slug.indexOf(delimiter);
+
+  if (index <= 0) {
+    return null;
+  }
+
+  const from = slug.slice(0, index);
+  const to = slug.slice(index + delimiter.length);
+
+  if (!from || !to) {
+    return null;
+  }
+
+  return { from, to };
+};
+
+const buildTechnicalAliasSlugs = (page: CryptoConversionPage): string[] => {
+  const fromTokens = TECHNICAL_UNIT_ALIASES[page.fromUnitId] ?? [page.fromUnitId];
+  const toTokens = TECHNICAL_UNIT_ALIASES[page.toUnitId] ?? [page.toUnitId];
+
+  return fromTokens.flatMap((fromToken) =>
+    toTokens.map((toToken) => `${fromToken}-to-${toToken}`),
+  );
+};
+
+const buildPtBrAliasSlugs = (page: CryptoConversionPage): string[] => {
+  const fromLabelToken = sanitizeSlugToken(page.fromLabel);
+  const toLabelToken = sanitizeSlugToken(page.toLabel);
+  const fromTokens = PTBR_UNIT_ALIASES[fromLabelToken] ?? [fromLabelToken];
+  const toTokens = PTBR_UNIT_ALIASES[toLabelToken] ?? [toLabelToken];
+
+  return fromTokens.flatMap((fromToken) =>
+    toTokens.map((toToken) => `${fromToken}-para-${toToken}`),
+  );
 };
 
 const formatBigIntFraction = (unit: UnitDefinition): string => {
@@ -262,6 +340,20 @@ const ptBrSlugMap = new Map(
   cryptoConversionPages.map((page) => [page.slugPtBr, page]),
 );
 
+const technicalAliasPairMap = new Map(
+  cryptoConversionPages.map((page) => [
+    `${normalizeTechnicalToken(page.fromUnitId)}->${normalizeTechnicalToken(page.toUnitId)}`,
+    page,
+  ]),
+);
+
+const ptBrAliasPairMap = new Map(
+  cryptoConversionPages.map((page) => [
+    `${normalizePtBrToken(page.fromLabel)}->${normalizePtBrToken(page.toLabel)}`,
+    page,
+  ]),
+);
+
 export const getCryptoConversionResolutionBySlug = (
   slug: string,
 ): { page: CryptoConversionPage; variant: CryptoSlugVariant } | undefined => {
@@ -273,6 +365,26 @@ export const getCryptoConversionResolutionBySlug = (
   const ptBr = ptBrSlugMap.get(slug);
   if (ptBr) {
     return { page: ptBr, variant: 'ptBr' };
+  }
+
+  const parsedTechnical = parseSlugByDelimiter(slug, '-to-');
+  if (parsedTechnical) {
+    const key = `${normalizeTechnicalToken(parsedTechnical.from)}->${normalizeTechnicalToken(parsedTechnical.to)}`;
+    const aliasMatch = technicalAliasPairMap.get(key);
+
+    if (aliasMatch) {
+      return { page: aliasMatch, variant: 'technical' };
+    }
+  }
+
+  const parsedPtBr = parseSlugByDelimiter(slug, '-para-');
+  if (parsedPtBr) {
+    const key = `${normalizePtBrToken(parsedPtBr.from)}->${normalizePtBrToken(parsedPtBr.to)}`;
+    const aliasMatch = ptBrAliasPairMap.get(key);
+
+    if (aliasMatch) {
+      return { page: aliasMatch, variant: 'ptBr' };
+    }
   }
 
   return undefined;
@@ -565,11 +677,16 @@ export const toLocalizedCryptoConversionLink = (
   assetName: page.assetName,
 });
 
-export const getCryptoConversionStaticParams = (): Array<{ conversionSlug: string }> =>
-  cryptoConversionPages.flatMap((page) => [
-    { conversionSlug: page.slugTechnical },
-    { conversionSlug: page.slugPtBr },
-  ]);
+export const getCryptoConversionStaticParams = (): Array<{ conversionSlug: string }> => {
+  const slugSet = new Set<string>();
+
+  cryptoConversionPages.forEach((page) => {
+    buildTechnicalAliasSlugs(page).forEach((slug) => slugSet.add(slug));
+    buildPtBrAliasSlugs(page).forEach((slug) => slugSet.add(slug));
+  });
+
+  return Array.from(slugSet).map((conversionSlug) => ({ conversionSlug }));
+};
 
 export const getFeaturedCryptoConversionPages = (
   limit = 4,

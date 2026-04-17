@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
@@ -42,12 +42,12 @@ export function generateStaticParams() {
   );
 }
 
-type ConversionLandingPageProps = {
+type ConversionLandingPageProps = Readonly<{
   params: Promise<{
     locale: string;
     conversionSlug: string;
   }>;
-};
+}>;
 
 export async function generateMetadata({
   params,
@@ -100,6 +100,17 @@ export default async function ConversionLandingPage({
   const conversionPage = resolution.page;
   const localized = getLocalizedCryptoConversionContent(conversionPage, locale);
 
+  const localePathMap = getCryptoConversionLocalePathMap(conversionPage);
+  const canonicalPath = localePathMap[locale];
+  const currentRequestPath = localizePath(
+    locale,
+    `/tools/crypto-unit-converter/${conversionSlug}`,
+  );
+
+  if (currentRequestPath !== canonicalPath) {
+    redirect(canonicalPath);
+  }
+
   const currentPath = localizePath(
     locale,
     getCryptoConversionPathByVariant(conversionPage, resolution.variant),
@@ -117,7 +128,7 @@ export default async function ConversionLandingPage({
     intro: localized.intro,
     seoTitle: localized.seoTitle,
     seoDescription: localized.seoDescription,
-    canonicalPath: getCryptoConversionLocalePathMap(conversionPage)[locale],
+    canonicalPath,
     primaryKeyword: localized.keywords[0] ?? baseTool.primaryKeyword,
     secondaryKeywords: localized.keywords.slice(1),
     searchIntent: dictionary.toolShell.conversionSearchIntent,

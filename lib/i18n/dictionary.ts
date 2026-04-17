@@ -214,9 +214,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'Todos os direitos reservados.',
     },
     home: {
-      h1: 'Ferramentas online úteis, rápidas e prontas para SEO',
+      h1: 'Ferramentas online úteis para o dia a dia',
       intro:
-        'Este projeto foi estruturado como um hub de tools com páginas independentes, performance alta e base de monetização com Google AdSense sem comprometer UX.',
+        'Encontre e use ferramentas online gratuitas para converter, calcular, gerar, visualizar e resolver tarefas comuns do cotidiano, tudo em um só lugar e sem cadastro.',
       featuredToolsTitle: 'Ferramentas em destaque',
       viewAllTools: 'Ver todas as ferramentas',
       growthTitle: 'Estrutura pensada para crescimento orgânico',
@@ -455,9 +455,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'All rights reserved.',
     },
     home: {
-      h1: 'Useful online tools with SEO-ready landing pages',
+      h1: 'Useful online tools for everyday tasks',
       intro:
-        'This project is designed as a scalable tools hub where each page can rank on its own, with fast UX and monetization readiness without hurting usability.',
+        'Find and use free online tools to convert, calculate, generate, visualize and solve common daily tasks, all in one place and with no sign up.',
       featuredToolsTitle: 'Featured tools',
       viewAllTools: 'View all tools',
       growthTitle: 'Built for international organic growth',
@@ -696,9 +696,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'Todos los derechos reservados.',
     },
     home: {
-      h1: 'Herramientas online útiles, rápidas y listas para SEO',
+      h1: 'Herramientas online útiles para el día a día',
       intro:
-        'Este proyecto está pensado como un hub escalable de herramientas donde cada página puede posicionar por sí sola, con buena UX y estructura para monetización responsable.',
+        'Encuentra y usa herramientas online gratis para convertir, calcular, generar, visualizar y resolver tareas cotidianas, todo en un solo lugar y sin registro.',
       featuredToolsTitle: 'Herramientas destacadas',
       viewAllTools: 'Ver todas las herramientas',
       growthTitle: 'Arquitectura orientada a crecimiento orgánico',
