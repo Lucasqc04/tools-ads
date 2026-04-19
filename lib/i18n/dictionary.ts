@@ -137,13 +137,15 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     seo: {
       siteDefaultTitle: 'Ferramentas Online',
       siteDefaultDescription:
-        'Hub de ferramentas online com foco em SEO técnico, performance e experiência limpa em português, inglês e espanhol.',
+        'Hub de ferramentas online grátis para tarefas do dia a dia, com experiência rápida, sem cadastro e sem login em português, inglês e espanhol.',
       home: {
         title: 'Ferramentas Online para Produtividade e Desenvolvimento',
         description:
-          'Hub de ferramentas online com foco em SEO técnico, performance e experiência limpa. Use utilitários práticos sem cadastro e com processamento local quando aplicável.',
+          'Use ferramentas online práticas, gratuitas, sem cadastro e sem login para resolver tarefas comuns com rapidez e processamento local quando aplicável.',
         keywords: [
           'ferramentas online',
+          'ferramentas online gratis sem cadastro',
+          'ferramentas online sem login',
           'tools online grátis',
           'utilitários web',
           'ferramentas para desenvolvedores',
@@ -152,14 +154,21 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       tools: {
         title: 'Ferramentas Online',
         description:
-          'Lista de ferramentas online com páginas próprias, conteúdo útil e foco em performance para desktop e mobile.',
-        keywords: ['ferramentas online', 'lista de tools', 'utilitários web grátis'],
+          'Lista de ferramentas online grátis, sem cadastro e sem login, com conteúdo útil e foco em performance para desktop e mobile.',
+        keywords: [
+          'ferramentas online',
+          'ferramentas online grátis',
+          'ferramentas sem cadastro',
+          'ferramentas sem login',
+          'lista de tools',
+          'utilitários web grátis',
+        ],
       },
       about: {
         title: 'Sobre o Projeto',
         description:
-          'Entenda o objetivo do Tools Lucasqc, como as ferramentas são construídas e quais princípios de SEO, UX e privacidade orientam o produto.',
-        keywords: ['sobre ferramentas online', 'projeto tools', 'seo e ux'],
+          'Entenda o objetivo do Tools Lucasqc, como as ferramentas são construídas e quais princípios de utilidade, UX e privacidade orientam o produto.',
+        keywords: ['sobre ferramentas online', 'projeto tools', 'utilitários web'],
       },
       contact: {
         title: 'Contato',
@@ -210,25 +219,25 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     footer: {
       goHomeAriaLabel: 'Ir para Tools Lucasqc',
       navLabel: 'Links institucionais',
-      tagline: 'Ferramentas online rápidas, úteis e preparadas para SEO',
+      tagline: 'Ferramentas online rápidas, úteis e sem complicação',
       rightsReserved: 'Todos os direitos reservados.',
     },
     home: {
       h1: 'Ferramentas online úteis para o dia a dia',
       intro:
-        'Encontre e use ferramentas online gratuitas para converter, calcular, gerar, visualizar e resolver tarefas comuns do cotidiano, tudo em um só lugar e sem cadastro.',
+        'Encontre e use ferramentas online gratuitas para converter, calcular, gerar, visualizar e resolver tarefas comuns do cotidiano, tudo em um só lugar, sem cadastro e sem login.',
       featuredToolsTitle: 'Ferramentas em destaque',
       viewAllTools: 'Ver todas as ferramentas',
-      growthTitle: 'Estrutura pensada para crescimento orgânico',
+      growthTitle: 'Ferramentas pensadas para uso rápido',
       growthParagraphs: [
-        'Cada tool é tratada como landing page própria, com metadados dedicados, FAQ, conteúdo explicativo e links internos leves. Assim, as páginas conseguem rankear direto no Google sem depender da home como única entrada.',
-        'A navegação global é discreta para evitar poluição visual. O usuário encontra rápido o que precisa e o robô de busca mantém rastreabilidade de rotas importantes via sitemap e estrutura de links contextual.',
+        'Cada ferramenta tem sua própria página com guia rápido, FAQ e ações diretas para você concluir a tarefa sem perder tempo.',
+        'A navegação é leve para evitar poluição visual. Em celular e desktop, você chega nas ações principais com poucos cliques.',
       ],
     },
     toolsIndex: {
       h1: 'Todas as ferramentas',
       intro:
-        'Catálogo enxuto com páginas focadas. Cada ferramenta tem contexto próprio, FAQ, metadados individuais e arquitetura pronta para crescer sem perder qualidade.',
+        'Catálogo enxuto com páginas focadas. Cada ferramenta traz contexto, FAQ e fluxo simples para você resolver a tarefa em poucos passos.',
       searchLabel: 'Buscar ferramenta',
       searchPlaceholder: 'Ex.: json, satoshi, pdf',
       searchButton: 'Buscar',
@@ -239,7 +248,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     about: {
       h1: 'Sobre o Tools Lucasqc',
       intro:
-        'O Tools Lucasqc nasceu para entregar utilitários web realmente úteis, rápidos e com estrutura profissional de SEO técnico. Cada página foi pensada como entrada direta de tráfego orgânico, sem depender da home para fazer sentido.',
+        'O Tools Lucasqc nasceu para entregar utilitários web realmente úteis, rápidos e fáceis de usar. Cada página foi pensada para funcionar bem sozinha e ajudar você a resolver tarefas sem complicação.',
       principlesTitle: 'Princípios do produto',
       principles: [
         'Conteúdo útil antes de monetização.',
@@ -249,7 +258,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       ],
       qualityTitle: 'Compromisso de qualidade',
       qualityParagraph:
-        'Mantemos páginas institucionais claras, políticas transparentes e uma arquitetura de links internos discreta. Isso fortalece confiança de usuários, mecanismos de busca e plataformas de anúncios como o Google AdSense.',
+        'Mantemos páginas institucionais claras, políticas transparentes e navegação simples. Isso fortalece a confiança dos usuários e de plataformas de anúncios como o Google AdSense.',
     },
     contact: {
       h1: 'Contato',
@@ -345,7 +354,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       faqTitle: 'Perguntas frequentes',
       relatedToolsTitle: 'Outras ferramentas úteis',
       relatedToolsDescription:
-        'Links internos discretos para navegação contextual e descoberta orgânica.',
+        'Links úteis para continuar tarefas parecidas sem voltar para a busca.',
       trustTitle: 'Privacidade e processamento local',
       trustText:
         'As ferramentas desta página rodam no navegador e não enviam o conteúdo digitado para backend. Isso melhora privacidade, reduz latência e ajuda na experiência mobile.',
@@ -354,7 +363,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         'Links internos leves para combinações próximas e úteis do mesmo contexto técnico.',
       cryptoPopularTitle: 'Conversões populares',
       cryptoPopularDescription:
-        'Páginas específicas de alta intenção para consultas diretas como gwei para ETH, sat para BTC e lamport para SOL.',
+        'Conversões frequentes como gwei para ETH, sat para BTC e lamport para SOL.',
       conversionBreadcrumbLabel: 'Conversor de Unidades Cripto',
       conversionSearchIntent:
         'Usuários que buscam conversão direta entre duas unidades técnicas de um mesmo ativo cripto.',
@@ -377,29 +386,37 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     seo: {
       siteDefaultTitle: 'Online Tools',
       siteDefaultDescription:
-        'Global online tools hub built for technical SEO, fast UX, and localized rankings in Portuguese, English, and Spanish.',
+        'Global hub of free online tools for everyday tasks, with fast UX, no sign-up, and no login in Portuguese, English, and Spanish.',
       home: {
         title: 'Free Online Tools for Creators, Marketers, and Developers',
         description:
-          'Use practical web tools with indexable pages, strong technical SEO foundations, and privacy-friendly local processing.',
+          'Use practical web tools with fast workflows, free access, no sign-up, no login, and privacy-friendly local processing.',
         keywords: [
           'free online tools',
+          'free online tools no sign up',
+          'free online tools no login',
           'web productivity tools',
           'developer tools online',
-          'seo friendly tools',
+          'fast browser tools',
         ],
       },
       tools: {
         title: 'All Online Tools',
         description:
-          'Explore focused online tools with dedicated landing pages, FAQs, and optimized metadata for global search visibility.',
-        keywords: ['online tools list', 'free web utilities', 'browser tools'],
+          'Explore focused online tools with clear pages, free access, no sign-up, and quick workflows for desktop and mobile.',
+        keywords: [
+          'online tools list',
+          'free web utilities',
+          'tools without sign up',
+          'tools without login',
+          'browser tools',
+        ],
       },
       about: {
         title: 'About This Project',
         description:
-          'Learn how Tools Lucasqc is built to scale organic traffic with technical SEO, clean UX, and transparent privacy practices.',
-        keywords: ['about tools lucasqc', 'seo tools project', 'web tools mission'],
+          'Learn how Tools Lucasqc is built to deliver useful tools with clean UX and transparent privacy practices.',
+        keywords: ['about tools lucasqc', 'web tools project', 'web tools mission'],
       },
       contact: {
         title: 'Contact',
@@ -451,25 +468,25 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     footer: {
       goHomeAriaLabel: 'Go to Tools Lucasqc homepage',
       navLabel: 'Institutional links',
-      tagline: 'Fast online tools built for SEO and practical workflows',
+      tagline: 'Fast online tools for practical workflows',
       rightsReserved: 'All rights reserved.',
     },
     home: {
       h1: 'Useful online tools for everyday tasks',
       intro:
-        'Find and use free online tools to convert, calculate, generate, visualize and solve common daily tasks, all in one place and with no sign up.',
+        'Find and use free online tools to convert, calculate, generate, visualize and solve common daily tasks, all in one place with no sign-up and no login.',
       featuredToolsTitle: 'Featured tools',
       viewAllTools: 'View all tools',
-      growthTitle: 'Built for international organic growth',
+      growthTitle: 'Built for fast everyday workflows',
       growthParagraphs: [
-        'Each tool is treated like a standalone landing page, with dedicated metadata, FAQ coverage, and contextual internal links. That structure supports rankings beyond homepage traffic.',
-        'Navigation stays intentionally lightweight to reduce clutter. Users can reach key actions quickly while search engines crawl important URLs consistently through sitemaps and semantic linking.',
+        'Each tool has its own focused page with a quick guide, FAQ, and direct actions so users can finish tasks quickly.',
+        'Navigation stays intentionally lightweight to reduce clutter, helping users reach key actions fast on both desktop and mobile.',
       ],
     },
     toolsIndex: {
       h1: 'All tools',
       intro:
-        'A focused catalog with dedicated pages per utility. Every tool includes contextual content, FAQ, and metadata designed for search intent.',
+        'A focused catalog with one page per utility. Every tool includes clear context, FAQ, and practical steps for quick use.',
       searchLabel: 'Search tools',
       searchPlaceholder: 'Example: json, satoshi, pdf',
       searchButton: 'Search',
@@ -480,7 +497,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     about: {
       h1: 'About Tools Lucasqc',
       intro:
-        'Tools Lucasqc was created to ship practical web utilities with strong technical SEO foundations. Every page is built to work as an independent organic entry point.',
+        'Tools Lucasqc was created to ship practical web utilities that are fast, simple, and useful in real workflows.',
       principlesTitle: 'Product principles',
       principles: [
         'Useful content before monetization.',
@@ -490,7 +507,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       ],
       qualityTitle: 'Quality commitment',
       qualityParagraph:
-        'We keep institutional pages clear, policies transparent, and internal linking focused. This helps build trust with users, search engines, and ad platforms such as Google AdSense.',
+        'We keep institutional pages clear, policies transparent, and navigation straightforward. This helps build trust with users and ad platforms such as Google AdSense.',
     },
     contact: {
       h1: 'Contact',
@@ -586,7 +603,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       faqTitle: 'Frequently asked questions',
       relatedToolsTitle: 'Other useful tools',
       relatedToolsDescription:
-        'Light internal links for contextual discovery and better crawl flow.',
+        'Helpful links to continue similar tasks without starting over.',
       trustTitle: 'Privacy and local processing',
       trustText:
         'Tools on this page run directly in your browser and do not send entered content to a backend. This improves privacy and reduces latency.',
@@ -595,7 +612,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         'Internal links to nearby conversion combinations that match similar technical intent.',
       cryptoPopularTitle: 'Popular conversions',
       cryptoPopularDescription:
-        'High-intent landing pages for queries such as gwei to ETH, sat to BTC, and lamport to SOL.',
+        'Frequently used conversions such as gwei to ETH, sat to BTC, and lamport to SOL.',
       conversionBreadcrumbLabel: 'Crypto Unit Converter',
       conversionSearchIntent:
         'Users searching for direct conversion between two technical units of the same crypto asset.',
@@ -618,29 +635,37 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     seo: {
       siteDefaultTitle: 'Herramientas Online',
       siteDefaultDescription:
-        'Hub internacional de herramientas online con enfoque en SEO técnico, UX rápida y contenido localizado en portugués, inglés y español.',
+        'Hub internacional de herramientas online gratis para tareas cotidianas, con UX rápida, sin registro y sin login en portugués, inglés y español.',
       home: {
         title: 'Herramientas Online Gratis para Productividad y Desarrollo',
         description:
-          'Usa utilidades web con páginas indexables, estructura SEO sólida y procesamiento local para una experiencia más rápida y confiable.',
+          'Usa utilidades web prácticas, gratis, sin registro y sin login, con procesamiento local para una experiencia más rápida y confiable.',
         keywords: [
           'herramientas online gratis',
+          'herramientas online sin registro',
+          'herramientas online sin login',
           'utilidades web',
           'herramientas para desarrolladores',
-          'seo técnico',
+          'herramientas rápidas',
         ],
       },
       tools: {
         title: 'Todas las herramientas online',
         description:
-          'Directorio de herramientas con landing pages propias, contenido útil y metadatos optimizados para posicionamiento internacional.',
-        keywords: ['lista de herramientas online', 'utilidades web gratis', 'tools en navegador'],
+          'Directorio de herramientas gratis, sin registro y sin login, con páginas claras y flujo rápido para móvil y escritorio.',
+        keywords: [
+          'lista de herramientas online',
+          'utilidades web gratis',
+          'herramientas sin registro',
+          'herramientas sin login',
+          'tools en navegador',
+        ],
       },
       about: {
         title: 'Sobre este proyecto',
         description:
-          'Conoce cómo Tools Lucasqc está construido para crecer en tráfico orgánico con SEO técnico, UX limpia y políticas transparentes.',
-        keywords: ['sobre tools lucasqc', 'proyecto seo tools', 'herramientas web'],
+          'Conoce cómo Tools Lucasqc está construido para ofrecer herramientas útiles con UX limpia y políticas transparentes.',
+        keywords: ['sobre tools lucasqc', 'proyecto herramientas web', 'herramientas web'],
       },
       contact: {
         title: 'Contacto',
@@ -692,25 +717,25 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     footer: {
       goHomeAriaLabel: 'Ir al inicio de Tools Lucasqc',
       navLabel: 'Enlaces institucionales',
-      tagline: 'Herramientas online rápidas y útiles, preparadas para SEO global',
+      tagline: 'Herramientas online rápidas y útiles, sin complicaciones',
       rightsReserved: 'Todos los derechos reservados.',
     },
     home: {
       h1: 'Herramientas online útiles para el día a día',
       intro:
-        'Encuentra y usa herramientas online gratis para convertir, calcular, generar, visualizar y resolver tareas cotidianas, todo en un solo lugar y sin registro.',
+        'Encuentra y usa herramientas online gratis para convertir, calcular, generar, visualizar y resolver tareas cotidianas, todo en un solo lugar, sin registro y sin login.',
       featuredToolsTitle: 'Herramientas destacadas',
       viewAllTools: 'Ver todas las herramientas',
-      growthTitle: 'Arquitectura orientada a crecimiento orgánico',
+      growthTitle: 'Diseñadas para uso rápido',
       growthParagraphs: [
-        'Cada herramienta funciona como una landing page independiente, con metadatos dedicados, FAQ y enlaces internos contextuales. Esto mejora la visibilidad más allá del tráfico de la home.',
-        'La navegación global se mantiene ligera para evitar ruido visual. Así el usuario llega rápido a la acción principal y Google rastrea URLs clave con mayor consistencia.',
+        'Cada herramienta tiene su propia página con guía rápida, FAQ y acciones directas para completar la tarea sin perder tiempo.',
+        'La navegación se mantiene ligera para evitar ruido visual y facilitar el uso en móvil y escritorio.',
       ],
     },
     toolsIndex: {
       h1: 'Todas las herramientas',
       intro:
-        'Catálogo enfocado con páginas específicas por utilidad. Cada herramienta incluye contexto, FAQ y metadatos adaptados a intención de búsqueda.',
+        'Catálogo enfocado con una página por utilidad. Cada herramienta incluye contexto, FAQ y pasos prácticos de uso.',
       searchLabel: 'Buscar herramienta',
       searchPlaceholder: 'Ej.: json, satoshi, pdf',
       searchButton: 'Buscar',
@@ -721,7 +746,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     about: {
       h1: 'Sobre Tools Lucasqc',
       intro:
-        'Tools Lucasqc nace para ofrecer utilidades web realmente prácticas, con base sólida de SEO técnico y rendimiento. Cada página está diseñada para funcionar como punto de entrada orgánico independiente.',
+        'Tools Lucasqc nace para ofrecer utilidades web realmente prácticas, rápidas y fáciles de usar en tareas reales.',
       principlesTitle: 'Principios del producto',
       principles: [
         'Contenido útil antes que monetización.',
@@ -731,7 +756,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       ],
       qualityTitle: 'Compromiso de calidad',
       qualityParagraph:
-        'Mantenemos páginas institucionales claras, políticas transparentes y enlaces internos discretos. Esto fortalece la confianza de usuarios, buscadores y plataformas de anuncios como Google AdSense.',
+        'Mantenemos páginas institucionales claras, políticas transparentes y navegación simple. Esto fortalece la confianza de usuarios y plataformas de anuncios como Google AdSense.',
     },
     contact: {
       h1: 'Contacto',
@@ -828,7 +853,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       faqTitle: 'Preguntas frecuentes',
       relatedToolsTitle: 'Otras herramientas útiles',
       relatedToolsDescription:
-        'Enlaces internos discretos para descubrimiento contextual y mejor rastreo orgánico.',
+        'Enlaces útiles para continuar tareas parecidas sin empezar de cero.',
       trustTitle: 'Privacidad y procesamiento local',
       trustText:
         'Las herramientas de esta página se ejecutan en el navegador y no envían automáticamente el contenido ingresado a un backend. Esto mejora privacidad y reduce latencia.',
@@ -837,7 +862,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         'Enlaces internos ligeros para combinaciones cercanas dentro del mismo contexto técnico.',
       cryptoPopularTitle: 'Conversiones populares',
       cryptoPopularDescription:
-        'Landing pages de alta intención para búsquedas como gwei a ETH, sat a BTC y lamport a SOL.',
+        'Conversiones frecuentes como gwei a ETH, sat a BTC y lamport a SOL.',
       conversionBreadcrumbLabel: 'Conversor de Unidades Cripto',
       conversionSearchIntent:
         'Usuarios que buscan conversión directa entre dos unidades técnicas del mismo activo cripto.',

@@ -573,5 +573,249 @@ Antes de finalizar uma nova ferramenta, verificar:
 [ ] A página parece parte do mesmo site
 
 ========================================
+18. PALAVRAS-CHAVE (KEYWORD STRATEGY)
+=====================================
+
+Palavras-chave são a base do SEO.
+
+Cada ferramenta criada DEVE ser pensada a partir de uma intenção de busca real.
+
+---
+
+## 18.1. PRINCÍPIO FUNDAMENTAL
+
+Cada página deve responder uma pergunta ou ação específica do usuário.
+
+A keyword não é apenas uma palavra — é uma intenção.
+
+Exemplos:
+
+❌ “qr code”
+✔ “gerar qr code grátis”
+✔ “criar qr code pix”
+✔ “qr code para pagamento”
+
+---
+
+## 18.2. TIPOS DE KEYWORDS
+
+1. Head keywords (genéricas):
+
+* ex: “qr code”, “bitcoin”
+* alta concorrência
+* difícil de rankear
+
+2. Middle keywords:
+
+* ex: “qr code generator online”
+* concorrência média
+
+3. Long tail keywords (PRIORIDADE):
+
+* ex: “gerar qr code pix grátis”
+* ex: “converter bitcoin para real hoje”
+* baixa concorrência
+* alta conversão
+
+Regra:
+Sempre priorizar long tail keywords.
+
+---
+
+## 18.3. REGRA OBRIGATÓRIA
+
+Cada tool deve ter:
+
+* 1 keyword principal
+* 3 a 5 keywords secundárias
+
+Essas keywords devem ser definidas ANTES da criação da página.
+
+---
+
+## 18.4. ONDE USAR A KEYWORD
+
+A keyword principal deve aparecer:
+
+* no <title>
+* no H1
+* na URL (slug)
+* no primeiro parágrafo
+* naturalmente ao longo do conteúdo
+
+As keywords secundárias devem aparecer de forma natural no texto.
+
+---
+
+## 18.5. PROIBIDO
+
+* keyword stuffing (repetição forçada)
+* textos artificiais
+* repetir a mesma frase várias vezes
+* conteúdo sem sentido só para SEO
+
+---
+
+## 18.6. SLUG (URL) OTIMIZADO
+
+O slug deve refletir a keyword principal.
+
+Exemplos:
+
+✔ /gerar-qr-code-gratis
+✔ /btc-para-brl
+✔ /converter-usdt-real
+
+Evitar:
+
+✖ /tool-1
+✖ /page?id=123
+✖ /util123
+
+---
+
+## 18.7. INTENÇÃO DE BUSCA (CRÍTICO)
+
+Antes de criar qualquer tool, definir:
+
+* O usuário quer aprender?
+* O usuário quer converter?
+* O usuário quer gerar algo?
+
+A página deve resolver exatamente isso.
+
+---
+
+## 18.8. MULTI IDIOMA
+
+Cada idioma deve ter sua própria keyword:
+
+Português:
+
+* “gerar qr code grátis”
+
+Inglês:
+
+* “free qr code generator”
+
+Espanhol:
+
+* “generar código qr gratis”
+
+NUNCA traduzir palavra por palavra sem adaptação.
+
+---
+
+## 18.9. ESCALA (PROGRAMMATIC SEO)
+
+Criar variações baseadas em keywords:
+
+* /btc-para-brl
+
+* /btc-para-usd
+
+* /btc-para-eur
+
+* /qr-code-pix
+
+* /qr-code-bitcoin
+
+* /qr-code-wifi
+
+Cada página deve ter conteúdo próprio e não ser duplicada.
+
+---
+
+## 18.10. CHECKLIST DE KEYWORD
+
+Antes de criar uma nova tool:
+
+[ ] Existe uma keyword clara?
+[ ] Existe volume de busca?
+[ ] A intenção está bem definida?
+[ ] A URL representa a keyword?
+[ ] O conteúdo responde a busca?
+[ ] Existem variações naturais no texto?
+
+Se qualquer resposta for “não”, a página não deve ser criada ainda.
+
+========================================
+FIM DA SEÇÃO
+============
+
+========================================
+19. SEO TÉCNICO (OBRIGATÓRIO)
+========================================
+
+Esta seção é técnica/interna. Não é conteúdo para o usuário final.
+
+----------------------------------------
+19.1. ROTA OBRIGATÓRIA: /sitemap.xml
+----------------------------------------
+
+O projeto DEVE manter a rota `sitemap.xml` ativa via App Router (`app/sitemap.ts`).
+
+Regras:
+- listar todas as páginas indexáveis
+- incluir rotas institucionais
+- incluir rotas de ferramentas
+- incluir rotas dinâmicas de conversão (quando existirem)
+- incluir versões por idioma quando aplicável
+- evitar URLs duplicadas no sitemap
+
+----------------------------------------
+19.2. ROTA OBRIGATÓRIA: /robots.txt
+----------------------------------------
+
+O projeto DEVE manter a rota `robots.txt` ativa via App Router (`app/robots.ts`).
+
+Regras:
+- `User-agent: *`
+- permitir rastreamento de páginas públicas
+- bloquear apenas endpoints técnicos/internos (ex.: `/api/`)
+- declarar sitemap absoluto (`https://dominio/sitemap.xml`)
+- declarar `Host` canônico
+
+----------------------------------------
+19.3. PÁGINAS INDEXÁVEIS
+----------------------------------------
+
+Padrão obrigatório:
+- páginas públicas devem sair com `index, follow`
+- evitar `noindex` em páginas de ferramenta e institucionais
+- canonical e hreflang devem ser consistentes quando houver multi-idioma
+
+----------------------------------------
+19.4. SSR / HTML RENDERIZADO
+----------------------------------------
+
+Padrão obrigatório:
+- páginas de rota devem renderizar HTML no servidor (App Router)
+- conteúdo principal (H1, descrição, FAQ, blocos explicativos) deve estar no HTML inicial
+- componentes client-side devem ficar restritos à parte interativa da tool
+- evitar páginas que dependam 100% de hidratação para mostrar conteúdo principal
+
+----------------------------------------
+19.5. REGRA DE COPY VISÍVEL AO CLIENTE (CRÍTICO)
+----------------------------------------
+
+Textos visíveis para usuários devem focar no produto e no benefício prático.
+
+Permitido no copy público:
+- gratuito
+- sem cadastro
+- rápido
+- simples
+- seguro/privado
+
+Proibido no copy público:
+- explicar SEO
+- mencionar slug técnico
+- mencionar indexação, crawl, rankeamento, tráfego orgânico
+- explicar estratégia de posicionamento para buscadores
+
+Esses temas podem existir apenas em documentação interna (como este arquivo), nunca como argumento de venda dentro da interface pública.
+
+========================================
 FIM
 ========================================

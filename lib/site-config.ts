@@ -1,8 +1,8 @@
 export const siteConfig = {
   siteName: 'Tools Lucasqc',
-  tagline: 'Ferramentas online rápidas, úteis e preparadas para SEO',
+  tagline: 'Ferramentas online rápidas, úteis e sem complicação',
   description:
-    'Hub de ferramentas online com foco em SEO técnico, UX, performance e estrutura pronta para Google AdSense.',
+    'Hub de ferramentas online para tarefas do dia a dia, com foco em velocidade, privacidade e boa experiência em desktop e mobile.',
   url: 'https://tools.lucasqc.com',
   contactEmail: 'contato@tools.lucasqc.com',
   social: {

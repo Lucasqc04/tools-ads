@@ -3,6 +3,10 @@ import {
   cryptoConversionPages,
   getCryptoConversionPathByLocale,
 } from '@/data/crypto-conversion-pages';
+import {
+  getImageConversionPathByLocale,
+  imageConversionPages,
+} from '@/data/image-conversion-pages';
 import { toolsRegistry } from '@/data/tools-registry';
 import {
   defaultLocale,
@@ -48,6 +52,16 @@ const createLocalizedEntries = (
     priority: options.priority,
     alternates: buildAlternates(pathMap),
   }));
+};
+
+const dedupeByUrl = (entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap => {
+  const byUrl = new Map<string, MetadataRoute.Sitemap[number]>();
+
+  entries.forEach((entry) => {
+    byUrl.set(entry.url, entry);
+  });
+
+  return Array.from(byUrl.values());
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -102,5 +116,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
   });
 
-  return [...staticRoutes, ...toolRoutes, ...conversionRoutes];
+  const imageConversionRoutes: MetadataRoute.Sitemap = imageConversionPages.flatMap((page) => {
+    const pathMap: Record<AppLocale, string> = {
+      'pt-br': getImageConversionPathByLocale(page, 'pt-br'),
+      en: getImageConversionPathByLocale(page, 'en'),
+      es: getImageConversionPathByLocale(page, 'es'),
+    };
+
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.72,
+      alternates: buildAlternates(pathMap),
+    }));
+  });
+
+  return dedupeByUrl([
+    ...staticRoutes,
+    ...toolRoutes,
+    ...conversionRoutes,
+    ...imageConversionRoutes,
+  ]);
 }

@@ -17,29 +17,39 @@ export type ToolTranslation = {
 
 type NonPtLocale = Exclude<AppLocale, 'pt-br'>;
 
-type ToolId = 'crypto-unit-converter' | 'html-pdf-json' | 'qr-code-generator';
+type ToolId =
+  | 'crypto-unit-converter'
+  | 'html-pdf-json'
+  | 'html-viewer'
+  | 'pdf-viewer'
+  | 'json-formatter'
+  | 'image-converter'
+  | 'qr-code-generator';
 
 const enTranslations: Record<ToolId, ToolTranslation> = {
   'crypto-unit-converter': {
     name: 'Crypto Unit Converter',
     shortDescription:
-      'Convert satoshi, gwei, wei, lamport, sun, lovelace, and other on-chain units with local calculation only.',
-    primaryKeyword: 'crypto unit converter',
+      'Convert satoshi, gwei, wei, lamport, sun, lovelace, and other on-chain units for free, with no sign-up and no login.',
+    primaryKeyword: 'free crypto unit converter',
     secondaryKeywords: [
       'satoshi converter',
       'gwei to eth',
       'wei to eth converter',
       'lamport to sol',
       'trx to sun converter',
+      'crypto converter no sign up',
+      'crypto converter without login',
+      'free satoshi converter',
       'bitcoin unit converter',
       'ethereum unit converter',
     ],
     searchIntent:
-      'Users and developers needing precise conversion between crypto subunits without market price APIs.',
-    seoTitle: 'Crypto Unit Converter: Satoshi, Gwei, Wei, Lamport and More',
+      'Users and developers needing fast and precise conversion between crypto subunits for free, with no sign-up.',
+    seoTitle: 'Free Crypto Unit Converter | Satoshi, Gwei, Wei, Lamport',
     seoDescription:
-      'Convert BTC, ETH, USDT, USDC, SOL, TRX, XRP, ADA and more crypto units locally with precision and no data upload.',
-    h1: 'Crypto Unit Converter (Satoshi, Gwei, Wei, Lamport and more)',
+      'Convert BTC, ETH, USDT, USDC, SOL, TRX, XRP, ADA and more crypto units locally with precision, no sign-up, and no login.',
+    h1: 'Free Crypto Unit Converter Without Sign-Up and Login',
     intro:
       'Convert crypto units for BTC, ETH, USDT, USDC, SOL, BNB, TRX, XRP, ADA, LTC, DOT, AVAX, ATOM, XMR, and TON in real time, with local math and no external APIs.',
     contentBlocks: [
@@ -171,10 +181,280 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
+  'html-viewer': {
+    name: 'HTML Viewer with CSS and JS',
+    shortDescription:
+      'Preview HTML with CSS/JS support, fullscreen mode, and multi-file upload for free, with no sign-up and no login.',
+    primaryKeyword: 'free html viewer online',
+    secondaryKeywords: [
+      'html css js preview',
+      'sandbox html viewer',
+      'test html online',
+      'html viewer no sign up',
+      'html viewer without login',
+      'fullscreen html preview',
+    ],
+    searchIntent:
+      'Developers and creators who need a fast HTML preview tool with script/style support, no sign-up, and local rendering.',
+    seoTitle: 'Free HTML Viewer Online | CSS, JS, Fullscreen, No Sign-Up',
+    seoDescription:
+      'Paste HTML, CSS, and JavaScript or upload multiple files to render in sandbox for free, with no sign-up, no login, and fullscreen mode.',
+    h1: 'Free HTML Viewer with CSS, JS, Fullscreen, and No Sign-Up',
+    intro:
+      'Dedicated HTML Viewer to render and test markup with styles and scripts using local browser processing.',
+    contentBlocks: [
+      {
+        title: 'Focused HTML preview workflow',
+        paragraphs: [
+          'This page is dedicated to HTML rendering only, without PDF or JSON panels in the same interface. The result is a cleaner workflow focused on web snippet testing and page behavior checks.',
+          'You can run CSS and JavaScript inside a sandboxed preview to validate interactions before shipping changes.',
+        ],
+      },
+      {
+        title: 'Single editor and multi-file modes',
+        paragraphs: [
+          'Use editor mode to paste HTML/CSS/JS directly, or switch to file mode to upload multiple source files at once.',
+          'When multiple HTML files are uploaded, you can choose the main entry file while keeping shared CSS and JS bundled for preview.',
+        ],
+        list: [
+          'Paste HTML, CSS, and JS directly.',
+          'Upload many .html, .css, and .js files in one batch.',
+          'Choose the main HTML file for rendering.',
+          'Open output in fullscreen or new tab.',
+        ],
+      },
+      {
+        title: 'Safety and practical limits',
+        paragraphs: [
+          'Scripts are executed inside a sandboxed iframe preview. Run trusted code only when testing external snippets.',
+          'For larger test setups, opening preview in a new tab can improve screen usage and debugging comfort.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can this HTML Viewer execute JavaScript?',
+        answer:
+          'Yes. JavaScript execution is supported inside the sandbox preview for practical front-end testing.',
+      },
+      {
+        question: 'Can I upload separate HTML, CSS, and JS files?',
+        answer:
+          'Yes. Multi-file mode supports .html, .css, and .js uploads, including multiple HTML entry options.',
+      },
+      {
+        question: 'Is fullscreen mode available?',
+        answer:
+          'Yes. You can switch preview to fullscreen and also open it in a dedicated browser tab.',
+      },
+      {
+        question: 'Is my code uploaded to a server?',
+        answer:
+          'No by default. Rendering runs locally in your browser for privacy and low latency.',
+      },
+    ],
+  },
+  'pdf-viewer': {
+    name: 'Local PDF Viewer',
+    shortDescription:
+      'Open and review PDF files locally in your browser for free, with no sign-up, no login, and new-tab option.',
+    primaryKeyword: 'free pdf viewer online',
+    secondaryKeywords: [
+      'open pdf in browser',
+      'local pdf preview',
+      'pdf reader online',
+      'view pdf file online',
+      'pdf viewer no sign up',
+      'open pdf without login',
+    ],
+    searchIntent:
+      'Users who need a quick way to open and read PDF files for free, with no sign-up and no installation.',
+    seoTitle: 'Free PDF Viewer Online | Open PDF in Browser, No Sign-Up',
+    seoDescription:
+      'Preview PDF files locally in your browser for free, with no sign-up, no login, and no automatic upload.',
+    h1: 'Free Local PDF Viewer Without Sign-Up and Login',
+    intro:
+      'Open PDF files instantly in-browser for local review, with responsive layout and quick access actions.',
+    contentBlocks: [
+      {
+        title: 'Why use a local PDF viewer',
+        paragraphs: [
+          'This tool keeps PDF reading lightweight and focused. Select a file and review it immediately without cloud upload steps.',
+          'It is useful for checking contracts, proposals, and internal documents before sharing them externally.',
+        ],
+      },
+      {
+        title: 'Workflow benefits',
+        paragraphs: [
+          'You can open the same document in a dedicated tab for better screen usage and easier cross-checking with other tools.',
+          'The interface is intentionally simple to prioritize readability and speed.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Is the PDF uploaded to a server?',
+        answer:
+          'No by default. The file is loaded locally in your browser for preview.',
+      },
+      {
+        question: 'Can I open the PDF in another tab?',
+        answer:
+          'Yes. There is a direct action to open the current PDF preview in a new tab.',
+      },
+      {
+        question: 'Can I edit PDFs in this tool?',
+        answer:
+          'No. This page is focused on local viewing and review, not PDF editing.',
+      },
+    ],
+  },
+  'json-formatter': {
+    name: 'JSON Formatter and Minifier',
+    shortDescription:
+      'Format, minify, and validate JSON for free, with no sign-up, no login, readable error feedback, and quick copy actions.',
+    primaryKeyword: 'free json formatter online',
+    secondaryKeywords: [
+      'json minify online',
+      'json pretty print',
+      'json validator',
+      'format json in browser',
+      'json formatter no sign up',
+      'json formatter without login',
+    ],
+    searchIntent:
+      'Developers and analysts who need a fast JSON validation and formatting utility, free and with no sign-up.',
+    seoTitle: 'Free JSON Formatter Online | Minify, Validate, No Sign-Up',
+    seoDescription:
+      'Paste JSON to format, minify, and validate syntax in your browser for free, with no sign-up and no login.',
+    h1: 'Free JSON Formatter Without Sign-Up and Login',
+    intro:
+      'Dedicated JSON tool for payload cleanup, syntax checks, and quick output preparation in one place.',
+    contentBlocks: [
+      {
+        title: 'Validate before shipping payloads',
+        paragraphs: [
+          'The formatter validates JSON syntax before applying transformations, helping you catch malformed payloads early.',
+          'Error feedback is designed to be readable so you can fix issues quickly.',
+        ],
+      },
+      {
+        title: 'Pretty print and minify in one flow',
+        paragraphs: [
+          'Switch between formatted output for debugging and minified output for compact transport.',
+          'This helps in API testing, incident debugging, and docs preparation workflows.',
+        ],
+        list: [
+          'Pretty print for readability.',
+          'Minify for compact payload transfer.',
+          'Copy processed output with one click.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Does this tool validate invalid JSON?',
+        answer:
+          'Yes. It checks syntax and returns a readable error message when parsing fails.',
+      },
+      {
+        question: 'Can I both format and minify JSON here?',
+        answer:
+          'Yes. Both actions are available in the same interface.',
+      },
+      {
+        question: 'Is my JSON uploaded to a server?',
+        answer:
+          'No by default. Processing runs locally in your browser.',
+      },
+    ],
+  },
+  'image-converter': {
+    name: 'Image and PDF Converter',
+    shortDescription:
+      'Convert 20+ image formats and PDF directly in your browser with a fast, free, no-sign-up workflow.',
+    primaryKeyword: 'free image to pdf converter',
+    secondaryKeywords: [
+      'png to jpeg',
+      'jpg to pdf',
+      'pdf to png',
+      'webp to jpg',
+      'heic to jpg',
+      'tiff to png',
+      'avif to png',
+      'pdf to image converter',
+      'image format converter online',
+      'image converter no sign up',
+      'pdf converter without login',
+    ],
+    searchIntent:
+      'Users who need fast conversion between many image and PDF formats for free, with no sign-up and no login.',
+    seoTitle: 'Image and PDF Converter Online (20+ Formats) | Free, No Sign-Up',
+    seoDescription:
+      'Convert image and PDF files with local browser processing, no forced sign-up, no login, immediate download, and broad format coverage.',
+    h1: 'Free Image and PDF Converter (20+ Formats) Without Sign-Up',
+    intro:
+      'Convert files between 20+ image formats and PDF with local processing and direct download in just a few steps.',
+    contentBlocks: [
+      {
+        title: 'What this converter solves in real workflows',
+        paragraphs: [
+          'This tool handles common production tasks such as preparing website assets, adapting file formats for upload portals, turning image files into shareable PDFs, and extracting PDF pages as image files for editing.',
+          'The conversion runs in-browser, which reduces upload friction and gives users more control over documents that may contain sensitive or client-specific material.',
+        ],
+      },
+      {
+        title: 'Popular conversions for everyday tasks',
+        paragraphs: [
+          'You can quickly run common conversions such as png to jpeg, jpg to pdf, pdf to png, heic to jpg, and tiff to png without installing desktop software.',
+          'The interface keeps the flow simple: upload, pick output format, adjust options if needed, and download the result.',
+        ],
+        list: [
+          'PNG to JPEG for lightweight image delivery without transparency.',
+          'JPEG to WEBP for modern web optimization.',
+          'Image to PDF for document submission and archival.',
+          'PDF to image for editing individual pages in design tools.',
+        ],
+      },
+      {
+        title: 'Quality and performance best practices',
+        paragraphs: [
+          'For lossy outputs such as JPEG and WEBP, quality settings help balance readability and file size. Values around 80-92% are often a practical starting point.',
+          'Large PDFs can be converted in smaller page batches to keep mobile performance stable and reduce memory pressure.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I convert both image to PDF and PDF to image?',
+        answer:
+          'Yes. The tool supports both directions and can export PDF pages as image files.',
+      },
+      {
+        question: 'Is this converter free?',
+        answer: 'Yes. Core conversion features are free and available without mandatory sign-up.',
+      },
+      {
+        question: 'Are files uploaded to a server?',
+        answer:
+          'By default, no. Processing is local in the browser, which helps with privacy and faster response.',
+      },
+      {
+        question: 'Which formats are supported?',
+        answer:
+          'The tool includes 20+ format options and dedicated conversion pages. Local conversion currently covers PNG, JPEG, WEBP, AVIF, GIF, TIFF, BMP, ICO, SVG, TGA, and PDF flows, while some professional formats depend on browser support.',
+      },
+      {
+        question: 'Does it work on mobile devices?',
+        answer:
+          'Yes. The interface is responsive and keeps primary actions accessible on smaller screens.',
+      },
+    ],
+  },
   'qr-code-generator': {
     name: 'QR Code Generator with Logo',
     shortDescription:
-      'Create QR codes for text or URLs with no sign-up, add logo branding, and export to multiple file formats.',
+      'Create QR codes for text or URLs for free, with no sign-up, no login, logo branding, and export to multiple formats.',
     primaryKeyword: 'free qr code generator',
     secondaryKeywords: [
       'qr code generator no sign up',
@@ -187,11 +467,11 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       'unlimited qr code generator',
     ],
     searchIntent:
-      'Users who need fast QR generation with branding controls and immediate download for business or operational use.',
-    seoTitle: 'Free QR Code Generator Without Sign Up | PNG, SVG, PDF',
+      'Users who need fast QR generation for free, with no sign-up, no login, branding controls, and immediate download.',
+    seoTitle: 'Free QR Code Generator Without Sign-Up or Login | PNG, SVG, PDF',
     seoDescription:
       'Generate QR codes online for free with no registration. Customize colors, add a center logo, and export PNG, JPEG, WEBP, SVG, or PDF.',
-    h1: 'Free QR Code Generator Without Sign Up and With Download',
+    h1: 'Free QR Code Generator Without Sign-Up or Login',
     intro:
       'Paste text, URL, payment payload, or any content and generate a free QR code in seconds. Customize style, add a center logo, and export in PNG, JPEG, WEBP, SVG, or PDF.',
     contentBlocks: [
@@ -264,23 +544,26 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
   'crypto-unit-converter': {
     name: 'Conversor de Unidades Cripto',
     shortDescription:
-      'Convierte satoshi, gwei, wei, lamport, sun, lovelace y otras subunidades on-chain sin usar APIs externas.',
-    primaryKeyword: 'conversor de unidades cripto',
+      'Convierte satoshi, gwei, wei, lamport, sun, lovelace y otras subunidades on-chain gratis, sin registro y sin login.',
+    primaryKeyword: 'conversor de unidades cripto gratis',
     secondaryKeywords: [
       'satoshi a btc',
       'gwei a eth',
       'wei a eth',
       'lamport a sol',
       'trx a sun',
+      'conversor cripto sin registro',
+      'conversor cripto sin login',
+      'conversor satoshi gratis',
       'conversor unidades bitcoin',
       'conversor unidades ethereum',
     ],
     searchIntent:
-      'Usuarios y desarrolladores que necesitan convertir subunidades cripto con precisión sin depender de precios de mercado.',
-    seoTitle: 'Conversor Cripto de Satoshi, Gwei, Wei, Lamport y Más',
+      'Usuarios y desarrolladores que necesitan convertir subunidades cripto con precisión, rápido, gratis y sin registro.',
+    seoTitle: 'Conversor Cripto Gratis de Satoshi, Gwei, Wei y Lamport',
     seoDescription:
-      'Convierte unidades de BTC, ETH, USDT, USDC, SOL, TRX, XRP, ADA y más activos con cálculo local y sin enviar datos.',
-    h1: 'Conversor de Unidades Cripto (Satoshi, Gwei, Wei, Lamport y más)',
+      'Convierte unidades de BTC, ETH, USDT, USDC, SOL, TRX, XRP, ADA y más activos con cálculo local, sin registro y sin login.',
+    h1: 'Conversor de Unidades Cripto Gratis, Sin Registro y Sin Login',
     intro:
       'Convierte unidades de BTC, ETH, USDT, USDC, SOL, BNB, TRX, XRP, ADA, LTC, DOT, AVAX, ATOM, XMR y TON en tiempo real, con procesamiento local y sin API externa.',
     contentBlocks: [
@@ -413,10 +696,280 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
+  'html-viewer': {
+    name: 'Visor HTML con CSS y JS',
+    shortDescription:
+      'Previsualiza HTML con soporte para CSS/JS, pantalla completa y multiarchivo, gratis, sin registro y sin login.',
+    primaryKeyword: 'html viewer online gratis',
+    secondaryKeywords: [
+      'preview html css js',
+      'visor html sandbox',
+      'probar html online',
+      'visor html sin registro',
+      'visor html sin login',
+      'html preview pantalla completa',
+    ],
+    searchIntent:
+      'Desarrolladores y creadores que necesitan una herramienta de previsualización HTML rápida, gratis y sin registro.',
+    seoTitle: 'Visor HTML Online Gratis | CSS, JS y Pantalla Completa',
+    seoDescription:
+      'Pega HTML, CSS y JavaScript o sube múltiples archivos para renderizar en sandbox, gratis, sin registro y sin login.',
+    h1: 'Visor HTML Gratis con CSS, JS y Sin Registro',
+    intro:
+      'Herramienta dedicada para renderizar y probar HTML con estilos y scripts usando procesamiento local en el navegador.',
+    contentBlocks: [
+      {
+        title: 'Flujo enfocado solo en HTML',
+        paragraphs: [
+          'Esta página está dedicada exclusivamente al visor HTML, sin mezclar paneles de PDF o JSON en la misma interfaz.',
+          'Puedes ejecutar CSS y JavaScript dentro de un preview con sandbox para validar interacciones y comportamiento visual.',
+        ],
+      },
+      {
+        title: 'Modo editor y modo archivos',
+        paragraphs: [
+          'En modo editor puedes pegar HTML, CSS y JS directamente. En modo archivos puedes subir varios archivos en un solo lote.',
+          'Si subes varios HTML, eliges el archivo principal para renderizar mientras compartes CSS y JS comunes.',
+        ],
+        list: [
+          'Pegar código HTML/CSS/JS.',
+          'Subir múltiples archivos .html, .css y .js.',
+          'Elegir el HTML principal.',
+          'Abrir preview en pantalla completa o nueva pestaña.',
+        ],
+      },
+      {
+        title: 'Seguridad y límites prácticos',
+        paragraphs: [
+          'Los scripts se ejecutan dentro del iframe con sandbox. Usa código confiable cuando pruebes snippets externos.',
+          'Para escenarios grandes, abrir en nueva pestaña mejora espacio de trabajo y lectura.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Este visor HTML ejecuta JavaScript?',
+        answer:
+          'Sí. El preview permite ejecutar scripts dentro del sandbox para pruebas reales de front-end.',
+      },
+      {
+        question: '¿Puedo subir archivos separados de HTML, CSS y JS?',
+        answer:
+          'Sí. El modo multiarchivo soporta .html, .css y .js, incluyendo múltiples HTML de entrada.',
+      },
+      {
+        question: '¿Tiene modo pantalla completa?',
+        answer:
+          'Sí. Puedes activar pantalla completa y también abrir el resultado en nueva pestaña.',
+      },
+      {
+        question: '¿Se sube mi código a un servidor?',
+        answer:
+          'No por defecto. El renderizado ocurre localmente en tu navegador.',
+      },
+    ],
+  },
+  'pdf-viewer': {
+    name: 'Visor PDF Local',
+    shortDescription:
+      'Abre y revisa PDFs localmente en el navegador, gratis, sin registro, sin login y con opción de nueva pestaña.',
+    primaryKeyword: 'pdf viewer online gratis',
+    secondaryKeywords: [
+      'abrir pdf en navegador',
+      'vista previa pdf local',
+      'lector pdf online',
+      'ver pdf online',
+      'visor pdf sin registro',
+      'abrir pdf sin login',
+    ],
+    searchIntent:
+      'Usuarios que necesitan abrir y leer PDFs rápido, gratis y sin registro, sin instalar software de escritorio.',
+    seoTitle: 'Visor PDF Online Gratis | Abrir PDF en Navegador Sin Registro',
+    seoDescription:
+      'Visualiza PDFs localmente en tu navegador, gratis, sin registro, sin login y sin carga automática a servidor.',
+    h1: 'Visor PDF Local Gratis, Sin Registro y Sin Login',
+    intro:
+      'Abre archivos PDF en segundos con procesamiento local y una interfaz orientada a lectura rápida.',
+    contentBlocks: [
+      {
+        title: 'Por qué usar un visor PDF local',
+        paragraphs: [
+          'La herramienta prioriza lectura simple y sin fricción: seleccionas el archivo y ves el contenido de inmediato.',
+          'Es útil para revisar contratos, propuestas y documentos técnicos antes de compartirlos.',
+        ],
+      },
+      {
+        title: 'Ventajas del flujo',
+        paragraphs: [
+          'Puedes abrir el PDF en nueva pestaña para ganar espacio de lectura.',
+          'El diseño se mantiene minimalista para concentrarse en el documento.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿El PDF se sube a servidor?',
+        answer:
+          'No por defecto. El archivo se abre localmente en tu navegador.',
+      },
+      {
+        question: '¿Puedo abrir el documento en otra pestaña?',
+        answer:
+          'Sí. Hay una acción directa para abrir el PDF actual en nueva pestaña.',
+      },
+      {
+        question: '¿Permite editar PDF?',
+        answer:
+          'No. Esta página está enfocada en visualización y revisión local.',
+      },
+    ],
+  },
+  'json-formatter': {
+    name: 'Formateador y Minificador JSON',
+    shortDescription:
+      'Formatea, minifica y valida JSON gratis, sin registro y sin login, con errores legibles y copia rápida.',
+    primaryKeyword: 'formateador json online gratis',
+    secondaryKeywords: [
+      'json minify online',
+      'json pretty print',
+      'validador json',
+      'formatear json en navegador',
+      'formateador json sin registro',
+      'formateador json sin login',
+    ],
+    searchIntent:
+      'Desarrolladores y analistas que necesitan validar y ajustar JSON rápido, gratis y sin registro.',
+    seoTitle: 'Formateador JSON Online Gratis | Minify, Validación y Sin Registro',
+    seoDescription:
+      'Pega JSON para formatear, minificar y validar sintaxis en el navegador, gratis, sin registro y sin login.',
+    h1: 'Formateador JSON Gratis, Sin Registro y Sin Login',
+    intro:
+      'Herramienta dedicada para limpiar payloads JSON, validar estructura y preparar salida en segundos.',
+    contentBlocks: [
+      {
+        title: 'Validación antes de usar payloads',
+        paragraphs: [
+          'La herramienta valida sintaxis JSON antes de transformar el contenido, ayudando a detectar errores temprano.',
+          'Los mensajes de error están pensados para facilitar corrección rápida.',
+        ],
+      },
+      {
+        title: 'Formatear y minificar en el mismo flujo',
+        paragraphs: [
+          'Puedes alternar entre salida legible para depuración y salida minificada para transporte.',
+          'Esto es útil en pruebas de API, soporte y documentación técnica.',
+        ],
+        list: [
+          'Formatear para lectura.',
+          'Minificar para transferencia compacta.',
+          'Copiar salida procesada con un clic.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Valida JSON inválido?',
+        answer:
+          'Sí. Detecta errores de sintaxis y devuelve un mensaje claro.',
+      },
+      {
+        question: '¿Puedo formatear y minificar aquí mismo?',
+        answer:
+          'Sí. Ambas acciones están disponibles en la misma interfaz.',
+      },
+      {
+        question: '¿El JSON se envía a servidor?',
+        answer:
+          'No por defecto. El procesamiento se realiza localmente en tu navegador.',
+      },
+    ],
+  },
+  'image-converter': {
+    name: 'Conversor de Imagen y PDF',
+    shortDescription:
+      'Convierte más de 20 formatos de imagen y PDF directamente en tu navegador con un flujo rápido, gratis, sin registro y sin login.',
+    primaryKeyword: 'conversor de imagen a pdf gratis',
+    secondaryKeywords: [
+      'png a jpeg',
+      'jpg a pdf',
+      'pdf a png',
+      'webp a jpg',
+      'heic a jpg',
+      'tiff a png',
+      'avif a png',
+      'convertir pdf a imagen online',
+      'conversor de formatos de imagen',
+      'conversor de imagen sin registro',
+      'conversor pdf sin login',
+    ],
+    searchIntent:
+      'Usuarios que necesitan convertir archivos entre muchos formatos de imagen y PDF rápido, gratis y sin registro.',
+    seoTitle: 'Conversor de Imagen y PDF Online (20+ formatos) | Gratis y Sin Registro',
+    seoDescription:
+      'Convierte imágenes y PDFs con procesamiento local, sin registro obligatorio, sin login, descarga inmediata y cobertura de formatos amplia.',
+    h1: 'Conversor de Imagen y PDF Gratis (20+ formatos), Sin Registro y Sin Login',
+    intro:
+      'Convierte archivos entre más de 20 formatos de imagen y PDF con procesamiento local y descarga inmediata en pocos pasos.',
+    contentBlocks: [
+      {
+        title: 'Qué resuelve este conversor en la práctica',
+        paragraphs: [
+          'La herramienta cubre flujos comunes: optimizar imágenes para web, adaptar formatos para formularios de terceros, generar PDF desde imagen y extraer páginas de PDF para edición visual.',
+          'Todo ocurre en el navegador para reducir fricción operativa y mantener mayor control sobre archivos sensibles o de clientes.',
+        ],
+      },
+      {
+        title: 'Conversiones populares para tareas del día a día',
+        paragraphs: [
+          'Puedes resolver conversiones comunes como png a jpeg, jpg a pdf, pdf a png, heic a jpg y tiff a png sin instalar aplicaciones de escritorio.',
+          'La interfaz mantiene el flujo simple: sube el archivo, elige el formato de salida, ajusta opciones si hace falta y descarga.',
+        ],
+        list: [
+          'PNG a JPEG para reducir peso en imágenes sin transparencia.',
+          'JPEG a WEBP para optimización web moderna.',
+          'Imagen a PDF para envío y archivo documental.',
+          'PDF a imagen para edición de páginas individuales.',
+        ],
+      },
+      {
+        title: 'Calidad y rendimiento',
+        paragraphs: [
+          'En formatos con pérdida como JPEG y WEBP, ajustar calidad permite equilibrar tamaño y legibilidad. Un rango entre 80% y 92% suele funcionar bien.',
+          'En PDFs largos, convertir por bloques de páginas mejora estabilidad en móvil y reduce consumo de memoria.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Puedo convertir imagen a PDF y PDF a imagen?',
+        answer:
+          'Sí. La herramienta soporta ambos sentidos e incluye exportación de páginas PDF como imágenes.',
+      },
+      {
+        question: '¿Es gratis?',
+        answer: 'Sí. Las conversiones principales son gratuitas y no exigen registro obligatorio.',
+      },
+      {
+        question: '¿Los archivos se suben a servidor?',
+        answer:
+          'No por defecto. El procesamiento ocurre localmente en el navegador para mejorar privacidad y velocidad.',
+      },
+      {
+        question: '¿Qué formatos están disponibles?',
+        answer:
+          'La herramienta incluye más de 20 opciones de formato y páginas dedicadas por conversión. Hoy el flujo local cubre PNG, JPEG, WEBP, AVIF, GIF, TIFF, BMP, ICO, SVG, TGA y PDF, mientras que algunos formatos profesionales dependen del soporte del navegador.',
+      },
+      {
+        question: '¿Funciona en celular?',
+        answer:
+          'Sí. La interfaz es responsive y mantiene las acciones principales accesibles en pantallas pequeñas.',
+      },
+    ],
+  },
   'qr-code-generator': {
     name: 'Generador de Código QR con Logo',
     shortDescription:
-      'Crea códigos QR gratis para texto o URL, sin registro, con logo central y descarga en varios formatos.',
+      'Crea códigos QR gratis para texto o URL, sin registro, sin login, con logo central y descarga en varios formatos.',
     primaryKeyword: 'generador de código qr gratis',
     secondaryKeywords: [
       'qr sin registro',
@@ -429,11 +982,11 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       'generador qr ilimitado',
     ],
     searchIntent:
-      'Usuarios que quieren generar códigos QR rápido, personalizarlos y descargarlos para uso comercial u operativo.',
-    seoTitle: 'Generador de Código QR Gratis y Sin Registro | PNG, SVG y PDF',
+      'Usuarios que quieren generar códigos QR rápido, gratis, sin registro, sin login, personalizarlos y descargarlos.',
+    seoTitle: 'Generador de Código QR Gratis, Sin Registro y Sin Login | PNG, SVG y PDF',
     seoDescription:
       'Genera códigos QR online gratis, sin cuenta ni login. Personaliza colores, agrega logo central y exporta PNG, JPEG, WEBP, SVG o PDF.',
-    h1: 'Generador de Código QR Gratis, Sin Registro y con Descarga',
+    h1: 'Generador de Código QR Gratis, Sin Registro, Sin Login y con Descarga',
     intro:
       'Pega texto, URL, payload de pago o cualquier contenido y genera un código QR gratis en segundos. Personaliza estilo, añade logo central y exporta PNG, JPEG, WEBP, SVG o PDF.',
     contentBlocks: [

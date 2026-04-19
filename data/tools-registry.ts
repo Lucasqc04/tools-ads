@@ -4,10 +4,25 @@ import {
   cryptoConverterIntro,
 } from '@/data/content/crypto-unit-converter';
 import {
-  devUtilityContentBlocks,
-  devUtilityFaq,
-  devUtilityIntro,
-} from '@/data/content/html-pdf-json';
+  htmlViewerContentBlocks,
+  htmlViewerFaq,
+  htmlViewerIntro,
+} from '@/data/content/html-viewer';
+import {
+  imageConverterContentBlocks,
+  imageConverterFaq,
+  imageConverterIntro,
+} from '@/data/content/image-converter';
+import {
+  jsonFormatterContentBlocks,
+  jsonFormatterFaq,
+  jsonFormatterIntro,
+} from '@/data/content/json-formatter';
+import {
+  pdfViewerContentBlocks,
+  pdfViewerFaq,
+  pdfViewerIntro,
+} from '@/data/content/pdf-viewer';
 import {
   qrCodeGeneratorContentBlocks,
   qrCodeGeneratorFaq,
@@ -23,57 +38,155 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'crypto-unit-converter',
     name: 'Conversor de Unidades Cripto',
     shortDescription:
-      'Converta satoshi, gwei, wei, lamport, sun, lovelace e outras unidades on-chain sem API externa.',
+      'Converta satoshi, gwei, wei, lamport, sun, lovelace e outras unidades on-chain grátis, sem cadastro e sem login.',
     category: 'crypto',
-    primaryKeyword: 'conversor de unidades cripto',
+    primaryKeyword: 'conversor de unidades cripto gratis',
     secondaryKeywords: [
       'btc para satoshi',
       'gwei para eth',
       'wei para eth',
       'lamport para sol',
       'trx para sun',
+      'conversor cripto sem cadastro',
+      'conversor cripto sem login',
+      'conversor de satoshi gratis',
       'conversor unidades bitcoin',
       'conversor unidades ethereum',
     ],
     searchIntent:
-      'Usuários e devs que querem converter subunidades cripto com precisão sem depender de cotação de mercado.',
+      'Usuários e devs que querem converter subunidades cripto com precisão, rápido, grátis e sem cadastro.',
     seoTitle:
-      'Conversor de Satoshi, Gwei, Wei, Lamport e Unidades Cripto',
+      'Conversor de Satoshi, Gwei, Wei e Lamport Grátis | Sem Cadastro',
     seoDescription:
-      'Converta unidades de BTC, ETH, USDT, USDC, SOL, TRX, XRP, ADA e mais ativos localmente no navegador, com precisão e sem envio de dados.',
-    h1: 'Conversor de Unidades Cripto (Satoshi, Gwei, Wei, Lamport e mais)',
+      'Converta unidades de BTC, ETH, USDT, USDC, SOL, TRX, XRP, ADA e mais ativos localmente no navegador, grátis, sem cadastro e sem login.',
+    h1: 'Conversor de Unidades Cripto Grátis, Sem Cadastro e Sem Login',
     intro: cryptoConverterIntro,
     canonicalPath: '/tools/crypto-unit-converter',
     faq: cryptoConverterFaq,
     contentBlocks: cryptoConverterContentBlocks,
-    relatedToolIds: ['html-pdf-json', 'qr-code-generator'],
+    relatedToolIds: ['image-converter', 'html-viewer', 'json-formatter'],
   },
   {
-    id: 'html-pdf-json',
-    slug: 'html-pdf-json',
-    name: 'HTML Viewer + PDF Viewer + JSON Formatter',
+    id: 'html-viewer',
+    slug: 'html-viewer',
+    name: 'HTML Viewer com CSS e JS',
     shortDescription:
-      'Visualize HTML com sandbox, abra PDF local e formate JSON no navegador.',
+      'Visualize HTML com suporte a CSS/JS, tela cheia e multiarquivos, grátis, sem cadastro e sem login.',
     category: 'dev',
-    primaryKeyword: 'formatador json online',
+    primaryKeyword: 'html viewer online gratis',
     secondaryKeywords: [
       'visualizador html online',
-      'abrir pdf no navegador',
-      'json minify online',
-      'json pretty print',
+      'preview html css js',
+      'editor html com js',
+      'testar html online',
+      'html viewer sem cadastro',
+      'html viewer sem login',
+      'html sandbox viewer',
     ],
     searchIntent:
-      'Desenvolvedores e profissionais que precisam inspecionar conteúdo técnico localmente.',
+      'Usuários e devs que precisam renderizar HTML com CSS/JS rápido, grátis e sem login.',
     seoTitle:
-      'HTML Viewer, PDF Viewer e Formatador JSON | Ferramenta Online',
+      'HTML Viewer Online Grátis | CSS, JS, Tela Cheia e Sem Cadastro',
     seoDescription:
-      'Use um utilitário 3 em 1 para visualizar HTML em sandbox, abrir PDF localmente e formatar ou minificar JSON com validação.',
-    h1: 'Utilitário Dev: HTML Viewer, PDF Viewer e JSON Formatter',
-    intro: devUtilityIntro,
-    canonicalPath: '/tools/html-pdf-json',
-    faq: devUtilityFaq,
-    contentBlocks: devUtilityContentBlocks,
-    relatedToolIds: ['crypto-unit-converter', 'qr-code-generator'],
+      'Cole HTML, CSS e JavaScript ou envie múltiplos arquivos para renderizar em sandbox, grátis, sem cadastro, sem login e com abertura em nova aba.',
+    h1: 'HTML Viewer Grátis com CSS, JS, Tela Cheia e Sem Cadastro',
+    intro: htmlViewerIntro,
+    canonicalPath: '/tools/html-viewer',
+    faq: htmlViewerFaq,
+    contentBlocks: htmlViewerContentBlocks,
+    relatedToolIds: ['pdf-viewer', 'json-formatter', 'image-converter'],
+  },
+  {
+    id: 'pdf-viewer',
+    slug: 'pdf-viewer',
+    name: 'PDF Viewer Local',
+    shortDescription:
+      'Abra e visualize PDFs localmente no navegador, grátis, sem cadastro, sem login e com opção de nova aba.',
+    category: 'documents',
+    primaryKeyword: 'pdf viewer online gratis',
+    secondaryKeywords: [
+      'abrir pdf no navegador',
+      'visualizar pdf online',
+      'pdf preview local',
+      'leitor de pdf online',
+      'visualizador pdf sem cadastro',
+      'abrir pdf sem login',
+    ],
+    searchIntent:
+      'Usuários que precisam abrir e revisar PDFs rápido, grátis e sem cadastro.',
+    seoTitle: 'PDF Viewer Online Grátis | Abrir PDF no Navegador Sem Cadastro',
+    seoDescription:
+      'Visualize arquivos PDF localmente no navegador, grátis, sem cadastro e sem login, com abertura em nova aba e layout responsivo.',
+    h1: 'PDF Viewer Local Grátis, Sem Cadastro e Sem Login',
+    intro: pdfViewerIntro,
+    canonicalPath: '/tools/pdf-viewer',
+    faq: pdfViewerFaq,
+    contentBlocks: pdfViewerContentBlocks,
+    relatedToolIds: ['html-viewer', 'json-formatter', 'image-converter'],
+  },
+  {
+    id: 'json-formatter',
+    slug: 'json-formatter',
+    name: 'JSON Formatter e Minifier',
+    shortDescription:
+      'Formate, minifique e valide JSON grátis, sem cadastro e sem login, com feedback de erro e cópia rápida.',
+    category: 'dev',
+    primaryKeyword: 'formatador json online gratis',
+    secondaryKeywords: [
+      'json minify online',
+      'json pretty print',
+      'validar json online',
+      'formatador json sem cadastro',
+      'formatador json sem login',
+      'json formatter browser',
+    ],
+    searchIntent:
+      'Desenvolvedores e analistas que precisam validar e ajustar payloads JSON rápido, grátis e sem cadastro.',
+    seoTitle: 'JSON Formatter Online Grátis | Minify, Validação e Sem Cadastro',
+    seoDescription:
+      'Cole JSON para formatar, minificar e validar sintaxe no navegador, grátis, sem cadastro e sem login.',
+    h1: 'JSON Formatter Grátis, Sem Cadastro e Sem Login',
+    intro: jsonFormatterIntro,
+    canonicalPath: '/tools/json-formatter',
+    faq: jsonFormatterFaq,
+    contentBlocks: jsonFormatterContentBlocks,
+    relatedToolIds: ['html-viewer', 'pdf-viewer', 'image-converter'],
+  },
+  {
+    id: 'image-converter',
+    slug: 'image-converter',
+    name: 'Conversor de Imagem e PDF',
+    shortDescription:
+      'Converta mais de 20 formatos de imagem e PDF no navegador, grátis, sem cadastro, sem login e com download imediato.',
+    category: 'documents',
+    primaryKeyword: 'conversor de imagem para pdf gratis',
+    secondaryKeywords: [
+      'png para jpeg',
+      'jpg para pdf',
+      'pdf para png',
+      'webp para jpg',
+      'heic para jpg',
+      'tiff para png',
+      'avif para png',
+      'svg para png',
+      'psd para png',
+      'conversor de formatos de imagem',
+      'conversor de imagem sem cadastro',
+      'conversor pdf sem login',
+      'converter pdf para imagem online',
+    ],
+    searchIntent:
+      'Usuários que precisam converter arquivos visuais entre formatos de imagem e PDF rápido, grátis e sem cadastro.',
+    seoTitle:
+      'Conversor de Imagem e PDF Grátis (20+ formatos) | Sem Cadastro',
+    seoDescription:
+      'Converta imagens e PDFs online com processamento local, sem cadastro, sem login e com fluxo rápido para desktop e mobile.',
+    h1: 'Conversor de Imagem e PDF Grátis, Sem Cadastro, Sem Login e Rápido',
+    intro: imageConverterIntro,
+    canonicalPath: '/tools/image-converter',
+    faq: imageConverterFaq,
+    contentBlocks: imageConverterContentBlocks,
+    relatedToolIds: ['pdf-viewer', 'html-viewer', 'qr-code-generator'],
   },
   {
     id: 'qr-code-generator',
@@ -82,7 +195,7 @@ export const toolsRegistry: ToolDefinition[] = [
     shortDescription:
       'Crie QR Code grátis a partir de texto ou URL, sem cadastro, com logo e download em vários formatos.',
     category: 'utility',
-    primaryKeyword: 'gerador de qr code',
+    primaryKeyword: 'gerador de qr code gratis sem cadastro',
     secondaryKeywords: [
       'gerador de qr code gratis',
       'gerar qr code sem cadastro',
@@ -95,16 +208,16 @@ export const toolsRegistry: ToolDefinition[] = [
       'qr code personalizado',
     ],
     searchIntent:
-      'Usuários que querem gerar QR Code rápido, personalizar visual e baixar imagem para uso comercial ou operacional.',
-    seoTitle: 'Gerador de QR Code Grátis e Sem Cadastro | PNG, PDF e SVG',
+      'Usuários que querem gerar QR Code rápido, grátis, sem cadastro, sem login, personalizar visual e baixar imagem.',
+    seoTitle: 'Gerador de QR Code Grátis, Sem Cadastro e Sem Login | PNG, PDF e SVG',
     seoDescription:
       'Gere QR Code online grátis, sem cadastro, sem login e sem pagar nada. Personalize cores, adicione logo central e exporte em PNG, JPEG, WEBP, SVG e PDF.',
-    h1: 'Gerador de QR Code Grátis, Sem Cadastro e com Download',
+    h1: 'Gerador de QR Code Grátis, Sem Cadastro, Sem Login e com Download',
     intro: qrCodeGeneratorIntro,
     canonicalPath: '/tools/qr-code-generator',
     faq: qrCodeGeneratorFaq,
     contentBlocks: qrCodeGeneratorContentBlocks,
-    relatedToolIds: ['crypto-unit-converter', 'html-pdf-json'],
+    relatedToolIds: ['image-converter', 'pdf-viewer', 'json-formatter'],
   },
 ];
 
@@ -128,12 +241,18 @@ export const getRelatedTools = (toolId: string): ToolDefinition[] => {
 
 type LocalizableToolId =
   | 'crypto-unit-converter'
-  | 'html-pdf-json'
+  | 'html-viewer'
+  | 'pdf-viewer'
+  | 'json-formatter'
+  | 'image-converter'
   | 'qr-code-generator';
 
 const localizableToolIds = new Set<LocalizableToolId>([
   'crypto-unit-converter',
-  'html-pdf-json',
+  'html-viewer',
+  'pdf-viewer',
+  'json-formatter',
+  'image-converter',
   'qr-code-generator',
 ]);
 
