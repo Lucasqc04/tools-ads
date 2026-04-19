@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import { JsonLd } from '@/components/shared/json-ld';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
@@ -92,6 +93,7 @@ export default async function LocaleLayout({
           <div className="flex-1">{children}</div>
           <SiteFooter locale={locale} />
         </div>
+        <Analytics />
       </body>
     </html>
   );
