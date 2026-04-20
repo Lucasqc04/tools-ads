@@ -56,6 +56,10 @@ const formatGroups: Array<{ id: FormatGroupId; formats: ImageFormatId[] }> = [
     formats: ['png', 'jpeg', 'webp', 'avif', 'gif', 'svg'],
   },
   {
+    id: 'document',
+    formats: ['pdf'],
+  },
+  {
     id: 'desktop',
     formats: ['bmp', 'tiff', 'ico', 'tga', 'dds'],
   },
@@ -70,10 +74,6 @@ const formatGroups: Array<{ id: FormatGroupId; formats: ImageFormatId[] }> = [
   {
     id: 'raw',
     formats: ['raw', 'cr2', 'nef', 'arw'],
-  },
-  {
-    id: 'document',
-    formats: ['pdf'],
   },
 ];
 
