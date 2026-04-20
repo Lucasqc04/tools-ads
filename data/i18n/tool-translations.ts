@@ -23,6 +23,7 @@ type ToolId =
   | 'html-viewer'
   | 'pdf-viewer'
   | 'json-formatter'
+  | 'cpf-generator'
   | 'image-converter'
   | 'qr-code-generator';
 
@@ -538,6 +539,86 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
+  'cpf-generator': {
+    name: 'Valid CPF Generator',
+    shortDescription:
+      'Generate valid CPF numbers for tests with punctuation or plain digits, free, no sign-up, no login, and quick copy actions.',
+    primaryKeyword: 'free valid cpf generator',
+    secondaryKeywords: [
+      'cpf generator for testing',
+      'create valid cpf',
+      'cpf with punctuation',
+      'cpf without punctuation',
+      'cpf list generator',
+      'cpf no sign up',
+      'cpf without login',
+      'cpf for qa tests',
+    ],
+    searchIntent:
+      'Developers, QA teams, and analysts who need valid CPF samples for form validation and integration tests without sign-up.',
+    seoTitle: 'Free Valid CPF Generator | With or Without Punctuation',
+    seoDescription:
+      'Create valid CPF numbers online for testing with punctuation toggle, batch generation, and one-click copy. Free, no sign-up, no login.',
+    h1: 'Free Valid CPF Generator with Fast Copy and No Sign-Up',
+    intro:
+      'Generate mathematically valid CPF numbers in seconds for testing workflows, with output options for formatted or plain digits.',
+    contentBlocks: [
+      {
+        title: 'Generate valid CPF numbers for realistic test data',
+        paragraphs: [
+          'This tool creates CPF values using the official check-digit algorithm, so generated numbers pass standard validation rules used in forms and APIs.',
+          'You can switch between formatted output (000.000.000-00) and plain numeric output (00000000000) depending on your validation pipeline.',
+        ],
+      },
+      {
+        title: 'Practical use cases for product, QA, and development teams',
+        paragraphs: [
+          'Teams often need realistic but synthetic identifiers to test onboarding forms, anti-fraud validations, and internal registration flows.',
+          'Batch generation plus copy actions reduce manual work when filling spreadsheets, seed fixtures, and repeated test scenarios.',
+        ],
+        list: [
+          'Validate CPF mask behavior in front-end forms.',
+          'Test payload rules in backend endpoints.',
+          'Create synthetic records for staging environments.',
+          'Switch output format to match third-party integrations.',
+        ],
+      },
+      {
+        title: 'Privacy and usage limits',
+        paragraphs: [
+          'Generation runs locally in the browser by default, with no mandatory upload to a server.',
+          'Use generated CPF values only for testing and non-production simulations, never for real identity operations.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Do generated numbers pass CPF validation?',
+        answer:
+          'Yes. The generator follows official CPF check-digit rules, producing valid values for testing scenarios.',
+      },
+      {
+        question: 'Can I choose with or without punctuation?',
+        answer:
+          'Yes. You can output CPF values with punctuation or as plain digits only.',
+      },
+      {
+        question: 'Can I copy multiple CPFs at once?',
+        answer:
+          'Yes. You can copy the whole generated list at once or copy each CPF individually.',
+      },
+      {
+        question: 'Do I need to create an account?',
+        answer:
+          'No. The tool is free and available without sign-up or login.',
+      },
+      {
+        question: 'Is input data sent to a server?',
+        answer:
+          'No by default. Generation happens locally in your browser.',
+      },
+    ],
+  },
 };
 
 const esTranslations: Record<ToolId, ToolTranslation> = {
@@ -1050,6 +1131,86 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿El contenido se envía a servidor?',
         answer:
           'No. El procesamiento es local en el navegador y el contenido no se transmite a backend por defecto.',
+      },
+    ],
+  },
+  'cpf-generator': {
+    name: 'Generador de CPF válido',
+    shortDescription:
+      'Genera números de CPF válidos para pruebas con o sin puntuación, gratis, sin registro, sin login y con copia rápida.',
+    primaryKeyword: 'generador de cpf válido gratis',
+    secondaryKeywords: [
+      'crear cpf válido',
+      'generar cpf para pruebas',
+      'cpf con puntuación',
+      'cpf sin puntuación',
+      'generador de cpf por lote',
+      'cpf sin registro',
+      'cpf sin login',
+      'cpf para testing qa',
+    ],
+    searchIntent:
+      'Desarrolladores, equipos QA y analistas que necesitan CPF válidos para validar formularios e integraciones sin registro.',
+    seoTitle: 'Generador de CPF Válido Gratis | Con o Sin Puntuación',
+    seoDescription:
+      'Crea CPF válidos online para pruebas con opción con o sin puntuación, generación por lote y copia en un clic. Gratis, sin registro y sin login.',
+    h1: 'Generador de CPF Válido Gratis con Copia Rápida y Sin Registro',
+    intro:
+      'Genera CPF matemáticamente válidos en segundos para flujos de prueba, con salida formateada o solo numérica.',
+    contentBlocks: [
+      {
+        title: 'Genera CPF válidos para datos de prueba realistas',
+        paragraphs: [
+          'La herramienta crea valores de CPF usando el cálculo oficial de dígitos verificadores, por lo que los números pasan validaciones comunes de formularios y APIs.',
+          'Puedes alternar entre salida con formato (000.000.000-00) y salida solo numérica (00000000000), según la regla de tu integración.',
+        ],
+      },
+      {
+        title: 'Casos de uso para producto, QA y desarrollo',
+        paragraphs: [
+          'Los equipos necesitan identificadores sintéticos pero válidos para probar flujos de registro, validaciones antifraude y reglas de backend.',
+          'Con generación en lote y copia rápida, reduces trabajo manual al preparar planillas, fixtures y escenarios repetitivos.',
+        ],
+        list: [
+          'Validar máscaras de CPF en formularios front-end.',
+          'Probar reglas de payload en endpoints backend.',
+          'Crear registros sintéticos para ambientes de staging.',
+          'Cambiar formato de salida según terceros integrados.',
+        ],
+      },
+      {
+        title: 'Privacidad y límites de uso',
+        paragraphs: [
+          'La generación se ejecuta localmente en el navegador por defecto, sin subida obligatoria a servidor.',
+          'Usa los CPF generados solo para pruebas y simulaciones, nunca para operaciones de identidad real.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Los números generados pasan validación de CPF?',
+        answer:
+          'Sí. El generador aplica las reglas oficiales de dígitos verificadores del CPF.',
+      },
+      {
+        question: '¿Puedo elegir con o sin puntuación?',
+        answer:
+          'Sí. Puedes generar CPF con puntuación o solo con dígitos.',
+      },
+      {
+        question: '¿Se pueden copiar varios CPF a la vez?',
+        answer:
+          'Sí. Puedes copiar toda la lista generada o copiar cada CPF por separado.',
+      },
+      {
+        question: '¿Necesito crear cuenta?',
+        answer:
+          'No. La herramienta es gratis y no requiere registro ni login.',
+      },
+      {
+        question: '¿Se envían los datos a servidor?',
+        answer:
+          'No por defecto. La generación ocurre localmente en tu navegador.',
       },
     ],
   },

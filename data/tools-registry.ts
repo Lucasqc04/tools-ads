@@ -1,4 +1,9 @@
 import {
+  cpfGeneratorContentBlocks,
+  cpfGeneratorFaq,
+  cpfGeneratorIntro,
+} from '@/data/content/cpf-generator';
+import {
   cryptoConverterContentBlocks,
   cryptoConverterFaq,
   cryptoConverterIntro,
@@ -153,6 +158,36 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['html-viewer', 'pdf-viewer', 'image-converter'],
   },
   {
+    id: 'cpf-generator',
+    slug: 'cpf-generator',
+    name: 'Criador de CPF Válido',
+    shortDescription:
+      'Gere CPF válido para testes com opção com ou sem pontuação, grátis, sem cadastro e com cópia rápida.',
+    category: 'utility',
+    primaryKeyword: 'gerador de cpf valido gratis',
+    secondaryKeywords: [
+      'criador de cpf válido',
+      'gerar cpf para teste',
+      'cpf válido com pontuação',
+      'cpf válido sem pontuação',
+      'gerador de cpf sem cadastro',
+      'gerador de cpf sem login',
+      'cpf para homologação',
+      'gerar cpf em lote',
+    ],
+    searchIntent:
+      'Usuários e devs que precisam gerar CPF válido para testes de formulário, integração e QA sem cadastro.',
+    seoTitle: 'Gerador de CPF Válido Grátis | Com ou Sem Pontuação',
+    seoDescription:
+      'Crie CPF válido online para testes com opção com ou sem pontuação, geração em lote e cópia rápida, grátis, sem cadastro e sem login.',
+    h1: 'Gerador de CPF Válido Grátis, Sem Cadastro e Com Cópia Rápida',
+    intro: cpfGeneratorIntro,
+    canonicalPath: '/tools/cpf-generator',
+    faq: cpfGeneratorFaq,
+    contentBlocks: cpfGeneratorContentBlocks,
+    relatedToolIds: ['json-formatter', 'qr-code-generator', 'image-converter'],
+  },
+  {
     id: 'image-converter',
     slug: 'image-converter',
     name: 'Conversor de Imagem e PDF',
@@ -244,6 +279,7 @@ type LocalizableToolId =
   | 'html-viewer'
   | 'pdf-viewer'
   | 'json-formatter'
+  | 'cpf-generator'
   | 'image-converter'
   | 'qr-code-generator';
 
@@ -252,6 +288,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'html-viewer',
   'pdf-viewer',
   'json-formatter',
+  'cpf-generator',
   'image-converter',
   'qr-code-generator',
 ]);
