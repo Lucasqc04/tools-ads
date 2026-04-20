@@ -21,6 +21,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { ImageViewer } from '@/components/shared/image-viewer';
 import { type AppLocale } from '@/lib/i18n/config';
 import {
   blobToDataUrl,
@@ -218,6 +219,7 @@ const qrUi = {
     logoPreviewAlt: 'Preview do logo',
     logoLoadedFallback: 'Logo carregado',
     logoAppliedCenter: 'Logo aplicado no centro do QR Code.',
+    viewImage: 'Ver imagem',
     removeLogo: 'Remover logo',
   },
   en: {
@@ -266,6 +268,7 @@ const qrUi = {
     logoPreviewAlt: 'Logo preview',
     logoLoadedFallback: 'Logo loaded',
     logoAppliedCenter: 'Logo applied to QR center.',
+    viewImage: 'View image',
     removeLogo: 'Remove logo',
   },
   es: {
@@ -315,6 +318,7 @@ const qrUi = {
     logoPreviewAlt: 'Vista previa del logo',
     logoLoadedFallback: 'Logo cargado',
     logoAppliedCenter: 'Logo aplicado en el centro del QR.',
+    viewImage: 'Ver imagen',
     removeLogo: 'Quitar logo',
   },
 } as const;
@@ -496,6 +500,9 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
   const [status, setStatus] = useState<QrStatus | null>(null);
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [isDraggingLogo, setIsDraggingLogo] = useState(false);
+  const [qrPreviewDataUrl, setQrPreviewDataUrl] = useState('');
+  const [isQrViewerOpen, setIsQrViewerOpen] = useState(false);
+  const [isLogoViewerOpen, setIsLogoViewerOpen] = useState(false);
   const [selectedPresetId, setSelectedPresetId] = useState<StylePreset['id'] | 'custom'>(
     DEFAULT_PRESET.id,
   );
@@ -764,6 +771,15 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
     });
   };
 
+  const handleOpenQrViewer = async () => {
+    await runAction('open-preview-viewer', async () => {
+      const pngBlob = await getRawBlob('png');
+      const dataUrl = await blobToDataUrl(pngBlob);
+      setQrPreviewDataUrl(dataUrl);
+      setIsQrViewerOpen(true);
+    });
+  };
+
   return (
     <Card className="space-y-6">
       <div className="space-y-2">
@@ -809,6 +825,15 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
           </Button>
           <Button variant="secondary" disabled={!hasContent || Boolean(busyAction)} onClick={handleCopyImage}>
             {ui.copyImageButton}
+          </Button>
+          <Button
+            variant="secondary"
+            disabled={!hasContent || Boolean(busyAction)}
+            onClick={() => {
+              void handleOpenQrViewer();
+            }}
+          >
+            {ui.viewImage}
           </Button>
         </div>
 
@@ -1095,10 +1120,17 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
               <p className="text-xs text-slate-600">{ui.logoAppliedCenter}</p>
             </div>
             <Button
+              variant="secondary"
+              onClick={() => setIsLogoViewerOpen(true)}
+            >
+              {ui.viewImage}
+            </Button>
+            <Button
               variant="ghost"
               onClick={() => {
                 setLogoDataUrl(null);
                 setLogoFileName(null);
+                setIsLogoViewerOpen(false);
               }}
             >
               {ui.removeLogo}
@@ -1106,6 +1138,23 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
           </div>
         ) : null}
       </SectionCard>
+
+      <ImageViewer
+        src={qrPreviewDataUrl}
+        alt={ui.previewTitle}
+        isOpen={isQrViewerOpen}
+        onClose={() => setIsQrViewerOpen(false)}
+        onDownload={() => {
+          void handleDownload('png');
+        }}
+      />
+
+      <ImageViewer
+        src={logoDataUrl ?? ''}
+        alt={ui.logoPreviewAlt}
+        isOpen={isLogoViewerOpen}
+        onClose={() => setIsLogoViewerOpen(false)}
+      />
 
     </Card>
   );

@@ -1,8 +1,23 @@
 import {
+  base64ImageViewerContentBlocks,
+  base64ImageViewerFaq,
+  base64ImageViewerIntro,
+} from '@/data/content/base64-image-viewer';
+import {
   cpfGeneratorContentBlocks,
   cpfGeneratorFaq,
   cpfGeneratorIntro,
 } from '@/data/content/cpf-generator';
+import {
+  imageToBase64ContentBlocks,
+  imageToBase64Faq,
+  imageToBase64Intro,
+} from '@/data/content/image-to-base64';
+import {
+  passwordGeneratorContentBlocks,
+  passwordGeneratorFaq,
+  passwordGeneratorIntro,
+} from '@/data/content/password-generator';
 import {
   cryptoConverterContentBlocks,
   cryptoConverterFaq,
@@ -188,6 +203,96 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['json-formatter', 'qr-code-generator', 'image-converter'],
   },
   {
+    id: 'password-generator',
+    slug: 'password-generator',
+    name: 'Gerador de Senha Forte',
+    shortDescription:
+      'Crie senha forte com tamanho personalizado e combinacao de letras, numeros e simbolos, gratis e sem cadastro.',
+    category: 'utility',
+    primaryKeyword: 'gerador de senha forte gratis',
+    secondaryKeywords: [
+      'gerador de senha segura online',
+      'criar senha aleatoria',
+      'gerar senha com simbolos',
+      'senha com letras e numeros',
+      'gerador de senha sem cadastro',
+      'gerador de senha sem login',
+      'senha forte para contas',
+      'password generator online',
+    ],
+    searchIntent:
+      'Usuarios que precisam gerar senha forte rapidamente para contas pessoais, profissionais e testes de sistema.',
+    seoTitle: 'Gerador de Senha Forte Gratis | Com Letras, Numeros e Simbolos',
+    seoDescription:
+      'Gere senha forte online com tamanho personalizado, escolha de caracteres, regeneracao automatica e botao de copiar. Gratis, sem cadastro e sem login.',
+    h1: 'Gerador de Senha Forte Gratis, Sem Cadastro e Com Copia Rapida',
+    intro: passwordGeneratorIntro,
+    canonicalPath: '/tools/password-generator',
+    faq: passwordGeneratorFaq,
+    contentBlocks: passwordGeneratorContentBlocks,
+    relatedToolIds: ['cpf-generator', 'json-formatter', 'qr-code-generator'],
+  },
+  {
+    id: 'base64-image-viewer',
+    slug: 'base64-image-viewer',
+    name: 'Leitor de Base64 para Imagem',
+    shortDescription:
+      'Cole Base64, veja a imagem na hora e baixe em varios formatos, gratis, sem cadastro e sem login.',
+    category: 'dev',
+    primaryKeyword: 'leitor de base64 para imagem online',
+    secondaryKeywords: [
+      'converter base64 em imagem',
+      'visualizar base64 imagem',
+      'decodificar base64 de imagem',
+      'base64 para png',
+      'base64 para jpeg',
+      'base64 image viewer',
+      'abrir base64 em imagem',
+      'download de imagem base64',
+    ],
+    searchIntent:
+      'Usuarios e devs que precisam colar Base64 e visualizar imagem imediatamente para validar e baixar em formatos diferentes.',
+    seoTitle: 'Leitor de Base64 para Imagem Online | Preview e Download',
+    seoDescription:
+      'Cole Base64 e visualize imagem em tempo real. Baixe em varios formatos com conversao local, gratis, sem cadastro e sem login.',
+    h1: 'Leitor de Base64 para Imagem Grátis com Preview Instantaneo',
+    intro: base64ImageViewerIntro,
+    canonicalPath: '/tools/base64-image-viewer',
+    faq: base64ImageViewerFaq,
+    contentBlocks: base64ImageViewerContentBlocks,
+    relatedToolIds: ['image-to-base64', 'image-converter', 'html-viewer'],
+  },
+  {
+    id: 'image-to-base64',
+    slug: 'image-to-base64',
+    name: 'Gerador de Base64 por Imagem',
+    shortDescription:
+      'Converta imagem para Base64 com preview, copia em um clique e opcao de data URL ou Base64 puro.',
+    category: 'dev',
+    primaryKeyword: 'gerador de base64 por imagem online',
+    secondaryKeywords: [
+      'imagem para base64',
+      'converter imagem em base64',
+      'gerar data url de imagem',
+      'copiar base64 da imagem',
+      'image to base64 converter',
+      'jpg para base64',
+      'png para base64',
+      'base64 encoder imagem',
+    ],
+    searchIntent:
+      'Usuarios e devs que precisam transformar imagem em Base64 rapidamente para usar em APIs, HTML e testes de integracao.',
+    seoTitle: 'Gerador de Base64 por Imagem | Converter Imagem para Base64',
+    seoDescription:
+      'Envie imagem e gere Base64 automaticamente com preview, copia rapida e modo data URL. Gratis, sem cadastro e sem login.',
+    h1: 'Gerador de Base64 por Imagem Grátis com Preview e Copia Rapida',
+    intro: imageToBase64Intro,
+    canonicalPath: '/tools/image-to-base64',
+    faq: imageToBase64Faq,
+    contentBlocks: imageToBase64ContentBlocks,
+    relatedToolIds: ['base64-image-viewer', 'image-converter', 'json-formatter'],
+  },
+  {
     id: 'image-converter',
     slug: 'image-converter',
     name: 'Conversor de Imagem e PDF',
@@ -280,6 +385,9 @@ type LocalizableToolId =
   | 'pdf-viewer'
   | 'json-formatter'
   | 'cpf-generator'
+  | 'password-generator'
+  | 'base64-image-viewer'
+  | 'image-to-base64'
   | 'image-converter'
   | 'qr-code-generator';
 
@@ -289,6 +397,9 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'pdf-viewer',
   'json-formatter',
   'cpf-generator',
+  'password-generator',
+  'base64-image-viewer',
+  'image-to-base64',
   'image-converter',
   'qr-code-generator',
 ]);

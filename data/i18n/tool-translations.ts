@@ -24,6 +24,9 @@ type ToolId =
   | 'pdf-viewer'
   | 'json-formatter'
   | 'cpf-generator'
+  | 'password-generator'
+  | 'base64-image-viewer'
+  | 'image-to-base64'
   | 'image-converter'
   | 'qr-code-generator';
 
@@ -619,6 +622,246 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
+  'password-generator': {
+    name: 'Strong Password Generator',
+    shortDescription:
+      'Create strong passwords with custom length and character options, free, with no sign-up and no login.',
+    primaryKeyword: 'free strong password generator',
+    secondaryKeywords: [
+      'secure password generator online',
+      'random password creator',
+      'password with symbols',
+      'password with letters and numbers',
+      'password generator no sign up',
+      'password generator without login',
+      'strong password for accounts',
+      'custom length password',
+    ],
+    searchIntent:
+      'Users who need to generate strong passwords quickly for personal accounts, work systems, and testing flows.',
+    seoTitle: 'Free Strong Password Generator | Letters, Numbers, Symbols',
+    seoDescription:
+      'Generate strong passwords online with custom length, character selection, automatic refresh, and one-click copy. Free, no sign-up, no login.',
+    h1: 'Free Strong Password Generator with Fast Copy',
+    intro:
+      'Generate secure passwords instantly with full control over size and character types, including uppercase, lowercase, numbers, and symbols.',
+    contentBlocks: [
+      {
+        title: 'Build stronger passwords in a few clicks',
+        paragraphs: [
+          'This tool combines uppercase letters, lowercase letters, numbers, and symbols to generate stronger random passwords for practical use.',
+          'The output updates automatically when you change length or character options, which speeds up password policy testing.',
+        ],
+      },
+      {
+        title: 'Where this password generator helps in real life',
+        paragraphs: [
+          'Many people still reuse short and predictable passwords. A configurable generator helps create unique credentials for each account.',
+          'With regenerate and copy actions, the workflow is faster for onboarding, account resets, and QA credential preparation.',
+        ],
+        list: [
+          'Create stronger passwords for email and SaaS logins.',
+          'Generate temporary credentials for support operations.',
+          'Prepare test passwords for staging and QA environments.',
+          'Match specific password policies by toggling character sets.',
+        ],
+      },
+      {
+        title: 'Privacy and practical limits',
+        paragraphs: [
+          'Password generation runs locally in the browser by default, without mandatory server submission.',
+          'The length field has no fixed UI cap, but very large values may require more processing time depending on device performance.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Does the password update automatically?',
+        answer:
+          'Yes. The password updates automatically when you change length or character options, and you can also click regenerate.',
+      },
+      {
+        question: 'Can I choose which character types are used?',
+        answer:
+          'Yes. You can enable or disable uppercase, lowercase, numbers, and symbols.',
+      },
+      {
+        question: 'Is there a maximum length?',
+        answer:
+          'There is no fixed maximum in the interface. For very large lengths, generation time depends on your device.',
+      },
+      {
+        question: 'Can I copy the generated password with one click?',
+        answer:
+          'Yes. Use the copy button to send the current password directly to your clipboard.',
+      },
+      {
+        question: 'Is the password sent to a server?',
+        answer:
+          'No by default. Generation happens locally in your browser.',
+      },
+    ],
+  },
+  'base64-image-viewer': {
+    name: 'Base64 Image Viewer',
+    shortDescription:
+      'Paste Base64, preview image instantly, and download in multiple formats for free, with no sign-up and no login.',
+    primaryKeyword: 'base64 image viewer online',
+    secondaryKeywords: [
+      'base64 to image converter',
+      'decode image base64',
+      'view base64 image',
+      'base64 to png',
+      'base64 to jpeg',
+      'open base64 as image',
+      'download image from base64',
+      'data url image viewer',
+    ],
+    searchIntent:
+      'Developers and technical users who need to paste Base64 and preview image output immediately before downloading.',
+    seoTitle: 'Base64 Image Viewer Online | Instant Preview and Download',
+    seoDescription:
+      'Paste Base64 and preview image in real time. Download in multiple formats with local conversion, free, no sign-up, no login.',
+    h1: 'Free Base64 Image Viewer with Instant Preview',
+    intro:
+      'Decode Base64 image strings instantly, preview side by side, and export to multiple image formats in one workflow.',
+    contentBlocks: [
+      {
+        title: 'Turn Base64 text into a visible image',
+        paragraphs: [
+          'This tool decodes Base64 input and renders the image immediately in your browser, helping you validate payload content quickly.',
+          'After previewing, you can download the decoded image in original form or export to common formats such as PNG, JPEG, WEBP, and SVG.',
+        ],
+      },
+      {
+        title: 'Practical workflows for API and support teams',
+        paragraphs: [
+          'It is useful when backend services return image data as Base64 inside JSON responses or webhook payloads.',
+          'The side-by-side preview and format export flow reduce manual debugging steps during integrations and QA checks.',
+        ],
+        list: [
+          'Validate Base64 image payloads from APIs.',
+          'Decode data URLs into downloadable files.',
+          'Convert decoded output to another format.',
+          'Review images without external desktop software.',
+        ],
+      },
+      {
+        title: 'Privacy and practical limits',
+        paragraphs: [
+          'Decoding and rendering happen locally in the browser by default, without mandatory server upload.',
+          'Large Base64 strings may require more memory and processing time depending on device performance.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Do I need to upload Base64 content to a server?',
+        answer:
+          'No by default. Decoding and preview run locally in your browser.',
+      },
+      {
+        question: 'Does it support both data URL and raw Base64?',
+        answer:
+          'Yes. You can paste either format and define a fallback MIME type for raw Base64 content.',
+      },
+      {
+        question: 'Can I download in different image formats?',
+        answer:
+          'Yes. After decoding, you can export to multiple image formats available in the tool.',
+      },
+      {
+        question: 'Is preview updated instantly?',
+        answer:
+          'Yes. The preview updates automatically as soon as the Base64 input is valid.',
+      },
+      {
+        question: 'Is this tool free?',
+        answer:
+          'Yes. It is free to use with no sign-up and no mandatory login.',
+      },
+    ],
+  },
+  'image-to-base64': {
+    name: 'Image to Base64 Generator',
+    shortDescription:
+      'Upload an image and generate Base64 automatically with preview, one-click copy, and output mode selection.',
+    primaryKeyword: 'image to base64 generator online',
+    secondaryKeywords: [
+      'convert image to base64',
+      'png to base64',
+      'jpg to base64',
+      'image data url generator',
+      'base64 encoder image',
+      'copy image base64',
+      'base64 from image online',
+      'image base64 converter free',
+    ],
+    searchIntent:
+      'Users and developers who need to encode image files as Base64 quickly for APIs, front-end usage, and testing.',
+    seoTitle: 'Image to Base64 Generator | Convert Image to Base64 Online',
+    seoDescription:
+      'Upload image and generate Base64 instantly with preview, copy button, and data URL mode. Free, no sign-up, no login.',
+    h1: 'Free Image to Base64 Generator with Instant Preview and Copy',
+    intro:
+      'Convert image files to Base64 automatically, choose output mode, and copy the result in one click.',
+    contentBlocks: [
+      {
+        title: 'Encode images as Base64 for real integrations',
+        paragraphs: [
+          'This tool converts uploaded images to Base64 for practical usage in API payloads, inline web assets, and technical configurations.',
+          'You can choose image output format before encoding and switch between full data URL output or Base64-only text.',
+        ],
+      },
+      {
+        title: 'Common day-to-day use cases',
+        paragraphs: [
+          'Teams use Base64 output for quick prototypes, API examples, and environments where sending separate files is not ideal.',
+          'With preview, copy, and TXT download, the workflow is optimized for development, QA, and technical support.',
+        ],
+        list: [
+          'Generate Base64 for API requests.',
+          'Create data URLs for direct HTML/CSS usage.',
+          'Copy Base64 strings into test tools quickly.',
+          'Download Base64 output as text for team sharing.',
+        ],
+      },
+      {
+        title: 'Privacy and performance notes',
+        paragraphs: [
+          'Image encoding runs locally in the browser by default, without mandatory server transfer.',
+          'Large images create long Base64 strings, so final size depends on resolution and selected format.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Is my uploaded image sent to a server?',
+        answer:
+          'No by default. Conversion to Base64 is processed locally in your browser.',
+      },
+      {
+        question: 'Can I copy Base64 with one click?',
+        answer:
+          'Yes. Use the copy action to place the generated Base64 directly in your clipboard.',
+      },
+      {
+        question: 'Can I choose between data URL and raw Base64?',
+        answer:
+          'Yes. You can switch output mode depending on your target integration requirement.',
+      },
+      {
+        question: 'Can I change image format before encoding?',
+        answer:
+          'Yes. The tool allows selecting supported output image formats before Base64 generation.',
+      },
+      {
+        question: 'Does it work on mobile devices?',
+        answer:
+          'Yes. The interface is responsive and supports upload, preview, and copy on mobile.',
+      },
+    ],
+  },
 };
 
 const esTranslations: Record<ToolId, ToolTranslation> = {
@@ -1211,6 +1454,246 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿Se envían los datos a servidor?',
         answer:
           'No por defecto. La generación ocurre localmente en tu navegador.',
+      },
+    ],
+  },
+  'password-generator': {
+    name: 'Generador de Contrasena Segura',
+    shortDescription:
+      'Crea contrasenas seguras con longitud personalizada y tipos de caracteres, gratis, sin registro y sin login.',
+    primaryKeyword: 'generador de contrasena segura gratis',
+    secondaryKeywords: [
+      'generador de contrasenas online',
+      'crear contrasena aleatoria',
+      'contrasena con simbolos',
+      'contrasena con letras y numeros',
+      'generador de contrasena sin registro',
+      'generador de contrasena sin login',
+      'contrasena fuerte para cuentas',
+      'contrasena de longitud personalizada',
+    ],
+    searchIntent:
+      'Usuarios que necesitan generar contrasenas seguras rapidamente para cuentas personales, sistemas de trabajo y pruebas.',
+    seoTitle: 'Generador de Contrasena Segura Gratis | Letras, Numeros y Simbolos',
+    seoDescription:
+      'Genera contrasenas seguras online con longitud personalizada, seleccion de caracteres, regeneracion automatica y copia en un clic. Gratis, sin registro y sin login.',
+    h1: 'Generador de Contrasena Segura Gratis con Copia Rapida',
+    intro:
+      'Genera contrasenas seguras en segundos con control total de longitud y tipos de caracteres, incluyendo mayusculas, minusculas, numeros y simbolos.',
+    contentBlocks: [
+      {
+        title: 'Crea contrasenas mas fuertes en pocos clics',
+        paragraphs: [
+          'La herramienta combina letras mayusculas, minusculas, numeros y simbolos para generar contrasenas aleatorias mas robustas.',
+          'El resultado se actualiza automaticamente cuando cambias longitud u opciones, acelerando pruebas de politicas de seguridad.',
+        ],
+      },
+      {
+        title: 'Casos de uso en el dia a dia',
+        paragraphs: [
+          'Muchas personas reutilizan contrasenas cortas y predecibles. Un generador configurable ayuda a crear credenciales unicas para cada servicio.',
+          'Con botones de regenerar y copiar, el flujo es mas rapido para alta de cuentas, renovacion de accesos y preparacion de credenciales QA.',
+        ],
+        list: [
+          'Crear contrasenas mas fuertes para correo y plataformas SaaS.',
+          'Generar credenciales temporales para soporte tecnico.',
+          'Preparar contrasenas de prueba para staging y QA.',
+          'Cumplir reglas especificas activando o desactivando tipos de caracteres.',
+        ],
+      },
+      {
+        title: 'Privacidad y limites practicos',
+        paragraphs: [
+          'La generacion ocurre localmente en el navegador por defecto, sin envio obligatorio a servidor.',
+          'El campo de longitud no tiene tope fijo en la interfaz, pero valores muy altos pueden tardar mas segun el rendimiento del dispositivo.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿La contrasena se actualiza automaticamente?',
+        answer:
+          'Si. La contrasena cambia automaticamente cuando modificas longitud u opciones, y tambien puedes usar regenerar.',
+      },
+      {
+        question: '¿Puedo elegir los tipos de caracteres?',
+        answer:
+          'Si. Puedes activar o desactivar mayusculas, minusculas, numeros y simbolos.',
+      },
+      {
+        question: '¿Existe un maximo de longitud?',
+        answer:
+          'No hay un maximo fijo en la interfaz. Para longitudes muy altas, el tiempo depende del dispositivo.',
+      },
+      {
+        question: '¿Puedo copiar la contrasena con un clic?',
+        answer:
+          'Si. Usa el boton de copiar para enviar la contrasena actual al portapapeles.',
+      },
+      {
+        question: '¿La contrasena se envia al servidor?',
+        answer:
+          'No por defecto. La generacion ocurre localmente en tu navegador.',
+      },
+    ],
+  },
+  'base64-image-viewer': {
+    name: 'Lector de Base64 para Imagen',
+    shortDescription:
+      'Pega Base64, visualiza la imagen al instante y descarga en varios formatos, gratis, sin registro y sin login.',
+    primaryKeyword: 'lector de base64 para imagen online',
+    secondaryKeywords: [
+      'base64 a imagen',
+      'decodificar base64 de imagen',
+      'visualizar imagen base64',
+      'base64 a png',
+      'base64 a jpeg',
+      'abrir base64 como imagen',
+      'descargar imagen desde base64',
+      'visor de data url',
+    ],
+    searchIntent:
+      'Usuarios y desarrolladores que necesitan pegar Base64 para ver la imagen de inmediato y descargarla en otro formato.',
+    seoTitle: 'Lector de Base64 para Imagen Online | Vista Previa y Descarga',
+    seoDescription:
+      'Pega Base64 y visualiza imagen en tiempo real. Descarga en varios formatos con conversion local, gratis, sin registro y sin login.',
+    h1: 'Lector de Base64 para Imagen Gratis con Vista Previa Instantanea',
+    intro:
+      'Decodifica cadenas Base64 de imagen al instante, visualiza el resultado y exporta en multiples formatos.',
+    contentBlocks: [
+      {
+        title: 'Convierte texto Base64 en imagen visible',
+        paragraphs: [
+          'La herramienta decodifica el Base64 y renderiza la imagen de inmediato en tu navegador para validar contenido tecnico rapidamente.',
+          'Despues de revisar la vista previa, puedes descargar el archivo original o exportarlo a formatos como PNG, JPEG, WEBP y SVG.',
+        ],
+      },
+      {
+        title: 'Flujo practico para APIs y soporte',
+        paragraphs: [
+          'Es util cuando servicios backend devuelven imagenes Base64 dentro de JSON o payloads de webhooks.',
+          'La vista previa lateral y la exportacion por formato reducen pasos manuales en integraciones y pruebas QA.',
+        ],
+        list: [
+          'Validar payloads de imagen Base64 desde API.',
+          'Decodificar data URL a archivo descargable.',
+          'Convertir salida decodificada a otro formato.',
+          'Revisar imagenes sin software externo.',
+        ],
+      },
+      {
+        title: 'Privacidad y limites practicos',
+        paragraphs: [
+          'La decodificacion y renderizado ocurren localmente en el navegador por defecto, sin subida obligatoria a servidor.',
+          'Cadenas Base64 muy grandes pueden requerir mas memoria y tiempo segun el dispositivo.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Debo subir el Base64 a un servidor?',
+        answer:
+          'No por defecto. La lectura y vista previa se procesan localmente en tu navegador.',
+      },
+      {
+        question: '¿Soporta data URL y Base64 puro?',
+        answer:
+          'Si. Acepta ambos formatos y permite definir MIME por defecto para contenido Base64 sin prefijo.',
+      },
+      {
+        question: '¿Puedo descargar en diferentes formatos?',
+        answer:
+          'Si. Tras decodificar, puedes exportar en varios formatos de imagen disponibles.',
+      },
+      {
+        question: '¿La vista previa se actualiza al instante?',
+        answer:
+          'Si. La vista se actualiza automaticamente cuando el Base64 es valido.',
+      },
+      {
+        question: '¿La herramienta es gratuita?',
+        answer:
+          'Si. Es gratis y no exige registro ni login obligatorio.',
+      },
+    ],
+  },
+  'image-to-base64': {
+    name: 'Generador de Base64 desde Imagen',
+    shortDescription:
+      'Sube una imagen y genera Base64 automaticamente con vista previa, copia rapida y modo de salida configurable.',
+    primaryKeyword: 'generador de base64 desde imagen online',
+    secondaryKeywords: [
+      'imagen a base64',
+      'convertir imagen a base64',
+      'png a base64',
+      'jpg a base64',
+      'generador de data url',
+      'codificar imagen en base64',
+      'copiar base64 de imagen',
+      'base64 encoder online',
+    ],
+    searchIntent:
+      'Usuarios y desarrolladores que necesitan convertir archivos de imagen a Base64 para APIs, front-end y pruebas tecnicas.',
+    seoTitle: 'Generador de Base64 desde Imagen | Convertir Imagen a Base64',
+    seoDescription:
+      'Sube imagen y genera Base64 al instante con vista previa, boton de copia y modo data URL. Gratis, sin registro y sin login.',
+    h1: 'Generador de Base64 desde Imagen Gratis con Vista Previa y Copia',
+    intro:
+      'Convierte imagenes a Base64 automaticamente, elige modo de salida y copia el resultado en un clic.',
+    contentBlocks: [
+      {
+        title: 'Codifica imagenes en Base64 para integraciones reales',
+        paragraphs: [
+          'La herramienta transforma imagenes subidas a Base64 para uso en payloads de API, assets inline y configuraciones tecnicas.',
+          'Puedes elegir formato de imagen de salida antes de codificar y cambiar entre data URL completo o solo Base64.',
+        ],
+      },
+      {
+        title: 'Usos comunes en operaciones tecnicas',
+        paragraphs: [
+          'Equipos de desarrollo y QA usan Base64 para prototipos rapidos, ejemplos de API y escenarios donde no conviene adjuntar archivos separados.',
+          'Con vista previa, copia y descarga en TXT, el flujo es agil para soporte tecnico y validaciones internas.',
+        ],
+        list: [
+          'Generar Base64 para requests de API.',
+          'Crear data URL para uso directo en HTML/CSS.',
+          'Copiar Base64 en herramientas de prueba.',
+          'Descargar salida Base64 como texto para compartir.',
+        ],
+      },
+      {
+        title: 'Privacidad y rendimiento',
+        paragraphs: [
+          'La conversion a Base64 ocurre localmente en el navegador por defecto, sin envio obligatorio a servidor.',
+          'Imagenes grandes producen cadenas Base64 extensas, por lo que el tamano final depende de resolucion y formato elegido.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿La imagen se envia a servidor?',
+        answer:
+          'No por defecto. La conversion a Base64 se procesa localmente en tu navegador.',
+      },
+      {
+        question: '¿Puedo copiar el Base64 con un clic?',
+        answer:
+          'Si. El boton de copia envia el resultado directamente al portapapeles.',
+      },
+      {
+        question: '¿Puedo elegir entre data URL y Base64 puro?',
+        answer:
+          'Si. Puedes alternar el modo de salida segun la necesidad de tu integracion.',
+      },
+      {
+        question: '¿Puedo cambiar formato de imagen antes de codificar?',
+        answer:
+          'Si. Hay varias opciones de formato compatibles para codificar la imagen.',
+      },
+      {
+        question: '¿Funciona en celular?',
+        answer:
+          'Si. La interfaz responsive permite subir imagen, ver preview y copiar Base64 en mobile.',
       },
     ],
   },

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select } from '@/components/ui/select';
+import { ImageViewer } from '@/components/shared/image-viewer';
 import { cn } from '@/lib/cn';
 import {
   buildConvertedFileName,
@@ -171,6 +172,7 @@ type LocaleUi = {
   converting: string;
   reset: string;
   download: string;
+  viewImage: string;
   downloadAll: string;
   convertedSingleTitle: string;
   convertedMultiTitle: string;
@@ -212,6 +214,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
     converting: 'Convertendo...',
     reset: 'Limpar',
     download: 'Baixar',
+    viewImage: 'Ver imagem',
     downloadAll: 'Baixar todas as páginas',
     convertedSingleTitle: 'Conversão concluída',
     convertedMultiTitle: 'Páginas convertidas',
@@ -283,6 +286,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
     converting: 'Converting...',
     reset: 'Reset',
     download: 'Download',
+    viewImage: 'View image',
     downloadAll: 'Download all pages',
     convertedSingleTitle: 'Conversion completed',
     convertedMultiTitle: 'Converted pages',
@@ -355,6 +359,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
     converting: 'Convirtiendo...',
     reset: 'Limpiar',
     download: 'Descargar',
+    viewImage: 'Ver imagen',
     downloadAll: 'Descargar todas las páginas',
     convertedSingleTitle: 'Conversión completada',
     convertedMultiTitle: 'Páginas convertidas',
@@ -451,6 +456,11 @@ export function ImageConverterTool({
   const [infoMessage, setInfoMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isConverting, setIsConverting] = useState(false);
+  const [viewerState, setViewerState] = useState<{
+    src: string;
+    alt: string;
+    onDownload?: () => void;
+  } | null>(null);
 
   const outputFormats = useMemo(() => getOutputFormats(fromFormat), [fromFormat]);
   const showQualityControl = formatSupportsQuality(toFormat);
@@ -857,6 +867,20 @@ export function ImageConverterTool({
               className="max-h-[320px] w-full rounded-lg object-contain"
             />
           </div>
+          <Button
+            variant="secondary"
+            onClick={() =>
+              setViewerState({
+                src: sourcePreviewUrl,
+                alt: ui.sourcePreviewTitle,
+                onDownload: sourceFile
+                  ? () => downloadBlob(sourceFile, sourceFile.name)
+                  : undefined,
+              })
+            }
+          >
+            {ui.viewImage}
+          </Button>
         </section>
       ) : null}
 
@@ -877,6 +901,18 @@ export function ImageConverterTool({
                   className="max-h-[320px] w-full rounded-lg object-contain"
                 />
               </div>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setViewerState({
+                    src: singleResult.url,
+                    alt: singleResult.filename,
+                    onDownload: () => downloadBlob(singleResult.blob, singleResult.filename),
+                  })
+                }
+              >
+                {ui.viewImage}
+              </Button>
             </div>
           ) : (
             <p className="text-sm text-emerald-900">{ui.pdfResultMessage}</p>
@@ -913,13 +949,28 @@ export function ImageConverterTool({
                   />
                 </div>
 
-                <Button
-                  variant="secondary"
-                  className="w-full"
-                  onClick={() => downloadBlob(item.blob, item.filename)}
-                >
-                  {ui.download}
-                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => downloadBlob(item.blob, item.filename)}
+                  >
+                    {ui.download}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() =>
+                      setViewerState({
+                        src: item.url,
+                        alt: `#${item.pageNumber}`,
+                        onDownload: () => downloadBlob(item.blob, item.filename),
+                      })
+                    }
+                  >
+                    {ui.viewImage}
+                  </Button>
+                </div>
               </article>
             ))}
           </div>
@@ -928,7 +979,7 @@ export function ImageConverterTool({
             variant="secondary"
             onClick={() => {
               multiResult.items.forEach((item, index) => {
-                window.setTimeout(() => downloadBlob(item.blob, item.filename), index * 120);
+                globalThis.setTimeout(() => downloadBlob(item.blob, item.filename), index * 120);
               });
             }}
           >
@@ -936,6 +987,14 @@ export function ImageConverterTool({
           </Button>
         </section>
       ) : null}
+
+      <ImageViewer
+        src={viewerState?.src ?? ''}
+        alt={viewerState?.alt ?? ui.resultPreviewTitle}
+        isOpen={Boolean(viewerState)}
+        onClose={() => setViewerState(null)}
+        onDownload={viewerState?.onDownload}
+      />
     </Card>
   );
 }
