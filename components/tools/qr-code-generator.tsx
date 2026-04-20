@@ -5,7 +5,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type DragEvent,
   type ReactNode,
 } from 'react';
 import Image from 'next/image';
@@ -21,6 +20,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { ImageViewer } from '@/components/shared/image-viewer';
 import { type AppLocale } from '@/lib/i18n/config';
 import {
@@ -151,11 +151,11 @@ function SectionCard({
   title,
   description,
   children,
-}: {
+}: Readonly<{
   title: string;
   description?: string;
   children: ReactNode;
-}) {
+}>) {
   return (
     <section className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/80 p-4 md:p-5">
       <header className="space-y-1">
@@ -167,9 +167,9 @@ function SectionCard({
   );
 }
 
-type QrCodeGeneratorToolProps = {
+type QrCodeGeneratorToolProps = Readonly<{
   locale?: AppLocale;
-};
+}>;
 
 const qrUi = {
   'pt-br': {
@@ -478,7 +478,6 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
   const cornerDotLabels = cornerDotLabelsByLocale[locale];
   const errorCorrectionLabels = errorCorrectionLabelsByLocale[locale];
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const logoInputRef = useRef<HTMLInputElement | null>(null);
   const qrRef = useRef<QrCodeStylingInstance | null>(null);
   const statusTimerRef = useRef<number | null>(null);
 
@@ -494,12 +493,12 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
   const [backgroundColor, setBackgroundColor] = useState(DEFAULT_PRESET.backgroundColor);
 
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoFileName, setLogoFileName] = useState<string | null>(null);
   const [logoScale, setLogoScale] = useState(0.32);
   const [logoMargin, setLogoMargin] = useState(8);
   const [status, setStatus] = useState<QrStatus | null>(null);
   const [busyAction, setBusyAction] = useState<string | null>(null);
-  const [isDraggingLogo, setIsDraggingLogo] = useState(false);
   const [qrPreviewDataUrl, setQrPreviewDataUrl] = useState('');
   const [isQrViewerOpen, setIsQrViewerOpen] = useState(false);
   const [isLogoViewerOpen, setIsLogoViewerOpen] = useState(false);
@@ -682,31 +681,16 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
     try {
       const dataUrl = await readImageFileAsDataUrl(file);
       setLogoDataUrl(dataUrl);
+      setLogoFile(file);
       setLogoFileName(file.name);
       setFeedback({ type: 'success', message: ui.logoApplied });
     } catch {
+      setLogoFile(null);
       setFeedback({
         type: 'error',
         message: ui.logoLoadError,
       });
     }
-  };
-
-  const handleLogoDragOver = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDraggingLogo(true);
-  };
-
-  const handleLogoDragLeave = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDraggingLogo(false);
-  };
-
-  const handleLogoDrop = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDraggingLogo(false);
-    const file = event.dataTransfer.files?.[0] ?? null;
-    void processLogoFile(file);
   };
 
   const runAction = async (actionLabel: string, action: () => Promise<void>) => {
@@ -1057,36 +1041,24 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
         title={ui.logoSectionTitle}
         description={ui.logoSectionDescription}
       >
-        <input
-          ref={logoInputRef}
-          type="file"
+        <FileUploadDropzone
+          locale={locale}
+          label={ui.chooseImage}
+          helperText={ui.dragHint}
           accept="image/*"
-          className="sr-only"
-          onChange={(event) => {
-            void processLogoFile(event.target.files?.[0] ?? null);
+          acceptedDescription={ui.supportedFormats}
+          multiple={false}
+          onFilesSelected={(files) => {
+            void processLogoFile(files[0] ?? null);
+          }}
+          selectedFiles={logoFile ? [logoFile] : []}
+          onRemoveFile={() => {
+            setLogoDataUrl(null);
+            setLogoFile(null);
+            setLogoFileName(null);
+            setIsLogoViewerOpen(false);
           }}
         />
-
-        <div
-          onDragOver={handleLogoDragOver}
-          onDragLeave={handleLogoDragLeave}
-          onDrop={handleLogoDrop}
-          className={`rounded-2xl border-2 border-dashed p-4 text-center transition ${
-            isDraggingLogo
-              ? 'border-brand-400 bg-brand-50'
-              : 'border-slate-300 bg-white hover:border-slate-400'
-          }`}
-        >
-          <p className="text-sm font-medium text-slate-800">
-            {ui.dragHint}
-          </p>
-          <p className="mt-1 text-xs text-slate-600">{ui.supportedFormats}</p>
-          <div className="mt-3">
-            <Button variant="secondary" onClick={() => logoInputRef.current?.click()}>
-              {ui.chooseImage}
-            </Button>
-          </div>
-        </div>
 
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-800">
@@ -1129,6 +1101,7 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
               variant="ghost"
               onClick={() => {
                 setLogoDataUrl(null);
+                setLogoFile(null);
                 setLogoFileName(null);
                 setIsLogoViewerOpen(false);
               }}

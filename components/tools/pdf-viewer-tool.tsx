@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { type AppLocale } from '@/lib/i18n/config';
 
-type PdfViewerToolProps = {
+type PdfViewerToolProps = Readonly<{
   locale?: AppLocale;
-};
+}>;
 
 type PdfViewerUi = {
   title: string;
@@ -59,6 +60,7 @@ const uiByLocale: Record<AppLocale, PdfViewerUi> = {
 export function PdfViewerTool({ locale = 'pt-br' }: PdfViewerToolProps) {
   const ui = uiByLocale[locale];
 
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfName, setPdfName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -83,11 +85,13 @@ export function PdfViewerTool({ locale = 'pt-br' }: PdfViewerToolProps) {
 
     if (!looksLikePdf) {
       setErrorMessage(ui.invalidFile);
+      setPdfFile(null);
       setPdfName('');
       setPdfUrl(null);
       return;
     }
 
+    setPdfFile(file);
     setPdfName(file.name);
 
     setPdfUrl((previous) => {
@@ -108,6 +112,7 @@ export function PdfViewerTool({ locale = 'pt-br' }: PdfViewerToolProps) {
   };
 
   const handleClear = () => {
+    setPdfFile(null);
     setPdfName('');
     setErrorMessage('');
     setPdfUrl((previous) => {
@@ -126,15 +131,16 @@ export function PdfViewerTool({ locale = 'pt-br' }: PdfViewerToolProps) {
         <p className="mt-1 text-sm text-slate-700">{ui.intro}</p>
       </header>
 
-      <label className="space-y-2">
-        <span className="text-sm font-semibold text-slate-800">{ui.inputLabel}</span>
-        <input
-          type="file"
-          accept="application/pdf,.pdf"
-          onChange={(event) => handlePdfChange(event.target.files?.[0] ?? null)}
-          className="block w-full rounded-lg border border-slate-300 bg-white p-2 text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-800"
-        />
-      </label>
+      <FileUploadDropzone
+        locale={locale}
+        label={ui.inputLabel}
+        accept="application/pdf,.pdf"
+        acceptedDescription="PDF"
+        multiple={false}
+        onFilesSelected={(files) => handlePdfChange(files[0] ?? null)}
+        selectedFiles={pdfFile ? [pdfFile] : []}
+        onRemoveFile={handleClear}
+      />
 
       {pdfName ? (
         <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">

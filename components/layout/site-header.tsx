@@ -7,9 +7,9 @@ import { getDictionary } from '@/lib/i18n/dictionary';
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import { siteConfig } from '@/lib/site-config';
 
-type SiteHeaderProps = {
+type SiteHeaderProps = Readonly<{
   locale?: AppLocale;
-};
+}>;
 
 export function SiteHeader({ locale = 'pt-br' }: SiteHeaderProps) {
   const dictionary = getDictionary(locale);
@@ -22,7 +22,7 @@ export function SiteHeader({ locale = 'pt-br' }: SiteHeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-lg">
-      <Container className="flex h-14 items-center gap-4 md:h-16">
+      <Container className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 py-2 md:h-16 md:flex-nowrap md:gap-4 md:py-0">
         <Link
           href={localizePath(locale, '/')}
           className="flex shrink-0 items-center gap-2.5"
@@ -34,22 +34,7 @@ export function SiteHeader({ locale = 'pt-br' }: SiteHeaderProps) {
           </span>
         </Link>
 
-        <nav
-          aria-label={dictionary.header.navLabel}
-          className="ml-auto flex items-center gap-0.5"
-        >
-          {navLinks.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={localizePath(locale, href)}
-              className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="border-l border-slate-200 pl-3">
+        <div className="ml-auto border-l border-slate-200 pl-2 md:pl-3">
           <Suspense fallback={<div className="h-8 w-16 rounded-lg bg-slate-100" />}>
             <LanguageSwitcher
               currentLocale={locale}
@@ -57,6 +42,23 @@ export function SiteHeader({ locale = 'pt-br' }: SiteHeaderProps) {
             />
           </Suspense>
         </div>
+
+        <nav
+          aria-label={dictionary.header.navLabel}
+          className="order-3 -mx-1 w-full md:order-none md:mx-0 md:ml-auto md:w-auto"
+        >
+          <div className="flex items-center gap-0.5 overflow-x-auto px-1 pb-0.5 md:overflow-visible md:px-0 md:pb-0">
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={localizePath(locale, href)}
+                className="whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:px-3 sm:text-sm"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </nav>
       </Container>
     </header>
   );

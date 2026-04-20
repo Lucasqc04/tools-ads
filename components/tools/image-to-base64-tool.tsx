@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { ImageViewer } from '@/components/shared/image-viewer';
 import {
   availableBase64ImageOutputFormats,
@@ -349,20 +350,22 @@ export function ImageToBase64Tool({ locale = 'pt-br' }: ImageToBase64ToolProps) 
 
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="space-y-4">
-          <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-800">{ui.fileLabel}</span>
-            <input
-              type="file"
-              accept={fileInputAccept}
-              onChange={(event) => {
-                const file = event.target.files?.[0] ?? null;
-                setSourceFile(file);
-                setCopied(false);
-              }}
-              className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm"
-            />
-            <span className="text-xs text-slate-500">{ui.fileHint}</span>
-          </label>
+          <FileUploadDropzone
+            locale={locale}
+            label={ui.fileLabel}
+            helperText={ui.fileHint}
+            accept={fileInputAccept}
+            multiple={false}
+            onFilesSelected={(files) => {
+              setSourceFile(files[0] ?? null);
+              setCopied(false);
+            }}
+            selectedFiles={sourceFile ? [sourceFile] : []}
+            onRemoveFile={() => {
+              setSourceFile(null);
+              setCopied(false);
+            }}
+          />
 
           <label className="space-y-2">
             <span className="text-sm font-semibold text-slate-800">{ui.outputImageFormatLabel}</span>

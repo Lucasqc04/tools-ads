@@ -12,10 +12,10 @@ import {
   type AppLocale,
 } from '@/lib/i18n/config';
 
-type LanguageSwitcherProps = {
+type LanguageSwitcherProps = Readonly<{
   currentLocale: AppLocale;
   label: string;
-};
+}>;
 
 const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
 
@@ -46,7 +46,7 @@ export function LanguageSwitcher({ currentLocale, label }: LanguageSwitcherProps
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+        className="flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 sm:gap-1.5 sm:px-2.5 sm:text-sm"
         aria-expanded={open}
         aria-haspopup="true"
         aria-label={label}

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select } from '@/components/ui/select';
+import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { ImageViewer } from '@/components/shared/image-viewer';
 import { cn } from '@/lib/cn';
 import {
@@ -20,11 +21,11 @@ import {
 import { type AppLocale } from '@/lib/i18n/config';
 import type { ImageFormatId, RasterImageFormatId } from '@/types/image-conversion';
 
-type ImageConverterToolProps = {
+type ImageConverterToolProps = Readonly<{
   locale?: AppLocale;
   initialFromFormat?: ImageFormatId;
   initialToFormat?: ImageFormatId;
-};
+}>;
 
 type SingleResult = {
   blob: Blob;
@@ -465,6 +466,13 @@ export function ImageConverterTool({
   const outputFormats = useMemo(() => getOutputFormats(fromFormat), [fromFormat]);
   const showQualityControl = formatSupportsQuality(toFormat);
   const inputAccept = acceptedFileByFormat[fromFormat];
+  const acceptedFormatsDescription = useMemo(() => {
+    const extensions = fileExtensionsByFormat[fromFormat]
+      .map((extension) => `.${extension.toUpperCase()}`)
+      .join(', ');
+
+    return `${ui.formatLabels[fromFormat]} (${extensions})`;
+  }, [fromFormat, ui.formatLabels]);
   const outputIsLocallySupported =
     toFormat === 'pdf' ? true : isImageFormatAvailableForOutput(toFormat as RasterImageFormatId);
 
@@ -755,18 +763,16 @@ export function ImageConverterTool({
         </label>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-800" htmlFor="source-file">
-          {ui.sourceFile}
-        </label>
-        <input
-          id="source-file"
-          type="file"
-          accept={inputAccept}
-          onChange={(event) => handleFileChange(event.target.files?.[0] ?? null)}
-          className="block w-full rounded-lg border border-slate-300 bg-white p-2 text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-800"
-        />
-      </div>
+      <FileUploadDropzone
+        locale={locale}
+        label={ui.sourceFile}
+        accept={inputAccept}
+        acceptedDescription={acceptedFormatsDescription}
+        multiple={false}
+        onFilesSelected={(files) => handleFileChange(files[0] ?? null)}
+        selectedFiles={sourceFile ? [sourceFile] : []}
+        onRemoveFile={() => handleFileChange(null)}
+      />
 
       <div
         className={cn(

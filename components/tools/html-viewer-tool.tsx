@@ -3,14 +3,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/cn';
 import { type AppLocale } from '@/lib/i18n/config';
 
-type HtmlViewerToolProps = {
+type HtmlViewerToolProps = Readonly<{
   locale?: AppLocale;
-};
+}>;
 
 type EditorMode = 'editor' | 'files';
 
@@ -499,15 +500,14 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
     }
   };
 
-  const handleFilesUpload = async (fileList: FileList | null) => {
-    if (!fileList || !fileList.length) {
+  const handleFilesUpload = async (files: File[]) => {
+    if (!files.length) {
       return;
     }
 
     let loaded: LoadedSourceFile[] = [];
 
     try {
-      const files = Array.from(fileList);
       loaded = await Promise.all(
         files.map(async (file, index) => {
           const kind = getSourceFileKind(file.name);
@@ -618,18 +618,17 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
 
           {mode === 'files' ? (
             <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <label className="space-y-2">
-                <span className="text-sm font-semibold text-slate-800">{ui.filesLabel}</span>
-                <input
-                  type="file"
-                  multiple
-                  accept=".html,.htm,.css,.js,text/html,text/css,text/javascript,application/javascript"
-                  onChange={(event) => handleFilesUpload(event.target.files)}
-                  className="block w-full rounded-lg border border-slate-300 bg-white p-2 text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-800"
-                />
-              </label>
-
-              <p className="text-xs text-slate-600">{ui.filesHint}</p>
+              <FileUploadDropzone
+                locale={locale}
+                label={ui.filesLabel}
+                helperText={ui.filesHint}
+                accept=".html,.htm,.css,.js,text/html,text/css,text/javascript,application/javascript"
+                acceptedDescription=".HTML, .HTM, .CSS, .JS"
+                multiple
+                onFilesSelected={(files) => {
+                  void handleFilesUpload(files);
+                }}
+              />
 
               {htmlFiles.length ? (
                 <label className="space-y-2">
