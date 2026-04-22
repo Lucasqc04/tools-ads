@@ -27,6 +27,7 @@ type VideoCompressionItem = {
   metadata?: VideoMetadata;
   status: ItemStatus;
   progressPercent: number;
+  logs?: string[];
   resultFile?: File;
   resultUrl?: string;
   errorMessage?: string;
@@ -297,6 +298,7 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
           sourceUrl: URL.createObjectURL(file),
           status: 'pending',
           progressPercent: 0,
+          logs: [],
         }));
 
       return [...current, ...additions];
@@ -345,7 +347,12 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
             metadata,
           }));
         })
-        .catch(() => undefined);
+        .catch((err) => {
+          updateItem(item.id, (current) => ({
+            ...current,
+            logs: [...(current.logs ?? []), `metadata error: ${err instanceof Error ? err.message : String(err)}`].slice(-8),
+          }));
+        });
     });
   }, [items]);
 
@@ -361,10 +368,33 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
       const result = await compressVideoFile(item.file, {
         compressionLevel,
         onProgress: (event) => {
+          const raw = event as any;
+          const ratio =
+            typeof raw.progress === 'number'
+              ? raw.progress
+              : typeof raw.ratio === 'number'
+              ? raw.ratio
+              : typeof raw.percent === 'number'
+              ? raw.percent / 100
+              : 0;
+
+          const percent = Math.round(clamp(ratio * 100, 0, 100));
+
           updateItem(item.id, (current) => ({
             ...current,
-            progressPercent: Math.round(clamp(event.progress * 100, 0, 100)),
+            progressPercent: Number.isFinite(percent) ? percent : current.progressPercent,
           }));
+        },
+        onLog: (event) => {
+          const msg = (event && ((event as any).message ?? (event as any).msg)) || String(event);
+          const text = typeof msg === 'string' ? msg : JSON.stringify(msg);
+          updateItem(item.id, (current) => ({
+            ...current,
+            logs: [...(current.logs ?? []), text].slice(-12),
+          }));
+          // also emit to console for easier debugging in devtools
+          // eslint-disable-next-line no-console
+          console.debug('[video-compression][log]', text);
         },
       });
       const nextResultUrl = URL.createObjectURL(result.file);
@@ -390,6 +420,7 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
         status: 'error',
         progressPercent: 0,
         errorMessage: error instanceof Error ? error.message : ui.genericError,
+        logs: [...(current.logs ?? []), error instanceof Error ? error.message : String(error)].slice(-12),
       }));
     }
   };
@@ -585,6 +616,19 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
                         {ui.waitingCompression}
                       </p>
                     )}
+
+                    {item.logs && item.logs.length ? (
+                      <div className="mt-2 rounded-md border border-slate-100 bg-slate-50 p-2 text-xs text-slate-600">
+                        <strong className="font-semibold">Logs:</strong>
+                        <ul className="mt-1 list-inside list-disc space-y-1">
+                          {item.logs.map((l, idx) => (
+                            <li key={idx} className="break-words">
+                              {l}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </section>
                 </div>
 

@@ -223,7 +223,16 @@ export const compressVideoFile = async (
   estimatedSize: number;
   profile: VideoCompressionProfile;
 }> => {
-  const ffmpeg = await ensureFfmpeg();
+  options.onLog?.({ message: `Inicializando compressão para ${file.name}...` } as any);
+
+  let ffmpeg: FFmpeg;
+  try {
+    ffmpeg = await ensureFfmpeg();
+    options.onLog?.({ message: 'FFmpeg carregado com sucesso.' } as any);
+  } catch (err) {
+    options.onLog?.({ message: `Falha ao carregar FFmpeg: ${err instanceof Error ? err.message : String(err)}` } as any);
+    throw err;
+  }
   const metadata = await readVideoMetadata(file);
   const profile = getCompressionProfile(options.compressionLevel);
   const estimatedSize = estimateCompressedVideoSize(
@@ -261,7 +270,9 @@ export const compressVideoFile = async (
   ffmpeg.on('progress', progressHandler);
 
   try {
+    options.onLog?.({ message: `Escrevendo arquivo de entrada (${inputName})...` } as any);
     await ffmpeg.writeFile(inputName, await fetchFile(file));
+    options.onLog?.({ message: 'Arquivo de entrada escrito no FS.' } as any);
 
     const attempts: CompressionAttempt[] = [
       {
@@ -331,12 +342,17 @@ export const compressVideoFile = async (
     const attemptFailures: string[] = [];
     let successfulOutputName: string | null = null;
 
+    options.onLog?.({ message: `Iniciando tentativas de compressão (${attempts.length} estratégias).` } as any);
+
     for (const attempt of attempts) {
       const attemptOutputName = `${getUniqueToken()}-output.mp4`;
       outputNames.push(attemptOutputName);
 
       try {
+        options.onLog?.({ message: `Tentativa: ${attempt.label} — executando ffmpeg...` } as any);
         const exitCode = await ffmpeg.exec(attempt.buildArgs(attemptOutputName));
+        options.onLog?.({ message: `Tentativa ${attempt.label} terminou com codigo ${exitCode}.` } as any);
+
         if (exitCode === 0) {
           successfulOutputName = attemptOutputName;
           break;
@@ -345,6 +361,7 @@ export const compressVideoFile = async (
         attemptFailures.push(`${attempt.label} (codigo ${exitCode})`);
       } catch (error) {
         const reason = error instanceof Error ? error.message : 'erro inesperado';
+        options.onLog?.({ message: `Tentativa ${attempt.label} falhou: ${reason}` } as any);
         attemptFailures.push(`${attempt.label} (${reason})`);
       }
     }
@@ -377,6 +394,7 @@ export const compressVideoFile = async (
     ffmpeg.off('log', logHandler);
     ffmpeg.off('progress', progressHandler);
 
+    options.onLog?.({ message: 'Limpando arquivos temporarios do FFmpeg.' } as any);
     await ffmpeg.deleteFile(inputName).catch(() => undefined);
     await Promise.all(outputNames.map((outputName) => ffmpeg.deleteFile(outputName).catch(() => undefined)));
   }
