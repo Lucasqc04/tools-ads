@@ -28,7 +28,8 @@ type ToolId =
   | 'base64-image-viewer'
   | 'image-to-base64'
   | 'image-converter'
-  | 'qr-code-generator';
+  | 'qr-code-generator'
+  | 'invisible-character';
 
 const enTranslations: Record<ToolId, ToolTranslation> = {
   'crypto-unit-converter': {
@@ -539,6 +540,78 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Is my content sent to a server?',
         answer:
           'No. Processing is local in your browser and entered content is not transmitted to a backend by default.',
+      },
+    ],
+  },
+  'invisible-character': {
+    name: 'Invisible Character for Games',
+    shortDescription:
+      'Copy and generate invisible characters for games and social networks with 2, 3, and 4-character options plus Unicode detection.',
+    primaryKeyword: 'invisible character free fire',
+    secondaryKeywords: [
+      'free fire invisible name',
+      'invisible name cod mobile',
+      'invisible text discord',
+      'blank character copy paste',
+      'invisible username generator',
+      'invisible character for games',
+    ],
+    searchIntent:
+      'Players and social users who want to copy and test hidden Unicode patterns for display names and nicknames.',
+    seoTitle: 'Invisible Character for Free Fire, COD, and Discord | Copy and Paste',
+    seoDescription:
+      'Copy invisible characters and generate 2-4 character invisible names for Free Fire, COD Mobile, Discord, and more platforms.',
+    h1: 'Invisible Character for Games (Free Fire, COD, Discord, and more)',
+    intro:
+      'Generate and copy invisible names with multiple Unicode patterns, platform-focused recommendations, and hidden character detection.',
+    contentBlocks: [
+      {
+        title: 'How this invisible character tool improves success rate',
+        paragraphs: [
+          'Instead of giving only one blank character, this tool offers multiple patterns and platform-focused testing flows. This helps when one validator blocks single characters but accepts short combinations.',
+          'You can quickly try 2, 3, and 4-character outputs to match nickname length rules in games and social apps.',
+        ],
+      },
+      {
+        title: 'Built for gaming and social profile workflows',
+        paragraphs: [
+          'The page covers Free Fire, COD Mobile, Discord, and many other platforms with different validation behavior.',
+          'Each dedicated platform page includes keyword-focused content, recommended starting pattern, and compatibility guidance.',
+        ],
+        list: [
+          'Copy a single invisible character for quick tests.',
+          'Generate invisible names with 2, 3, or 4 characters.',
+          'Switch to alternate Unicode combinations when blocked.',
+          'Use the detector to inspect hidden characters in pasted text.',
+        ],
+      },
+      {
+        title: 'Privacy and practical limitations',
+        paragraphs: [
+          'Generation and detection run locally in your browser by default, without mandatory backend upload.',
+          'No pattern guarantees 100% approval because platforms can change validation rules at any time.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Does invisible nickname always work?',
+        answer:
+          'Not always. It depends on each platform current validator. That is why testing multiple combinations is essential.',
+      },
+      {
+        question: 'Can I generate 2, 3, and 4-character invisible names?',
+        answer:
+          'Yes. The tool includes dedicated actions to generate short invisible variants quickly.',
+      },
+      {
+        question: 'Is this tool free?',
+        answer: 'Yes. You can copy and generate invisible text for free, with no mandatory sign-up.',
+      },
+      {
+        question: 'Are my inputs sent to a server?',
+        answer:
+          'No by default. Character generation and detection are processed locally in your browser.',
       },
     ],
   },
@@ -1374,6 +1447,79 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿El contenido se envía a servidor?',
         answer:
           'No. El procesamiento es local en el navegador y el contenido no se transmite a backend por defecto.',
+      },
+    ],
+  },
+  'invisible-character': {
+    name: 'Caracter Invisible para Juegos',
+    shortDescription:
+      'Copia y genera caracteres invisibles para juegos y redes sociales con opciones de 2, 3 y 4 caracteres y detector Unicode.',
+    primaryKeyword: 'caracter invisible free fire',
+    secondaryKeywords: [
+      'nombre invisible free fire',
+      'nombre invisible cod mobile',
+      'texto invisible discord',
+      'letra invisible copiar',
+      'caracter invisible para juegos',
+      'invisible username generator',
+    ],
+    searchIntent:
+      'Jugadores y usuarios de redes sociales que buscan patrones Unicode invisibles para nombre visible o nickname.',
+    seoTitle: 'Caracter Invisible para Free Fire, COD y Discord | Copiar y Pegar',
+    seoDescription:
+      'Copia caracter invisible y genera nombres invisibles de 2 a 4 caracteres para Free Fire, COD Mobile, Discord y otras plataformas.',
+    h1: 'Caracter Invisible para Juegos (Free Fire, COD, Discord y mas)',
+    intro:
+      'Genera y copia nombres invisibles con multiples patrones Unicode, recomendaciones por plataforma y detector de caracteres ocultos.',
+    contentBlocks: [
+      {
+        title: 'Por que esta herramienta funciona mejor que listas simples',
+        paragraphs: [
+          'En lugar de un solo caracter vacio, aqui tienes varios patrones y acciones de prueba por plataforma. Esto mejora el resultado cuando el validador bloquea caracteres individuales.',
+          'Puedes probar rapido variantes de 2, 3 y 4 caracteres para adaptarte a reglas de longitud minima.',
+        ],
+      },
+      {
+        title: 'Flujo pensado para juegos y redes sociales',
+        paragraphs: [
+          'La herramienta cubre Free Fire, COD Mobile, Discord y decenas de plataformas con comportamientos de validacion diferentes.',
+          'Cada pagina dedicada incluye contenido SEO especifico, recomendacion inicial y nota de compatibilidad.',
+        ],
+        list: [
+          'Copiar un caracter invisible unico.',
+          'Generar nombre invisible con 2, 3 o 4 caracteres.',
+          'Cambiar combinacion Unicode cuando falle.',
+          'Usar detector para auditar texto pegado.',
+        ],
+      },
+      {
+        title: 'Privacidad y limites reales',
+        paragraphs: [
+          'La generacion y deteccion se ejecutan localmente en el navegador por defecto, sin envio obligatorio al servidor.',
+          'Ningun patron garantiza 100% de aprobacion, porque los filtros pueden cambiar con actualizaciones.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿El nombre invisible siempre funciona?',
+        answer:
+          'No siempre. Depende del validador actual de cada plataforma. Por eso conviene probar varias combinaciones.',
+      },
+      {
+        question: '¿Puedo generar nombres invisibles con 2, 3 y 4 caracteres?',
+        answer:
+          'Si. La herramienta trae botones directos para generar variantes cortas en un clic.',
+      },
+      {
+        question: '¿La herramienta es gratis?',
+        answer:
+          'Si. Puedes copiar y generar texto invisible gratis y sin registro obligatorio.',
+      },
+      {
+        question: '¿Los datos se envian al servidor?',
+        answer:
+          'No por defecto. La deteccion y generacion ocurren localmente en tu navegador.',
       },
     ],
   },

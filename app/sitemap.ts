@@ -7,6 +7,10 @@ import {
   getImageConversionPathByLocale,
   imageConversionPages,
 } from '@/data/image-conversion-pages';
+import {
+  getInvisiblePlatformPathByLocale,
+  invisiblePlatformPages,
+} from '@/data/invisible-platform-pages';
 import { toolsRegistry } from '@/data/tools-registry';
 import {
   defaultLocale,
@@ -132,10 +136,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
   });
 
+  const invisiblePlatformRoutes: MetadataRoute.Sitemap = invisiblePlatformPages.flatMap(
+    (page) => {
+      const pathMap: Record<AppLocale, string> = {
+        'pt-br': getInvisiblePlatformPathByLocale(page, 'pt-br'),
+        en: getInvisiblePlatformPathByLocale(page, 'en'),
+        es: getInvisiblePlatformPathByLocale(page, 'es'),
+      };
+
+      return locales.map((locale) => ({
+        url: makeAbsoluteUrl(pathMap[locale]),
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.72,
+        alternates: buildAlternates(pathMap),
+      }));
+    },
+  );
+
   return dedupeByUrl([
     ...staticRoutes,
     ...toolRoutes,
     ...conversionRoutes,
     ...imageConversionRoutes,
+    ...invisiblePlatformRoutes,
   ]);
 }

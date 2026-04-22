@@ -34,6 +34,11 @@ import {
   imageConverterIntro,
 } from '@/data/content/image-converter';
 import {
+  invisibleCharacterContentBlocks,
+  invisibleCharacterFaq,
+  invisibleCharacterIntro,
+} from '@/data/content/invisible-character';
+import {
   jsonFormatterContentBlocks,
   jsonFormatterFaq,
   jsonFormatterIntro,
@@ -359,6 +364,40 @@ export const toolsRegistry: ToolDefinition[] = [
     contentBlocks: qrCodeGeneratorContentBlocks,
     relatedToolIds: ['image-converter', 'pdf-viewer', 'json-formatter'],
   },
+  {
+    id: 'invisible-character',
+    slug: 'invisible-character',
+    name: 'Caractere Invisivel para Jogos',
+    shortDescription:
+      'Copie e gere caractere invisivel para jogos e redes sociais, com variacoes 2, 3 e 4 chars, detector Unicode e paginas por plataforma.',
+    category: 'utility',
+    primaryKeyword: 'caractere invisivel free fire',
+    secondaryKeywords: [
+      'espaco invisivel free fire',
+      'nick invisivel free fire',
+      'nome invisivel cod mobile',
+      'nick invisivel discord',
+      'letra invisivel copiar',
+      'caractere invisivel para jogos',
+      'invisible character free fire',
+      'invisible name cod mobile',
+      'invisible text discord',
+      'blank character copy paste',
+      'invisible username generator',
+    ],
+    searchIntent:
+      'Usuarios que querem copiar ou gerar nome invisivel para jogos e redes sociais com mais chance de passar em validacoes de nickname.',
+    seoTitle:
+      'Caractere Invisivel para Free Fire, COD e Discord | Copiar e Colar',
+    seoDescription:
+      'Copie caractere invisivel e gere nome invisivel para Free Fire, COD Mobile, Discord e outras plataformas. Teste combinacoes 2, 3 e 4 caracteres.',
+    h1: 'Caractere Invisivel para Jogos (Free Fire, COD, Discord e mais)',
+    intro: invisibleCharacterIntro,
+    canonicalPath: '/tools/invisible-character',
+    faq: invisibleCharacterFaq,
+    contentBlocks: invisibleCharacterContentBlocks,
+    relatedToolIds: ['qr-code-generator', 'password-generator', 'json-formatter'],
+  },
 ];
 
 export const getToolBySlug = (slug: string): ToolDefinition | undefined =>
@@ -389,7 +428,8 @@ type LocalizableToolId =
   | 'base64-image-viewer'
   | 'image-to-base64'
   | 'image-converter'
-  | 'qr-code-generator';
+  | 'qr-code-generator'
+  | 'invisible-character';
 
 const localizableToolIds = new Set<LocalizableToolId>([
   'crypto-unit-converter',
@@ -402,6 +442,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'image-to-base64',
   'image-converter',
   'qr-code-generator',
+  'invisible-character',
 ]);
 
 const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>
