@@ -28,6 +28,8 @@ type ToolId =
   | 'base64-image-viewer'
   | 'image-to-base64'
   | 'image-converter'
+  | 'image-compression'
+  | 'video-compression'
   | 'qr-code-generator'
   | 'invisible-character';
 
@@ -932,6 +934,170 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Does it work on mobile devices?',
         answer:
           'Yes. The interface is responsive and supports upload, preview, and copy on mobile.',
+      },
+    ],
+  },
+  'image-compression': {
+    name: 'Batch Image Compressor',
+    shortDescription:
+      'Compress multiple images online with adjustable compression level, estimated output size, and preview before download.',
+    primaryKeyword: 'compress image online free',
+    secondaryKeywords: [
+      'image compressor online',
+      'reduce image size',
+      'photo compressor online',
+      'batch image compression',
+      'jpeg compressor',
+      'webp compressor',
+      'shrink image file',
+      'image size reducer',
+      'image optimizer for website',
+      'image compressor no sign up',
+    ],
+    searchIntent:
+      'Users who need to reduce image size quickly with compression control and before/after preview.',
+    seoTitle: 'Free Online Image Compressor in Batch | Reduce Image Size',
+    seoDescription:
+      'Compress many images at once with adjustable compression level, output-size estimate, preview before download, and local browser processing.',
+    h1: 'Free Batch Image Compressor with Size Estimate and Preview',
+    intro:
+      'Upload multiple images, choose compression intensity, preview results, and download compressed files in batch.',
+    contentBlocks: [
+      {
+        title: 'How batch image compression works',
+        paragraphs: [
+          'This tool lets you upload multiple images at once, define the compression level, and process all files locally in your browser.',
+          'Before compression, each file shows an estimated output size so you can choose a lighter or stronger setting with fewer retries.',
+        ],
+      },
+      {
+        title: 'Control output size and quality in one workflow',
+        paragraphs: [
+          'You can keep the original format or convert to JPEG/WEBP for better size reduction, depending on your publishing needs.',
+          'Each file displays original and compressed preview, final size, and reduction percentage to speed up approval before download.',
+        ],
+        list: [
+          'Light compression for better visual fidelity.',
+          'Medium compression for size and quality balance.',
+          'Strong compression for smaller uploads.',
+          'Batch processing for many images in one run.',
+        ],
+      },
+      {
+        title: 'Privacy and practical limits',
+        paragraphs: [
+          'Image processing runs locally by default, without automatic upload to a server.',
+          'Very large images can take longer depending on available memory and CPU, especially on mobile devices.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I compress several images at once?',
+        answer:
+          'Yes. Multi-file upload is supported and each file keeps an individual status in the batch.',
+      },
+      {
+        question: 'Can I choose how strong compression should be?',
+        answer:
+          'Yes. Use the compression slider to set lighter or more aggressive reduction.',
+      },
+      {
+        question: 'Is output-size estimate exact?',
+        answer:
+          'It is an estimate based on selected settings. Actual size can vary by image content, dimensions, and format.',
+      },
+      {
+        question: 'Are images uploaded to a server?',
+        answer:
+          'No by default. Compression runs locally in your browser.',
+      },
+      {
+        question: 'Does this work on mobile?',
+        answer:
+          'Yes. The layout is responsive and works on mobile screens as well.',
+      },
+    ],
+  },
+  'video-compression': {
+    name: 'Video Compressor with FFmpeg WASM',
+    shortDescription:
+      'Compress multiple videos online with adjustable compression level, estimated output size, and before/after preview.',
+    primaryKeyword: 'compress video online free',
+    secondaryKeywords: [
+      'video compressor online',
+      'reduce video size',
+      'compress mp4 online',
+      'batch video compression',
+      'video size reducer',
+      'shrink video file',
+      'ffmpeg wasm video compressor',
+      'optimize video for upload',
+      'compress video no sign up',
+      'compress video without login',
+    ],
+    searchIntent:
+      'Users who need to reduce video size with control over compression level and preview before downloading.',
+    seoTitle: 'Free Online Video Compressor with FFmpeg WASM | Reduce Video Size',
+    seoDescription:
+      'Compress videos in batch online using FFmpeg WASM, with adjustable level, size estimate, before/after preview, and local browser processing.',
+    h1: 'Free Video Compressor with FFmpeg WASM, Size Estimate, and Preview',
+    intro:
+      'Upload multiple videos, tune compression intensity, preview results, and download smaller MP4 files.',
+    contentBlocks: [
+      {
+        title: 'In-browser video compression with FFmpeg WASM',
+        paragraphs: [
+          'This tool uses FFmpeg WASM to compress videos directly in the browser, with no desktop installation required.',
+          'You can process multiple files in one queue and keep track of progress file by file.',
+        ],
+      },
+      {
+        title: 'Compression control with expected final size',
+        paragraphs: [
+          'The compression slider lets you choose lighter or stronger reduction depending on your quality target.',
+          'Before processing, the tool shows an estimated output size based on duration and target profile to help you decide quickly.',
+        ],
+        list: [
+          'Lower compression for better quality retention.',
+          'Medium compression for day-to-day uploads.',
+          'Higher compression for stricter file-size limits.',
+          'Batch queue for handling several videos at once.',
+        ],
+      },
+      {
+        title: 'Privacy and performance notes',
+        paragraphs: [
+          'Videos are processed locally in the browser by default, without automatic upload to a backend service.',
+          'Large high-resolution videos demand more RAM and CPU, so conversion time depends on your device performance.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I compress multiple videos in one go?',
+        answer:
+          'Yes. Batch upload is supported and each video is processed with an individual status.',
+      },
+      {
+        question: 'Can I control compression strength?',
+        answer:
+          'Yes. The compression level slider lets you choose the reduction intensity.',
+      },
+      {
+        question: 'Is the final-size estimate exact?',
+        answer:
+          'It is an estimate based on duration and compression profile. Actual output can vary by codec and scene complexity.',
+      },
+      {
+        question: 'Are videos uploaded to a server?',
+        answer:
+          'No by default. Processing happens locally in your browser.',
+      },
+      {
+        question: 'Does it work on mobile devices?',
+        answer:
+          'Yes, but large files may take longer on lower-power devices.',
       },
     ],
   },
@@ -1840,6 +2006,170 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿Funciona en celular?',
         answer:
           'Si. La interfaz responsive permite subir imagen, ver preview y copiar Base64 en mobile.',
+      },
+    ],
+  },
+  'image-compression': {
+    name: 'Compresor de Imagen por Lote',
+    shortDescription:
+      'Comprime varias imagenes online con nivel ajustable, estimacion de tamano final y preview antes de descargar.',
+    primaryKeyword: 'comprimir imagen online gratis',
+    secondaryKeywords: [
+      'compresor de imagen online',
+      'reducir tamano de imagen',
+      'comprimir foto online',
+      'compresion de imagen por lote',
+      'compresor jpeg',
+      'compresor webp',
+      'bajar peso de imagen',
+      'optimizador de imagen web',
+      'compresor de imagen sin registro',
+      'compresor de imagen sin login',
+    ],
+    searchIntent:
+      'Usuarios que necesitan reducir tamano de imagen rapido con control de compresion y comparacion visual.',
+    seoTitle: 'Compresor de Imagen Online Gratis por Lote | Reducir Tamano',
+    seoDescription:
+      'Comprime muchas imagenes a la vez con nivel ajustable, estimacion de tamano final, preview antes/despues y descarga rapida en el navegador.',
+    h1: 'Compresor de Imagen por Lote Gratis con Estimacion y Vista Previa',
+    intro:
+      'Sube varias imagenes, ajusta el nivel de compresion, compara resultados y descarga archivos mas livianos.',
+    contentBlocks: [
+      {
+        title: 'Como funciona la compresion de imagen por lote',
+        paragraphs: [
+          'La herramienta permite cargar varias imagenes en una sola tanda y aplicar compresion local directamente en el navegador.',
+          'Antes de procesar, cada archivo muestra una estimacion de tamano final para ayudarte a elegir el nivel ideal.',
+        ],
+      },
+      {
+        title: 'Control de calidad y peso en un solo flujo',
+        paragraphs: [
+          'Puedes mantener formato original o convertir a JPEG/WEBP para mejorar reduccion segun tu caso de uso.',
+          'Cada item incluye preview original y comprimido, tamano final y porcentaje de reduccion para validar antes de descargar.',
+        ],
+        list: [
+          'Compresion ligera para conservar calidad.',
+          'Compresion media para equilibrio general.',
+          'Compresion alta para bajar mas peso.',
+          'Proceso por lote para muchos archivos en una sola corrida.',
+        ],
+      },
+      {
+        title: 'Privacidad y limites practicos',
+        paragraphs: [
+          'El procesamiento ocurre localmente por defecto, sin subida automatica a servidor.',
+          'Imagenes muy grandes pueden tardar mas segun CPU y memoria del dispositivo.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Puedo comprimir varias imagenes a la vez?',
+        answer:
+          'Si. La herramienta soporta carga multiple y estado individual por archivo.',
+      },
+      {
+        question: '¿Puedo elegir cuanto comprimir?',
+        answer:
+          'Si. El slider permite definir compresion mas leve o mas agresiva.',
+      },
+      {
+        question: '¿La estimacion de tamano final es exacta?',
+        answer:
+          'Es una estimacion tecnica. El resultado real puede variar por contenido, resolucion y formato.',
+      },
+      {
+        question: '¿Las imagenes se envian al servidor?',
+        answer:
+          'No por defecto. La compresion se ejecuta localmente en tu navegador.',
+      },
+      {
+        question: '¿Funciona en movil?',
+        answer:
+          'Si. El layout es responsive y se adapta a pantallas pequenas.',
+      },
+    ],
+  },
+  'video-compression': {
+    name: 'Compresor de Video con FFmpeg WASM',
+    shortDescription:
+      'Comprime videos online por lote con nivel ajustable, estimacion de tamano final y preview antes de descargar.',
+    primaryKeyword: 'comprimir video online gratis',
+    secondaryKeywords: [
+      'compresor de video online',
+      'reducir tamano de video',
+      'comprimir mp4 online',
+      'compresion de video por lote',
+      'reducir mb de video',
+      'ffmpeg wasm video',
+      'optimizador de video para subir',
+      'compresor de video sin registro',
+      'compresor de video sin login',
+      'bajar peso de video',
+    ],
+    searchIntent:
+      'Usuarios que buscan reducir tamano de video con control de compresion y preview antes de descargar.',
+    seoTitle: 'Compresor de Video Online Gratis con FFmpeg WASM | Reducir Tamano',
+    seoDescription:
+      'Comprime videos por lote en el navegador con FFmpeg WASM, nivel ajustable, estimacion de tamano final y comparacion antes/despues.',
+    h1: 'Compresor de Video Gratis con FFmpeg WASM, Estimacion y Vista Previa',
+    intro:
+      'Carga varios videos, ajusta intensidad de compresion, revisa resultado y descarga archivos mas livianos.',
+    contentBlocks: [
+      {
+        title: 'Compresion de video en navegador',
+        paragraphs: [
+          'La herramienta usa FFmpeg WASM para reducir tamano de videos sin instalar software de escritorio.',
+          'Permite trabajar por lote y acompanar el progreso de cada archivo durante el proceso.',
+        ],
+      },
+      {
+        title: 'Nivel de compresion con expectativa de tamano',
+        paragraphs: [
+          'Con el slider puedes elegir entre compresion suave, media o fuerte segun calidad deseada.',
+          'Antes de ejecutar, se muestra una estimacion de tamano final basada en duracion y perfil seleccionado.',
+        ],
+        list: [
+          'Compresion baja para mantener mas calidad.',
+          'Compresion media para subidas diarias.',
+          'Compresion alta para limites estrictos de peso.',
+          'Flujo en lote para varios videos.',
+        ],
+      },
+      {
+        title: 'Privacidad y rendimiento',
+        paragraphs: [
+          'El procesamiento se hace localmente por defecto, sin subida automatica a backend.',
+          'Videos largos y en alta resolucion pueden requerir mas RAM y CPU, por lo que el tiempo depende del dispositivo.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Puedo comprimir varios videos a la vez?',
+        answer:
+          'Si. Se admite carga multiple y cada video conserva estado individual.',
+      },
+      {
+        question: '¿Puedo controlar la intensidad de compresion?',
+        answer:
+          'Si. El slider de nivel define cuanto se reduce el archivo.',
+      },
+      {
+        question: '¿La estimacion de tamano final es exacta?',
+        answer:
+          'Es una proyeccion tecnica. El peso real puede variar segun codec y complejidad de escenas.',
+      },
+      {
+        question: '¿Los videos se envian al servidor?',
+        answer:
+          'No por defecto. La compresion ocurre localmente en tu navegador.',
+      },
+      {
+        question: '¿Funciona en celular?',
+        answer:
+          'Si, pero archivos grandes pueden tardar mas en dispositivos con menor potencia.',
       },
     ],
   },

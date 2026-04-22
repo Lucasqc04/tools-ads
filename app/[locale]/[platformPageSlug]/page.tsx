@@ -9,6 +9,7 @@ import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converte
 import { HtmlViewerTool } from '@/components/tools/html-viewer-tool';
 import { ImageConversionLinks } from '@/components/tools/image-conversion-links';
 import { ImageConverterTool } from '@/components/tools/image-converter-tool';
+import { ImageCompressionTool } from '@/components/tools/image-compression-tool';
 import { ImageToBase64Tool } from '@/components/tools/image-to-base64-tool';
 import { InvisibleCharacterTool } from '@/components/tools/invisible-character-tool';
 import { InvisiblePlatformLinks } from '@/components/tools/invisible-platform-links';
@@ -18,6 +19,7 @@ import { PdfViewerTool } from '@/components/tools/pdf-viewer-tool';
 import { QrCodeGeneratorTool } from '@/components/tools/qr-code-generator';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
+import { VideoCompressionTool } from '@/components/tools/video-compression-tool';
 import {
   getFeaturedCryptoConversionPages,
   getLocalizedCryptoConversionContent,
@@ -163,6 +165,8 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'base64-image-viewer': 'DeveloperApplication',
   'image-to-base64': 'DeveloperApplication',
   'image-converter': 'UtilitiesApplication',
+  'image-compression': 'UtilitiesApplication',
+  'video-compression': 'UtilitiesApplication',
   'qr-code-generator': 'UtilitiesApplication',
   'invisible-character': 'UtilitiesApplication',
 };
@@ -562,6 +566,10 @@ export default async function LandingPage({ params }: LandingPageProps) {
         links={imageLinks}
       />
     );
+  } else if (aliasPage.toolSlug === 'image-compression') {
+    toolUi = <ImageCompressionTool locale={locale} />;
+  } else if (aliasPage.toolSlug === 'video-compression') {
+    toolUi = <VideoCompressionTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'qr-code-generator') {
     toolUi = <QrCodeGeneratorTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'invisible-character') {

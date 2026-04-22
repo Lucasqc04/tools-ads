@@ -34,10 +34,20 @@ import {
   imageConverterIntro,
 } from '@/data/content/image-converter';
 import {
+  imageCompressionContentBlocks,
+  imageCompressionFaq,
+  imageCompressionIntro,
+} from '@/data/content/image-compression';
+import {
   invisibleCharacterContentBlocks,
   invisibleCharacterFaq,
   invisibleCharacterIntro,
 } from '@/data/content/invisible-character';
+import {
+  videoCompressionContentBlocks,
+  videoCompressionFaq,
+  videoCompressionIntro,
+} from '@/data/content/video-compression';
 import {
   jsonFormatterContentBlocks,
   jsonFormatterFaq,
@@ -334,6 +344,72 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['pdf-viewer', 'html-viewer', 'qr-code-generator'],
   },
   {
+    id: 'image-compression',
+    slug: 'image-compression',
+    name: 'Compressor de Imagem em Lote',
+    shortDescription:
+      'Comprima varias imagens online, ajuste nivel de compressao, veja estimativa de tamanho e preview antes de baixar.',
+    category: 'documents',
+    primaryKeyword: 'comprimir imagem online gratis',
+    secondaryKeywords: [
+      'compressor de imagem online',
+      'reduzir tamanho de imagem',
+      'comprimir foto sem perder muita qualidade',
+      'compressao de imagem em lote',
+      'jpeg compressor online',
+      'webp compressor online',
+      'reduzir kb da imagem',
+      'otimizar imagem para site',
+      'compressor de imagem sem cadastro',
+      'compressor de imagem sem login',
+    ],
+    searchIntent:
+      'Usuarios que precisam reduzir tamanho de imagem rapido, com controle de compressao e preview antes do download.',
+    seoTitle:
+      'Compressor de Imagem Online Gratis em Lote | Reduzir Tamanho com Preview',
+    seoDescription:
+      'Comprima varias imagens de uma vez com controle de nivel, estimativa de tamanho final, preview antes/depois e download rapido. Gratis, sem cadastro e sem login.',
+    h1: 'Compressor de Imagem em Lote Gratis com Preview e Controle de Compressao',
+    intro: imageCompressionIntro,
+    canonicalPath: '/tools/image-compression',
+    faq: imageCompressionFaq,
+    contentBlocks: imageCompressionContentBlocks,
+    relatedToolIds: ['image-converter', 'image-to-base64', 'video-compression'],
+  },
+  {
+    id: 'video-compression',
+    slug: 'video-compression',
+    name: 'Compressor de Video com FFmpeg WASM',
+    shortDescription:
+      'Comprima videos online em lote com FFmpeg WASM, ajuste nivel, veja estimativa de tamanho e preview antes de baixar.',
+    category: 'documents',
+    primaryKeyword: 'comprimir video online gratis',
+    secondaryKeywords: [
+      'compressor de video online',
+      'reduzir tamanho de video',
+      'comprimir mp4 online',
+      'reduzir mb de video',
+      'compressao de video em lote',
+      'ffmpeg wasm online',
+      'otimizar video para upload',
+      'comprimir video sem cadastro',
+      'comprimir video sem login',
+      'diminuir tamanho do video para whatsapp',
+    ],
+    searchIntent:
+      'Usuarios que querem reduzir tamanho de video com controle de compressao, mantendo preview antes do download.',
+    seoTitle:
+      'Compressor de Video Online Gratis com FFmpeg WASM | Reduzir Tamanho',
+    seoDescription:
+      'Comprima varios videos online com FFmpeg WASM, controle de nivel, estimativa de tamanho final, preview antes/depois e download local. Gratis, sem cadastro e sem login.',
+    h1: 'Compressor de Video Online Gratis com FFmpeg WASM e Preview Antes do Download',
+    intro: videoCompressionIntro,
+    canonicalPath: '/tools/video-compression',
+    faq: videoCompressionFaq,
+    contentBlocks: videoCompressionContentBlocks,
+    relatedToolIds: ['image-compression', 'image-converter', 'pdf-viewer'],
+  },
+  {
     id: 'qr-code-generator',
     slug: 'qr-code-generator',
     name: 'Gerador de QR Code com Logo',
@@ -428,6 +504,8 @@ type LocalizableToolId =
   | 'base64-image-viewer'
   | 'image-to-base64'
   | 'image-converter'
+  | 'image-compression'
+  | 'video-compression'
   | 'qr-code-generator'
   | 'invisible-character';
 
@@ -441,6 +519,8 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'base64-image-viewer',
   'image-to-base64',
   'image-converter',
+  'image-compression',
+  'video-compression',
   'qr-code-generator',
   'invisible-character',
 ]);
