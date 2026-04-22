@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { buildLocalePathMap, localizePath } from '@/lib/i18n/config';
@@ -55,6 +56,10 @@ export default async function ContactPage({ params }: ContactPageProps) {
         <p>
           <Link href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</Link>
         </p>
+
+        <div className="flex justify-center py-2">
+          <MediumRectangleAd />
+        </div>
 
         <h2 className="text-2xl font-bold tracking-tight text-slate-900">
           {dictionary.contact.responseTimeTitle}

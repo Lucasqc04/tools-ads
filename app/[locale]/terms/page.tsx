@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { buildLocalePathMap, localizePath } from '@/lib/i18n/config';
@@ -44,6 +45,10 @@ export default async function TermsPage({ params }: TermsPageProps) {
           {dictionary.terms.h1}
         </h1>
         <p>{dictionary.terms.intro}</p>
+
+        <div className="flex justify-center py-2">
+          <MediumRectangleAd />
+        </div>
 
         {dictionary.terms.sections.map((section) => (
           <section key={section.title} className="space-y-2">

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { buildLocalePathMap, localizePath } from '@/lib/i18n/config';
@@ -46,6 +47,10 @@ export default async function PrivacyPolicyPage({ params }: PrivacyPolicyPagePro
           {dictionary.privacy.h1}
         </h1>
         <p>{dictionary.privacy.intro}</p>
+
+        <div className="flex justify-center py-2">
+          <MediumRectangleAd />
+        </div>
 
         {dictionary.privacy.sections.map((section) => (
           <section key={section.title} className="space-y-2">

@@ -1,8 +1,5 @@
 import type { ReactNode } from 'react';
-import { AdSlotFooter } from '@/components/ads/ad-slot-footer';
-import { AdSlotInContent } from '@/components/ads/ad-slot-in-content';
-import { AdSlotSidebar } from '@/components/ads/ad-slot-sidebar';
-import { AdSlotTop } from '@/components/ads/ad-slot-top';
+import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ContentBlocks } from '@/components/shared/content-blocks';
@@ -45,11 +42,7 @@ export function ToolPageShell({
         <p className="text-base leading-7 text-slate-700 md:text-lg">{tool.intro}</p>
       </header>
 
-      <div className="mt-6">
-        <AdSlotTop />
-      </div>
-
-      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+      <div className="mt-8">
         <main className="space-y-8">
           <section aria-labelledby="tool-interface-title" className="space-y-3">
             <h2 id="tool-interface-title" className="text-2xl font-bold tracking-tight text-slate-900">
@@ -60,7 +53,9 @@ export function ToolPageShell({
 
           {afterToolSection ? afterToolSection : null}
 
-          <AdSlotInContent />
+          <div className="flex justify-center">
+            <MediumRectangleAd />
+          </div>
 
           <ContentBlocks
             blocks={tool.contentBlocks}
@@ -75,14 +70,9 @@ export function ToolPageShell({
             title={dictionary.toolShell.trustTitle}
             text={dictionary.toolShell.trustText}
           />
-
-          <AdSlotFooter />
         </main>
-
-        <aside className="hidden lg:block" aria-label="Área de anúncio lateral">
-          <AdSlotSidebar />
-        </aside>
       </div>
+
     </Container>
   );
 }

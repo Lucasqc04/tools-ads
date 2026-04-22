@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { AdSlotTop } from '@/components/ads/ad-slot-top';
+import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { ToolCard } from '@/components/tools/tool-card';
 import { getLocalizedToolsRegistry } from '@/data/tools-registry';
@@ -47,10 +47,6 @@ export default async function HomePage({ params }: HomePageProps) {
         <p className="text-lg leading-8 text-slate-700">{dictionary.home.intro}</p>
       </section>
 
-      <div className="mt-6">
-        <AdSlotTop />
-      </div>
-
       <section className="mt-10" aria-labelledby="featured-tools-title">
         <div className="mb-5 flex items-end justify-between gap-3">
           <h2
@@ -70,6 +66,10 @@ export default async function HomePage({ params }: HomePageProps) {
           ))}
         </div>
       </section>
+
+      <div className="mt-10 flex justify-center">
+        <MediumRectangleAd />
+      </div>
 
       <section className="prose-lite mt-12 max-w-reading space-y-4">
         <h2 className="text-2xl font-bold tracking-tight text-slate-900">
