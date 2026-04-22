@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-tool';
+import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
 import { CpfGeneratorTool } from '@/components/tools/cpf-generator-tool';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
@@ -157,6 +158,7 @@ const invisibleSectionByLocale: Record<AppLocale, { title: string; description: 
 
 const softwareCategoryByToolSlug: Record<string, string> = {
   'crypto-unit-converter': 'FinanceApplication',
+  'bitcoin-wallet': 'FinanceApplication',
   'html-viewer': 'DeveloperApplication',
   'pdf-viewer': 'UtilitiesApplication',
   'json-formatter': 'DeveloperApplication',
@@ -528,6 +530,8 @@ export default async function LandingPage({ params }: LandingPageProps) {
         links={cryptoLinks}
       />
     );
+  } else if (aliasPage.toolSlug === 'bitcoin-wallet') {
+    toolUi = <BitcoinWalletTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'html-viewer') {
     toolUi = <HtmlViewerTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'pdf-viewer') {

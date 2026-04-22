@@ -1,4 +1,9 @@
 import {
+  bitcoinWalletContentBlocks,
+  bitcoinWalletFaq,
+  bitcoinWalletIntro,
+} from '@/data/content/bitcoin-wallet';
+import {
   base64ImageViewerContentBlocks,
   base64ImageViewerFaq,
   base64ImageViewerIntro,
@@ -68,6 +73,41 @@ import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ToolDefinition } from '@/types/tool';
 
 export const toolsRegistry: ToolDefinition[] = [
+  {
+    id: 'bitcoin-wallet',
+    slug: 'bitcoin-wallet',
+    name: 'Carteira Bitcoin Testnet e Mainnet',
+    shortDescription:
+      'Gere carteira Bitcoin, importe seed/WIF, veja saldo e UTXOs e envie BTC em testnet ou mainnet usando mempool API.',
+    category: 'crypto',
+    primaryKeyword: 'carteira bitcoin testnet e mainnet',
+    secondaryKeywords: [
+      'gerar carteira bitcoin online',
+      'importar seed bitcoin',
+      'importar wif bitcoin',
+      'enviar bitcoin testnet',
+      'enviar bitcoin mainnet',
+      'wallet bitcoin no navegador',
+      'bitcoin wallet tool',
+      'bip39 bitcoin wallet',
+      'bip84 segwit wallet',
+      'mempool api bitcoin tool',
+      'consultar utxos bitcoin',
+      'saldo bitcoin testnet',
+    ],
+    searchIntent:
+      'Usuarios e devs que precisam criar ou importar carteira Bitcoin e enviar transacoes com processamento local no navegador.',
+    seoTitle:
+      'Carteira Bitcoin Testnet/Mainnet | Gerar, Importar e Enviar BTC',
+    seoDescription:
+      'Crie carteira Bitcoin com seed BIP39, importe WIF, consulte saldo e UTXOs e envie BTC em testnet ou mainnet com assinatura local. Gratis, sem cadastro.',
+    h1: 'Carteira Bitcoin Testnet e Mainnet com Envio Local de BTC',
+    intro: bitcoinWalletIntro,
+    canonicalPath: '/tools/bitcoin-wallet',
+    faq: bitcoinWalletFaq,
+    contentBlocks: bitcoinWalletContentBlocks,
+    relatedToolIds: ['crypto-unit-converter', 'json-formatter', 'qr-code-generator'],
+  },
   {
     id: 'crypto-unit-converter',
     slug: 'crypto-unit-converter',
@@ -379,9 +419,9 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'video-compression',
     slug: 'video-compression',
-    name: 'Compressor de Video com FFmpeg WASM',
+    name: 'Compressor de Video Online',
     shortDescription:
-      'Comprima videos online em lote com FFmpeg WASM, ajuste nivel, veja estimativa de tamanho e preview antes de baixar.',
+      'Comprima videos online em lote, ajuste nivel, veja estimativa de tamanho e preview antes de baixar.',
     category: 'documents',
     primaryKeyword: 'comprimir video online gratis',
     secondaryKeywords: [
@@ -390,7 +430,7 @@ export const toolsRegistry: ToolDefinition[] = [
       'comprimir mp4 online',
       'reduzir mb de video',
       'compressao de video em lote',
-      'ffmpeg wasm online',
+      'compressor de video rapido',
       'otimizar video para upload',
       'comprimir video sem cadastro',
       'comprimir video sem login',
@@ -399,10 +439,10 @@ export const toolsRegistry: ToolDefinition[] = [
     searchIntent:
       'Usuarios que querem reduzir tamanho de video com controle de compressao, mantendo preview antes do download.',
     seoTitle:
-      'Compressor de Video Online Gratis com FFmpeg WASM | Reduzir Tamanho',
+      'Compressor de Video Online Gratis | Reduzir Tamanho',
     seoDescription:
-      'Comprima varios videos online com FFmpeg WASM, controle de nivel, estimativa de tamanho final, preview antes/depois e download local. Gratis, sem cadastro e sem login.',
-    h1: 'Compressor de Video Online Gratis com FFmpeg WASM e Preview Antes do Download',
+      'Comprima varios videos online com controle de nivel, estimativa de tamanho final, preview antes/depois e download local. Gratis, sem cadastro e sem login.',
+    h1: 'Compressor de Video Online Gratis com Preview Antes do Download',
     intro: videoCompressionIntro,
     canonicalPath: '/tools/video-compression',
     faq: videoCompressionFaq,
@@ -495,6 +535,7 @@ export const getRelatedTools = (toolId: string): ToolDefinition[] => {
 };
 
 type LocalizableToolId =
+  | 'bitcoin-wallet'
   | 'crypto-unit-converter'
   | 'html-viewer'
   | 'pdf-viewer'
@@ -510,6 +551,7 @@ type LocalizableToolId =
   | 'invisible-character';
 
 const localizableToolIds = new Set<LocalizableToolId>([
+  'bitcoin-wallet',
   'crypto-unit-converter',
   'html-viewer',
   'pdf-viewer',

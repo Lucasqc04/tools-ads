@@ -1,13 +1,13 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const videoCompressionIntro =
-  'Comprima videos online com FFmpeg WASM, ajuste o nivel de compressao, veja estimativa de tamanho e compare preview antes de baixar.';
+  'Comprima videos online, ajuste o nivel de compressao, veja estimativa de tamanho e compare preview antes de baixar.';
 
 export const videoCompressionContentBlocks: ContentBlock[] = [
   {
-    title: 'Compressao de video no navegador com FFmpeg WASM',
+    title: 'Compressao de video no navegador',
     paragraphs: [
-      'Esta ferramenta usa FFmpeg WASM para reduzir tamanho de video diretamente no browser, sem depender de instalacao local de software. Voce pode enviar varios videos e comprimir em lote no mesmo fluxo.',
+      'Esta ferramenta reduz tamanho de video diretamente no browser, sem depender de instalacao local de software. Voce pode enviar varios videos e comprimir em lote no mesmo fluxo.',
       'O nivel de compressao e configuravel, permitindo balancear qualidade visual e peso final de acordo com o destino do arquivo: upload, compartilhamento, publicacao web ou armazenamento.',
     ],
   },
@@ -52,7 +52,7 @@ export const videoCompressionFaq: FaqItem[] = [
   {
     question: 'Os videos sobem para algum servidor?',
     answer:
-      'Nao por padrao. O processamento acontece localmente no navegador usando FFmpeg WASM.',
+      'Nao por padrao. O processamento acontece localmente no navegador.',
   },
   {
     question: 'Funciona em celular?',

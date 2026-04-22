@@ -866,13 +866,26 @@ export function ImageConverterTool({
       {sourcePreviewUrl ? (
         <section className="space-y-2">
           <h3 className="text-sm font-semibold text-slate-800">{ui.sourcePreviewTitle}</h3>
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-2">
+          <button
+            type="button"
+            className="w-full cursor-zoom-in overflow-hidden rounded-xl border border-slate-200 bg-white p-2 text-left transition hover:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-200"
+            aria-label={`${ui.viewImage}: ${ui.sourcePreviewTitle}`}
+            onClick={() =>
+              setViewerState({
+                src: sourcePreviewUrl,
+                alt: ui.sourcePreviewTitle,
+                onDownload: sourceFile
+                  ? () => downloadBlob(sourceFile, sourceFile.name)
+                  : undefined,
+              })
+            }
+          >
             <img
               src={sourcePreviewUrl}
               alt="source preview"
               className="max-h-[320px] w-full rounded-lg object-contain"
             />
-          </div>
+          </button>
           <Button
             variant="secondary"
             onClick={() =>
@@ -900,13 +913,24 @@ export function ImageConverterTool({
           {singleResult.outputFormat !== 'pdf' ? (
             <div className="space-y-2">
               <p className="text-sm font-semibold text-slate-800">{ui.resultPreviewTitle}</p>
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-2">
+              <button
+                type="button"
+                className="w-full cursor-zoom-in overflow-hidden rounded-xl border border-slate-200 bg-white p-2 text-left transition hover:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                aria-label={`${ui.viewImage}: ${singleResult.filename}`}
+                onClick={() =>
+                  setViewerState({
+                    src: singleResult.url,
+                    alt: singleResult.filename,
+                    onDownload: () => downloadBlob(singleResult.blob, singleResult.filename),
+                  })
+                }
+              >
                 <img
                   src={singleResult.url}
                   alt="converted output"
                   className="max-h-[320px] w-full rounded-lg object-contain"
                 />
-              </div>
+              </button>
               <Button
                 variant="secondary"
                 onClick={() =>
@@ -947,13 +971,24 @@ export function ImageConverterTool({
                   #{item.pageNumber} · {item.width}x{item.height}
                 </p>
 
-                <div className="overflow-hidden rounded-md border border-slate-200 bg-slate-50">
+                <button
+                  type="button"
+                  className="w-full cursor-zoom-in overflow-hidden rounded-md border border-slate-200 bg-slate-50 text-left transition hover:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                  aria-label={`${ui.viewImage}: #${item.pageNumber}`}
+                  onClick={() =>
+                    setViewerState({
+                      src: item.url,
+                      alt: `#${item.pageNumber}`,
+                      onDownload: () => downloadBlob(item.blob, item.filename),
+                    })
+                  }
+                >
                   <img
                     src={item.url}
                     alt={`page ${item.pageNumber}`}
                     className="h-[160px] w-full object-contain"
                   />
-                </div>
+                </button>
 
                 <div className="grid grid-cols-2 gap-2">
                   <Button

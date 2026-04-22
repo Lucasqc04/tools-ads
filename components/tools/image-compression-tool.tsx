@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
+import { ImageViewer } from '@/components/shared/image-viewer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select } from '@/components/ui/select';
@@ -56,6 +57,7 @@ type ImageCompressionUi = {
   outputFormatSame: string;
   outputFormatJpeg: string;
   outputFormatWebp: string;
+  viewImage: string;
   done: string;
   pending: string;
   error: string;
@@ -93,6 +95,7 @@ const uiByLocale: Record<AppLocale, ImageCompressionUi> = {
     outputFormatSame: 'Manter formato original',
     outputFormatJpeg: 'Converter para JPEG',
     outputFormatWebp: 'Converter para WEBP',
+    viewImage: 'Ver imagem',
     done: 'Concluido',
     pending: 'Pendente',
     error: 'Erro',
@@ -129,6 +132,7 @@ const uiByLocale: Record<AppLocale, ImageCompressionUi> = {
     outputFormatSame: 'Keep original format',
     outputFormatJpeg: 'Convert to JPEG',
     outputFormatWebp: 'Convert to WEBP',
+    viewImage: 'View image',
     done: 'Done',
     pending: 'Pending',
     error: 'Error',
@@ -165,6 +169,7 @@ const uiByLocale: Record<AppLocale, ImageCompressionUi> = {
     outputFormatSame: 'Mantener formato original',
     outputFormatJpeg: 'Convertir a JPEG',
     outputFormatWebp: 'Convertir a WEBP',
+    viewImage: 'Ver imagen',
     done: 'Listo',
     pending: 'Pendiente',
     error: 'Error',
@@ -213,6 +218,11 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
   const [compressionLevel, setCompressionLevel] = useState(56);
   const [outputFormat, setOutputFormat] = useState<ImageCompressionOutputFormat>('same');
   const [isCompressing, setIsCompressing] = useState(false);
+  const [viewerState, setViewerState] = useState<{
+    src: string;
+    alt: string;
+    onDownload?: () => void;
+  } | null>(null);
   const itemsRef = useRef<ImageCompressionItem[]>([]);
 
   useEffect(() => {
@@ -281,6 +291,8 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
   };
 
   const handleRemoveFile = (index: number) => {
+    setViewerState(null);
+
     setItems((current) => {
       const target = current[index];
       if (!target) {
@@ -297,6 +309,8 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
   };
 
   const handleClearAll = () => {
+    setViewerState(null);
+
     setItems((current) => {
       current.forEach((item) => {
         URL.revokeObjectURL(item.sourceUrl);
@@ -464,9 +478,11 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
               compressionLevel,
               outputFormat,
             );
-            const hasResult = Boolean(item.resultFile && item.resultUrl);
+            const resultFile = item.resultFile;
+            const resultUrl = item.resultUrl;
+            const hasResult = Boolean(resultFile && resultUrl);
             const savings = hasResult
-              ? calculateSavingsPercent(item.file.size, item.resultFile?.size ?? item.file.size)
+              ? calculateSavingsPercent(item.file.size, resultFile?.size ?? item.file.size)
               : calculateSavingsPercent(item.file.size, estimatedSize);
 
             return (
@@ -494,27 +510,77 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
                     <h5 className="text-xs font-semibold uppercase tracking-wide text-slate-700">
                       {ui.sourcePreview}
                     </h5>
-                    <img
-                      src={item.sourceUrl}
-                      alt={item.file.name}
-                      className="h-40 w-full rounded-md border border-slate-200 bg-white object-contain"
-                    />
+                    <button
+                      type="button"
+                      className="w-full cursor-zoom-in overflow-hidden rounded-md border border-slate-200 bg-white text-left transition hover:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                      aria-label={`${ui.viewImage}: ${item.file.name}`}
+                      onClick={() =>
+                        setViewerState({
+                          src: item.sourceUrl,
+                          alt: item.file.name,
+                          onDownload: () => downloadBlob(item.file, item.file.name),
+                        })
+                      }
+                    >
+                      <img
+                        src={item.sourceUrl}
+                        alt={item.file.name}
+                        className="h-40 w-full object-contain"
+                      />
+                    </button>
+                    <Button
+                      variant="secondary"
+                      onClick={() =>
+                        setViewerState({
+                          src: item.sourceUrl,
+                          alt: item.file.name,
+                          onDownload: () => downloadBlob(item.file, item.file.name),
+                        })
+                      }
+                    >
+                      {ui.viewImage}
+                    </Button>
                   </section>
 
                   <section className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
                     <h5 className="text-xs font-semibold uppercase tracking-wide text-slate-700">
                       {ui.resultPreview}
                     </h5>
-                    {hasResult && item.resultUrl ? (
+                    {hasResult && resultFile && resultUrl ? (
                       <>
-                        <img
-                          src={item.resultUrl}
-                          alt={`${item.file.name}-compressed`}
-                          className="h-40 w-full rounded-md border border-slate-200 bg-white object-contain"
-                        />
+                        <button
+                          type="button"
+                          className="w-full cursor-zoom-in overflow-hidden rounded-md border border-slate-200 bg-white text-left transition hover:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                          aria-label={`${ui.viewImage}: ${resultFile.name}`}
+                          onClick={() =>
+                            setViewerState({
+                              src: resultUrl,
+                              alt: resultFile.name,
+                              onDownload: () => downloadBlob(resultFile, resultFile.name),
+                            })
+                          }
+                        >
+                          <img
+                            src={resultUrl}
+                            alt={`${item.file.name}-compressed`}
+                            className="h-40 w-full object-contain"
+                          />
+                        </button>
                         <p className="text-xs text-slate-600">
-                          {ui.finalSizeLabel}: {formatBytes(item.resultFile?.size ?? 0)}
+                          {ui.finalSizeLabel}: {formatBytes(resultFile.size)}
                         </p>
+                        <Button
+                          variant="secondary"
+                          onClick={() =>
+                            setViewerState({
+                              src: resultUrl,
+                              alt: resultFile.name,
+                              onDownload: () => downloadBlob(resultFile, resultFile.name),
+                            })
+                          }
+                        >
+                          {ui.viewImage}
+                        </Button>
                       </>
                     ) : item.status === 'compressing' ? (
                       <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-sm text-amber-700">
@@ -559,6 +625,14 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
           })}
         </div>
       ) : null}
+
+      <ImageViewer
+        src={viewerState?.src ?? ''}
+        alt={viewerState?.alt ?? ui.resultPreview}
+        isOpen={Boolean(viewerState)}
+        onClose={() => setViewerState(null)}
+        onDownload={viewerState?.onDownload}
+      />
 
       <p className="text-xs text-slate-600">{ui.processingLocalNote}</p>
     </Card>

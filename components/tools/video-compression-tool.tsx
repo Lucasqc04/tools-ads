@@ -67,12 +67,12 @@ type VideoCompressionUi = {
 
 const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
   'pt-br': {
-    title: 'Compressor de video com FFmpeg WASM',
+    title: 'Compressor de video online',
     intro:
       'Comprima varios videos no navegador, ajuste o nivel de compressao e compare preview antes do download.',
     filesLabel: 'Videos para comprimir',
     filesHint:
-      'Suporta envio em lote. O processamento usa FFmpeg WASM e pode levar mais tempo em arquivos grandes.',
+      'Suporta envio em lote. O processamento e local e pode levar mais tempo em arquivos grandes.',
     compressionLevelLabel: 'Nivel de compressao',
     compressionLevelHint:
       'Nivel maior reduz mais o tamanho (com impacto maior em qualidade e possivel reducao de resolucao).',
@@ -93,7 +93,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     resolutionLabel: 'Resolucao',
     savingsLabel: (value) => `Reducao: ${value.toFixed(1)}%`,
     ffmpegWarmupNote:
-      'No primeiro uso, o FFmpeg WASM pode baixar arquivos de runtime e iniciar mais devagar.',
+      'No primeiro uso, o mecanismo de compressao pode baixar recursos e iniciar mais devagar.',
     processingLocalNote:
       'Os videos sao processados localmente no navegador. Nao ha upload automatico para servidor por padrao.',
     done: 'Concluido',
@@ -104,12 +104,12 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     genericError: 'Nao foi possivel comprimir este video.',
   },
   en: {
-    title: 'Video compressor with FFmpeg WASM',
+    title: 'Online video compressor',
     intro:
       'Compress multiple videos directly in your browser, control compression level, and preview before download.',
     filesLabel: 'Videos to compress',
     filesHint:
-      'Batch upload is supported. Processing uses FFmpeg WASM and may take longer for large files.',
+      'Batch upload is supported. Processing is local and may take longer for large files.',
     compressionLevelLabel: 'Compression level',
     compressionLevelHint:
       'Higher levels usually reduce size more, with stronger quality and resolution impact.',
@@ -130,7 +130,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     resolutionLabel: 'Resolution',
     savingsLabel: (value) => `Savings: ${value.toFixed(1)}%`,
     ffmpegWarmupNote:
-      'At first run, FFmpeg WASM may download runtime assets and start slower.',
+      'On first run, the compression engine may download assets and start slower.',
     processingLocalNote:
       'Videos are processed locally in your browser. No automatic server upload is performed by default.',
     done: 'Done',
@@ -141,12 +141,12 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     genericError: 'Could not compress this video.',
   },
   es: {
-    title: 'Compresor de video con FFmpeg WASM',
+    title: 'Compresor de video online',
     intro:
       'Comprime varios videos en el navegador, ajusta el nivel de compresion y previsualiza antes de descargar.',
     filesLabel: 'Videos para comprimir',
     filesHint:
-      'Soporta carga por lote. El procesamiento usa FFmpeg WASM y puede tardar mas en archivos grandes.',
+      'Soporta carga por lote. El procesamiento es local y puede tardar mas en archivos grandes.',
     compressionLevelLabel: 'Nivel de compresion',
     compressionLevelHint:
       'Un nivel mayor suele reducir mas el tamano, con mayor impacto en calidad y resolucion.',
@@ -167,7 +167,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     resolutionLabel: 'Resolucion',
     savingsLabel: (value) => `Reduccion: ${value.toFixed(1)}%`,
     ffmpegWarmupNote:
-      'En el primer uso, FFmpeg WASM puede descargar archivos de runtime e iniciar mas lento.',
+      'En el primer uso, el motor de compresion puede descargar recursos e iniciar mas lento.',
     processingLocalNote:
       'Los videos se procesan localmente en el navegador. No hay subida automatica a servidor por defecto.',
     done: 'Listo',
@@ -384,12 +384,12 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
           errorMessage: undefined,
         };
       });
-    } catch {
+    } catch (error) {
       updateItem(item.id, (current) => ({
         ...current,
         status: 'error',
         progressPercent: 0,
-        errorMessage: ui.genericError,
+        errorMessage: error instanceof Error ? error.message : ui.genericError,
       }));
     }
   };

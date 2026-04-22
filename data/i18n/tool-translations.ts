@@ -18,6 +18,7 @@ export type ToolTranslation = {
 type NonPtLocale = Exclude<AppLocale, 'pt-br'>;
 
 type ToolId =
+  | 'bitcoin-wallet'
   | 'crypto-unit-converter'
   | 'html-pdf-json'
   | 'html-viewer'
@@ -34,6 +35,89 @@ type ToolId =
   | 'invisible-character';
 
 const enTranslations: Record<ToolId, ToolTranslation> = {
+  'bitcoin-wallet': {
+    name: 'Bitcoin Wallet for Testnet and Mainnet',
+    shortDescription:
+      'Generate wallet, import seed or WIF, read balance and UTXOs, and send BTC on testnet or mainnet with local signing.',
+    primaryKeyword: 'bitcoin wallet testnet and mainnet',
+    secondaryKeywords: [
+      'generate bitcoin wallet online',
+      'import bitcoin seed phrase',
+      'import bitcoin wif',
+      'send bitcoin testnet',
+      'send bitcoin mainnet',
+      'bitcoin wallet in browser',
+      'bip39 bitcoin wallet',
+      'bip84 segwit wallet',
+      'mempool api bitcoin tool',
+      'bitcoin utxo wallet',
+    ],
+    searchIntent:
+      'Users and developers needing a browser-based Bitcoin wallet tool to create/import keys and send transactions in testnet or mainnet.',
+    seoTitle: 'Bitcoin Wallet (Testnet/Mainnet) | Generate, Import, and Send BTC',
+    seoDescription:
+      'Create Bitcoin wallet with BIP39 seed, import WIF, read balance/UTXOs, and send BTC with local signing and mempool API broadcast.',
+    h1: 'Bitcoin Wallet Tool for Testnet and Mainnet with Local BTC Sending',
+    intro:
+      'Generate or import Bitcoin wallet, inspect UTXOs, and send BTC directly in-browser with BIP39/BIP84 flow and local transaction signing.',
+    contentBlocks: [
+      {
+        title: 'Client-side Bitcoin wallet flow with BIP39 and BIP84',
+        paragraphs: [
+          'This tool generates BIP39 mnemonic and derives native SegWit addresses (BIP84) in your browser. You can also import existing wallet using mnemonic or WIF.',
+          'Testnet and Mainnet are both supported. Testnet stays as default so you can validate the flow before handling real BTC.',
+        ],
+      },
+      {
+        title: 'Balance, UTXO lookup, and local transaction signing',
+        paragraphs: [
+          'The page reads address balance and UTXOs through public mempool API endpoints. Sending workflow performs coin selection locally and signs the transaction in-browser.',
+          'After signing, only raw hex is sent to broadcast endpoint. Private material remains on your device by default.',
+        ],
+        list: [
+          'Generate wallet from english BIP39 mnemonic.',
+          'Import wallet from seed phrase or WIF.',
+          'Read confirmed and unconfirmed balance.',
+          'Inspect UTXOs before spending.',
+          'Set fee rate and broadcast signed transaction.',
+        ],
+      },
+      {
+        title: 'Security notes and practical boundaries',
+        paragraphs: [
+          'No server-side custody is involved by default, but browser environment risks still exist, including malware, malicious extensions, and screen capture.',
+          'Use testnet for development and small-value tests. For meaningful holdings, prefer dedicated wallet software or hardware wallet.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Does this tool support both testnet and mainnet?',
+        answer:
+          'Yes. You can switch network in the interface. Testnet is the recommended default.',
+      },
+      {
+        question: 'Can I import both mnemonic and WIF?',
+        answer:
+          'Yes. The wallet supports BIP39 english mnemonic import and WIF private key import.',
+      },
+      {
+        question: 'How does sending work without backend wallet server?',
+        answer:
+          'Transaction is built and signed locally in your browser. Public mempool API is used for UTXO lookup and broadcast only.',
+      },
+      {
+        question: 'Are my seed and WIF uploaded to server?',
+        answer:
+          'Not by default. Sensitive key material stays local unless your browser environment is compromised.',
+      },
+      {
+        question: 'Is this suitable for storing large BTC amounts?',
+        answer:
+          'No. For significant funds, use dedicated wallet solutions and stronger operational security.',
+      },
+    ],
+  },
   'crypto-unit-converter': {
     name: 'Crypto Unit Converter',
     shortDescription:
@@ -1020,7 +1104,7 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
     ],
   },
   'video-compression': {
-    name: 'Video Compressor with FFmpeg WASM',
+    name: 'Online Video Compressor',
     shortDescription:
       'Compress multiple videos online with adjustable compression level, estimated output size, and before/after preview.',
     primaryKeyword: 'compress video online free',
@@ -1031,24 +1115,24 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       'batch video compression',
       'video size reducer',
       'shrink video file',
-      'ffmpeg wasm video compressor',
+      'fast video compressor',
       'optimize video for upload',
       'compress video no sign up',
       'compress video without login',
     ],
     searchIntent:
       'Users who need to reduce video size with control over compression level and preview before downloading.',
-    seoTitle: 'Free Online Video Compressor with FFmpeg WASM | Reduce Video Size',
+    seoTitle: 'Free Online Video Compressor | Reduce Video Size',
     seoDescription:
-      'Compress videos in batch online using FFmpeg WASM, with adjustable level, size estimate, before/after preview, and local browser processing.',
-    h1: 'Free Video Compressor with FFmpeg WASM, Size Estimate, and Preview',
+      'Compress videos in batch online with adjustable level, size estimate, before/after preview, and local browser processing.',
+    h1: 'Free Video Compressor with Size Estimate and Preview',
     intro:
       'Upload multiple videos, tune compression intensity, preview results, and download smaller MP4 files.',
     contentBlocks: [
       {
-        title: 'In-browser video compression with FFmpeg WASM',
+        title: 'In-browser video compression',
         paragraphs: [
-          'This tool uses FFmpeg WASM to compress videos directly in the browser, with no desktop installation required.',
+          'This tool compresses videos directly in the browser, with no desktop installation required.',
           'You can process multiple files in one queue and keep track of progress file by file.',
         ],
       },
@@ -1104,6 +1188,89 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
 };
 
 const esTranslations: Record<ToolId, ToolTranslation> = {
+  'bitcoin-wallet': {
+    name: 'Wallet Bitcoin para Testnet y Mainnet',
+    shortDescription:
+      'Genera wallet, importa seed o WIF, consulta saldo y UTXOs, y envia BTC en testnet o mainnet con firma local.',
+    primaryKeyword: 'wallet bitcoin testnet y mainnet',
+    secondaryKeywords: [
+      'generar wallet bitcoin online',
+      'importar seed bitcoin',
+      'importar wif bitcoin',
+      'enviar bitcoin testnet',
+      'enviar bitcoin mainnet',
+      'wallet bitcoin en navegador',
+      'wallet bitcoin bip39',
+      'wallet segwit bip84',
+      'herramienta bitcoin mempool api',
+      'wallet utxo bitcoin',
+    ],
+    searchIntent:
+      'Usuarios y desarrolladores que necesitan crear o importar wallet Bitcoin y enviar transacciones desde el navegador.',
+    seoTitle: 'Wallet Bitcoin (Testnet/Mainnet) | Generar, Importar y Enviar BTC',
+    seoDescription:
+      'Crea wallet Bitcoin con seed BIP39, importa WIF, revisa saldo y UTXOs, y envia BTC con firma local y broadcast por mempool API.',
+    h1: 'Wallet Bitcoin para Testnet y Mainnet con Envio Local de BTC',
+    intro:
+      'Genera o importa wallet Bitcoin, revisa UTXOs y envia BTC en navegador con flujo BIP39/BIP84 y firma local.',
+    contentBlocks: [
+      {
+        title: 'Flujo client-side con BIP39 y BIP84',
+        paragraphs: [
+          'La herramienta genera mnemonic BIP39 y deriva direccion SegWit nativa (BIP84) localmente en el navegador.',
+          'Tambien puedes importar una wallet existente usando seed phrase o private key en formato WIF.',
+        ],
+      },
+      {
+        title: 'Consulta de saldo/UTXOs y envio con firma local',
+        paragraphs: [
+          'La pagina consulta saldo y UTXOs por endpoints publicos de mempool API. El envio selecciona inputs y firma transaccion localmente.',
+          'Despues de firmar, solo se envia el hex final al endpoint de broadcast.',
+        ],
+        list: [
+          'Generar wallet con mnemonic BIP39 en ingles.',
+          'Importar wallet por seed o WIF.',
+          'Consultar saldo confirmado y no confirmado.',
+          'Inspeccionar UTXOs antes de gastar.',
+          'Definir fee rate y enviar transaccion.',
+        ],
+      },
+      {
+        title: 'Seguridad y limites practicos',
+        paragraphs: [
+          'No hay custodia en servidor por defecto, pero el entorno del navegador puede tener riesgos (malware o extensiones maliciosas).',
+          'Usa testnet para pruebas y montos pequenos. Para fondos relevantes, prefiere wallet dedicada o hardware wallet.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Soporta testnet y mainnet?',
+        answer:
+          'Si. Puedes cambiar red en la interfaz, con testnet como opcion recomendada por defecto.',
+      },
+      {
+        question: '¿Puedo importar seed phrase y WIF?',
+        answer:
+          'Si. Se admite importacion por mnemonic BIP39 en ingles y por private key WIF.',
+      },
+      {
+        question: '¿Como funciona el envio sin backend custodial?',
+        answer:
+          'La transaccion se construye y firma localmente. Solo se usan endpoints publicos para UTXOs y broadcast.',
+      },
+      {
+        question: '¿La seed y la WIF se suben al servidor?',
+        answer:
+          'No por defecto. El material sensible permanece en el navegador salvo entorno comprometido.',
+      },
+      {
+        question: '¿Sirve para guardar mucho BTC?',
+        answer:
+          'No es lo ideal. Para montos altos, usa soluciones de wallet dedicadas con mejor seguridad operacional.',
+      },
+    ],
+  },
   'crypto-unit-converter': {
     name: 'Conversor de Unidades Cripto',
     shortDescription:
@@ -2092,7 +2259,7 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
     ],
   },
   'video-compression': {
-    name: 'Compresor de Video con FFmpeg WASM',
+    name: 'Compresor de Video Online',
     shortDescription:
       'Comprime videos online por lote con nivel ajustable, estimacion de tamano final y preview antes de descargar.',
     primaryKeyword: 'comprimir video online gratis',
@@ -2102,7 +2269,7 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       'comprimir mp4 online',
       'compresion de video por lote',
       'reducir mb de video',
-      'ffmpeg wasm video',
+      'compresor de video rapido',
       'optimizador de video para subir',
       'compresor de video sin registro',
       'compresor de video sin login',
@@ -2110,17 +2277,17 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
     ],
     searchIntent:
       'Usuarios que buscan reducir tamano de video con control de compresion y preview antes de descargar.',
-    seoTitle: 'Compresor de Video Online Gratis con FFmpeg WASM | Reducir Tamano',
+    seoTitle: 'Compresor de Video Online Gratis | Reducir Tamano',
     seoDescription:
-      'Comprime videos por lote en el navegador con FFmpeg WASM, nivel ajustable, estimacion de tamano final y comparacion antes/despues.',
-    h1: 'Compresor de Video Gratis con FFmpeg WASM, Estimacion y Vista Previa',
+      'Comprime videos por lote en el navegador con nivel ajustable, estimacion de tamano final y comparacion antes/despues.',
+    h1: 'Compresor de Video Gratis con Estimacion y Vista Previa',
     intro:
       'Carga varios videos, ajusta intensidad de compresion, revisa resultado y descarga archivos mas livianos.',
     contentBlocks: [
       {
         title: 'Compresion de video en navegador',
         paragraphs: [
-          'La herramienta usa FFmpeg WASM para reducir tamano de videos sin instalar software de escritorio.',
+          'La herramienta reduce tamano de videos sin instalar software de escritorio.',
           'Permite trabajar por lote y acompanar el progreso de cada archivo durante el proceso.',
         ],
       },

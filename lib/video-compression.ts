@@ -1,5 +1,5 @@
 import { FFmpeg, type LogEvent, type ProgressEvent } from '@ffmpeg/ffmpeg';
-import { fetchFile, toBlobURL } from '@ffmpeg/util';
+import { fetchFile } from '@ffmpeg/util';
 
 export type VideoMetadata = {
   durationInSeconds: number;
@@ -20,14 +20,50 @@ export type VideoCompressionProfile = {
   downscaleFactor: number;
 };
 
+type CompressionAttempt = {
+  label: string;
+  buildArgs: (outputName: string) => string[];
+};
+
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
 
 const CORE_VERSION = '0.12.10';
-const CORE_BASE_URL = `https://unpkg.com/@ffmpeg/core@${CORE_VERSION}/dist/esm`;
+const CORE_FILES = {
+  core: 'ffmpeg-core.js',
+  wasm: 'ffmpeg-core.wasm',
+} as const;
+const CORE_SOURCES = [
+  {
+    label: 'api-local',
+    getAssetUrl: (fileName: string) => `/api/ffmpeg?asset=${encodeURIComponent(fileName)}`,
+  },
+  {
+    label: 'unpkg',
+    getAssetUrl: (fileName: string) =>
+      `https://unpkg.com/@ffmpeg/core@${CORE_VERSION}/dist/umd/${fileName}`,
+  },
+  {
+    label: 'jsdelivr',
+    getAssetUrl: (fileName: string) =>
+      `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${CORE_VERSION}/dist/umd/${fileName}`,
+  },
+] as const;
 
 let ffmpegInstance: FFmpeg | null = null;
 let ffmpegLoadPromise: Promise<FFmpeg> | null = null;
+
+const toLoadErrorMessage = (error: unknown): string => {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.replaceAll(/\s+/g, ' ').slice(0, 180);
+};
+
+const buildFfmpegLoadError = (failures: string[]): Error =>
+  new Error(
+    `Nao foi possivel iniciar o mecanismo de compressao de video (${failures.join(
+      ' | ',
+    )}). Verifique sua conexao, extensoes de bloqueio e tente novamente.`,
+  );
 
 const getCompressionProfile = (compressionLevel: number): VideoCompressionProfile => {
   const normalized = clamp(compressionLevel / 100, 0, 1);
@@ -72,6 +108,19 @@ const getScaleFilter = (downscaleFactor: number): string | undefined => {
   return `scale=trunc(iw*${downscaleFactor}/2)*2:trunc(ih*${downscaleFactor}/2)*2`;
 };
 
+const getTargetVideoBitrateKbps = (
+  fileSize: number,
+  durationInSeconds: number,
+  videoBitrateFactor: number,
+): number => {
+  if (durationInSeconds > 0) {
+    const originalBitrateKbps = (fileSize * 8) / durationInSeconds / 1000;
+    return clamp(Math.round(originalBitrateKbps * videoBitrateFactor), 280, 6000);
+  }
+
+  return 1400;
+};
+
 const ensureFfmpeg = async (): Promise<FFmpeg> => {
   if (ffmpegInstance?.loaded) {
     return ffmpegInstance;
@@ -79,23 +128,31 @@ const ensureFfmpeg = async (): Promise<FFmpeg> => {
 
   if (!ffmpegLoadPromise) {
     ffmpegLoadPromise = (async () => {
-      const ffmpeg = new FFmpeg();
-      const coreURL = await toBlobURL(`${CORE_BASE_URL}/ffmpeg-core.js`, 'text/javascript');
-      const wasmURL = await toBlobURL(`${CORE_BASE_URL}/ffmpeg-core.wasm`, 'application/wasm');
-      const workerURL = await toBlobURL(
-        `${CORE_BASE_URL}/ffmpeg-core.worker.js`,
-        'text/javascript',
-      );
+      const loadFailures: string[] = [];
 
-      await ffmpeg.load({
-        coreURL,
-        wasmURL,
-        workerURL,
-      });
+      for (const source of CORE_SOURCES) {
+        try {
+          const ffmpeg = new FFmpeg();
+          const coreURL = source.getAssetUrl(CORE_FILES.core);
+          const wasmURL = source.getAssetUrl(CORE_FILES.wasm);
 
-      ffmpegInstance = ffmpeg;
-      return ffmpeg;
-    })();
+          await ffmpeg.load({
+            coreURL,
+            wasmURL,
+          });
+
+          ffmpegInstance = ffmpeg;
+          return ffmpeg;
+        } catch (error) {
+          loadFailures.push(`${source.label}: ${toLoadErrorMessage(error)}`);
+        }
+      }
+
+      throw buildFfmpegLoadError(loadFailures);
+    })().catch((error) => {
+      ffmpegLoadPromise = null;
+      throw error;
+    });
   }
 
   return ffmpegLoadPromise;
@@ -174,12 +231,25 @@ export const compressVideoFile = async (
     metadata.durationInSeconds,
     options.compressionLevel,
   );
+  const targetVideoBitrateKbps = getTargetVideoBitrateKbps(
+    file.size,
+    metadata.durationInSeconds,
+    profile.videoBitrateFactor,
+  );
 
   const inputName = `${getUniqueToken()}-input.${file.name.split('.').pop() || 'mp4'}`;
-  const outputName = `${getUniqueToken()}-output.mp4`;
   const scaleFilter = getScaleFilter(profile.downscaleFactor);
+  const outputNames: string[] = [];
+  const logTail: string[] = [];
 
   const logHandler = (event: LogEvent) => {
+    if (event.message) {
+      logTail.push(event.message);
+      if (logTail.length > 6) {
+        logTail.shift();
+      }
+    }
+
     options.onLog?.(event);
   };
 
@@ -193,34 +263,101 @@ export const compressVideoFile = async (
   try {
     await ffmpeg.writeFile(inputName, await fetchFile(file));
 
-    const args = [
-      '-i',
-      inputName,
-      ...(scaleFilter ? ['-vf', scaleFilter] : []),
-      '-c:v',
-      'libx264',
-      '-preset',
-      'veryfast',
-      '-crf',
-      String(profile.crf),
-      '-c:a',
-      'aac',
-      '-b:a',
-      `${profile.audioBitrateKbps}k`,
-      '-movflags',
-      '+faststart',
-      '-pix_fmt',
-      'yuv420p',
-      outputName,
+    const attempts: CompressionAttempt[] = [
+      {
+        label: 'h264-com-audio',
+        buildArgs: (outputName) => [
+          '-i',
+          inputName,
+          ...(scaleFilter ? ['-vf', scaleFilter] : []),
+          '-c:v',
+          'libx264',
+          '-preset',
+          'veryfast',
+          '-crf',
+          String(profile.crf),
+          '-c:a',
+          'aac',
+          '-b:a',
+          `${profile.audioBitrateKbps}k`,
+          '-movflags',
+          '+faststart',
+          '-pix_fmt',
+          'yuv420p',
+          outputName,
+        ],
+      },
+      {
+        label: 'mpeg4-com-audio',
+        buildArgs: (outputName) => [
+          '-i',
+          inputName,
+          ...(scaleFilter ? ['-vf', scaleFilter] : []),
+          '-c:v',
+          'mpeg4',
+          '-b:v',
+          `${targetVideoBitrateKbps}k`,
+          '-c:a',
+          'aac',
+          '-b:a',
+          `${profile.audioBitrateKbps}k`,
+          '-movflags',
+          '+faststart',
+          '-pix_fmt',
+          'yuv420p',
+          outputName,
+        ],
+      },
+      {
+        label: 'mpeg4-sem-audio',
+        buildArgs: (outputName) => [
+          '-i',
+          inputName,
+          ...(scaleFilter ? ['-vf', scaleFilter] : []),
+          '-c:v',
+          'mpeg4',
+          '-b:v',
+          `${targetVideoBitrateKbps}k`,
+          '-an',
+          '-movflags',
+          '+faststart',
+          '-pix_fmt',
+          'yuv420p',
+          outputName,
+        ],
+      },
     ];
 
-    const exitCode = await ffmpeg.exec(args);
+    const attemptFailures: string[] = [];
+    let successfulOutputName: string | null = null;
 
-    if (exitCode !== 0) {
-      throw new Error(`Falha na compressao de video (codigo ${exitCode}).`);
+    for (const attempt of attempts) {
+      const attemptOutputName = `${getUniqueToken()}-output.mp4`;
+      outputNames.push(attemptOutputName);
+
+      try {
+        const exitCode = await ffmpeg.exec(attempt.buildArgs(attemptOutputName));
+        if (exitCode === 0) {
+          successfulOutputName = attemptOutputName;
+          break;
+        }
+
+        attemptFailures.push(`${attempt.label} (codigo ${exitCode})`);
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : 'erro inesperado';
+        attemptFailures.push(`${attempt.label} (${reason})`);
+      }
     }
 
-    const outputData = await ffmpeg.readFile(outputName);
+    if (!successfulOutputName) {
+      const details =
+        logTail.length > 0 ? ` Detalhes: ${logTail.slice(-2).join(' | ')}` : '';
+      throw new Error(
+        `Falha na compressao de video apos tentativas automaticas (${attemptFailures.join(', ')}).${details}`,
+      );
+    }
+
+    const outputData = await ffmpeg.readFile(successfulOutputName);
     const outputBytes =
       outputData instanceof Uint8Array ? outputData : new TextEncoder().encode(String(outputData));
 
@@ -241,6 +378,6 @@ export const compressVideoFile = async (
     ffmpeg.off('progress', progressHandler);
 
     await ffmpeg.deleteFile(inputName).catch(() => undefined);
-    await ffmpeg.deleteFile(outputName).catch(() => undefined);
+    await Promise.all(outputNames.map((outputName) => ffmpeg.deleteFile(outputName).catch(() => undefined)));
   }
 };
