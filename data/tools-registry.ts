@@ -59,11 +59,6 @@ import {
   jsonFormatterIntro,
 } from '@/data/content/json-formatter';
 import {
-  pdfViewerContentBlocks,
-  pdfViewerFaq,
-  pdfViewerIntro,
-} from '@/data/content/pdf-viewer';
-import {
   qrCodeGeneratorContentBlocks,
   qrCodeGeneratorFaq,
   qrCodeGeneratorIntro,
@@ -169,35 +164,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/html-viewer',
     faq: htmlViewerFaq,
     contentBlocks: htmlViewerContentBlocks,
-    relatedToolIds: ['pdf-viewer', 'json-formatter', 'image-converter'],
-  },
-  {
-    id: 'pdf-viewer',
-    slug: 'pdf-viewer',
-    name: 'PDF Viewer Local',
-    shortDescription:
-      'Abra e visualize PDFs localmente no navegador, grátis, sem cadastro, sem login e com opção de nova aba.',
-    category: 'documents',
-    primaryKeyword: 'pdf viewer online gratis',
-    secondaryKeywords: [
-      'abrir pdf no navegador',
-      'visualizar pdf online',
-      'pdf preview local',
-      'leitor de pdf online',
-      'visualizador pdf sem cadastro',
-      'abrir pdf sem login',
-    ],
-    searchIntent:
-      'Usuários que precisam abrir e revisar PDFs rápido, grátis e sem cadastro.',
-    seoTitle: 'PDF Viewer Online Grátis | Abrir PDF no Navegador Sem Cadastro',
-    seoDescription:
-      'Visualize arquivos PDF localmente no navegador, grátis, sem cadastro e sem login, com abertura em nova aba e layout responsivo.',
-    h1: 'PDF Viewer Local Grátis, Sem Cadastro e Sem Login',
-    intro: pdfViewerIntro,
-    canonicalPath: '/tools/pdf-viewer',
-    faq: pdfViewerFaq,
-    contentBlocks: pdfViewerContentBlocks,
-    relatedToolIds: ['html-viewer', 'json-formatter', 'image-converter'],
+    relatedToolIds: ['json-formatter', 'image-converter'],
   },
   {
     id: 'json-formatter',
@@ -225,7 +192,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/json-formatter',
     faq: jsonFormatterFaq,
     contentBlocks: jsonFormatterContentBlocks,
-    relatedToolIds: ['html-viewer', 'pdf-viewer', 'image-converter'],
+    relatedToolIds: ['html-viewer', 'image-converter'],
   },
   {
     id: 'cpf-generator',
@@ -381,7 +348,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/image-converter',
     faq: imageConverterFaq,
     contentBlocks: imageConverterContentBlocks,
-    relatedToolIds: ['pdf-viewer', 'html-viewer', 'qr-code-generator'],
+    relatedToolIds: ['html-viewer', 'qr-code-generator'],
   },
   {
     id: 'image-compression',
@@ -447,7 +414,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/video-compression',
     faq: videoCompressionFaq,
     contentBlocks: videoCompressionContentBlocks,
-    relatedToolIds: ['image-compression', 'image-converter', 'pdf-viewer'],
+    relatedToolIds: ['image-compression', 'image-converter'],
   },
   {
     id: 'qr-code-generator',
@@ -478,7 +445,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/qr-code-generator',
     faq: qrCodeGeneratorFaq,
     contentBlocks: qrCodeGeneratorContentBlocks,
-    relatedToolIds: ['image-converter', 'pdf-viewer', 'json-formatter'],
+    relatedToolIds: ['image-converter', 'json-formatter'],
   },
   {
     id: 'invisible-character',
@@ -538,7 +505,6 @@ type LocalizableToolId =
   | 'bitcoin-wallet'
   | 'crypto-unit-converter'
   | 'html-viewer'
-  | 'pdf-viewer'
   | 'json-formatter'
   | 'cpf-generator'
   | 'password-generator'
@@ -554,7 +520,6 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'bitcoin-wallet',
   'crypto-unit-converter',
   'html-viewer',
-  'pdf-viewer',
   'json-formatter',
   'cpf-generator',
   'password-generator',

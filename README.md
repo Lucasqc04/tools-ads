@@ -22,7 +22,6 @@ Hub de ferramentas online com foco em:
 - `/tools/crypto-unit-converter/[from]-to-[to]` (slug técnico, canonical)
 - `/tools/crypto-unit-converter/[de]-para-[para]` (slug PT-BR automático, ex.: `/tools/crypto-unit-converter/satoshi-para-btc`)
 - `/tools/html-viewer`
-- `/tools/pdf-viewer`
 - `/tools/json-formatter`
 - `/tools/html-pdf-json` (legado, redireciona para `/tools/html-viewer`)
 - `/tools/image-converter`

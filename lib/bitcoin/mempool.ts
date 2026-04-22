@@ -65,72 +65,201 @@ const buildApiUrl = (networkId: BitcoinNetworkId, path: string): string => {
   return `${networkConfig.mempoolApiBaseUrl}${path}`;
 };
 
+const buildBlockstreamApiUrl = (networkId: BitcoinNetworkId, path: string): string => {
+  const networkConfig = getBitcoinNetworkConfig(networkId);
+  return `${networkConfig.blockstreamApiBaseUrl}${path}`;
+};
+
+type FallbackOptions = {
+  onFallback?: (reason: string) => void;
+  timeoutMs?: number;
+};
+
+const DEFAULT_TIMEOUT_MS = 3000;
+
+const fetchWithTimeout = async (
+  input: RequestInfo,
+  init: RequestInit | undefined,
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+): Promise<Response> => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(input, { signal: controller.signal, ...init });
+    clearTimeout(id);
+    return response;
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
+  }
+};
+
 export const fetchAddressBalance = async (
   networkId: BitcoinNetworkId,
   address: string,
+  opts?: FallbackOptions,
 ): Promise<AddressBalance> => {
-  const endpoint = buildApiUrl(networkId, `/address/${address}`);
-  const payload = await fetch(endpoint, {
-    method: 'GET',
-    cache: 'no-store',
-  }).then((response) => parseJson<AddressPayload>(response));
+  const timeout = opts?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
-  const confirmedSats =
-    payload.chain_stats.funded_txo_sum - payload.chain_stats.spent_txo_sum;
-  const unconfirmedSats =
-    payload.mempool_stats.funded_txo_sum - payload.mempool_stats.spent_txo_sum;
+  const mempoolEndpoint = buildApiUrl(networkId, `/address/${address}`);
 
-  return {
-    confirmedSats,
-    unconfirmedSats,
-    totalSats: confirmedSats + unconfirmedSats,
-  };
+  try {
+    const payload = await fetchWithTimeout(mempoolEndpoint, { method: 'GET', cache: 'no-store' }, timeout).then((r) =>
+      parseJson<AddressPayload>(r),
+    );
+
+    const confirmedSats = payload.chain_stats.funded_txo_sum - payload.chain_stats.spent_txo_sum;
+    const unconfirmedSats = payload.mempool_stats.funded_txo_sum - payload.mempool_stats.spent_txo_sum;
+
+    return {
+      confirmedSats,
+      unconfirmedSats,
+      totalSats: confirmedSats + unconfirmedSats,
+    };
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    opts?.onFallback?.(reason);
+
+    // fallback to Blockstream (Esplora-compatible)
+    const bsEndpoint = buildBlockstreamApiUrl(networkId, `/address/${address}`);
+    const payload = await fetchWithTimeout(bsEndpoint, { method: 'GET', cache: 'no-store' }, timeout * 2).then((r) =>
+      parseJson<AddressPayload>(r),
+    );
+
+    const confirmedSats = payload.chain_stats.funded_txo_sum - payload.chain_stats.spent_txo_sum;
+    const unconfirmedSats = payload.mempool_stats.funded_txo_sum - payload.mempool_stats.spent_txo_sum;
+
+    return {
+      confirmedSats,
+      unconfirmedSats,
+      totalSats: confirmedSats + unconfirmedSats,
+    };
+  }
 };
 
 export const fetchAddressUtxos = async (
   networkId: BitcoinNetworkId,
   address: string,
+  opts?: FallbackOptions,
 ): Promise<MempoolUtxo[]> => {
-  const endpoint = buildApiUrl(networkId, `/address/${address}/utxo`);
-  return fetch(endpoint, { method: 'GET', cache: 'no-store' }).then((response) =>
-    parseJson<MempoolUtxo[]>(response),
-  );
+  const timeout = opts?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const mempoolEndpoint = buildApiUrl(networkId, `/address/${address}/utxo`);
+
+  try {
+    return await fetchWithTimeout(mempoolEndpoint, { method: 'GET', cache: 'no-store' }, timeout).then((r) =>
+      parseJson<MempoolUtxo[]>(r),
+    );
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    opts?.onFallback?.(reason);
+
+    const bsEndpoint = buildBlockstreamApiUrl(networkId, `/address/${address}/utxo`);
+    return await fetchWithTimeout(bsEndpoint, { method: 'GET', cache: 'no-store' }, timeout * 2).then((r) =>
+      parseJson<MempoolUtxo[]>(r),
+    );
+  }
 };
 
 export const fetchRecommendedFeeRate = async (
   networkId: BitcoinNetworkId,
+  opts?: FallbackOptions,
 ): Promise<RecommendedFeeRate> => {
+  const timeout = opts?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const endpoint = buildApiUrl(networkId, '/v1/fees/recommended');
 
   try {
-    return await fetch(endpoint, { method: 'GET', cache: 'no-store' }).then((response) =>
+    return await fetchWithTimeout(endpoint, { method: 'GET', cache: 'no-store' }, timeout).then((response) =>
       parseJson<RecommendedFeeRate>(response),
     );
-  } catch {
-    return {
-      fastestFee: 12,
-      halfHourFee: 8,
-      hourFee: 5,
-      economyFee: 3,
-      minimumFee: 1,
-    };
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    opts?.onFallback?.(reason);
+
+    // Blockstream provides /fee-estimates mapping target->sats/vbyte
+    const bsEndpoint = buildBlockstreamApiUrl(networkId, '/fee-estimates');
+
+    try {
+      const estimates = await fetchWithTimeout(bsEndpoint, { method: 'GET', cache: 'no-store' }, timeout * 2).then((r) =>
+        parseJson<Record<string, number>>(r),
+      );
+
+      const asNumber = (key: string | number) => {
+        const v = estimates[String(key)];
+        return Number.isFinite(v) ? Math.round(v) : undefined;
+      };
+
+      const allValues = Object.values(estimates).map((v) => Math.round(v));
+      const minVal = allValues.length ? Math.max(1, Math.min(...allValues)) : 1;
+      const maxVal = allValues.length ? Math.max(...allValues) : 12;
+
+      const fastestFee = asNumber(1) ?? maxVal;
+      const halfHourFee = asNumber(3) ?? asNumber(6) ?? fastestFee;
+      const hourFee = asNumber(6) ?? asNumber(12) ?? halfHourFee;
+      const economyFee = asNumber(24) ?? Math.max(1, Math.floor((halfHourFee + hourFee) / 2));
+      const minimumFee = minVal;
+
+      return {
+        fastestFee,
+        halfHourFee,
+        hourFee,
+        economyFee,
+        minimumFee,
+      };
+    } catch {
+      return {
+        fastestFee: 12,
+        halfHourFee: 8,
+        hourFee: 5,
+        economyFee: 3,
+        minimumFee: 1,
+      };
+    }
   }
 };
 
 export const broadcastTransactionHex = async (
   networkId: BitcoinNetworkId,
   txHex: string,
+  opts?: FallbackOptions,
 ): Promise<string> => {
-  const endpoint = buildApiUrl(networkId, '/tx');
+  const timeout = opts?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const mempoolEndpoint = buildApiUrl(networkId, '/tx');
 
-  const txid = await fetch(endpoint, {
-    method: 'POST',
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'text/plain',
-    },
-    body: txHex,
-  }).then((response) => parseText(response));
+  try {
+    const txid = await fetchWithTimeout(
+      mempoolEndpoint,
+      {
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: txHex,
+      },
+      timeout,
+    ).then((r) => parseText(r));
 
-  return txid.trim().replaceAll('"', '');
+    return txid.trim().replaceAll('"', '');
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    opts?.onFallback?.(reason);
+
+    const bsEndpoint = buildBlockstreamApiUrl(networkId, '/tx');
+
+    const txid = await fetchWithTimeout(
+      bsEndpoint,
+      {
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: txHex,
+      },
+      timeout * 2,
+    ).then((r) => parseText(r));
+
+    return txid.trim().replaceAll('"', '');
+  }
 };

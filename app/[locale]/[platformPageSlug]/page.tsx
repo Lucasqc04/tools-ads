@@ -16,7 +16,6 @@ import { InvisibleCharacterTool } from '@/components/tools/invisible-character-t
 import { InvisiblePlatformLinks } from '@/components/tools/invisible-platform-links';
 import { JsonFormatterTool } from '@/components/tools/json-formatter-tool';
 import { PasswordGeneratorTool } from '@/components/tools/password-generator-tool';
-import { PdfViewerTool } from '@/components/tools/pdf-viewer-tool';
 import { QrCodeGeneratorTool } from '@/components/tools/qr-code-generator';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
@@ -160,7 +159,6 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'crypto-unit-converter': 'FinanceApplication',
   'bitcoin-wallet': 'FinanceApplication',
   'html-viewer': 'DeveloperApplication',
-  'pdf-viewer': 'UtilitiesApplication',
   'json-formatter': 'DeveloperApplication',
   'cpf-generator': 'UtilitiesApplication',
   'password-generator': 'SecurityApplication',
@@ -534,8 +532,6 @@ export default async function LandingPage({ params }: LandingPageProps) {
     toolUi = <BitcoinWalletTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'html-viewer') {
     toolUi = <HtmlViewerTool locale={locale} />;
-  } else if (aliasPage.toolSlug === 'pdf-viewer') {
-    toolUi = <PdfViewerTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'json-formatter') {
     toolUi = <JsonFormatterTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'cpf-generator') {

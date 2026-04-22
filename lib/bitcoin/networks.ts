@@ -8,6 +8,7 @@ export type BitcoinNetworkConfig = {
   coinType: 0 | 1;
   derivationBasePath: string;
   mempoolApiBaseUrl: string;
+  blockstreamApiBaseUrl: string;
   mempoolExplorerBaseUrl: string;
   addressPrefix: 'bc1' | 'tb1';
 };
@@ -21,6 +22,7 @@ export const bitcoinNetworkConfigs: Record<BitcoinNetworkId, BitcoinNetworkConfi
     coinType: 1,
     derivationBasePath: "m/84'/1'/0'/0",
     mempoolApiBaseUrl: 'https://mempool.space/testnet4/api',
+    blockstreamApiBaseUrl: 'https://blockstream.info/testnet/api',
     mempoolExplorerBaseUrl: 'https://mempool.space/testnet4',
     addressPrefix: 'tb1',
   },
@@ -30,6 +32,7 @@ export const bitcoinNetworkConfigs: Record<BitcoinNetworkId, BitcoinNetworkConfi
     coinType: 0,
     derivationBasePath: "m/84'/0'/0'/0",
     mempoolApiBaseUrl: 'https://mempool.space/api',
+    blockstreamApiBaseUrl: 'https://blockstream.info/api',
     mempoolExplorerBaseUrl: 'https://mempool.space',
     addressPrefix: 'bc1',
   },

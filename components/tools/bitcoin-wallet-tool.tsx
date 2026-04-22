@@ -124,6 +124,8 @@ type Ui = {
   networkSwitchHint: string;
   invalidSend: string;
   includeConfirmedOnlyHint: string;
+  mempoolFallbackWarningTitle: string;
+  mempoolFallbackWarningBody: string;
 };
 
 const uiByLocale: Record<AppLocale, Ui> = {
@@ -215,6 +217,9 @@ const uiByLocale: Record<AppLocale, Ui> = {
       'Preencha endereco destino, valor e fee valida para enviar.',
     includeConfirmedOnlyHint:
       'Se desmarcado, somente UTXOs confirmados serao usados na selecao de inputs.',
+    mempoolFallbackWarningTitle: 'API mempool.space instavel',
+    mempoolFallbackWarningBody:
+      'A API principal esta lenta ou retornou erro. Usando Blockstream como fallback — proceda com calma.',
   },
   en: {
     title: 'Bitcoin Wallet for Testnet and Mainnet',
@@ -300,6 +305,9 @@ const uiByLocale: Record<AppLocale, Ui> = {
       'Fill destination address, amount, and valid fee rate before sending.',
     includeConfirmedOnlyHint:
       'If unchecked, only confirmed UTXOs are used during input selection.',
+    mempoolFallbackWarningTitle: 'mempool.space API unstable',
+    mempoolFallbackWarningBody:
+      'Primary API is slow or returned an error. Using Blockstream as fallback — proceed cautiously.',
   },
   es: {
     title: 'Wallet Bitcoin para Testnet y Mainnet',
@@ -387,6 +395,9 @@ const uiByLocale: Record<AppLocale, Ui> = {
       'Completa direccion destino, valor y fee valida antes de enviar.',
     includeConfirmedOnlyHint:
       'Si no se marca, solo se usaran UTXOs confirmados para seleccionar inputs.',
+    mempoolFallbackWarningTitle: 'API mempool.space inestable',
+    mempoolFallbackWarningBody:
+      'La API principal está lenta o devolvió un error. Usando Blockstream como fallback — proceda con calma.',
   },
 };
 
@@ -434,6 +445,7 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
   const [showSeed, setShowSeed] = useState(false);
   const [showWif, setShowWif] = useState(false);
   const [recommendedFee, setRecommendedFee] = useState<RecommendedFeeRate | null>(null);
+  const [mempoolFallbackMessage, setMempoolFallbackMessage] = useState<string | null>(null);
 
   const explorerBaseUrl = useMemo(
     () => getBitcoinNetworkConfig(networkId).mempoolExplorerBaseUrl,
@@ -448,7 +460,12 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
     let cancelled = false;
 
     const loadRecommendedFee = async () => {
-      const fees = await fetchRecommendedFeeRate(networkId);
+      const fees = await fetchRecommendedFeeRate(networkId, {
+        onFallback: () => {
+          setMempoolFallbackMessage(`${ui.mempoolFallbackWarningTitle} — ${ui.mempoolFallbackWarningBody}`);
+          setTimeout(() => setMempoolFallbackMessage(null), 10000);
+        },
+      });
 
       if (cancelled) {
         return;
@@ -524,8 +541,18 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
 
     try {
       const [balance, utxos] = await Promise.all([
-        fetchAddressBalance(networkId, addressValue),
-        fetchAddressUtxos(networkId, addressValue),
+        fetchAddressBalance(networkId, addressValue, {
+          onFallback: () => {
+            setMempoolFallbackMessage(`${ui.mempoolFallbackWarningTitle} — ${ui.mempoolFallbackWarningBody}`);
+            setTimeout(() => setMempoolFallbackMessage(null), 10000);
+          },
+        }),
+        fetchAddressUtxos(networkId, addressValue, {
+          onFallback: () => {
+            setMempoolFallbackMessage(`${ui.mempoolFallbackWarningTitle} — ${ui.mempoolFallbackWarningBody}`);
+            setTimeout(() => setMempoolFallbackMessage(null), 10000);
+          },
+        }),
       ]);
 
       setWalletData({
@@ -708,7 +735,12 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
         includeUnconfirmed,
       });
 
-      const txid = await broadcastTransactionHex(networkId, signed.txHex);
+      const txid = await broadcastTransactionHex(networkId, signed.txHex, {
+        onFallback: () => {
+          setMempoolFallbackMessage(`${ui.mempoolFallbackWarningTitle} — ${ui.mempoolFallbackWarningBody}`);
+          setTimeout(() => setMempoolFallbackMessage(null), 10000);
+        },
+      });
 
       setTxState({
         isSending: false,
@@ -855,6 +887,13 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
       {walletErrorMessage ? (
         <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {walletErrorMessage}
+        </p>
+      ) : null}
+
+      {mempoolFallbackMessage ? (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          <strong className="font-semibold">{ui.mempoolFallbackWarningTitle}:</strong>{' '}
+          {ui.mempoolFallbackWarningBody}
         </p>
       ) : null}
 

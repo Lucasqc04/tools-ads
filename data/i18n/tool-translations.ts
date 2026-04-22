@@ -22,7 +22,6 @@ type ToolId =
   | 'crypto-unit-converter'
   | 'html-pdf-json'
   | 'html-viewer'
-  | 'pdf-viewer'
   | 'json-formatter'
   | 'cpf-generator'
   | 'password-generator'
@@ -345,61 +344,7 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
-  'pdf-viewer': {
-    name: 'Local PDF Viewer',
-    shortDescription:
-      'Open and review PDF files locally in your browser for free, with no sign-up, no login, and new-tab option.',
-    primaryKeyword: 'free pdf viewer online',
-    secondaryKeywords: [
-      'open pdf in browser',
-      'local pdf preview',
-      'pdf reader online',
-      'view pdf file online',
-      'pdf viewer no sign up',
-      'open pdf without login',
-    ],
-    searchIntent:
-      'Users who need a quick way to open and read PDF files for free, with no sign-up and no installation.',
-    seoTitle: 'Free PDF Viewer Online | Open PDF in Browser, No Sign-Up',
-    seoDescription:
-      'Preview PDF files locally in your browser for free, with no sign-up, no login, and no automatic upload.',
-    h1: 'Free Local PDF Viewer Without Sign-Up and Login',
-    intro:
-      'Open PDF files instantly in-browser for local review, with responsive layout and quick access actions.',
-    contentBlocks: [
-      {
-        title: 'Why use a local PDF viewer',
-        paragraphs: [
-          'This tool keeps PDF reading lightweight and focused. Select a file and review it immediately without cloud upload steps.',
-          'It is useful for checking contracts, proposals, and internal documents before sharing them externally.',
-        ],
-      },
-      {
-        title: 'Workflow benefits',
-        paragraphs: [
-          'You can open the same document in a dedicated tab for better screen usage and easier cross-checking with other tools.',
-          'The interface is intentionally simple to prioritize readability and speed.',
-        ],
-      },
-    ],
-    faq: [
-      {
-        question: 'Is the PDF uploaded to a server?',
-        answer:
-          'No by default. The file is loaded locally in your browser for preview.',
-      },
-      {
-        question: 'Can I open the PDF in another tab?',
-        answer:
-          'Yes. There is a direct action to open the current PDF preview in a new tab.',
-      },
-      {
-        question: 'Can I edit PDFs in this tool?',
-        answer:
-          'No. This page is focused on local viewing and review, not PDF editing.',
-      },
-    ],
-  },
+  
   'json-formatter': {
     name: 'JSON Formatter and Minifier',
     shortDescription:
@@ -1499,61 +1444,7 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
-  'pdf-viewer': {
-    name: 'Visor PDF Local',
-    shortDescription:
-      'Abre y revisa PDFs localmente en el navegador, gratis, sin registro, sin login y con opción de nueva pestaña.',
-    primaryKeyword: 'pdf viewer online gratis',
-    secondaryKeywords: [
-      'abrir pdf en navegador',
-      'vista previa pdf local',
-      'lector pdf online',
-      'ver pdf online',
-      'visor pdf sin registro',
-      'abrir pdf sin login',
-    ],
-    searchIntent:
-      'Usuarios que necesitan abrir y leer PDFs rápido, gratis y sin registro, sin instalar software de escritorio.',
-    seoTitle: 'Visor PDF Online Gratis | Abrir PDF en Navegador Sin Registro',
-    seoDescription:
-      'Visualiza PDFs localmente en tu navegador, gratis, sin registro, sin login y sin carga automática a servidor.',
-    h1: 'Visor PDF Local Gratis, Sin Registro y Sin Login',
-    intro:
-      'Abre archivos PDF en segundos con procesamiento local y una interfaz orientada a lectura rápida.',
-    contentBlocks: [
-      {
-        title: 'Por qué usar un visor PDF local',
-        paragraphs: [
-          'La herramienta prioriza lectura simple y sin fricción: seleccionas el archivo y ves el contenido de inmediato.',
-          'Es útil para revisar contratos, propuestas y documentos técnicos antes de compartirlos.',
-        ],
-      },
-      {
-        title: 'Ventajas del flujo',
-        paragraphs: [
-          'Puedes abrir el PDF en nueva pestaña para ganar espacio de lectura.',
-          'El diseño se mantiene minimalista para concentrarse en el documento.',
-        ],
-      },
-    ],
-    faq: [
-      {
-        question: '¿El PDF se sube a servidor?',
-        answer:
-          'No por defecto. El archivo se abre localmente en tu navegador.',
-      },
-      {
-        question: '¿Puedo abrir el documento en otra pestaña?',
-        answer:
-          'Sí. Hay una acción directa para abrir el PDF actual en nueva pestaña.',
-      },
-      {
-        question: '¿Permite editar PDF?',
-        answer:
-          'No. Esta página está enfocada en visualización y revisión local.',
-      },
-    ],
-  },
+  
   'json-formatter': {
     name: 'Formateador y Minificador JSON',
     shortDescription:
