@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import {
-  getCryptoConversionLocalePathMap,
-  getCryptoConversionPathByVariant,
   getCryptoConversionResolutionBySlug,
   getCryptoConversionStaticParams,
   getLocalizedCryptoConversionContent,
@@ -23,7 +21,7 @@ import {
   buildSoftwareApplicationJsonLd,
   buildToolWebPageJsonLd,
 } from '@/lib/json-ld';
-import { localizePath, locales } from '@/lib/i18n/config';
+import { buildLocalePathMap, localizePath, locales } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
 import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { buildLocalizedMetadata } from '@/lib/seo';
@@ -78,7 +76,7 @@ export async function generateMetadata({
     locale,
     title: localized.seoTitle,
     description: localized.seoDescription,
-    localePaths: getCryptoConversionLocalePathMap(conversionPage),
+    localePaths: buildLocalePathMap(`/tools/crypto-unit-converter/${conversionSlug}`),
     keywords: localized.keywords,
   });
 }
@@ -99,22 +97,12 @@ export default async function ConversionLandingPage({
 
   const conversionPage = resolution.page;
   const localized = getLocalizedCryptoConversionContent(conversionPage, locale);
-
-  const localePathMap = getCryptoConversionLocalePathMap(conversionPage);
-  const canonicalPath = localePathMap[locale];
   const currentRequestPath = localizePath(
     locale,
     `/tools/crypto-unit-converter/${conversionSlug}`,
   );
-
-  if (currentRequestPath !== canonicalPath) {
-    redirect(canonicalPath);
-  }
-
-  const currentPath = localizePath(
-    locale,
-    getCryptoConversionPathByVariant(conversionPage, resolution.variant),
-  );
+  const canonicalPath = currentRequestPath;
+  const currentPath = currentRequestPath;
 
   const relatedTools = getLocalizedRelatedTools(locale, baseTool.id);
   const relatedConversions = getRelatedCryptoConversionPages(conversionPage.slug, 4).map(

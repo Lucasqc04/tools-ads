@@ -816,6 +816,92 @@ Proibido no copy público:
 
 Esses temas podem existir apenas em documentação interna (como este arquivo), nunca como argumento de venda dentro da interface pública.
 
+----------------------------------------
+19.6. PÁGINAS IRMÃS INDEXÁVEIS (NOVO PADRÃO OBRIGATÓRIO)
+----------------------------------------
+
+Todas as ferramentas DEVEM possuir páginas irmãs com variações semânticas de busca.
+
+Exemplos de formato:
+- `/{locale}/formatar-json`
+- `/{locale}/formatador-de-json`
+- `/{locale}/nome-invisivel-cod-mobile`
+- `/{locale}/nick-invisivel-cod`
+
+Regras:
+- as páginas irmãs devem ser rotas reais, pré-mapeadas e renderizadas no build
+- não pode depender de parâmetro de query para “montar SEO” no runtime
+- cada rota irmã deve responder com HTML completo (H1, intro, conteúdo e FAQ)
+- cada rota irmã deve manter `index,follow`
+- páginas irmãs devem compartilhar a mesma ferramenta funcional, porém com copy e keyword foco por intenção
+
+----------------------------------------
+19.7. PROIBIÇÃO DE GERAÇÃO SEO EM TEMPO DE REQUISIÇÃO
+----------------------------------------
+
+Para SEO, é proibido:
+- criar páginas apenas em runtime sem estarem na malha de rotas estáticas
+- depender de conteúdo que só existe após hidratação client-side
+- deixar variações importantes fora de `generateStaticParams`
+
+Padrão obrigatório:
+- toda variação de slug deve estar listada em estruturas de dados versionadas
+- toda variação deve ser resolvível no servidor sem fetch externo obrigatório
+- toda variação deve aparecer no sitemap
+
+----------------------------------------
+19.8. MATRIZ DE COBERTURA (TOOLS x IDIOMAS x VARIAÇÕES)
+----------------------------------------
+
+Cada ferramenta deve atender os 3 eixos abaixo:
+- eixo 1: rota canônica (`/{locale}/tools/{tool-slug}`)
+- eixo 2: páginas irmãs de intenção (`/{locale}/{slug-variacao}`)
+- eixo 3: páginas contextuais específicas (quando aplicável), como:
+  - conversões (`pdf-para-jpeg`, `btc-para-satoshi`, etc.)
+  - plataformas (`nome invisível` por jogo/rede social)
+
+Regra de escala:
+- gerar dezenas de combinações por ferramenta com base em keyword primária + secundárias
+- priorizar variações head, middle e long-tail
+- manter slug limpo, semântico e coerente com a intenção de busca
+
+----------------------------------------
+19.9. SITEMAP E ROBOTS COM COBERTURA TOTAL
+----------------------------------------
+
+`sitemap.xml` deve incluir, sem exceção:
+- rotas institucionais
+- rotas canônicas de tools
+- todas as páginas irmãs de intenção
+- todas as páginas de conversão/variação contextual
+- todas as versões por idioma
+
+Regras adicionais:
+- deduplicar URLs finais no sitemap
+- manter `robots.txt` liberando rastreamento público
+- bloquear apenas endpoints técnicos (ex.: `/api/`)
+
+----------------------------------------
+19.10. REGRA DE CANONICAL PARA PÁGINAS IRMÃS
+----------------------------------------
+
+Para páginas irmãs programáticas:
+- não forçar redirect para uma única URL da ferramenta quando o objetivo é indexar múltiplas variações
+- cada página irmã deve ter canonical coerente com a própria rota servida
+- manter consistência de metadados (title, description, keywords) por variação
+
+----------------------------------------
+19.11. CHECKLIST DE PUBLICAÇÃO SEO PROGRAMÁTICO
+----------------------------------------
+
+Antes de publicar:
+- [ ] todas as variações estão em arquivos de dados (fonte única)
+- [ ] todas as variações entram em `generateStaticParams`
+- [ ] todas as variações aparecem em `sitemap.xml`
+- [ ] todas as variações retornam HTML SSR completo
+- [ ] todas as variações estão com `index,follow`
+- [ ] nenhuma variação depende de geração SEO dinâmica no runtime
+
 ========================================
 FIM
 ========================================

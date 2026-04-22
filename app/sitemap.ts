@@ -1,16 +1,8 @@
 import type { MetadataRoute } from 'next';
-import {
-  cryptoConversionPages,
-  getCryptoConversionPathByLocale,
-} from '@/data/crypto-conversion-pages';
-import {
-  getImageConversionPathByLocale,
-  imageConversionPages,
-} from '@/data/image-conversion-pages';
-import {
-  getInvisiblePlatformPathByLocale,
-  invisiblePlatformPages,
-} from '@/data/invisible-platform-pages';
+import { getCryptoConversionStaticParams } from '@/data/crypto-conversion-pages';
+import { getImageConversionStaticParams } from '@/data/image-conversion-pages';
+import { getInvisiblePlatformStaticParamsByLocale } from '@/data/invisible-platform-pages';
+import { getToolAliasStaticParamsByLocale } from '@/data/tool-alias-pages';
 import { toolsRegistry } from '@/data/tools-registry';
 import {
   defaultLocale,
@@ -68,6 +60,30 @@ const dedupeByUrl = (entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap => {
   return Array.from(byUrl.values());
 };
 
+const collectInvisibleLandingSlugs = (): string[] => {
+  const slugs = new Set<string>();
+
+  locales.forEach((locale) => {
+    getInvisiblePlatformStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      slugs.add(platformPageSlug);
+    });
+  });
+
+  return Array.from(slugs);
+};
+
+const collectToolAliasSlugs = (): string[] => {
+  const slugs = new Set<string>();
+
+  locales.forEach((locale) => {
+    getToolAliasStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      slugs.add(platformPageSlug);
+    });
+  });
+
+  return Array.from(slugs);
+};
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
@@ -92,73 +108,55 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
   );
 
-  const toolRoutes: MetadataRoute.Sitemap = toolsRegistry.flatMap((tool) => {
-    const pathMap = buildLocalePathMap(`/tools/${tool.slug}`);
-
-    return locales.map((locale) => ({
-      url: makeAbsoluteUrl(pathMap[locale]),
+  const toolRoutes: MetadataRoute.Sitemap = toolsRegistry.flatMap((tool) =>
+    createLocalizedEntries(`/tools/${tool.slug}`, {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
-      alternates: buildAlternates(pathMap),
-    }));
-  });
+    }),
+  );
 
-  const conversionRoutes: MetadataRoute.Sitemap = cryptoConversionPages.flatMap((page) => {
-    const pathMap: Record<AppLocale, string> = {
-      'pt-br': getCryptoConversionPathByLocale(page, 'pt-br'),
-      en: getCryptoConversionPathByLocale(page, 'en'),
-      es: getCryptoConversionPathByLocale(page, 'es'),
-    };
-
-    return locales.map((locale) => ({
-      url: makeAbsoluteUrl(pathMap[locale]),
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.72,
-      alternates: buildAlternates(pathMap),
-    }));
-  });
-
-  const imageConversionRoutes: MetadataRoute.Sitemap = imageConversionPages.flatMap((page) => {
-    const pathMap: Record<AppLocale, string> = {
-      'pt-br': getImageConversionPathByLocale(page, 'pt-br'),
-      en: getImageConversionPathByLocale(page, 'en'),
-      es: getImageConversionPathByLocale(page, 'es'),
-    };
-
-    return locales.map((locale) => ({
-      url: makeAbsoluteUrl(pathMap[locale]),
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.72,
-      alternates: buildAlternates(pathMap),
-    }));
-  });
-
-  const invisiblePlatformRoutes: MetadataRoute.Sitemap = invisiblePlatformPages.flatMap(
-    (page) => {
-      const pathMap: Record<AppLocale, string> = {
-        'pt-br': getInvisiblePlatformPathByLocale(page, 'pt-br'),
-        en: getInvisiblePlatformPathByLocale(page, 'en'),
-        es: getInvisiblePlatformPathByLocale(page, 'es'),
-      };
-
-      return locales.map((locale) => ({
-        url: makeAbsoluteUrl(pathMap[locale]),
+  const cryptoConversionRoutes: MetadataRoute.Sitemap = getCryptoConversionStaticParams().flatMap(
+    ({ conversionSlug }) =>
+      createLocalizedEntries(`/tools/crypto-unit-converter/${conversionSlug}`, {
         lastModified: now,
         changeFrequency: 'weekly',
         priority: 0.72,
-        alternates: buildAlternates(pathMap),
-      }));
-    },
+      }),
+  );
+
+  const imageConversionRoutes: MetadataRoute.Sitemap = getImageConversionStaticParams().flatMap(
+    ({ conversionSlug }) =>
+      createLocalizedEntries(`/tools/image-converter/${conversionSlug}`, {
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.72,
+      }),
+  );
+
+  const invisibleLandingRoutes: MetadataRoute.Sitemap = collectInvisibleLandingSlugs().flatMap(
+    (slug) =>
+      createLocalizedEntries(`/${slug}`, {
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.74,
+      }),
+  );
+
+  const toolAliasRoutes: MetadataRoute.Sitemap = collectToolAliasSlugs().flatMap((slug) =>
+    createLocalizedEntries(`/${slug}`, {
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    }),
   );
 
   return dedupeByUrl([
     ...staticRoutes,
     ...toolRoutes,
-    ...conversionRoutes,
+    ...cryptoConversionRoutes,
     ...imageConversionRoutes,
-    ...invisiblePlatformRoutes,
+    ...invisibleLandingRoutes,
+    ...toolAliasRoutes,
   ]);
 }

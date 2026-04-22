@@ -532,6 +532,15 @@ export const getRelatedInvisiblePlatformPages = (
 export const getInvisiblePlatformStaticParamsByLocale = (
   locale: AppLocale,
 ): Array<{ platformPageSlug: string }> =>
-  invisiblePlatformPages.map((page) => ({
-    platformPageSlug: getInvisiblePlatformSlugByLocale(page, locale),
+  Array.from(
+    new Set(
+      invisiblePlatformPages.flatMap((page) => [
+        getInvisiblePlatformSlugByLocale(page, locale),
+        page.slugPtBr,
+        page.slugEn,
+        page.slugEs,
+      ]),
+    ),
+  ).map((platformPageSlug) => ({
+    platformPageSlug,
   }));

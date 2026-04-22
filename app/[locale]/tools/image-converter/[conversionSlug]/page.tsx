@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { ImageConversionLinks } from '@/components/tools/image-conversion-links';
 import { ImageConverterTool } from '@/components/tools/image-converter-tool';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import {
-  getImageConversionLocalePathMap,
-  getImageConversionPathByVariant,
   getImageConversionResolutionBySlug,
   getImageConversionStaticParams,
   getLocalizedImageConversionContent,
@@ -107,7 +105,7 @@ export async function generateMetadata({
     locale,
     title: localized.seoTitle,
     description: localized.seoDescription,
-    localePaths: getImageConversionLocalePathMap(conversionPage),
+    localePaths: buildLocalePathMap(`/tools/image-converter/${conversionSlug}`),
     keywords: localized.keywords,
   });
 }
@@ -128,18 +126,9 @@ export default async function ConversionLandingPage({
 
   const conversionPage = resolution.page;
   const localized = getLocalizedImageConversionContent(conversionPage, locale);
-  const localePathMap = getImageConversionLocalePathMap(conversionPage);
-  const canonicalPath = localePathMap[locale];
   const currentRequestPath = localizePath(locale, `/tools/image-converter/${conversionSlug}`);
-
-  if (currentRequestPath !== canonicalPath) {
-    redirect(canonicalPath);
-  }
-
-  const currentPath = localizePath(
-    locale,
-    getImageConversionPathByVariant(conversionPage, resolution.variant),
-  );
+  const canonicalPath = currentRequestPath;
+  const currentPath = currentRequestPath;
 
   const relatedTools = getLocalizedRelatedTools(locale, baseTool.id);
   const relatedConversions = getRelatedImageConversionPages(conversionPage.slug, 4).map((page) =>
