@@ -4,7 +4,9 @@ import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-tool';
 import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
+import { CompoundInterestTool } from '@/components/tools/compound-interest-tool';
 import { CpfGeneratorTool } from '@/components/tools/cpf-generator-tool';
+import { FakePersonGeneratorTool } from '@/components/tools/fake-person-generator-tool';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
 import { HtmlViewerTool } from '@/components/tools/html-viewer-tool';
@@ -17,6 +19,7 @@ import { InvisiblePlatformLinks } from '@/components/tools/invisible-platform-li
 import { JsonFormatterTool } from '@/components/tools/json-formatter-tool';
 import { PasswordGeneratorTool } from '@/components/tools/password-generator-tool';
 import { QrCodeGeneratorTool } from '@/components/tools/qr-code-generator';
+import { SorteadorTool } from '@/components/tools/sorteador-tool';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import { VideoCompressionTool } from '@/components/tools/video-compression-tool';
@@ -161,6 +164,7 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'html-viewer': 'DeveloperApplication',
   'json-formatter': 'DeveloperApplication',
   'cpf-generator': 'UtilitiesApplication',
+  'gerador-pessoa-fake': 'DeveloperApplication',
   'password-generator': 'SecurityApplication',
   'base64-image-viewer': 'DeveloperApplication',
   'image-to-base64': 'DeveloperApplication',
@@ -168,6 +172,8 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'image-compression': 'UtilitiesApplication',
   'video-compression': 'UtilitiesApplication',
   'qr-code-generator': 'UtilitiesApplication',
+  sorteador: 'UtilitiesApplication',
+  'calculadora-juros-compostos': 'FinanceApplication',
   'invisible-character': 'UtilitiesApplication',
 };
 
@@ -536,6 +542,8 @@ export default async function LandingPage({ params }: LandingPageProps) {
     toolUi = <JsonFormatterTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'cpf-generator') {
     toolUi = <CpfGeneratorTool locale={locale} />;
+  } else if (aliasPage.toolSlug === 'gerador-pessoa-fake') {
+    toolUi = <FakePersonGeneratorTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'password-generator') {
     toolUi = <PasswordGeneratorTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'base64-image-viewer') {
@@ -572,6 +580,10 @@ export default async function LandingPage({ params }: LandingPageProps) {
     toolUi = <VideoCompressionTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'qr-code-generator') {
     toolUi = <QrCodeGeneratorTool locale={locale} />;
+  } else if (aliasPage.toolSlug === 'sorteador') {
+    toolUi = <SorteadorTool locale={locale} />;
+  } else if (aliasPage.toolSlug === 'calculadora-juros-compostos') {
+    toolUi = <CompoundInterestTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'invisible-character') {
     toolUi = <InvisibleCharacterTool locale={locale} initialPlatformId={aliasPage.invisiblePlatformId} />;
 

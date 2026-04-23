@@ -14,6 +14,16 @@ import {
   cpfGeneratorIntro,
 } from '@/data/content/cpf-generator';
 import {
+  fakePersonGeneratorContentBlocks,
+  fakePersonGeneratorFaq,
+  fakePersonGeneratorIntro,
+} from '@/data/content/fake-person-generator';
+import {
+  compoundInterestContentBlocks,
+  compoundInterestFaq,
+  compoundInterestIntro,
+} from '@/data/content/compound-interest';
+import {
   imageToBase64ContentBlocks,
   imageToBase64Faq,
   imageToBase64Intro,
@@ -63,6 +73,11 @@ import {
   qrCodeGeneratorFaq,
   qrCodeGeneratorIntro,
 } from '@/data/content/qr-code-generator';
+import {
+  sorteadorContentBlocks,
+  sorteadorFaq,
+  sorteadorIntro,
+} from '@/data/content/sorteador';
 import { getToolTranslation } from '@/data/i18n/tool-translations';
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ToolDefinition } from '@/types/tool';
@@ -222,7 +237,41 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/cpf-generator',
     faq: cpfGeneratorFaq,
     contentBlocks: cpfGeneratorContentBlocks,
-    relatedToolIds: ['json-formatter', 'qr-code-generator', 'image-converter'],
+    relatedToolIds: ['gerador-pessoa-fake', 'json-formatter', 'qr-code-generator'],
+  },
+  {
+    id: 'gerador-pessoa-fake',
+    slug: 'gerador-pessoa-fake',
+    name: 'Gerador de Pessoa Fake para Testes',
+    shortDescription:
+      'Gere identidade ficticia coerente com CPF valido, RG, email, telefone, endereco, idade e nascimento para desenvolvimento e QA.',
+    category: 'utility',
+    primaryKeyword: 'gerador de pessoa fake',
+    secondaryKeywords: [
+      'gerador de dados fake',
+      'gerador de dados para teste',
+      'fake data generator brasil',
+      'gerador de identidade ficticia',
+      'gerar cpf valido com nome',
+      'gerador de cpf e rg',
+      'gerador de usuario fake',
+      'gerador de dados completos pessoa',
+      'fake user generator brazil',
+      'gerador de cadastro de teste',
+      'dados ficticios para homologacao',
+    ],
+    searchIntent:
+      'Devs, QAs e analistas que precisam gerar pessoas ficticias coerentes para testar formularios, APIs, banco de dados e automacoes.',
+    seoTitle:
+      'Gerador de Pessoa Fake para Testes | CPF, RG, Email, Telefone e Endereco',
+    seoDescription:
+      'Crie pessoas ficticias coerentes para testes com CPF valido, RG, idade, nascimento, estado, cidade, DDD, CEP e exportacao em JSON, CSV e SQL.',
+    h1: 'Gerador de Pessoa Fake para Testes com CPF, RG e Endereco Coerente',
+    intro: fakePersonGeneratorIntro,
+    canonicalPath: '/tools/gerador-pessoa-fake',
+    faq: fakePersonGeneratorFaq,
+    contentBlocks: fakePersonGeneratorContentBlocks,
+    relatedToolIds: ['cpf-generator', 'json-formatter', 'password-generator'],
   },
   {
     id: 'password-generator',
@@ -448,6 +497,74 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['image-converter', 'json-formatter'],
   },
   {
+    id: 'sorteador',
+    slug: 'sorteador',
+    name: 'Sorteador Online Completo',
+    shortDescription:
+      'Sortear nomes e numeros online com parsing inteligente, roleta visual, multiplos resultados e compartilhamento por link.',
+    category: 'utility',
+    primaryKeyword: 'sorteador online',
+    secondaryKeywords: [
+      'sortear nomes online',
+      'sorteador de numeros',
+      'roleta online de nomes',
+      'random picker online',
+      'wheel picker online',
+      'sortear lista online',
+      'sorteio aleatorio gratis',
+      'sortear 3 nomes online',
+      'sortear sem repetir',
+      'sorteador com tempo',
+      'roleta com nomes gratis',
+    ],
+    searchIntent:
+      'Usuarios que querem sortear nomes, numeros ou listas completas de forma rapida, com transparencia e opcoes avancadas de configuracao.',
+    seoTitle:
+      'Sorteador Online Completo | Sortear Nomes, Numeros e Roleta',
+    seoDescription:
+      'Use o sorteador online para nomes e numeros com auto-deteccao de separador, sorteio com/sem repeticao, roleta animada, CSV e link compartilhavel.',
+    h1: 'Sorteador Online de Nomes e Numeros com Modo Roleta',
+    intro: sorteadorIntro,
+    canonicalPath: '/tools/sorteador',
+    faq: sorteadorFaq,
+    contentBlocks: sorteadorContentBlocks,
+    relatedToolIds: ['calculadora-juros-compostos', 'password-generator', 'qr-code-generator'],
+  },
+  {
+    id: 'calculadora-juros-compostos',
+    slug: 'calculadora-juros-compostos',
+    name: 'Calculadora de Juros Compostos',
+    shortDescription:
+      'Simule juros compostos com aporte mensal, descubra aporte para meta e taxa necessaria com grafico, tabela e comparacao com juros simples.',
+    category: 'utility',
+    primaryKeyword: 'calculadora de juros compostos',
+    secondaryKeywords: [
+      'simulador de juros compostos',
+      'juros compostos online',
+      'calculadora de investimento com aporte mensal',
+      'quanto rende por mes',
+      'quanto preciso investir por mes',
+      'descobrir taxa de juros necessaria',
+      'simulador de rendimento mensal',
+      'calculadora juros compostos mensal',
+      'calculadora juros compostos anual',
+      'como calcular juros compostos',
+      'juros simples vs compostos',
+    ],
+    searchIntent:
+      'Usuarios que precisam calcular crescimento de patrimonio com juros compostos e comparar cenarios para investimento, meta financeira e planejamento de prazo.',
+    seoTitle:
+      'Calculadora de Juros Compostos Online | Simulador com Aporte Mensal',
+    seoDescription:
+      'Calcule juros compostos com valor inicial, aporte mensal, taxa e prazo. Veja valor final, juros totais, grafico, tabela, comparacao com juros simples e metas.',
+    h1: 'Calculadora de Juros Compostos Online com Aporte Mensal',
+    intro: compoundInterestIntro,
+    canonicalPath: '/tools/calculadora-juros-compostos',
+    faq: compoundInterestFaq,
+    contentBlocks: compoundInterestContentBlocks,
+    relatedToolIds: ['sorteador', 'crypto-unit-converter', 'json-formatter'],
+  },
+  {
     id: 'invisible-character',
     slug: 'invisible-character',
     name: 'Caractere Invisivel para Jogos',
@@ -507,6 +624,7 @@ type LocalizableToolId =
   | 'html-viewer'
   | 'json-formatter'
   | 'cpf-generator'
+  | 'gerador-pessoa-fake'
   | 'password-generator'
   | 'base64-image-viewer'
   | 'image-to-base64'
@@ -514,6 +632,8 @@ type LocalizableToolId =
   | 'image-compression'
   | 'video-compression'
   | 'qr-code-generator'
+  | 'sorteador'
+  | 'calculadora-juros-compostos'
   | 'invisible-character';
 
 const localizableToolIds = new Set<LocalizableToolId>([
@@ -522,6 +642,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'html-viewer',
   'json-formatter',
   'cpf-generator',
+  'gerador-pessoa-fake',
   'password-generator',
   'base64-image-viewer',
   'image-to-base64',
@@ -529,6 +650,8 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'image-compression',
   'video-compression',
   'qr-code-generator',
+  'sorteador',
+  'calculadora-juros-compostos',
   'invisible-character',
 ]);
 

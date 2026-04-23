@@ -7,9 +7,11 @@ export type VideoMetadata = {
   height: number;
 };
 
+export type CompressionLogEvent = LogEvent;
+
 export type VideoCompressionOptions = {
   compressionLevel: number;
-  onLog?: (event: LogEvent) => void;
+  onLog?: (event: CompressionLogEvent) => void;
   onProgress?: (event: ProgressEvent) => void;
 };
 
@@ -50,8 +52,22 @@ const CORE_SOURCES = [
   },
 ] as const;
 
+const SERVER_COMPRESS_ENDPOINT = '/api/video-compress';
+const SERVER_REQUEST_TIMEOUT_MS = 8 * 60 * 1000;
+
 let ffmpegInstance: FFmpeg | null = null;
 let ffmpegLoadPromise: Promise<FFmpeg> | null = null;
+
+const emitLog = (options: VideoCompressionOptions, message: string): void => {
+  options.onLog?.({ type: 'info', message });
+};
+
+const emitProgress = (options: VideoCompressionOptions, progress: number): void => {
+  options.onProgress?.({
+    progress: clamp(progress, 0, 1),
+    time: 0,
+  });
+};
 
 const toLoadErrorMessage = (error: unknown): string => {
   const message = error instanceof Error ? error.message : String(error);
@@ -119,6 +135,88 @@ const getTargetVideoBitrateKbps = (
   }
 
   return 1400;
+};
+
+const parseOutputFilename = (contentDisposition: string | null, fallbackName: string): string => {
+  if (!contentDisposition) {
+    return fallbackName;
+  }
+
+  const match = contentDisposition.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/i);
+
+  if (!match?.[1]) {
+    return fallbackName;
+  }
+
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return match[1];
+  }
+};
+
+const compressVideoViaApi = async (
+  file: File,
+  options: VideoCompressionOptions,
+): Promise<File> => {
+  if (typeof window === 'undefined') {
+    throw new Error('API de compressao indisponivel fora do navegador.');
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('compressionLevel', String(options.compressionLevel));
+
+  const controller = new AbortController();
+  const timeout = globalThis.setTimeout(() => controller.abort(), SERVER_REQUEST_TIMEOUT_MS);
+  let syntheticProgress = 0.08;
+  const progressTicker = globalThis.setInterval(() => {
+    syntheticProgress = Math.min(0.82, syntheticProgress + 0.02);
+    emitProgress(options, syntheticProgress);
+  }, 900);
+
+  emitProgress(options, syntheticProgress);
+
+  try {
+    const response = await fetch(SERVER_COMPRESS_ENDPOINT, {
+      method: 'POST',
+      body: formData,
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      let message = `API de compressao retornou status ${response.status}.`;
+
+      try {
+        const payload = (await response.json()) as { error?: string };
+        if (payload.error) {
+          message = payload.error;
+        }
+      } catch {
+        // ignore payload parsing failure
+      }
+
+      throw new Error(message);
+    }
+
+    emitProgress(options, 0.9);
+
+    const outputBlob = await response.blob();
+    const outputName = parseOutputFilename(
+      response.headers.get('Content-Disposition'),
+      toOutputName(file.name),
+    );
+
+    emitProgress(options, 1);
+
+    return new File([outputBlob], outputName, {
+      type: outputBlob.type || 'video/mp4',
+      lastModified: Date.now(),
+    });
+  } finally {
+    globalThis.clearTimeout(timeout);
+    globalThis.clearInterval(progressTicker);
+  }
 };
 
 const ensureFfmpeg = async (): Promise<FFmpeg> => {
@@ -223,16 +321,8 @@ export const compressVideoFile = async (
   estimatedSize: number;
   profile: VideoCompressionProfile;
 }> => {
-  options.onLog?.({ message: `Inicializando compressão para ${file.name}...` } as any);
+  emitLog(options, `Inicializando compressao para ${file.name}...`);
 
-  let ffmpeg: FFmpeg;
-  try {
-    ffmpeg = await ensureFfmpeg();
-    options.onLog?.({ message: 'FFmpeg carregado com sucesso.' } as any);
-  } catch (err) {
-    options.onLog?.({ message: `Falha ao carregar FFmpeg: ${err instanceof Error ? err.message : String(err)}` } as any);
-    throw err;
-  }
   const metadata = await readVideoMetadata(file);
   const profile = getCompressionProfile(options.compressionLevel);
   const estimatedSize = estimateCompressedVideoSize(
@@ -240,6 +330,35 @@ export const compressVideoFile = async (
     metadata.durationInSeconds,
     options.compressionLevel,
   );
+
+  try {
+    emitLog(options, 'Tentando compressao via API do servidor...');
+    const serverOutputFile = await compressVideoViaApi(file, options);
+    emitLog(options, 'Compressao concluida via API do servidor.');
+
+    return {
+      file: serverOutputFile,
+      metadata,
+      estimatedSize,
+      profile,
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    emitLog(options, `API indisponivel: ${message}. Iniciando fallback local (FFmpeg.wasm).`);
+  }
+
+  let ffmpeg: FFmpeg;
+  try {
+    ffmpeg = await ensureFfmpeg();
+    emitLog(options, 'FFmpeg local carregado com sucesso.');
+  } catch (error) {
+    emitLog(
+      options,
+      `Falha ao carregar FFmpeg local: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    throw error;
+  }
+
   const targetVideoBitrateKbps = getTargetVideoBitrateKbps(
     file.size,
     metadata.durationInSeconds,
@@ -263,16 +382,23 @@ export const compressVideoFile = async (
   };
 
   const progressHandler = (event: ProgressEvent) => {
-    options.onProgress?.(event);
+    options.onProgress?.({
+      ...event,
+      progress: clamp(event.progress, 0, 1),
+    });
   };
 
   ffmpeg.on('log', logHandler);
   ffmpeg.on('progress', progressHandler);
 
   try {
-    options.onLog?.({ message: `Escrevendo arquivo de entrada (${inputName})...` } as any);
+    emitLog(options, `Escrevendo arquivo de entrada (${inputName})...`);
+    emitProgress(options, 0.05);
+
     await ffmpeg.writeFile(inputName, await fetchFile(file));
-    options.onLog?.({ message: 'Arquivo de entrada escrito no FS.' } as any);
+
+    emitLog(options, 'Arquivo de entrada escrito no FS local.');
+    emitProgress(options, 0.1);
 
     const attempts: CompressionAttempt[] = [
       {
@@ -342,16 +468,18 @@ export const compressVideoFile = async (
     const attemptFailures: string[] = [];
     let successfulOutputName: string | null = null;
 
-    options.onLog?.({ message: `Iniciando tentativas de compressão (${attempts.length} estratégias).` } as any);
+    emitLog(options, `Iniciando fallback local (${attempts.length} tentativas).`);
 
-    for (const attempt of attempts) {
+    for (let index = 0; index < attempts.length; index += 1) {
+      const attempt = attempts[index] as CompressionAttempt;
       const attemptOutputName = `${getUniqueToken()}-output.mp4`;
       outputNames.push(attemptOutputName);
 
+      emitProgress(options, 0.15 + index * 0.18);
+
       try {
-        options.onLog?.({ message: `Tentativa: ${attempt.label} — executando ffmpeg...` } as any);
+        emitLog(options, `Tentativa local: ${attempt.label}.`);
         const exitCode = await ffmpeg.exec(attempt.buildArgs(attemptOutputName));
-        options.onLog?.({ message: `Tentativa ${attempt.label} terminou com codigo ${exitCode}.` } as any);
 
         if (exitCode === 0) {
           successfulOutputName = attemptOutputName;
@@ -361,7 +489,7 @@ export const compressVideoFile = async (
         attemptFailures.push(`${attempt.label} (codigo ${exitCode})`);
       } catch (error) {
         const reason = error instanceof Error ? error.message : 'erro inesperado';
-        options.onLog?.({ message: `Tentativa ${attempt.label} falhou: ${reason}` } as any);
+        emitLog(options, `Tentativa ${attempt.label} falhou: ${reason}`);
         attemptFailures.push(`${attempt.label} (${reason})`);
       }
     }
@@ -384,6 +512,8 @@ export const compressVideoFile = async (
       lastModified: Date.now(),
     });
 
+    emitProgress(options, 1);
+
     return {
       file: outputFile,
       metadata,
@@ -394,8 +524,11 @@ export const compressVideoFile = async (
     ffmpeg.off('log', logHandler);
     ffmpeg.off('progress', progressHandler);
 
-    options.onLog?.({ message: 'Limpando arquivos temporarios do FFmpeg.' } as any);
+    emitLog(options, 'Limpando arquivos temporarios do FFmpeg local.');
+
     await ffmpeg.deleteFile(inputName).catch(() => undefined);
-    await Promise.all(outputNames.map((outputName) => ffmpeg.deleteFile(outputName).catch(() => undefined)));
+    await Promise.all(
+      outputNames.map((outputName) => ffmpeg.deleteFile(outputName).catch(() => undefined)),
+    );
   }
 };

@@ -9,6 +9,7 @@ import {
   compressVideoFile,
   estimateCompressedVideoSize,
   readVideoMetadata,
+  type CompressionLogEvent,
   type VideoMetadata,
 } from '@/lib/video-compression';
 import { calculateSavingsPercent, formatBytes } from '@/lib/file-size';
@@ -368,26 +369,15 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
       const result = await compressVideoFile(item.file, {
         compressionLevel,
         onProgress: (event) => {
-          const raw = event as any;
-          const ratio =
-            typeof raw.progress === 'number'
-              ? raw.progress
-              : typeof raw.ratio === 'number'
-              ? raw.ratio
-              : typeof raw.percent === 'number'
-              ? raw.percent / 100
-              : 0;
-
-          const percent = Math.round(clamp(ratio * 100, 0, 100));
+          const percent = Math.round(clamp(event.progress * 100, 0, 100));
 
           updateItem(item.id, (current) => ({
             ...current,
             progressPercent: Number.isFinite(percent) ? percent : current.progressPercent,
           }));
         },
-        onLog: (event) => {
-          const msg = (event && ((event as any).message ?? (event as any).msg)) || String(event);
-          const text = typeof msg === 'string' ? msg : JSON.stringify(msg);
+        onLog: (event: CompressionLogEvent) => {
+          const text = event.message;
           updateItem(item.id, (current) => ({
             ...current,
             logs: [...(current.logs ?? []), text].slice(-12),

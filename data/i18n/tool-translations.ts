@@ -24,6 +24,7 @@ type ToolId =
   | 'html-viewer'
   | 'json-formatter'
   | 'cpf-generator'
+  | 'gerador-pessoa-fake'
   | 'password-generator'
   | 'base64-image-viewer'
   | 'image-to-base64'
@@ -31,6 +32,8 @@ type ToolId =
   | 'image-compression'
   | 'video-compression'
   | 'qr-code-generator'
+  | 'sorteador'
+  | 'calculadora-juros-compostos'
   | 'invisible-character';
 
 const enTranslations: Record<ToolId, ToolTranslation> = {
@@ -726,6 +729,246 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
+  'gerador-pessoa-fake': {
+    name: 'Fake Person Generator for Testing',
+    shortDescription:
+      'Generate coherent fictional profiles with valid CPF, realistic RG, address, phone, and email for QA, automation, and staging datasets.',
+    primaryKeyword: 'fake person generator brazil',
+    secondaryKeywords: [
+      'fake data generator brazil',
+      'generate fake cpf and rg',
+      'test user generator',
+      'mock profile generator',
+      'fake identity for testing',
+      'brazilian test data generator',
+      'fake signup data',
+      'qa fixture generator',
+    ],
+    searchIntent:
+      'Developers, QA teams, and analysts needing coherent synthetic person profiles for forms, APIs, and database fixtures.',
+    seoTitle: 'Fake Person Generator for Testing | CPF, RG, Address, Email',
+    seoDescription:
+      'Create fictional yet coherent Brazil-focused profiles with valid CPF, realistic RG, city/state/DDD/ZIP consistency, and export to JSON, CSV, and SQL.',
+    h1: 'Fake Person Generator for Testing with Coherent Brazil Data',
+    intro:
+      'Generate complete fictional profiles for QA and development with coherent CPF, RG, age, birth date, zodiac, address, phone, and email.',
+    contentBlocks: [
+      {
+        title: 'Coherent synthetic identity generation for technical workflows',
+        paragraphs: [
+          'This tool generates fictional people for testing pipelines, not real identities. It combines name, age, birth date, and contact fields into coherent records.',
+          'The focus is Brazil-specific testing quality, including valid CPF generation, realistic RG format, and location consistency across state, city, DDD, and ZIP range.',
+        ],
+      },
+      {
+        title: 'Output modes for QA and engineering teams',
+        paragraphs: [
+          'You can generate complete profiles or use dev presets for only emails, only CPF/RG, or only phone numbers. This reduces noisy fields when building targeted test cases.',
+          'Each run can be copied by field, by card, or exported as text, JSON, CSV, and SQL insert statements for direct integration with fixtures and staging databases.',
+        ],
+        list: [
+          'Exact age or age-range generation with matching birth date.',
+          'Optional parent names, extra biological fields, and generated passwords.',
+          'Fixed seed support for reproducible runs.',
+          'Popular email domain control (Gmail, Hotmail, Outlook, Yahoo).',
+        ],
+      },
+      {
+        title: 'Responsible usage and privacy',
+        paragraphs: [
+          'Generated records are fictional and should be used only in testing, QA, and non-production simulations.',
+          'Processing runs locally in the browser by default and does not require mandatory sign-up or login.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Are generated people real?',
+        answer:
+          'No. Profiles are synthetic and intended only for testing and development workflows.',
+      },
+      {
+        question: 'Does the generated CPF pass validation rules?',
+        answer:
+          'Yes. CPF values are generated with valid check digits for typical validation logic.',
+      },
+      {
+        question: 'Can I export generated profiles?',
+        answer:
+          'Yes. You can copy or export results as text, JSON, CSV, and SQL insert format.',
+      },
+      {
+        question: 'Can I force email domains like gmail.com or hotmail.com?',
+        answer:
+          'Yes. You can pick fixed popular domains or use random selection among common providers.',
+      },
+      {
+        question: 'Is data uploaded to a server?',
+        answer:
+          'No by default. Generation runs locally in your browser.',
+      },
+    ],
+  },
+  sorteador: {
+    name: 'Complete Random Picker',
+    shortDescription:
+      'Draw names and numbers with smart parsing, wheel mode, multiple winners, weighted logic, and shareable links.',
+    primaryKeyword: 'random picker online',
+    secondaryKeywords: [
+      'name picker online',
+      'number picker tool',
+      'wheel picker',
+      'raffle picker',
+      'draw names without repetition',
+      'draw multiple winners',
+      'weighted random picker',
+      'shuffle list online',
+    ],
+    searchIntent:
+      'People who need to quickly draw names or numbers with configurable rules and transparent randomization.',
+    seoTitle: 'Complete Random Picker Online | Names, Numbers, Wheel',
+    seoDescription:
+      'Paste any list and draw winners with smart separator detection, wheel animation, weighted probability, CSV export, and shareable URL.',
+    h1: 'Complete Online Random Picker for Names and Numbers',
+    intro:
+      'Paste a list, auto-detect separators, run instant or suspense draws, and share reproducible random setups by URL.',
+    contentBlocks: [
+      {
+        title: 'Smart list parsing for fast everyday draws',
+        paragraphs: [
+          'The picker supports comma, line break, space, tab, dot, pipe, slash, and semicolon separators. This makes pasted data from spreadsheets and chats work instantly.',
+          'You can also switch to manual list editing, remove duplicates, trim extra spaces, ignore empty tokens, and parse weighted items such as Name (2x).',
+        ],
+      },
+      {
+        title: 'Draw modes for practical use cases',
+        paragraphs: [
+          'Use simple draw, no repetition, with repetition, or full shuffle order depending on your flow. Multi-winner draws and winner history blocking are supported.',
+          'For engagement scenarios, the tool includes suspense timing, roulette-style visual mode, simulation of 1000 runs, and transparency fields for seed and algorithm.',
+        ],
+        list: [
+          'Draw 1 or many winners in one run.',
+          'Enable weighted probability for priority items.',
+          'Generate and replace numeric ranges automatically.',
+          'Copy result, export CSV, and share setup link.',
+        ],
+      },
+      {
+        title: 'Privacy and transparency',
+        paragraphs: [
+          'Randomization uses local browser entropy and processing remains local by default.',
+          'No sign-up is required, and generated results can be audited through visible algorithm and seed references.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I draw multiple names without repetition?',
+        answer:
+          'Yes. Choose no-repetition mode and set the number of winners you need.',
+      },
+      {
+        question: 'Does it support weighted random draw?',
+        answer:
+          'Yes. You can enable weights and parse formats like Name (2x) for higher probability.',
+      },
+      {
+        question: 'Can I use it as a random number picker?',
+        answer:
+          'Yes. Numeric lists are detected automatically and range generation is available.',
+      },
+      {
+        question: 'Can I share the same draw configuration?',
+        answer:
+          'Yes. The tool can generate shareable URLs with list and draw parameters.',
+      },
+      {
+        question: 'Is processing local?',
+        answer:
+          'Yes. Parsing and draw execution run in-browser by default.',
+      },
+    ],
+  },
+  'calculadora-juros-compostos': {
+    name: 'Compound Interest Calculator',
+    shortDescription:
+      'Simulate investment growth with monthly deposits, compare simple vs compound, and calculate required contribution or required rate.',
+    primaryKeyword: 'compound interest calculator online',
+    secondaryKeywords: [
+      'investment calculator with monthly contribution',
+      'future value calculator',
+      'required contribution calculator',
+      'required rate calculator',
+      'simple vs compound interest',
+      'monthly return simulator',
+      'goal-based investment calculator',
+      'inflation adjusted investment calculator',
+    ],
+    searchIntent:
+      'People planning savings and investment scenarios who need clear projections, contribution planning, and target-rate estimation.',
+    seoTitle: 'Compound Interest Calculator Online | Monthly Deposits and Goals',
+    seoDescription:
+      'Calculate compound interest with initial amount, monthly contribution, rate, and period. View chart, detailed table, simple-interest comparison, and target planning.',
+    h1: 'Compound Interest Calculator with Monthly Contribution and Goal Modes',
+    intro:
+      'Run investment projections, estimate required monthly contribution for a target, and solve required rate with a practical multi-mode calculator.',
+    contentBlocks: [
+      {
+        title: 'Three calculator modes in one page',
+        paragraphs: [
+          'Invest mode projects growth with initial capital, monthly deposits, rate frequency, and period frequency. Results include final amount, total invested, and total interest.',
+          'Goal mode solves the monthly contribution needed to reach a final target. Required-rate mode estimates the monthly and yearly rate needed to hit a specific amount.',
+        ],
+      },
+      {
+        title: 'Practical financial planning outputs',
+        paragraphs: [
+          'The interface includes growth chart, detailed monthly/yearly table, text summary, CSV export, and shareable URL for scenario collaboration.',
+          'You can also compare simple versus compound interest and optionally apply annual inflation to inspect nominal vs real purchasing power.',
+        ],
+        list: [
+          'Automatic conversion between monthly and yearly rates.',
+          'Contribution timing toggle (period start or end).',
+          'Detailed rows with opening balance, contribution, interest, and closing balance.',
+          'Quick-copy summary for reports and discussion.',
+        ],
+      },
+      {
+        title: 'Important interpretation limits',
+        paragraphs: [
+          'Projected values are mathematical estimates and do not account for taxes, platform fees, asset volatility, or credit risk unless modeled separately.',
+          'Use multiple scenarios with conservative and optimistic rates to make planning decisions with better risk awareness.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Does the calculator support monthly contributions?',
+        answer:
+          'Yes. You can set recurring monthly deposits and choose whether deposits happen at the start or end of each period.',
+      },
+      {
+        question: 'Can I calculate how much I need to invest monthly to reach a goal?',
+        answer:
+          'Yes. Goal mode estimates the required monthly contribution based on target amount, period, and interest rate.',
+      },
+      {
+        question: 'Can I discover the required rate for a target amount?',
+        answer:
+          'Yes. Required-rate mode solves the monthly and yearly equivalent rate needed for your target.',
+      },
+      {
+        question: 'Does it compare simple and compound interest?',
+        answer:
+          'Yes. You can enable side-by-side comparison to visualize the compounding effect.',
+      },
+      {
+        question: 'Is the calculation local?',
+        answer:
+          'Yes. Computation runs in your browser by default.',
+      },
+    ],
+  },
   'password-generator': {
     name: 'Strong Password Generator',
     shortDescription:
@@ -1133,6 +1376,246 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
 };
 
 const esTranslations: Record<ToolId, ToolTranslation> = {
+  'gerador-pessoa-fake': {
+    name: 'Generador de Persona Fake para Pruebas',
+    shortDescription:
+      'Genera perfiles ficticios coherentes con CPF válido, RG realista, dirección, teléfono y email para QA, automatización y datos de staging.',
+    primaryKeyword: 'generador de persona fake brasil',
+    secondaryKeywords: [
+      'generador de datos fake brasil',
+      'generar cpf y rg para pruebas',
+      'fake identity generator',
+      'test user generator',
+      'generador de perfil ficticio',
+      'datos de prueba para formularios',
+      'fake user generator brazil',
+      'generador de datos sintéticos',
+    ],
+    searchIntent:
+      'Desarrolladores, QA y analistas que necesitan perfiles ficticios coherentes para validar formularios, APIs y bases de datos.',
+    seoTitle: 'Generador de Persona Fake para Pruebas | CPF, RG, Dirección y Email',
+    seoDescription:
+      'Crea personas ficticias coherentes para testing con CPF válido, RG realista, ciudad/estado/DDD/CEP consistentes y exportación en JSON, CSV y SQL.',
+    h1: 'Generador de Persona Fake para Pruebas con Datos Coherentes de Brasil',
+    intro:
+      'Genera perfiles ficticios completos para QA y desarrollo con CPF, RG, edad, nacimiento, signo, dirección, teléfono y email coherentes.',
+    contentBlocks: [
+      {
+        title: 'Datos ficticios coherentes para pruebas técnicas',
+        paragraphs: [
+          'La herramienta crea identidades sintéticas para testing y nunca para suplantación o uso real. Cada perfil mantiene coherencia entre edad, nacimiento, ubicación y contacto.',
+          'El enfoque principal es Brasil: CPF válido por dígitos verificadores, formato de RG realista y consistencia entre UF, ciudad, DDD y CEP.',
+        ],
+      },
+      {
+        title: 'Flujo pensado para QA, automatización y fixtures',
+        paragraphs: [
+          'Puedes usar modo completo o presets para generar solo emails, solo CPF/RG o solo teléfonos. Esto acelera casos de prueba específicos sin ruido de campos innecesarios.',
+          'Los resultados permiten copia por campo, copia por tarjeta y exportación en texto, JSON, CSV y SQL para usar directo en seeds o scripts.',
+        ],
+        list: [
+          'Edad exacta o rango con fecha de nacimiento consistente.',
+          'Nombres de madre y padre con opción de heredar apellido.',
+          'Seed fija para generación reproducible.',
+          'Control de dominios populares (gmail, hotmail, outlook, yahoo).',
+        ],
+      },
+      {
+        title: 'Uso responsable y privacidad',
+        paragraphs: [
+          'Los datos generados son ficticios y deben usarse solo en entornos de prueba, QA y homologación.',
+          'El procesamiento ocurre localmente en navegador por defecto y no requiere registro ni login.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Las personas generadas son reales?',
+        answer:
+          'No. Son perfiles sintéticos creados exclusivamente para pruebas y desarrollo.',
+      },
+      {
+        question: '¿El CPF generado pasa validaciones comunes?',
+        answer:
+          'Sí. El CPF se genera con dígitos verificadores válidos.',
+      },
+      {
+        question: '¿Puedo exportar en formatos técnicos?',
+        answer:
+          'Sí. Puedes copiar o exportar en texto, JSON, CSV y SQL INSERT.',
+      },
+      {
+        question: '¿Puedo forzar dominios como gmail.com o hotmail.com?',
+        answer:
+          'Sí. Puedes elegir dominio fijo o modo aleatorio entre proveedores populares.',
+      },
+      {
+        question: '¿Los datos se envían al servidor?',
+        answer:
+          'No por defecto. La generación corre localmente en tu navegador.',
+      },
+    ],
+  },
+  sorteador: {
+    name: 'Sorteador Online Completo',
+    shortDescription:
+      'Sortea nombres y números con parsing inteligente, ruleta visual, múltiples ganadores, pesos y enlace compartible.',
+    primaryKeyword: 'sorteador online completo',
+    secondaryKeywords: [
+      'sortear nombres online',
+      'sorteador de números',
+      'ruleta de nombres',
+      'random picker online',
+      'wheel picker online',
+      'sortear sin repetir',
+      'sortear varios ganadores',
+      'sorteador con tiempo',
+    ],
+    searchIntent:
+      'Personas que necesitan realizar sorteos rápidos de nombres o números con reglas configurables y transparencia en el proceso.',
+    seoTitle: 'Sorteador Online Completo | Nombres, Números y Ruleta',
+    seoDescription:
+      'Pega cualquier lista y sortea con auto-detección de separador, modo ruleta, múltiples resultados, pesos, CSV y URL compartible.',
+    h1: 'Sorteador Online de Nombres y Números con Modo Ruleta',
+    intro:
+      'Pega una lista, detecta separadores automáticamente y ejecuta sorteos instantáneos o con suspense, con enlace de configuración compartible.',
+    contentBlocks: [
+      {
+        title: 'Parsing inteligente para usar cualquier lista',
+        paragraphs: [
+          'La herramienta detecta separadores como coma, salto de línea, espacio, tab, punto, barra, pipe y punto y coma.',
+          'También puedes activar lista manual, quitar duplicados, recortar espacios, ignorar vacíos y leer pesos con formatos como Nombre (2x).',
+        ],
+      },
+      {
+        title: 'Modos de sorteo para escenarios reales',
+        paragraphs: [
+          'Puedes elegir entre sorteo simple, sin repetición, con repetición o shuffle completo según tu dinámica.',
+          'Para engagement, incluye suspense de tiempo, ruleta visual, simulación de 1000 sorteos y modo de transparencia con seed y algoritmo.',
+        ],
+        list: [
+          'Sortear uno o varios ganadores en una corrida.',
+          'Aplicar pesos para probabilidades diferenciadas.',
+          'Generar intervalo numérico automático.',
+          'Copiar resultado, descargar CSV y compartir por URL.',
+        ],
+      },
+      {
+        title: 'Privacidad y transparencia',
+        paragraphs: [
+          'La aleatoriedad usa entropía local del navegador y el procesamiento permanece local por defecto.',
+          'No requiere registro ni login, y muestra referencias de seed y algoritmo para auditoría rápida.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Puedo sortear varios nombres sin repetir?',
+        answer:
+          'Sí. Elige modo sin repetición y define cuántos resultados necesitas.',
+      },
+      {
+        question: '¿Admite sorteo con pesos?',
+        answer:
+          'Sí. Puedes activar pesos y usar formatos como Nombre (2x).',
+      },
+      {
+        question: '¿También sirve para números aleatorios?',
+        answer:
+          'Sí. Detecta listas numéricas automáticamente y permite generar rangos.',
+      },
+      {
+        question: '¿Puedo compartir la configuración exacta del sorteo?',
+        answer:
+          'Sí. Puedes generar un enlace con parámetros de lista y modo.',
+      },
+      {
+        question: '¿El procesamiento es local?',
+        answer:
+          'Sí. Parsing y sorteo se ejecutan en tu navegador por defecto.',
+      },
+    ],
+  },
+  'calculadora-juros-compostos': {
+    name: 'Calculadora de Interés Compuesto',
+    shortDescription:
+      'Simula crecimiento con aportes mensuales, compara interés simple vs compuesto y calcula aporte o tasa necesaria para tu meta.',
+    primaryKeyword: 'calculadora de interés compuesto online',
+    secondaryKeywords: [
+      'simulador de interés compuesto',
+      'calculadora de inversión con aporte mensual',
+      'cuánto invertir por mes',
+      'calculadora de tasa necesaria',
+      'simulador de rendimiento mensual',
+      'interés simple vs compuesto',
+      'calculadora de meta financiera',
+      'valor futuro con aportes',
+    ],
+    searchIntent:
+      'Usuarios que planifican ahorro e inversión y necesitan proyectar escenarios, definir aporte mensual o calcular tasa requerida.',
+    seoTitle: 'Calculadora de Interés Compuesto Online | Aportes, Metas y Tasa',
+    seoDescription:
+      'Calcula interés compuesto con valor inicial, aporte mensual, tasa y plazo. Incluye gráfico, tabla, comparación con interés simple y metas.',
+    h1: 'Calculadora de Interés Compuesto con Aporte Mensual y Metas',
+    intro:
+      'Proyecta escenarios de inversión, descubre aporte necesario para una meta y calcula la tasa requerida con un flujo de tres modos.',
+    contentBlocks: [
+      {
+        title: 'Tres modos en una sola herramienta',
+        paragraphs: [
+          'Modo Invertir: proyecta capital final con valor inicial, aporte mensual, tasa y plazo.',
+          'Modo Meta: calcula cuánto aportar por mes para alcanzar un objetivo. Modo Tasa: estima la tasa mensual y anual necesaria para llegar al valor final deseado.',
+        ],
+      },
+      {
+        title: 'Salida pensada para decisiones financieras',
+        paragraphs: [
+          'Muestra valor final, total invertido, total de intereses, rentabilidad, gráfico de evolución y tabla detallada por periodo.',
+          'También permite comparar interés simple vs compuesto, aplicar inflación opcional y exportar escenario en CSV o enlace compartible.',
+        ],
+        list: [
+          'Conversión automática entre tasa mensual y anual equivalente.',
+          'Aporte al inicio o al final del periodo.',
+          'Tabla con saldo inicial, aporte, interés y saldo final.',
+          'Resumen textual para copiar y compartir rápidamente.',
+        ],
+      },
+      {
+        title: 'Límites de interpretación',
+        paragraphs: [
+          'Los resultados son proyecciones matemáticas y no incluyen impuestos, comisiones ni riesgo de mercado salvo que se modelen aparte.',
+          'Conviene usar escenarios conservadores y optimistas para tomar decisiones con mejor contexto de riesgo.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Acepta aporte mensual?',
+        answer:
+          'Sí. Puedes definir aporte mensual y si entra al inicio o al final del periodo.',
+      },
+      {
+        question: '¿Puedo calcular cuánto aportar para llegar a una meta?',
+        answer:
+          'Sí. El modo Meta estima el aporte mensual requerido según objetivo, plazo y tasa.',
+      },
+      {
+        question: '¿Puedo descubrir la tasa necesaria para un valor final?',
+        answer:
+          'Sí. El modo Tasa devuelve la tasa mensual y anual equivalente.',
+      },
+      {
+        question: '¿Compara interés simple y compuesto?',
+        answer:
+          'Sí. Puedes activar la comparación para visualizar la diferencia.',
+      },
+      {
+        question: '¿El cálculo es local?',
+        answer:
+          'Sí. La simulación corre en tu navegador por defecto.',
+      },
+    ],
+  },
   'bitcoin-wallet': {
     name: 'Wallet Bitcoin para Testnet y Mainnet',
     shortDescription:
