@@ -276,7 +276,7 @@ export function InvisibleCharacterTool({
     setPatternId(nextPattern.id);
     setCharacterId(nextPattern.characterIds[0] ?? invisibleCharacterDefinitions[0]?.id ?? '');
     setFeedbackMessage('');
-  }, [selectedPlatform?.id]);
+  }, [selectedPlatform]);
 
   useEffect(() => {
     if (!generatorUnit) {

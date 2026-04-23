@@ -159,7 +159,7 @@ const loadImageFromFile = async (file: File): Promise<HTMLImageElement> => {
   try {
     return await tryLoadFromBlob(file);
   } catch (initialError) {
-    // Se falhar de primeira, tente suporte HEIC/HEIF via heic2any (import dinâmico)
+    // Se falhar de primeira, para HEIC/HEIF tenta fallback server-side.
     const lower = file.name.toLowerCase();
     const isHeic =
       file.type === 'image/heic' || file.type === 'image/heif' || lower.endsWith('.heic') || lower.endsWith('.heif');
@@ -169,39 +169,23 @@ const loadImageFromFile = async (file: File): Promise<HTMLImageElement> => {
     }
 
     try {
-      const mod = await import('heic2any');
-      const heic2any = (mod && (mod.default ?? mod)) as any;
+      const form = new FormData();
+      form.append('file', file as unknown as Blob);
 
-      if (typeof heic2any !== 'function') {
-        throw new Error('Módulo heic2any inválido.');
+      const resp = await fetch('/api/convert/heic', { method: 'POST', body: form });
+
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(text || `Server returned ${resp.status}`);
       }
 
-      const converted: Blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
-      return await tryLoadFromBlob(converted);
-    } catch (heicErr) {
-      // Se conversão local falhar, tente fallback server-side
-      try {
-        const form = new FormData();
-        form.append('file', file as unknown as Blob);
-
-        const resp = await fetch('/api/convert/heic', { method: 'POST', body: form });
-
-        if (!resp.ok) {
-          const text = await resp.text();
-          throw new Error(text || `Server returned ${resp.status}`);
-        }
-
-        const blob = await resp.blob();
-        return await tryLoadFromBlob(blob);
-      } catch (serverErr) {
-        const hint =
-          "Se você precisa de suporte HEIC no navegador, instale a dependência opcional 'heic2any' (npm i heic2any) ou configure um endpoint server-side que suporte ffmpeg.";
-        const msg1 = heicErr instanceof Error ? heicErr.message : String(heicErr);
-        const msg2 = serverErr instanceof Error ? serverErr.message : String(serverErr);
-        throw new Error(
-          `Falha ao carregar imagem HEIC. Tentativas local e server-side falharam. Local: ${msg1}. Server: ${msg2}. ${hint}`,
-        );
-      }
+      const blob = await resp.blob();
+      return await tryLoadFromBlob(blob);
+    } catch (serverErr) {
+      const msg = serverErr instanceof Error ? serverErr.message : String(serverErr);
+      throw new Error(
+        `Falha ao carregar imagem HEIC/HEIF. Conversao server-side falhou: ${msg}`,
+      );
     }
   }
 };

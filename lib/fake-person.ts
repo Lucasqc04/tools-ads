@@ -81,7 +81,7 @@ export type FakePersonGeneratorOptions = {
 };
 
 export type FakePersonField = {
-  id: string;
+  id: LocalizedFieldId;
   label: string;
   value: string;
 };
@@ -93,7 +93,22 @@ export type FakePersonOutput = {
   sql: string;
 };
 
-type PersonFieldId = keyof FakePerson | 'address' | 'state';
+type PersonFieldId =
+  | 'fullName'
+  | 'gender'
+  | 'age'
+  | 'birthDate'
+  | 'zodiacSign'
+  | 'cpf'
+  | 'rg'
+  | 'email'
+  | 'mobilePhone'
+  | 'landlinePhone'
+  | 'motherName'
+  | 'fatherName'
+  | 'password'
+  | 'address'
+  | 'state';
 
 type LocalizedFieldId = PersonFieldId | 'bloodType' | 'heightCm' | 'weightKg' | 'favoriteColor' | 'cep' | 'ddd';
 
@@ -1277,22 +1292,21 @@ export const getFakePersonFields = (
 ): FakePersonField[] => {
   const fields = outputFieldsByPreset[preset] ?? outputFieldsByPreset.complete;
   const labels = fieldLabelMapByLocale[locale];
+  const rows: FakePersonField[] = [];
 
-  const rows = fields
-    .map((field) => {
-      const value = getFieldValue(person, field, locale);
+  for (const field of fields) {
+    const value = getFieldValue(person, field, locale);
 
-      if (!value) {
-        return null;
-      }
+    if (!value) {
+      continue;
+    }
 
-      return {
-        id: field,
-        label: labels[field] ?? field,
-        value,
-      } satisfies FakePersonField;
-    })
-    .filter((row): row is FakePersonField => Boolean(row));
+    rows.push({
+      id: field,
+      label: labels[field] ?? field,
+      value,
+    });
+  }
 
   if (preset === 'complete') {
     if (person.extras.bloodType) {

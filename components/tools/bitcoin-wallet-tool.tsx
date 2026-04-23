@@ -480,7 +480,7 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
     return () => {
       cancelled = true;
     };
-  }, [networkId]);
+  }, [networkId, ui.mempoolFallbackWarningBody, ui.mempoolFallbackWarningTitle]);
 
   useEffect(() => {
     const currentWallet = walletSessionRef.current;
