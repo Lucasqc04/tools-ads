@@ -19,6 +19,11 @@ import {
   fakePersonGeneratorIntro,
 } from '@/data/content/fake-person-generator';
 import {
+  descobrirIpPublicoContentBlocks,
+  descobrirIpPublicoFaq,
+  descobrirIpPublicoIntro,
+} from '@/data/content/descobrir-ip-publico';
+import {
   compoundInterestContentBlocks,
   compoundInterestFaq,
   compoundInterestIntro,
@@ -598,6 +603,33 @@ export const toolsRegistry: ToolDefinition[] = [
     contentBlocks: invisibleCharacterContentBlocks,
     relatedToolIds: ['qr-code-generator', 'password-generator', 'json-formatter'],
   },
+  {
+    id: 'descobrir-ip-publico',
+    slug: 'descobrir-ip-publico',
+    name: 'Descobrir IP Público e Informações',
+    shortDescription:
+      'Descubra seu IP público, provedor (ISP) e informações básicas de dispositivo e localização aproximada.',
+    category: 'utility',
+    primaryKeyword: 'descobrir ip publico',
+    secondaryKeywords: [
+      'meu ip',
+      'ip publico',
+      'qual meu ip',
+      'descobrir ip isp',
+      'ip info',
+    ],
+    searchIntent:
+      'Usuarios que precisam saber o IP publico atual, provedor e detalhes basicos do dispositivo para diagnostico e configuracao de rede.',
+    seoTitle: 'Descobrir IP Público | ISP, Localização e Dispositivo',
+    seoDescription:
+      'Descubra seu IP publico, provedor (ISP), cidade aproximada, pais e informacoes do dispositivo. Consulta via servico publico, sem passar pelo nosso servidor.',
+    h1: 'Descubra seu IP Público e Informações do Dispositivo',
+    intro: descobrirIpPublicoIntro,
+    canonicalPath: '/tools/descobrir-ip-publico',
+    faq: descobrirIpPublicoFaq,
+    contentBlocks: descobrirIpPublicoContentBlocks,
+    relatedToolIds: ['json-formatter', 'qr-code-generator'],
+  },
 ];
 
 export const getToolBySlug = (slug: string): ToolDefinition | undefined =>
@@ -634,7 +666,9 @@ type LocalizableToolId =
   | 'qr-code-generator'
   | 'sorteador'
   | 'calculadora-juros-compostos'
-  | 'invisible-character';
+  | 'invisible-character'
+  | 'descobrir-ip-publico';
+
 
 const localizableToolIds = new Set<LocalizableToolId>([
   'bitcoin-wallet',
@@ -653,6 +687,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'sorteador',
   'calculadora-juros-compostos',
   'invisible-character',
+  'descobrir-ip-publico',
 ]);
 
 const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>

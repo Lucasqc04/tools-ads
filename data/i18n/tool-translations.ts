@@ -34,7 +34,8 @@ type ToolId =
   | 'qr-code-generator'
   | 'sorteador'
   | 'calculadora-juros-compostos'
-  | 'invisible-character';
+  | 'invisible-character'
+  | 'descobrir-ip-publico';
 
 const enTranslations: Record<ToolId, ToolTranslation> = {
   'bitcoin-wallet': {
@@ -1370,6 +1371,87 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Does it work on mobile devices?',
         answer:
           'Yes, but large files may take longer on lower-power devices.',
+      },
+    ],
+  },
+  'descobrir-ip-publico': {
+    name: 'Discover Public IP and Device Info',
+    shortDescription:
+      'Discover your public IP, estimated ISP, and basic device and location information from your browser.',
+    primaryKeyword: 'discover public ip',
+    secondaryKeywords: [
+      'my ip',
+      'public ip',
+      'what is my ip',
+      'ip lookup',
+      'ip info',
+    ],
+    searchIntent:
+      'Users who need to check their public IP, ISP, approximate location and basic device info for troubleshooting and network configuration.',
+    seoTitle: 'Discover Public IP | ISP, Location and Device Info',
+    seoDescription:
+      'Find your public IP address, ISP, approximate city/region, and basic device info. Browser-side query to a public IP service; no server upload.',
+    h1: 'Discover Your Public IP and Device Information',
+    intro:
+      'Quickly discover your public IP, estimated provider (ISP), and basic device information and approximate location.',
+    contentBlocks: [
+      {
+        title: 'What this tool does',
+        paragraphs: [
+          'This tool identifies your public IP visible to the internet and queries a public IP service to return additional information such as ISP, approximate city/region and coordinates.',
+          'The request is made directly from your browser to the public service and results are displayed on-screen. Device details (OS and browser) are detected from the User-Agent string for quick diagnostics.',
+        ],
+      },
+      {
+        title: 'When to use it',
+        paragraphs: [
+          'Use it to check which public IP your connection is using, confirm if your ISP changed, validate firewall rules, test geo-blocking behavior, or gather info for support.',
+        ],
+        list: [
+          'Check the public IP before configuring external services.',
+          'Confirm which ISP appears to external services.',
+          'Get an approximate location based on IP for diagnostics (not precise).',
+          'Copy IP in different formats (with or without dots) for scripts and validation.',
+        ],
+      },
+      {
+        title: 'Privacy and limitations',
+        paragraphs: [
+          "The tool performs a simple browser-side call to a public IP service. No data is sent to this website's server. Location is an IP-based estimate and may be incorrect or reflect the ISP location.",
+          'Do not use these results for legal, safety, or high-precision needs.',
+        ],
+      },
+      {
+        title: 'How to copy the IP',
+        paragraphs: [
+          'You can copy the IP exactly (with dots) or in a compact format without dots, useful for systems that expect only digits. The UI provides copy buttons for both formats.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'What is a public IP?',
+        answer:
+          'A public IP is the address your connection uses on the internet as seen by external servers. Multiple devices behind a router may share the same public IP.',
+      },
+      {
+        question: 'Does the site receive my IP?',
+        answer:
+          'No. The request is made directly from your browser to a public IP service; this site does not automatically receive or persist your IP.',
+      },
+      {
+        question: 'Is location accurate?',
+        answer:
+          'Not necessarily. IP-based location is an estimate and may point to the ISP region rather than your exact address.',
+      },
+      {
+        question: 'Can I copy the IP without dots?',
+        answer:
+          'Yes. There is a button to copy the IP without dots (for example 123456789 instead of 123.456.78.9) for systems requiring only digits.',
+      },
+      {
+        question: 'Is this tool free?',
+        answer: 'Yes. It uses a public IP service for basic queries.',
       },
     ],
   },
@@ -2711,6 +2793,87 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿Funciona en celular?',
         answer:
           'Si, pero archivos grandes pueden tardar mas en dispositivos con menor potencia.',
+      },
+    ],
+  },
+  'descobrir-ip-publico': {
+    name: 'Descubrir IP Pública e Información',
+    shortDescription:
+      'Descubra su IP pública, ISP estimado y datos básicos del dispositivo y la ubicación aproximada desde su navegador.',
+    primaryKeyword: 'descubrir ip publica',
+    secondaryKeywords: [
+      'mi ip',
+      'ip publica',
+      'que ip tengo',
+      'consulta ip',
+      'info ip',
+    ],
+    searchIntent:
+      'Usuarios que necesitan conocer su IP pública, ISP y datos básicos del dispositivo para diagnóstico y configuración de red.',
+    seoTitle: 'Descubrir IP Pública | ISP, Ubicación y Dispositivo',
+    seoDescription:
+      'Encuentre su dirección IP pública, ISP estimado, ciudad/región aproximada y datos básicos del dispositivo. Consulta desde el navegador a un servicio público; no se envía al servidor.',
+    h1: 'Descubra su IP Pública y la Información del Dispositivo',
+    intro:
+      'Descubra rápidamente su IP pública, proveedor estimado (ISP) y datos básicos del dispositivo y ubicación aproximada.',
+    contentBlocks: [
+      {
+        title: 'Qué hace esta herramienta',
+        paragraphs: [
+          'La herramienta identifica la IP pública visible en Internet y consulta un servicio público para devolver información adicional como ISP, ciudad/región aproximada y coordenadas.',
+          'La petición se realiza directamente desde su navegador al servicio público y los resultados se muestran en pantalla. Los detalles del dispositivo (SO y navegador) se detectan desde el User-Agent para facilitar diagnósticos rápidos.',
+        ],
+      },
+      {
+        title: 'Cuándo usarla',
+        paragraphs: [
+          'Úsela para verificar qué IP pública está usando su conexión, confirmar si su ISP cambió, validar reglas de firewall, probar bloqueos geográficos o recopilar información para soporte.',
+        ],
+        list: [
+          'Verificar la IP pública antes de configurar servicios externos.',
+          'Confirmar qué ISP aparece para servicios externos.',
+          'Obtener una ubicación aproximada basada en IP para diagnóstico (no precisa).',
+          'Copiar la IP en distintos formatos (con o sin puntos) para scripts y validaciones.',
+        ],
+      },
+      {
+        title: 'Privacidad y limitaciones',
+        paragraphs: [
+          'La herramienta realiza una llamada desde el navegador a un servicio público de IP. No se envía información al servidor de este sitio. La ubicación basada en IP es una estimación y puede reflejar la región del ISP.',
+          'No utilice estos resultados para decisiones legales, de seguridad o que requieran alta precisión.',
+        ],
+      },
+      {
+        title: 'Cómo copiar la IP',
+        paragraphs: [
+          'Puede copiar la IP tal como aparece (con puntos) o en formato compacto sin puntos, útil para sistemas que esperan solo dígitos. La interfaz ofrece botones de copia para ambos formatos.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Qué es una IP pública?',
+        answer:
+          'Una IP pública es la dirección que su conexión usa en Internet y que ven los servidores externos. Varios dispositivos detrás de un router pueden compartir la misma IP pública.',
+      },
+      {
+        question: '¿El sitio recibe mi IP?',
+        answer:
+          'No. La petición se realiza directamente desde su navegador a un servicio público de IP; este sitio no recibe ni persiste automáticamente su IP.',
+      },
+      {
+        question: '¿La ubicación es precisa?',
+        answer:
+          'No necesariamente. La ubicación basada en IP es una estimación y puede apuntar a la región del ISP en lugar de su dirección exacta.',
+      },
+      {
+        question: '¿Puedo copiar la IP sin puntos?',
+        answer:
+          'Sí. Hay un botón para copiar la IP sin puntos (por ejemplo 123456789 en lugar de 123.456.78.9) para sistemas que requieren solo dígitos.',
+      },
+      {
+        question: '¿La herramienta es gratuita?',
+        answer: 'Sí. Utiliza un servicio público para consultas básicas.',
       },
     ],
   },

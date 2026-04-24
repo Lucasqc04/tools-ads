@@ -4,6 +4,9 @@ REGRAS DE NEGÓCIO - SITE DE TOOLS
 
 Este documento define os padrões obrigatórios para criação de qualquer nova ferramenta no site.
 
+NOTA IMPORTANTE: TODO O CONTEÚDO DESTE DOCUMENTO É OBRIGATÓRIO.
+Todas as seções, estruturas e itens descritos aqui são requisitos mínimos — nada neste arquivo é "opcional" por padrão. Siga à risca para manter consistência e aprovação de SEO/Ads.
+
 O objetivo é:
 - Maximizar SEO no Google
 - Garantir compatibilidade com Google AdSense
@@ -39,6 +42,8 @@ Toda ferramenta DEVE seguir esta estrutura:
 7. RODAPÉ
 
 NUNCA criar página apenas com input + botão.
+
+- TRADUÇÕES (OBRIGATÓRIO): Toda nova ferramenta deve fornecer traduções obrigatórias para pelo menos as seguintes localidades: `pt-br`, `en` e `es`. Isso inclui: strings de UI, `h1`, `intro`, `seoTitle`, `seoDescription`, `contentBlocks` e `faq`. As traduções devem ser registradas no sistema de i18n do projeto (por exemplo `data/i18n/tool-translations.ts`) e/ou em arquivos de conteúdo localizados em `data/content/` seguindo o padrão do projeto.
 
 ========================================
 3. SEO - REGRAS OBRIGATÓRIAS
