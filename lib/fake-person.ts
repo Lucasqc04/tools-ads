@@ -131,6 +131,15 @@ type NameCatalog = {
   rare: string[];
 };
 
+type ViaCepAddress = {
+  cep: string;
+  logradouro: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+  erro?: boolean;
+};
+
 const bloodTypes = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
 
 const favoriteColors = [
@@ -184,6 +193,47 @@ const streetNames = [
 ];
 
 const popularEmailDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
+
+const viaCepStreetTerms = [
+  'Rua',
+  'Avenida',
+  'Travessa',
+  'Alameda',
+  'Praca',
+  'Dom',
+  'Sao',
+  'Santa',
+  'Professor',
+  'Coronel',
+  'General',
+  'Padre',
+  'Doutor',
+  'Major',
+];
+
+const viaCepNameTerms = [
+  'Jose',
+  'Joao',
+  'Maria',
+  'Ana',
+  'Carlos',
+  'Paulo',
+  'Pedro',
+  'Lucas',
+  'Oliveira',
+  'Silva',
+  'Souza',
+  'Santos',
+  'Barbosa',
+  'Almeida',
+  'Fernandes',
+  'Monteiro',
+];
+
+const viaCepSearchCache = new Map<string, ViaCepAddress[]>();
+const viaCepRequestTimeoutMs = 1800;
+const viaCepMaxTermAttempts = 5;
+const viaCepMaxUniqueLocationLookups = 4;
 
 const statesCatalog: StateData[] = [
   {
@@ -625,6 +675,29 @@ const removeAccents = (value: string): string =>
     .replace(/\s+/g, ' ')
     .trim();
 
+const normalizeViaCepToken = (value: string): string =>
+  removeAccents(value)
+    .toLowerCase()
+    .split(/\s+/)
+    .join(' ')
+    .trim();
+
+const buildLocationLookupKey = (stateUf: string, city: string): string =>
+  `${stateUf.toUpperCase()}|${normalizeViaCepToken(city)}`;
+
+const shuffleWithRng = <T,>(rng: RandomSource, items: T[]): T[] => {
+  const nextItems = [...items];
+
+  for (let index = nextItems.length - 1; index > 0; index -= 1) {
+    const swapIndex = rng.int(0, index);
+    const temp = nextItems[index];
+    nextItems[index] = nextItems[swapIndex];
+    nextItems[swapIndex] = temp;
+  }
+
+  return nextItems;
+};
+
 const normalizeEmailLocal = (value: string): string =>
   removeAccents(value)
     .toLowerCase()
@@ -925,6 +998,127 @@ class RandomSource {
   }
 }
 
+const fetchViaCepJson = async (url: string): Promise<unknown> => {
+  const abortController = new AbortController();
+  const timeoutId = globalThis.setTimeout(() => {
+    abortController.abort();
+  }, viaCepRequestTimeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      signal: abortController.signal,
+      cache: 'force-cache',
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return await response.json();
+  } catch {
+    return [];
+  } finally {
+    globalThis.clearTimeout(timeoutId);
+  }
+};
+
+const parseViaCepResult = (payload: unknown, stateUf: string): ViaCepAddress[] => {
+  if (!Array.isArray(payload)) {
+    return [];
+  }
+
+  const normalizedState = normalizeViaCepToken(stateUf);
+
+  return payload
+    .filter((entry): entry is ViaCepAddress => Boolean(entry && typeof entry === 'object'))
+    .filter((entry) => entry.erro !== true)
+    .filter(
+      (entry) =>
+        typeof entry.cep === 'string' &&
+        typeof entry.logradouro === 'string' &&
+        typeof entry.bairro === 'string' &&
+        typeof entry.localidade === 'string' &&
+        typeof entry.uf === 'string',
+    )
+    .filter((entry) => normalizeViaCepToken(entry.uf) === normalizedState)
+    .filter((entry) => entry.logradouro.trim().length > 0);
+};
+
+const fetchViaCepByTerm = async (
+  stateUf: string,
+  city: string,
+  term: string,
+): Promise<ViaCepAddress[]> => {
+  const normalizedStateUf = stateUf.trim().toUpperCase();
+  const normalizedCity = removeAccents(city).trim();
+  const normalizedTerm = removeAccents(term).trim();
+
+  if (!normalizedStateUf || !normalizedCity || !normalizedTerm) {
+    return [];
+  }
+
+  const cacheKey = `${buildLocationLookupKey(normalizedStateUf, normalizedCity)}|${normalizeViaCepToken(normalizedTerm)}`;
+  const cached = viaCepSearchCache.get(cacheKey);
+
+  if (cached) {
+    return cached;
+  }
+
+  const url = `https://viacep.com.br/ws/${normalizedStateUf}/${encodeURIComponent(normalizedCity)}/${encodeURIComponent(normalizedTerm)}/json/`;
+  const payload = await fetchViaCepJson(url);
+  const parsed = parseViaCepResult(payload, normalizedStateUf);
+
+  viaCepSearchCache.set(cacheKey, parsed);
+  return parsed;
+};
+
+const fetchRealAddressesForCity = async (
+  rng: RandomSource,
+  stateUf: string,
+  city: string,
+): Promise<ViaCepAddress[]> => {
+  const nameTerms = shuffleWithRng(rng, viaCepNameTerms).slice(0, 6);
+  const candidateTerms = Array.from(new Set([...viaCepStreetTerms, ...nameTerms])).slice(
+    0,
+    viaCepMaxTermAttempts,
+  );
+
+  for (const term of candidateTerms) {
+    const matches = await fetchViaCepByTerm(stateUf, city, term);
+
+    if (matches.length > 0) {
+      return matches;
+    }
+  }
+
+  return [];
+};
+
+const mergePersonWithRealAddress = (
+  person: FakePerson,
+  realAddress: ViaCepAddress,
+): FakePerson => {
+  const street = realAddress.logradouro.trim() || person.location.street;
+  const neighborhood = realAddress.bairro.trim() || person.location.neighborhood;
+  const city = realAddress.localidade.trim() || person.location.city;
+  const stateUf = realAddress.uf.trim().toUpperCase() || person.location.stateUf;
+  const cep = realAddress.cep.trim() || person.location.cep;
+  const addressLine = `${street}, ${person.location.number} - ${neighborhood}, ${city} - ${stateUf}, ${cep}`;
+
+  return {
+    ...person,
+    location: {
+      ...person.location,
+      street,
+      neighborhood,
+      city,
+      stateUf,
+      cep,
+      addressLine,
+    },
+  };
+};
+
 const resolveNamesForPerson = (
   rng: RandomSource,
   language: FakeNameLanguage,
@@ -1050,6 +1244,52 @@ export const generateFakePeople = (
         favoriteColor: options.includeExtras ? rng.pick(favoriteColors) : '',
       },
     };
+  });
+};
+
+export const generateFakePeopleWithRealAddresses = async (
+  incomingOptions: Partial<FakePersonGeneratorOptions>,
+): Promise<FakePerson[]> => {
+  const options = sanitizeOptions(incomingOptions);
+  const people = generateFakePeople(options);
+  const lookupSeed = options.seed ? `${options.seed}-viacep` : '';
+  const lookupRng = new RandomSource(lookupSeed);
+  const poolsByLocation = new Map<string, ViaCepAddress[]>();
+
+  const uniqueLocations = Array.from(
+    new Set(people.map((person) => buildLocationLookupKey(person.location.stateUf, person.location.city))),
+  ).slice(0, viaCepMaxUniqueLocationLookups);
+
+  await Promise.all(
+    uniqueLocations.map(async (locationKey) => {
+      const sample = people.find(
+        (person) => buildLocationLookupKey(person.location.stateUf, person.location.city) === locationKey,
+      );
+
+      if (!sample) {
+        return;
+      }
+
+      const pool = await fetchRealAddressesForCity(
+        lookupRng,
+        sample.location.stateUf,
+        sample.location.city,
+      );
+
+      poolsByLocation.set(locationKey, pool);
+    }),
+  );
+
+  return people.map((person) => {
+    const locationKey = buildLocationLookupKey(person.location.stateUf, person.location.city);
+    const pool = poolsByLocation.get(locationKey) ?? [];
+
+    if (pool.length === 0) {
+      return person;
+    }
+
+    const pickedAddress = lookupRng.pick(pool);
+    return mergePersonWithRealAddress(person, pickedAddress);
   });
 };
 

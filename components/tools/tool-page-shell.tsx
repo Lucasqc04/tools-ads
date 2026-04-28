@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ContentBlocks } from '@/components/shared/content-blocks';
@@ -53,9 +52,11 @@ export function ToolPageShell({
 
           {afterToolSection ? afterToolSection : null}
 
+          {/* Ads temporariamente desativados
           <div className="flex justify-center">
             <MediumRectangleAd />
           </div>
+          */}
 
           <ContentBlocks
             blocks={tool.contentBlocks}

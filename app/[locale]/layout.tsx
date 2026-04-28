@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/next';
-import { DesktopLeaderboardAd, MobileBottomAd } from '@/components/ads/network-ads';
 import { JsonLd } from '@/components/shared/json-ld';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
@@ -13,9 +12,11 @@ import { siteConfig } from '@/lib/site-config';
 
 export const dynamicParams = false;
 
+/* Ads temporariamente desativados
 const ADSENSE_CLIENT_ID = 'ca-pub-7845590634125025';
 const ADSENSE_SCRIPT_SRC =
   'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7845590634125025';
+*/
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -82,8 +83,10 @@ export default async function LocaleLayout({
   return (
     <html lang={localeMetadata[locale].htmlLang}>
       <head>
+        {/* Ads temporariamente desativados
         <meta name="google-adsense-account" content={ADSENSE_CLIENT_ID} />
         <script async src={ADSENSE_SCRIPT_SRC} crossOrigin="anonymous"></script>
+        */}
       </head>
       <body className="min-h-screen bg-slate-50 pb-16 text-slate-900 md:pb-0">
         <div className="flex min-h-screen flex-col">
@@ -91,15 +94,19 @@ export default async function LocaleLayout({
           <JsonLd data={buildWebsiteJsonLd(locale)} />
 
           <SiteHeader locale={locale} />
+          {/* Ads temporariamente desativados
           <div className="hidden justify-center px-4 pt-4 md:flex">
             <DesktopLeaderboardAd />
           </div>
+          */}
           <div className="flex-1">{children}</div>
           <SiteFooter locale={locale} />
         </div>
+        {/* Ads temporariamente desativados
         <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center border-t border-slate-200 bg-slate-50/95 py-1 md:hidden">
           <MobileBottomAd />
         </div>
+        */}
         <Analytics />
       </body>
     </html>

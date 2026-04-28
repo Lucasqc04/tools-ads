@@ -10,6 +10,7 @@ import {
   buildFakePeopleOutput,
   fakePersonDefaultOptions,
   generateFakePeople,
+  generateFakePeopleWithRealAddresses,
   getFakePersonCitiesByState,
   getFakePersonFields,
   getFakePersonStateOptions,
@@ -179,7 +180,7 @@ const ptUi: Ui = {
   historyEmpty: 'Sem historico por enquanto.',
   historyItem: (count, stamp) => `${count} pessoa(s) em ${stamp}`,
   localNote:
-    'Processamento local no navegador. Nenhum dado e enviado para servidor por padrao.',
+    'Processamento local no navegador. Quando disponivel, consulta ViaCEP para enriquecer CEP e endereco.',
   copyError: 'Nao foi possivel copiar agora. Tente novamente.',
 };
 
@@ -256,7 +257,7 @@ const enUi: Ui = {
   historyTitle: 'Recent history',
   historyEmpty: 'No history yet.',
   historyItem: (count, stamp) => `${count} profile(s) at ${stamp}`,
-  localNote: 'Local browser processing. No automatic server upload by default.',
+  localNote: 'Local browser processing. When available, ViaCEP lookup enriches ZIP code and address.',
   copyError: 'Could not copy right now. Please try again.',
 };
 
@@ -333,7 +334,7 @@ const esUi: Ui = {
   historyTitle: 'Historial reciente',
   historyEmpty: 'Sin historial por ahora.',
   historyItem: (count, stamp) => `${count} persona(s) en ${stamp}`,
-  localNote: 'Procesamiento local en navegador. No hay envio automatico a servidor.',
+  localNote: 'Procesamiento local en navegador. Cuando esta disponible, ViaCEP enriquece codigo postal y direccion.',
   copyError: 'No fue posible copiar ahora. Intentalo de nuevo.',
 };
 
@@ -428,6 +429,7 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
   const [copiedToken, setCopiedToken] = useState('');
   const [history, setHistory] = useState<Array<{ stamp: string; count: number }>>([]);
   const [previewMode, setPreviewMode] = useState<'text' | 'json' | 'csv' | 'sql'>('text');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const states = useMemo(() => getFakePersonStateOptions(), []);
   const citiesFromState = useMemo(() => getFakePersonCitiesByState(stateUf), [stateUf]);
@@ -644,7 +646,17 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
           ? currentOutput.csv
           : currentOutput.sql;
 
-  const generatePeople = (append: boolean) => {
+  const applyGeneratedPeople = (nextPeople: FakePerson[], append: boolean) => {
+    setPeople((current) => (append ? [...current, ...nextPeople] : nextPeople));
+    setHistory((current) => [
+      { stamp: nowStamp(locale), count: nextPeople.length },
+      ...current,
+    ].slice(0, 8));
+    setErrorMessage('');
+    setFeedbackMessage('');
+  };
+
+  const generatePeople = async (append: boolean) => {
     if (normalizedOptions.quantity < 1 || normalizedOptions.quantity > 30) {
       setErrorMessage(ui.invalidInput);
       return;
@@ -655,27 +667,49 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
       return;
     }
 
-    const nextPeople = generateFakePeople(normalizedOptions);
+    setIsGenerating(true);
 
-    setPeople((current) => (append ? [...current, ...nextPeople] : nextPeople));
-    setHistory((current) => [
-      { stamp: nowStamp(locale), count: nextPeople.length },
-      ...current,
-    ].slice(0, 8));
-    setErrorMessage('');
-    setFeedbackMessage('');
+    try {
+      const nextPeople = await generateFakePeopleWithRealAddresses(normalizedOptions);
+      applyGeneratedPeople(nextPeople, append);
+    } catch {
+      const fallbackPeople = generateFakePeople(normalizedOptions);
+      applyGeneratedPeople(fallbackPeople, append);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const regenerateOne = (index: number) => {
+  const regenerateOne = async (index: number) => {
+    if (isGenerating) {
+      return;
+    }
+
     const seedSuffix = normalizedOptions.seed
       ? `${normalizedOptions.seed}-regen-${index}-${Date.now()}`
       : '';
 
-    const replacement = generateFakePeople({
-      ...normalizedOptions,
-      quantity: 1,
-      seed: seedSuffix,
-    })[0];
+    setIsGenerating(true);
+
+    let replacement: FakePerson | undefined;
+
+    try {
+      replacement = (
+        await generateFakePeopleWithRealAddresses({
+          ...normalizedOptions,
+          quantity: 1,
+          seed: seedSuffix,
+        })
+      )[0];
+    } catch {
+      replacement = generateFakePeople({
+        ...normalizedOptions,
+        quantity: 1,
+        seed: seedSuffix,
+      })[0];
+    } finally {
+      setIsGenerating(false);
+    }
 
     if (!replacement) {
       return;
@@ -1004,14 +1038,19 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
         ) : null}
 
         <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => generatePeople(false)}>
-            {ui.generateButton}
+          <Button variant="secondary" onClick={() => void generatePeople(false)} disabled={isGenerating}>
+            {isGenerating ? `${ui.generateButton}...` : ui.generateButton}
           </Button>
-          <Button variant="secondary" onClick={() => generatePeople(true)} disabled={!people.length}>
-            {ui.generateMoreButton}
+          <Button
+            variant="secondary"
+            onClick={() => void generatePeople(true)}
+            disabled={isGenerating || !people.length}
+          >
+            {isGenerating ? `${ui.generateMoreButton}...` : ui.generateMoreButton}
           </Button>
           <Button
             variant="ghost"
+            disabled={isGenerating}
             onClick={() => {
               setPeople([]);
               setErrorMessage('');
@@ -1059,7 +1098,8 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
                       <Button
                         variant="ghost"
                         className="h-8 px-3 text-xs"
-                        onClick={() => regenerateOne(index)}
+                        onClick={() => void regenerateOne(index)}
+                        disabled={isGenerating}
                       >
                         {ui.regenerateCard}
                       </Button>

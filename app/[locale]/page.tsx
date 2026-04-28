@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { ToolCard } from '@/components/tools/tool-card';
 import { getLocalizedToolsRegistry } from '@/data/tools-registry';
@@ -67,9 +66,11 @@ export default async function HomePage({ params }: HomePageProps) {
         </div>
       </section>
 
+      {/* Ads temporariamente desativados
       <div className="mt-10 flex justify-center">
         <MediumRectangleAd />
       </div>
+      */}
 
       <section className="prose-lite mt-12 max-w-reading space-y-4">
         <h2 className="text-2xl font-bold tracking-tight text-slate-900">

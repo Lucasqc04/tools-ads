@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { buildLocalePathMap, localizePath } from '@/lib/i18n/config';
@@ -46,9 +45,11 @@ export default async function AboutPage({ params }: AboutPageProps) {
         </h1>
         <p>{dictionary.about.intro}</p>
 
+        {/* Ads temporariamente desativados
         <div className="flex justify-center py-2">
           <MediumRectangleAd />
         </div>
+        */}
 
         <h2 className="text-2xl font-bold tracking-tight text-slate-900">
           {dictionary.about.principlesTitle}

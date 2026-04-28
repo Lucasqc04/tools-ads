@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { MediumRectangleAd } from '@/components/ads/network-ads';
 import { Container } from '@/components/layout/container';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ToolCard } from '@/components/tools/tool-card';
@@ -125,9 +124,11 @@ export default async function ToolsIndexPage({
         ))}
       </section>
 
+      {/* Ads temporariamente desativados
       <div className="mt-8 flex justify-center">
         <MediumRectangleAd />
       </div>
+      */}
 
       {!filteredTools.length ? (
         <p className="mt-4 text-sm text-slate-700">
