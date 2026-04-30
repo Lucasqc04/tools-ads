@@ -10,6 +10,7 @@ import { FakePersonGeneratorTool } from '@/components/tools/fake-person-generato
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
 import { HtmlViewerTool } from '@/components/tools/html-viewer-tool';
+import { MarkdownEditorTool } from '@/components/tools/markdown-editor-tool';
 import { ImageConversionLinks } from '@/components/tools/image-conversion-links';
 import { ImageConverterTool } from '@/components/tools/image-converter-tool';
 import { ImageCompressionTool } from '@/components/tools/image-compression-tool';
@@ -162,6 +163,7 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'crypto-unit-converter': 'FinanceApplication',
   'bitcoin-wallet': 'FinanceApplication',
   'html-viewer': 'DeveloperApplication',
+  'markdown-editor': 'DeveloperApplication',
   'json-formatter': 'DeveloperApplication',
   'cpf-generator': 'UtilitiesApplication',
   'gerador-pessoa-fake': 'DeveloperApplication',
@@ -538,6 +540,8 @@ export default async function LandingPage({ params }: LandingPageProps) {
     toolUi = <BitcoinWalletTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'html-viewer') {
     toolUi = <HtmlViewerTool locale={locale} />;
+  } else if (aliasPage.toolSlug === 'markdown-editor') {
+    toolUi = <MarkdownEditorTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'json-formatter') {
     toolUi = <JsonFormatterTool locale={locale} />;
   } else if (aliasPage.toolSlug === 'cpf-generator') {

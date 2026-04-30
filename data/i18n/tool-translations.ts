@@ -22,6 +22,7 @@ type ToolId =
   | 'crypto-unit-converter'
   | 'html-pdf-json'
   | 'html-viewer'
+  | 'markdown-editor'
   | 'json-formatter'
   | 'cpf-generator'
   | 'gerador-pessoa-fake'
@@ -348,7 +349,87 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
-  
+  'markdown-editor': {
+    name: 'Markdown Viewer and Editor',
+    shortDescription:
+      'Edit, preview, and export Markdown online with .md upload, fullscreen focus mode, and output to MD, HTML, PNG, or PDF.',
+    primaryKeyword: 'free markdown editor online',
+    secondaryKeywords: [
+      'markdown viewer online',
+      'md editor with preview',
+      'open markdown file online',
+      'markdown to html online',
+      'export markdown to pdf',
+      'export markdown to image',
+      'markdown editor no sign up',
+      'markdown editor without login',
+      'fullscreen markdown editor',
+    ],
+    searchIntent:
+      'Developers, documentation teams, and writers who need to edit markdown with instant preview and flexible exports without installing desktop apps.',
+    seoTitle: 'Free Markdown Editor Online | Preview, .md Upload, Export PDF/PNG',
+    seoDescription:
+      'Open and edit Markdown online with live preview, fullscreen split view, editing shortcuts, and export to MD, HTML, PNG, and PDF.',
+    h1: 'Online Markdown Viewer and Editor with Real-Time Preview',
+    intro:
+      'Markdown workspace for writing and reviewing technical docs, README files, notes, and web content with local browser processing.',
+    contentBlocks: [
+      {
+        title: 'Full markdown workflow in one screen',
+        paragraphs: [
+          'This tool combines raw markdown editing and styled preview in the same workspace so you can write and validate structure side by side.',
+          'It supports headings, blockquotes, lists, checklists, links, images, tables, and fenced code blocks, which covers the most common documentation patterns.',
+        ],
+      },
+      {
+        title: 'Upload existing .md files and speed up writing with shortcuts',
+        paragraphs: [
+          'If you already have a markdown file, upload it and continue editing instantly in the browser. You can keep the existing structure and only refine sections before publishing.',
+          'The shortcut toolbar helps insert common syntax quickly, including heading levels, list formats, links, image syntax, tables, and code blocks.',
+        ],
+        list: [
+          'Upload .md or .markdown files.',
+          'Use fullscreen focus mode with split editor/preview.',
+          'Switch between split, editor-only, and preview-only layouts.',
+          'Copy rendered HTML when you need embeddable output.',
+        ],
+      },
+      {
+        title: 'Export options and practical performance limits',
+        paragraphs: [
+          'After review, export in the format that matches your workflow: Markdown for version control, HTML for publishing, PNG for visual sharing, and PDF for distribution.',
+          'Very large documents with many external images can require more RAM and CPU during PNG/PDF export. In these cases, exporting in sections is a safer approach.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I open an existing markdown file?',
+        answer:
+          'Yes. Upload .md or .markdown files and continue editing with real-time preview.',
+      },
+      {
+        question: 'Does it have fullscreen editing mode?',
+        answer:
+          'Yes. Focus mode expands the workspace to full screen and keeps editor and preview side by side on larger displays.',
+      },
+      {
+        question: 'Which export formats are supported?',
+        answer:
+          'You can export as Markdown (.md), HTML (.html), PNG image, and PDF.',
+      },
+      {
+        question: 'Is my content uploaded to a server?',
+        answer:
+          'No by default. Editing, rendering, and export are processed locally in your browser.',
+      },
+      {
+        question: 'Does it work on mobile devices?',
+        answer:
+          'Yes. The interface is responsive and adapts editing/preview layout for smaller screens.',
+      },
+    ],
+  },
   'json-formatter': {
     name: 'JSON Formatter and Minifier',
     shortDescription:
@@ -2009,7 +2090,87 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
-  
+  'markdown-editor': {
+    name: 'Visualizador y Editor de Markdown',
+    shortDescription:
+      'Edita, previsualiza y exporta Markdown online con carga de .md, modo foco en pantalla completa y salida en MD, HTML, PNG y PDF.',
+    primaryKeyword: 'editor markdown online gratis',
+    secondaryKeywords: [
+      'visualizador markdown online',
+      'editor md con preview',
+      'abrir archivo markdown',
+      'markdown a html online',
+      'exportar markdown a pdf',
+      'exportar markdown a imagen',
+      'editor markdown sin registro',
+      'editor markdown sin login',
+      'editor markdown pantalla completa',
+    ],
+    searchIntent:
+      'Desarrolladores, equipos de documentacion y creadores que necesitan editar markdown con preview inmediato y exportacion flexible sin instalar software.',
+    seoTitle: 'Editor Markdown Online Gratis | Preview, Carga .md y Exportar PDF/PNG',
+    seoDescription:
+      'Abre y edita Markdown con vista previa en tiempo real, modo pantalla completa y exportacion en MD, HTML, PNG y PDF.',
+    h1: 'Visualizador y Editor de Markdown Online con Preview en Tiempo Real',
+    intro:
+      'Espacio de trabajo para escribir y revisar documentacion tecnica, README y notas con procesamiento local en navegador.',
+    contentBlocks: [
+      {
+        title: 'Flujo completo de markdown en una sola interfaz',
+        paragraphs: [
+          'La herramienta combina edicion de Markdown y preview estilizado en el mismo espacio para que puedas revisar estructura y legibilidad al instante.',
+          'Incluye soporte para titulos, citas, listas, checklist, enlaces, imagenes, tablas y bloques de codigo, cubriendo escenarios comunes de documentacion.',
+        ],
+      },
+      {
+        title: 'Carga archivos .md existentes y acelera la escritura con atajos',
+        paragraphs: [
+          'Si ya tienes un archivo markdown, puedes subirlo y seguir editando sin perder formato ni contexto.',
+          'La barra de acciones permite insertar sintaxis frecuente rapidamente: H1/H2/H3, listas, enlaces, imagenes, tablas y bloques de codigo.',
+        ],
+        list: [
+          'Cargar archivos .md o .markdown.',
+          'Usar modo foco en pantalla completa con editor y preview.',
+          'Alternar entre vista dividida, solo editor o solo preview.',
+          'Copiar HTML renderizado para usar en otras plataformas.',
+        ],
+      },
+      {
+        title: 'Exportacion flexible y limites practicos de rendimiento',
+        paragraphs: [
+          'Cuando terminas la revision, puedes exportar en el formato ideal para cada uso: MD para versionado, HTML para web, PNG para compartir visualmente y PDF para envio.',
+          'Documentos muy largos con imagenes externas pueden demandar mas memoria en exportaciones PNG/PDF. En esos casos conviene exportar por secciones.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Puedo abrir un archivo markdown existente?',
+        answer:
+          'Si. Puedes cargar archivos .md o .markdown y continuar la edicion con preview en tiempo real.',
+      },
+      {
+        question: '¿Tiene modo de edicion en pantalla completa?',
+        answer:
+          'Si. El modo foco usa pantalla completa y mantiene editor y preview lado a lado en pantallas amplias.',
+      },
+      {
+        question: '¿Que formatos de exportacion soporta?',
+        answer:
+          'Puedes exportar en Markdown (.md), HTML (.html), imagen PNG y PDF.',
+      },
+      {
+        question: '¿El contenido se envia a servidor?',
+        answer:
+          'No por defecto. Edicion, renderizado y exportacion se ejecutan localmente en tu navegador.',
+      },
+      {
+        question: '¿Funciona en celular?',
+        answer:
+          'Si. La interfaz es responsive y adapta el layout para pantallas pequenas.',
+      },
+    ],
+  },
   'json-formatter': {
     name: 'Formateador y Minificador JSON',
     shortDescription:

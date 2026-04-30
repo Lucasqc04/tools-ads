@@ -42,6 +42,98 @@ a {
   @apply text-slate-900;
 }
 
+.markdown-viewer-prose {
+  @apply break-words text-sm leading-7 text-slate-700 md:text-base;
+}
+
+.markdown-viewer-prose h1,
+.markdown-viewer-prose h2,
+.markdown-viewer-prose h3,
+.markdown-viewer-prose h4,
+.markdown-viewer-prose h5,
+.markdown-viewer-prose h6 {
+  @apply mt-7 text-slate-900;
+}
+
+.markdown-viewer-prose h1 {
+  @apply text-3xl font-bold tracking-tight;
+}
+
+.markdown-viewer-prose h2 {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.markdown-viewer-prose h3 {
+  @apply text-xl font-semibold tracking-tight;
+}
+
+.markdown-viewer-prose h4,
+.markdown-viewer-prose h5,
+.markdown-viewer-prose h6 {
+  @apply text-base font-semibold;
+}
+
+.markdown-viewer-prose p {
+  @apply my-3;
+}
+
+.markdown-viewer-prose ul {
+  @apply my-3 list-disc space-y-1 pl-6;
+}
+
+.markdown-viewer-prose ol {
+  @apply my-3 list-decimal space-y-1 pl-6;
+}
+
+.markdown-viewer-prose li {
+  @apply text-slate-700;
+}
+
+.markdown-viewer-prose li.task-item {
+  @apply ml-0 flex list-none items-start gap-2 pl-0;
+}
+
+.markdown-viewer-prose blockquote {
+  @apply my-4 rounded-lg border-l-4 border-brand-500 bg-brand-50 px-4 py-3 text-slate-700;
+}
+
+.markdown-viewer-prose hr {
+  @apply my-6 border-t border-slate-300;
+}
+
+.markdown-viewer-prose code {
+  @apply rounded bg-slate-200 px-1.5 py-0.5 font-mono text-[0.9em] text-slate-900;
+}
+
+.markdown-viewer-prose pre {
+  @apply my-4 overflow-auto rounded-xl border border-slate-200 bg-slate-900 p-4 text-slate-100;
+}
+
+.markdown-viewer-prose pre code {
+  @apply bg-transparent p-0 text-inherit;
+}
+
+.markdown-viewer-prose a {
+  @apply text-brand-700 underline underline-offset-2 hover:text-brand-800;
+}
+
+.markdown-viewer-prose img {
+  @apply my-4 block h-auto max-w-full rounded-lg border border-slate-200;
+}
+
+.markdown-viewer-prose table {
+  @apply my-4 w-full border-collapse text-left text-sm;
+}
+
+.markdown-viewer-prose th,
+.markdown-viewer-prose td {
+  @apply border border-slate-200 px-3 py-2 align-top;
+}
+
+.markdown-viewer-prose th {
+  @apply bg-slate-100 font-semibold text-slate-900;
+}
+
 .qr-preview-render canvas,
 .qr-preview-render svg,
 .qr-preview-render img {

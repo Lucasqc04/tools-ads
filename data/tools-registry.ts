@@ -49,6 +49,11 @@ import {
   htmlViewerIntro,
 } from '@/data/content/html-viewer';
 import {
+  markdownEditorContentBlocks,
+  markdownEditorFaq,
+  markdownEditorIntro,
+} from '@/data/content/markdown-editor';
+import {
   imageConverterContentBlocks,
   imageConverterFaq,
   imageConverterIntro,
@@ -185,6 +190,38 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: htmlViewerFaq,
     contentBlocks: htmlViewerContentBlocks,
     relatedToolIds: ['json-formatter', 'image-converter'],
+  },
+  {
+    id: 'markdown-editor',
+    slug: 'markdown-editor',
+    name: 'Editor e Visualizador de Markdown',
+    shortDescription:
+      'Edite, visualize e exporte Markdown online com upload de .md, modo tela cheia e saida em MD, HTML, PNG e PDF.',
+    category: 'dev',
+    primaryKeyword: 'editor markdown online gratis',
+    secondaryKeywords: [
+      'visualizador markdown online',
+      'editor md com preview',
+      'abrir arquivo markdown',
+      'markdown para html online',
+      'markdown exportar pdf',
+      'markdown exportar imagem',
+      'markdown sem cadastro',
+      'markdown sem login',
+      'markdown editor fullscreen',
+    ],
+    searchIntent:
+      'Usuarios, devs e times de conteudo que precisam editar Markdown com preview imediato e exportacao em formatos diferentes sem instalar aplicativos.',
+    seoTitle:
+      'Editor Markdown Online Gratis | Preview, Upload .md e Exportar PDF/PNG',
+    seoDescription:
+      'Use o editor e visualizador de Markdown para abrir .md, editar em tela cheia, inserir titulos/listas/codigo e exportar em MD, HTML, PNG e PDF.',
+    h1: 'Editor e Visualizador de Markdown Online com Preview em Tempo Real',
+    intro: markdownEditorIntro,
+    canonicalPath: '/tools/markdown-editor',
+    faq: markdownEditorFaq,
+    contentBlocks: markdownEditorContentBlocks,
+    relatedToolIds: ['html-viewer', 'json-formatter', 'image-converter'],
   },
   {
     id: 'json-formatter',
@@ -654,6 +691,7 @@ type LocalizableToolId =
   | 'bitcoin-wallet'
   | 'crypto-unit-converter'
   | 'html-viewer'
+  | 'markdown-editor'
   | 'json-formatter'
   | 'cpf-generator'
   | 'gerador-pessoa-fake'
@@ -674,6 +712,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'bitcoin-wallet',
   'crypto-unit-converter',
   'html-viewer',
+  'markdown-editor',
   'json-formatter',
   'cpf-generator',
   'gerador-pessoa-fake',
