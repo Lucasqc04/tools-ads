@@ -36,7 +36,8 @@ type ToolId =
   | 'sorteador'
   | 'calculadora-juros-compostos'
   | 'invisible-character'
-  | 'descobrir-ip-publico';
+  | 'descobrir-ip-publico'
+  | 'email-temporario';
 
 const enTranslations: Record<ToolId, ToolTranslation> = {
   'bitcoin-wallet': {
@@ -1533,6 +1534,93 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       {
         question: 'Is this tool free?',
         answer: 'Yes. It uses a public IP service for basic queries.',
+      },
+    ],
+  },
+  'email-temporario': {
+    name: 'Temporary Email',
+    shortDescription:
+      'Generate a disposable email to receive messages for up to 1 hour with automatic expiration.',
+    primaryKeyword: 'free temporary email',
+    secondaryKeywords: [
+      'temporary email',
+      'disposable email',
+      'temp mail',
+      'receive email online',
+      'temporary inbox',
+      'email for testing',
+      'email for quick sign up',
+      'anti spam email',
+    ],
+    searchIntent:
+      'Users and technical teams who need a short-lived inbox for quick sign-ups, QA flows, and basic privacy protection.',
+    seoTitle: 'Free Temporary Email',
+    seoDescription:
+      'Create a free temporary email address to receive messages for a limited time. Useful for tests, quick sign-ups, and reducing spam in your primary inbox.',
+    h1: 'Temporary Email',
+    intro:
+      'Generate a disposable inbox in seconds to receive emails for a limited time and protect your primary address.',
+    contentBlocks: [
+      {
+        title: 'What is a temporary email?',
+        paragraphs: [
+          'A temporary email is a disposable address created on demand for short-term use. It helps you receive messages without exposing your personal or business inbox everywhere.',
+          'In this tool, each inbox has an expiration window and messages are automatically removed after the configured TTL.',
+        ],
+      },
+      {
+        title: 'When should you use it?',
+        paragraphs: [
+          'Temporary inboxes are practical for low-risk flows such as trial sign-ups, feature testing, and quick form validations.',
+          'Teams also use them in QA pipelines to verify transactional emails without creating permanent accounts.',
+        ],
+        list: [
+          'Test registration and verification email flows.',
+          'Receive one-time codes during staging or QA checks.',
+          'Protect your main inbox from marketing spam.',
+          'Validate webhook-triggered email templates quickly.',
+        ],
+      },
+      {
+        title: 'Is temporary email safe?',
+        paragraphs: [
+          'It is useful for basic privacy and spam control, but it is not a full anonymity solution. Treat it as a short-lived channel for low-risk communication.',
+          'Because data expires automatically, do not rely on this inbox for long-term account ownership.',
+        ],
+      },
+      {
+        title: 'When not to use temporary email',
+        paragraphs: [
+          'Do not use it for banking, exchanges, financial services, critical recovery flows, or accounts where you need permanent access to notifications.',
+          'For important services, use a long-term inbox protected by strong authentication.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'How long does the temporary inbox stay active?',
+        answer:
+          'By default, the inbox remains active for 1 hour and then expires automatically with its messages.',
+      },
+      {
+        question: 'Can I send emails from this tool?',
+        answer:
+          'No. This feature is inbound-only and is designed to receive emails, not send them.',
+      },
+      {
+        question: 'Do I need to create an account?',
+        answer:
+          'No account is required. You can generate an address and read messages directly on the page.',
+      },
+      {
+        question: 'Are messages stored permanently?',
+        answer:
+          'No. Messages are temporary and automatically deleted when the inbox TTL expires.',
+      },
+      {
+        question: 'Should I use temporary email for critical accounts?',
+        answer:
+          'No. Use a permanent and secure email provider for financial, business, and recovery-sensitive accounts.',
       },
     ],
   },
@@ -3035,6 +3123,93 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       {
         question: '¿La herramienta es gratuita?',
         answer: 'Sí. Utiliza un servicio público para consultas básicas.',
+      },
+    ],
+  },
+  'email-temporario': {
+    name: 'Correo Temporal',
+    shortDescription:
+      'Genera un correo desechable para recibir mensajes por hasta 1 hora, con expiracion automatica.',
+    primaryKeyword: 'correo temporal gratis',
+    secondaryKeywords: [
+      'correo temporal',
+      'email temporal',
+      'correo desechable',
+      'temp mail',
+      'inbox temporal',
+      'email para pruebas',
+      'correo para registro rapido',
+      'proteccion contra spam',
+    ],
+    searchIntent:
+      'Usuarios y equipos tecnicos que necesitan una inbox de corta duracion para registros simples, pruebas de QA y privacidad basica.',
+    seoTitle: 'Correo Temporal Gratis',
+    seoDescription:
+      'Crea un correo temporal gratis para recibir mensajes por tiempo limitado. Ideal para pruebas, registros rapidos y reducir spam en tu email principal.',
+    h1: 'Correo Temporal',
+    intro:
+      'Genera una inbox desechable en segundos para recibir correos por tiempo limitado y proteger tu direccion principal.',
+    contentBlocks: [
+      {
+        title: 'Que es un correo temporal?',
+        paragraphs: [
+          'Un correo temporal es una direccion desechable creada al instante para uso corto. Permite recibir mensajes sin exponer tu inbox personal o de trabajo en todos los sitios.',
+          'En esta herramienta, cada inbox tiene expiracion y los mensajes se eliminan automaticamente al finalizar el TTL.',
+        ],
+      },
+      {
+        title: 'Para que sirve un correo temporal?',
+        paragraphs: [
+          'Las inbox temporales son utiles para flujos de bajo riesgo, como registros de prueba, validaciones rapidas y revisiones de formularios.',
+          'Tambien son utiles en QA para validar correos transaccionales sin crear cuentas permanentes.',
+        ],
+        list: [
+          'Probar flujos de registro y verificacion por email.',
+          'Recibir codigos de un solo uso en staging o QA.',
+          'Proteger tu correo principal contra spam de marketing.',
+          'Validar plantillas de email disparadas por webhook.',
+        ],
+      },
+      {
+        title: 'Es seguro usar correo temporal?',
+        paragraphs: [
+          'Es una opcion practica para privacidad basica y control de spam, pero no garantiza anonimato total. Debe usarse como canal temporal para escenarios de bajo riesgo.',
+          'Como la informacion expira, no conviene usarla en cuentas que dependan de historial de mensajes.',
+        ],
+      },
+      {
+        title: 'Cuando no usar correo temporal',
+        paragraphs: [
+          'No lo uses para bancos, exchanges, servicios financieros, recuperacion de contrasena o cuentas donde necesites acceso permanente a notificaciones.',
+          'Para servicios importantes, usa un correo permanente con autenticacion fuerte.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Cuanto tiempo queda activa la inbox temporal?',
+        answer:
+          'Por defecto, la inbox dura 1 hora y luego expira automaticamente junto con sus mensajes.',
+      },
+      {
+        question: 'Puedo enviar correos desde esta herramienta?',
+        answer:
+          'No. Esta funcionalidad es solo para recepcion de mensajes inbound.',
+      },
+      {
+        question: 'Necesito crear cuenta para usarla?',
+        answer:
+          'No. Puedes generar una direccion y leer mensajes directamente en la pagina.',
+      },
+      {
+        question: 'Los mensajes se guardan para siempre?',
+        answer:
+          'No. El almacenamiento es temporal y los datos se eliminan automaticamente al expirar el TTL.',
+      },
+      {
+        question: 'Sirve para cuentas criticas o financieras?',
+        answer:
+          'No es recomendado. Para cuentas importantes usa un correo permanente y seguro.',
       },
     ],
   },

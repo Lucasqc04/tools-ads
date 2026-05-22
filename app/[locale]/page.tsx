@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Container } from '@/components/layout/container';
 import { ToolCard } from '@/components/tools/tool-card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { getLocalizedToolsRegistry } from '@/data/tools-registry';
 import { buildLocalePathMap, localizePath } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
@@ -58,6 +60,20 @@ export default async function HomePage({ params }: HomePageProps) {
             {dictionary.home.viewAllTools}
           </Link>
         </div>
+
+        <form
+          action={localizePath(locale, '/tools')}
+          method="get"
+          className="mb-6 flex gap-2 md:max-w-lg"
+        >
+          <Input
+            name="search"
+            placeholder={dictionary.toolsIndex.searchPlaceholder}
+          />
+          <Button type="submit" variant="secondary">
+            {dictionary.toolsIndex.searchButton}
+          </Button>
+        </form>
 
         <div className="grid gap-4 md:grid-cols-2">
           {tools.map((tool) => (

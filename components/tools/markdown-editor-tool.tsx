@@ -1,10 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEventHandler } from 'react';
-import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEventHandler, type MouseEvent as ReactMouseEvent } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Select } from '@/components/ui/select';
 import { cn } from '@/lib/cn';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
@@ -27,18 +24,8 @@ type ExportFormat = 'md' | 'html' | 'png' | 'pdf' | 'docx';
 type StatusTone = 'success' | 'warning' | 'error';
 
 type ToolUi = {
-  title: string;
-  intro: string;
-  uploadLabel: string;
-  uploadHint: string;
-  acceptedDescription: string;
-  editorLabel: string;
   editorPlaceholder: string;
-  previewLabel: string;
-  previewHint: string;
   previewEmpty: string;
-  toolbarTitle: string;
-  layoutTitle: string;
   splitView: string;
   editorOnly: string;
   previewOnly: string;
@@ -48,16 +35,11 @@ type ToolUi = {
   clear: string;
   htmlCopy: string;
   htmlCopied: string;
-  exportTitle: string;
-  exportFormatLabel: string;
   exportAction: string;
   exportingAction: string;
-  currentFileLabel: string;
   localProcessingNote: string;
-  statsTitle: string;
   wordsLabel: string;
   charsLabel: string;
-  charsNoSpaceLabel: string;
   linesLabel: string;
   readingTimeLabel: string;
   minutesSuffix: string;
@@ -70,6 +52,7 @@ type ToolUi = {
   statusHtmlCopied: string;
   statusHtmlCopyError: string;
   statusExportError: string;
+  uploadFile: string;
   placeholders: {
     heading: string;
     listItem: string;
@@ -117,68 +100,53 @@ type SelectionMutation = {
   selectionEnd: number;
 };
 
+const STORAGE_KEY = 'md-editor-content';
+const STORAGE_FILENAME_KEY = 'md-editor-filename';
+
 const uiByLocale: Record<AppLocale, ToolUi> = {
   'pt-br': {
-    title: 'Visualizador e Editor de Markdown',
-    intro:
-      'Edite Markdown com preview em tempo real, upload de arquivo .md, modo foco em tela cheia e exportacao em multiplos formatos.',
-    uploadLabel: 'Arquivo Markdown (.md)',
-    uploadHint: 'Envie um arquivo para abrir e continuar editando no navegador.',
-    acceptedDescription: '.MD, .MARKDOWN',
-    editorLabel: 'Editor Markdown',
     editorPlaceholder: '# Seu documento\n\nComece a escrever aqui...',
-    previewLabel: 'Preview renderizado',
-    previewHint: 'Visualizacao em tempo real da sintaxe Markdown.',
     previewEmpty: 'Digite ou envie um arquivo Markdown para visualizar aqui.',
-    toolbarTitle: 'Atalhos de edicao',
-    layoutTitle: 'Layout',
     splitView: 'Dividido',
-    editorOnly: 'So editor',
-    previewOnly: 'So preview',
-    focusMode: 'Modo foco tela cheia',
-    exitFocusMode: 'Sair do modo foco',
-    loadSample: 'Carregar exemplo',
+    editorOnly: 'Editor',
+    previewOnly: 'Preview',
+    focusMode: 'Tela cheia',
+    exitFocusMode: 'Sair',
+    loadSample: 'Exemplo',
     clear: 'Limpar',
-    htmlCopy: 'Copiar HTML renderizado',
-    htmlCopied: 'HTML copiado',
-    exportTitle: 'Exportacao',
-    exportFormatLabel: 'Formato de saida',
-    exportAction: 'Baixar / Exportar',
+    htmlCopy: 'Copiar HTML',
+    htmlCopied: 'Copiado!',
+    exportAction: 'Exportar',
     exportingAction: 'Exportando...',
-    currentFileLabel: 'Arquivo atual',
-    localProcessingNote:
-      'Privacidade: edicao, preview e exportacao acontecem localmente no navegador por padrao.',
-    statsTitle: 'Resumo rapido',
+    localProcessingNote: 'Tudo processado localmente no navegador.',
     wordsLabel: 'Palavras',
     charsLabel: 'Caracteres',
-    charsNoSpaceLabel: 'Caracteres sem espaco',
     linesLabel: 'Linhas',
-    readingTimeLabel: 'Leitura estimada',
+    readingTimeLabel: 'Leitura',
     minutesSuffix: 'min',
-    statusFileLoaded: 'Arquivo Markdown carregado com sucesso.',
-    statusFileReadError: 'Nao foi possivel ler o arquivo enviado. Tente novamente.',
-    statusNoContentToExport: 'Adicione conteudo Markdown antes de exportar.',
-    statusExportDone: 'Exportacao concluida com sucesso.',
-    statusExportDoneTruncated:
-      'Exportacao concluida. Documento muito longo: o arquivo final pode ter sido limitado para manter performance.',
-    statusExportDoneExternalImages:
-      'Exportacao concluida. Algumas imagens externas nao puderam ser incorporadas e foram substituidas por aviso no arquivo.',
-    statusHtmlCopied: 'HTML renderizado copiado para a area de transferencia.',
-    statusHtmlCopyError: 'Nao foi possivel copiar o HTML. Verifique permissoes do navegador.',
-    statusExportError: 'Falha ao exportar o arquivo. Tente novamente em alguns segundos.',
+    statusFileLoaded: 'Arquivo carregado com sucesso.',
+    statusFileReadError: 'Nao foi possivel ler o arquivo.',
+    statusNoContentToExport: 'Adicione conteudo antes de exportar.',
+    statusExportDone: 'Exportacao concluida.',
+    statusExportDoneTruncated: 'Exportacao concluida. Documento limitado por performance.',
+    statusExportDoneExternalImages: 'Exportacao concluida. Imagens externas substituidas por aviso.',
+    statusHtmlCopied: 'HTML copiado para a area de transferencia.',
+    statusHtmlCopyError: 'Nao foi possivel copiar. Verifique permissoes.',
+    statusExportError: 'Falha ao exportar. Tente novamente.',
+    uploadFile: 'Abrir .md',
     placeholders: {
-      heading: 'Titulo da secao',
-      listItem: 'Item da lista',
-      taskItem: 'Tarefa pendente',
-      quote: 'Texto em destaque',
-      bold: 'texto forte',
-      italic: 'texto em enfase',
-      strike: 'texto removido',
+      heading: 'Titulo',
+      listItem: 'Item',
+      taskItem: 'Tarefa',
+      quote: 'Citacao',
+      bold: 'negrito',
+      italic: 'italico',
+      strike: 'tachado',
       linkText: 'texto do link',
-      linkUrl: 'https://seu-link.com',
-      imageAlt: 'descricao da imagem',
-      imageUrl: 'https://seu-arquivo.com/imagem.png',
-      codeInline: 'const valor = 42',
+      linkUrl: 'https://exemplo.com',
+      imageAlt: 'descricao',
+      imageUrl: 'https://exemplo.com/imagem.png',
+      codeInline: 'const x = 42',
       codeBlock: 'function exemplo() {\n  return true;\n}',
       tableHeadA: 'Coluna A',
       tableHeadB: 'Coluna B',
@@ -189,90 +157,72 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
       h1: 'H1',
       h2: 'H2',
       h3: 'H3',
-      bold: 'Negrito',
-      italic: 'Italico',
-      strike: 'Tachado',
-      quote: 'Citacao',
+      bold: 'B',
+      italic: 'I',
+      strike: 'S',
+      quote: 'Quote',
       ul: 'Lista',
-      ol: 'Numerada',
-      task: 'Checklist',
+      ol: '1.',
+      task: '\u2611',
       link: 'Link',
-      image: 'Imagem',
-      code: 'Codigo',
-      codeBlock: 'Bloco de codigo',
+      image: 'Img',
+      code: 'Code',
+      codeBlock: '{ }',
       table: 'Tabela',
-      hr: 'Linha',
+      hr: '\u2014',
     },
     exportOptions: [
       { value: 'md', label: 'Markdown (.md)' },
       { value: 'html', label: 'HTML (.html)' },
-      { value: 'png', label: 'Imagem PNG (.png)' },
+      { value: 'png', label: 'PNG (.png)' },
       { value: 'pdf', label: 'PDF (.pdf)' },
-      { value: 'docx', label: 'Documento Word (.docx)' },
+      { value: 'docx', label: 'Word (.docx)' },
     ],
-    sampleMarkdown: `# Guia rapido de Markdown\n\n## O que voce pode editar\n\n- Titulos\n- Listas\n- Links e imagens\n- Tabelas\n- Blocos de codigo\n\n> Dica: use o modo foco para editar em tela cheia.\n\n### Exemplo de tabela\n\n| Recurso | Status |\n| --- | --- |\n| Upload .md | OK |\n| Preview em tempo real | OK |\n| Exportacao PDF/PNG | OK |\n\n### Exemplo de codigo\n\n\`\`\`ts\nconst mensagem = 'Markdown pronto para publicar';\nconsole.log(mensagem);\n\`\`\`\n`,
+    sampleMarkdown: '# Guia rapido de Markdown\n\n## O que voce pode editar\n\n- Titulos\n- Listas\n- Links e imagens\n- Tabelas\n- Blocos de codigo\n\n> Dica: use o modo tela cheia para editar com mais espaco.\n\n### Exemplo de tabela\n\n| Recurso | Status |\n| --- | --- |\n| Upload .md | OK |\n| Preview em tempo real | OK |\n| Exportacao PDF/PNG | OK |\n\n### Exemplo de codigo\n\n```ts\nconst mensagem = \'Markdown pronto para publicar\';\nconsole.log(mensagem);\n```\n',
   },
   en: {
-    title: 'Markdown Viewer and Editor',
-    intro:
-      'Edit Markdown with real-time preview, .md upload, fullscreen focus mode, and multi-format export.',
-    uploadLabel: 'Markdown file (.md)',
-    uploadHint: 'Upload a file to open and continue editing directly in your browser.',
-    acceptedDescription: '.MD, .MARKDOWN',
-    editorLabel: 'Markdown editor',
     editorPlaceholder: '# Your document\n\nStart writing here...',
-    previewLabel: 'Rendered preview',
-    previewHint: 'Real-time visualization of Markdown syntax.',
     previewEmpty: 'Type or upload a Markdown file to preview here.',
-    toolbarTitle: 'Editing shortcuts',
-    layoutTitle: 'Layout',
     splitView: 'Split',
-    editorOnly: 'Editor only',
-    previewOnly: 'Preview only',
-    focusMode: 'Fullscreen focus mode',
-    exitFocusMode: 'Exit focus mode',
-    loadSample: 'Load sample',
+    editorOnly: 'Editor',
+    previewOnly: 'Preview',
+    focusMode: 'Fullscreen',
+    exitFocusMode: 'Exit',
+    loadSample: 'Sample',
     clear: 'Clear',
-    htmlCopy: 'Copy rendered HTML',
-    htmlCopied: 'HTML copied',
-    exportTitle: 'Export',
-    exportFormatLabel: 'Output format',
-    exportAction: 'Download / Export',
+    htmlCopy: 'Copy HTML',
+    htmlCopied: 'Copied!',
+    exportAction: 'Export',
     exportingAction: 'Exporting...',
-    currentFileLabel: 'Current file',
-    localProcessingNote:
-      'Privacy: editing, preview, and exports are processed locally in your browser by default.',
-    statsTitle: 'Quick stats',
+    localProcessingNote: 'Everything processed locally in your browser.',
     wordsLabel: 'Words',
     charsLabel: 'Characters',
-    charsNoSpaceLabel: 'Chars without spaces',
     linesLabel: 'Lines',
-    readingTimeLabel: 'Estimated reading',
+    readingTimeLabel: 'Reading',
     minutesSuffix: 'min',
-    statusFileLoaded: 'Markdown file loaded successfully.',
-    statusFileReadError: 'Could not read the uploaded file. Please try again.',
-    statusNoContentToExport: 'Add Markdown content before exporting.',
-    statusExportDone: 'Export completed successfully.',
-    statusExportDoneTruncated:
-      'Export completed. Large document detected: output may be capped to keep performance stable.',
-    statusExportDoneExternalImages:
-      'Export completed. Some external images could not be embedded and were replaced with fallback notes.',
-    statusHtmlCopied: 'Rendered HTML copied to clipboard.',
-    statusHtmlCopyError: 'Could not copy HTML. Check browser clipboard permissions.',
-    statusExportError: 'Export failed. Please try again in a few seconds.',
+    statusFileLoaded: 'File loaded successfully.',
+    statusFileReadError: 'Could not read the file.',
+    statusNoContentToExport: 'Add content before exporting.',
+    statusExportDone: 'Export completed.',
+    statusExportDoneTruncated: 'Export completed. Output capped for performance.',
+    statusExportDoneExternalImages: 'Export completed. External images replaced with fallback.',
+    statusHtmlCopied: 'HTML copied to clipboard.',
+    statusHtmlCopyError: 'Could not copy. Check browser permissions.',
+    statusExportError: 'Export failed. Try again.',
+    uploadFile: 'Open .md',
     placeholders: {
-      heading: 'Section title',
-      listItem: 'List item',
-      taskItem: 'Pending task',
-      quote: 'Highlighted text',
-      bold: 'strong text',
-      italic: 'emphasized text',
-      strike: 'removed text',
-      linkText: 'link label',
-      linkUrl: 'https://your-link.com',
-      imageAlt: 'image description',
-      imageUrl: 'https://your-file.com/image.png',
-      codeInline: 'const value = 42',
+      heading: 'Title',
+      listItem: 'Item',
+      taskItem: 'Task',
+      quote: 'Quote',
+      bold: 'bold',
+      italic: 'italic',
+      strike: 'strike',
+      linkText: 'link text',
+      linkUrl: 'https://example.com',
+      imageAlt: 'description',
+      imageUrl: 'https://example.com/image.png',
+      codeInline: 'const x = 42',
       codeBlock: 'function sample() {\n  return true;\n}',
       tableHeadA: 'Column A',
       tableHeadB: 'Column B',
@@ -283,90 +233,72 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
       h1: 'H1',
       h2: 'H2',
       h3: 'H3',
-      bold: 'Bold',
-      italic: 'Italic',
-      strike: 'Strike',
+      bold: 'B',
+      italic: 'I',
+      strike: 'S',
       quote: 'Quote',
-      ul: 'Bulleted',
-      ol: 'Numbered',
-      task: 'Checklist',
+      ul: 'List',
+      ol: '1.',
+      task: '\u2611',
       link: 'Link',
-      image: 'Image',
+      image: 'Img',
       code: 'Code',
-      codeBlock: 'Code block',
+      codeBlock: '{ }',
       table: 'Table',
-      hr: 'Divider',
+      hr: '\u2014',
     },
     exportOptions: [
       { value: 'md', label: 'Markdown (.md)' },
       { value: 'html', label: 'HTML (.html)' },
-      { value: 'png', label: 'PNG image (.png)' },
+      { value: 'png', label: 'PNG (.png)' },
       { value: 'pdf', label: 'PDF (.pdf)' },
-      { value: 'docx', label: 'Word document (.docx)' },
+      { value: 'docx', label: 'Word (.docx)' },
     ],
-    sampleMarkdown: `# Quick Markdown Guide\n\n## What you can edit\n\n- Headings\n- Lists\n- Links and images\n- Tables\n- Code blocks\n\n> Tip: switch to focus mode for fullscreen editing.\n\n### Sample table\n\n| Feature | Status |\n| --- | --- |\n| .md upload | OK |\n| Real-time preview | OK |\n| PDF/PNG export | OK |\n\n### Sample code\n\n\`\`\`ts\nconst message = 'Markdown ready to publish';\nconsole.log(message);\n\`\`\`\n`,
+    sampleMarkdown: '# Quick Markdown Guide\n\n## What you can edit\n\n- Headings\n- Lists\n- Links and images\n- Tables\n- Code blocks\n\n> Tip: use fullscreen mode for a better editing experience.\n\n### Sample table\n\n| Feature | Status |\n| --- | --- |\n| .md upload | OK |\n| Real-time preview | OK |\n| PDF/PNG export | OK |\n\n### Sample code\n\n```ts\nconst message = \'Markdown ready to publish\';\nconsole.log(message);\n```\n',
   },
   es: {
-    title: 'Visualizador y Editor de Markdown',
-    intro:
-      'Edita Markdown con vista previa en tiempo real, carga de .md, modo foco en pantalla completa y exportacion en varios formatos.',
-    uploadLabel: 'Archivo Markdown (.md)',
-    uploadHint: 'Sube un archivo para abrirlo y continuar editando en el navegador.',
-    acceptedDescription: '.MD, .MARKDOWN',
-    editorLabel: 'Editor Markdown',
     editorPlaceholder: '# Tu documento\n\nEmpieza a escribir aqui...',
-    previewLabel: 'Vista previa renderizada',
-    previewHint: 'Visualizacion en tiempo real de la sintaxis Markdown.',
     previewEmpty: 'Escribe o sube un archivo Markdown para verlo aqui.',
-    toolbarTitle: 'Atajos de edicion',
-    layoutTitle: 'Diseno',
     splitView: 'Dividido',
-    editorOnly: 'Solo editor',
-    previewOnly: 'Solo preview',
-    focusMode: 'Modo foco pantalla completa',
-    exitFocusMode: 'Salir del modo foco',
-    loadSample: 'Cargar ejemplo',
+    editorOnly: 'Editor',
+    previewOnly: 'Preview',
+    focusMode: 'Pantalla completa',
+    exitFocusMode: 'Salir',
+    loadSample: 'Ejemplo',
     clear: 'Limpiar',
-    htmlCopy: 'Copiar HTML renderizado',
-    htmlCopied: 'HTML copiado',
-    exportTitle: 'Exportacion',
-    exportFormatLabel: 'Formato de salida',
-    exportAction: 'Descargar / Exportar',
+    htmlCopy: 'Copiar HTML',
+    htmlCopied: 'Copiado!',
+    exportAction: 'Exportar',
     exportingAction: 'Exportando...',
-    currentFileLabel: 'Archivo actual',
-    localProcessingNote:
-      'Privacidad: la edicion, vista previa y exportacion se procesan localmente en tu navegador por defecto.',
-    statsTitle: 'Resumen rapido',
+    localProcessingNote: 'Todo procesado localmente en tu navegador.',
     wordsLabel: 'Palabras',
     charsLabel: 'Caracteres',
-    charsNoSpaceLabel: 'Caracteres sin espacio',
     linesLabel: 'Lineas',
-    readingTimeLabel: 'Lectura estimada',
+    readingTimeLabel: 'Lectura',
     minutesSuffix: 'min',
-    statusFileLoaded: 'Archivo Markdown cargado correctamente.',
-    statusFileReadError: 'No fue posible leer el archivo subido. Intentalo otra vez.',
-    statusNoContentToExport: 'Agrega contenido Markdown antes de exportar.',
-    statusExportDone: 'Exportacion completada con exito.',
-    statusExportDoneTruncated:
-      'Exportacion completada. Documento grande detectado: la salida puede limitarse para mantener rendimiento.',
-    statusExportDoneExternalImages:
-      'Exportacion completada. Algunas imagenes externas no pudieron incorporarse y fueron reemplazadas por avisos.',
-    statusHtmlCopied: 'HTML renderizado copiado al portapapeles.',
-    statusHtmlCopyError: 'No fue posible copiar el HTML. Revisa permisos del navegador.',
-    statusExportError: 'Fallo al exportar el archivo. Intentalo de nuevo en unos segundos.',
+    statusFileLoaded: 'Archivo cargado correctamente.',
+    statusFileReadError: 'No fue posible leer el archivo.',
+    statusNoContentToExport: 'Agrega contenido antes de exportar.',
+    statusExportDone: 'Exportacion completada.',
+    statusExportDoneTruncated: 'Exportacion completada. Salida limitada por rendimiento.',
+    statusExportDoneExternalImages: 'Exportacion completada. Imagenes externas reemplazadas.',
+    statusHtmlCopied: 'HTML copiado al portapapeles.',
+    statusHtmlCopyError: 'No fue posible copiar. Revisa permisos.',
+    statusExportError: 'Fallo al exportar. Intentalo de nuevo.',
+    uploadFile: 'Abrir .md',
     placeholders: {
-      heading: 'Titulo de seccion',
-      listItem: 'Elemento de lista',
-      taskItem: 'Tarea pendiente',
-      quote: 'Texto destacado',
-      bold: 'texto fuerte',
-      italic: 'texto en enfasis',
-      strike: 'texto eliminado',
+      heading: 'Titulo',
+      listItem: 'Elemento',
+      taskItem: 'Tarea',
+      quote: 'Cita',
+      bold: 'negrita',
+      italic: 'italica',
+      strike: 'tachado',
       linkText: 'texto del enlace',
-      linkUrl: 'https://tu-enlace.com',
-      imageAlt: 'descripcion de imagen',
-      imageUrl: 'https://tu-archivo.com/imagen.png',
-      codeInline: 'const valor = 42',
+      linkUrl: 'https://ejemplo.com',
+      imageAlt: 'descripcion',
+      imageUrl: 'https://ejemplo.com/imagen.png',
+      codeInline: 'const x = 42',
       codeBlock: 'function ejemplo() {\n  return true;\n}',
       tableHeadA: 'Columna A',
       tableHeadB: 'Columna B',
@@ -377,49 +309,38 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
       h1: 'H1',
       h2: 'H2',
       h3: 'H3',
-      bold: 'Negrita',
-      italic: 'Italica',
-      strike: 'Tachado',
+      bold: 'B',
+      italic: 'I',
+      strike: 'S',
       quote: 'Cita',
       ul: 'Lista',
-      ol: 'Numerada',
-      task: 'Checklist',
-      link: 'Enlace',
-      image: 'Imagen',
-      code: 'Codigo',
-      codeBlock: 'Bloque codigo',
+      ol: '1.',
+      task: '\u2611',
+      link: 'Link',
+      image: 'Img',
+      code: 'Code',
+      codeBlock: '{ }',
       table: 'Tabla',
-      hr: 'Linea',
+      hr: '\u2014',
     },
     exportOptions: [
       { value: 'md', label: 'Markdown (.md)' },
       { value: 'html', label: 'HTML (.html)' },
-      { value: 'png', label: 'Imagen PNG (.png)' },
+      { value: 'png', label: 'PNG (.png)' },
       { value: 'pdf', label: 'PDF (.pdf)' },
-      { value: 'docx', label: 'Documento Word (.docx)' },
+      { value: 'docx', label: 'Word (.docx)' },
     ],
-    sampleMarkdown: `# Guia rapido de Markdown\n\n## Que puedes editar\n\n- Titulos\n- Listas\n- Enlaces e imagenes\n- Tablas\n- Bloques de codigo\n\n> Consejo: usa el modo foco para editar en pantalla completa.\n\n### Tabla de ejemplo\n\n| Recurso | Estado |\n| --- | --- |\n| Carga .md | OK |\n| Preview en tiempo real | OK |\n| Exportacion PDF/PNG | OK |\n\n### Codigo de ejemplo\n\n\`\`\`ts\nconst mensaje = 'Markdown listo para publicar';\nconsole.log(mensaje);\n\`\`\`\n`,
+    sampleMarkdown: '# Guia rapido de Markdown\n\n## Que puedes editar\n\n- Titulos\n- Listas\n- Enlaces e imagenes\n- Tablas\n- Bloques de codigo\n\n> Consejo: usa pantalla completa para mas espacio.\n\n### Tabla de ejemplo\n\n| Recurso | Estado |\n| --- | --- |\n| Carga .md | OK |\n| Preview en tiempo real | OK |\n| Exportacion PDF/PNG | OK |\n\n### Codigo de ejemplo\n\n```ts\nconst mensaje = \'Markdown listo para publicar\';\nconsole.log(mensaje);\n```\n',
   },
 };
 
 const statusClassByTone: Record<StatusTone, string> = {
-  success: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  warning: 'border-amber-200 bg-amber-50 text-amber-800',
-  error: 'border-rose-200 bg-rose-50 text-rose-800',
+  success: 'bg-emerald-600 text-white',
+  warning: 'bg-amber-500 text-white',
+  error: 'bg-rose-600 text-white',
 };
 
-const editorTextareaClass =
-  'w-full rounded-xl border border-slate-300 bg-white p-4 text-sm font-mono text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-200';
-
-const readTextFile = async (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => resolve(String(reader.result ?? ''));
-    reader.onerror = () => reject(new Error('Falha ao ler arquivo'));
-
-    reader.readAsText(file);
-  });
+const readTextFile = (file: File): Promise<string> => file.text();
 
 const createLineListFromSelection = (selected: string, fallback: string): string[] => {
   const base = selected || fallback;
@@ -430,8 +351,10 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
   const ui = uiByLocale[locale];
   const editorRef = useRef<HTMLTextAreaElement | null>(null);
   const previewContainerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [input, setInput] = useState(ui.sampleMarkdown);
+  const [input, setInput] = useState('');
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('split');
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [fileName, setFileName] = useState('markdown-document.md');
@@ -439,53 +362,54 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
   const [isExporting, setIsExporting] = useState(false);
   const [isHtmlCopied, setIsHtmlCopied] = useState(false);
   const [status, setStatus] = useState<{ tone: StatusTone; text: string } | null>(null);
+  const [splitRatio, setSplitRatio] = useState(50);
+  const [isHydrated, setIsHydrated] = useState(false);
 
+  // Load from localStorage on mount
   useEffect(() => {
-    setInput(ui.sampleMarkdown);
-    setStatus(null);
-    setIsHtmlCopied(false);
-  }, [locale, ui.sampleMarkdown]);
-
-  useEffect(() => {
-    if (!isFocusMode) {
-      return undefined;
+    try {
+      const savedContent = localStorage.getItem(STORAGE_KEY);
+      const savedFilename = localStorage.getItem(STORAGE_FILENAME_KEY);
+      if (savedContent !== null) {
+        setInput(savedContent);
+      } else {
+        setInput(ui.sampleMarkdown);
+      }
+      if (savedFilename) {
+        setFileName(savedFilename);
+      }
+    } catch {
+      setInput(ui.sampleMarkdown);
     }
+    setIsHydrated(true);
+  }, []);
 
-    const htmlElement = document.documentElement;
-    const bodyElement = document.body;
-    const scrollY = window.scrollY;
+  // Save to localStorage on change (debounced)
+  useEffect(() => {
+    if (!isHydrated) return;
+    const timeout = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, input);
+        localStorage.setItem(STORAGE_FILENAME_KEY, fileName);
+      } catch {
+        // Storage full or unavailable
+      }
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [input, fileName, isHydrated]);
 
-    const previousHtmlOverflow = htmlElement.style.overflow;
-    const previousBodyOverflow = bodyElement.style.overflow;
-    const previousBodyPosition = bodyElement.style.position;
-    const previousBodyTop = bodyElement.style.top;
-    const previousBodyWidth = bodyElement.style.width;
-    const previousBodyLeft = bodyElement.style.left;
-    const previousBodyRight = bodyElement.style.right;
-    const previousBodyOverscrollBehavior = bodyElement.style.overscrollBehavior;
-    const previousHtmlOverscrollBehavior = htmlElement.style.overscrollBehavior;
+  // Lock body scroll in focus mode
+  useEffect(() => {
+    if (!isFocusMode) return undefined;
 
-    htmlElement.style.overflow = 'hidden';
-    htmlElement.style.overscrollBehavior = 'none';
-    bodyElement.style.overflow = 'hidden';
-    bodyElement.style.overscrollBehavior = 'none';
-    bodyElement.style.position = 'fixed';
-    bodyElement.style.top = `-${scrollY}px`;
-    bodyElement.style.left = '0';
-    bodyElement.style.right = '0';
-    bodyElement.style.width = '100%';
+    const scrollY = globalThis.scrollY;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
 
     return () => {
-      htmlElement.style.overflow = previousHtmlOverflow;
-      bodyElement.style.overflow = previousBodyOverflow;
-      bodyElement.style.position = previousBodyPosition;
-      bodyElement.style.top = previousBodyTop;
-      bodyElement.style.width = previousBodyWidth;
-      bodyElement.style.left = previousBodyLeft;
-      bodyElement.style.right = previousBodyRight;
-      bodyElement.style.overscrollBehavior = previousBodyOverscrollBehavior;
-      htmlElement.style.overscrollBehavior = previousHtmlOverscrollBehavior;
-      window.scrollTo(0, scrollY);
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      globalThis.scrollTo(0, scrollY);
     };
   }, [isFocusMode]);
 
@@ -493,12 +417,40 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
   const stats = useMemo(() => getMarkdownStats(input), [input]);
   const sanitizedBaseName = useMemo(() => sanitizeMarkdownFileBaseName(fileName), [fileName]);
 
+  // Resizer drag logic
+  const handleResizeStart = useCallback((e: ReactMouseEvent) => {
+    e.preventDefault();
+    const container = containerRef.current;
+    if (!container) return;
+
+    const startX = e.clientX;
+    const containerRect = container.getBoundingClientRect();
+    const startRatio = splitRatio;
+
+    const onMove = (moveEvent: globalThis.MouseEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const deltaPercent = (deltaX / containerRect.width) * 100;
+      const newRatio = Math.min(80, Math.max(20, startRatio + deltaPercent));
+      setSplitRatio(newRatio);
+    };
+
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }, [splitRatio]);
+
+  // Selection mutation helpers
   const mutateSelection = (buildMutation: (selectedText: string) => SelectionMutation) => {
     const textarea = editorRef.current;
-
-    if (!textarea) {
-      return;
-    }
+    if (!textarea) return;
 
     const start = textarea.selectionStart ?? input.length;
     const end = textarea.selectionEnd ?? input.length;
@@ -513,7 +465,7 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
     setInput(nextValue);
     setStatus(null);
 
-    window.requestAnimationFrame(() => {
+    globalThis.requestAnimationFrame(() => {
       textarea.focus();
       const absoluteStart = before.length + mutation.selectionStart;
       const absoluteEnd = before.length + mutation.selectionEnd;
@@ -525,20 +477,10 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
     mutateSelection((selectedText) => {
       const text = selectedText || placeholder;
       const merged = `${prefix}${text}${suffix}`;
-
       if (selectedText) {
-        return {
-          text: merged,
-          selectionStart: merged.length,
-          selectionEnd: merged.length,
-        };
+        return { text: merged, selectionStart: merged.length, selectionEnd: merged.length };
       }
-
-      return {
-        text: merged,
-        selectionStart: prefix.length,
-        selectionEnd: prefix.length + placeholder.length,
-      };
+      return { text: merged, selectionStart: prefix.length, selectionEnd: prefix.length + placeholder.length };
     });
   };
 
@@ -546,12 +488,7 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
     mutateSelection((selectedText) => {
       const lines = createLineListFromSelection(selectedText, placeholder);
       const merged = lines.map((line) => `${prefix}${line}`).join('\n');
-
-      return {
-        text: merged,
-        selectionStart: merged.length,
-        selectionEnd: merged.length,
-      };
+      return { text: merged, selectionStart: merged.length, selectionEnd: merged.length };
     });
   };
 
@@ -562,13 +499,8 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
   const insertOrderedList = () => {
     mutateSelection((selectedText) => {
       const lines = createLineListFromSelection(selectedText, ui.placeholders.listItem);
-      const merged = lines.map((line, index) => `${index + 1}. ${line}`).join('\n');
-
-      return {
-        text: merged,
-        selectionStart: merged.length,
-        selectionEnd: merged.length,
-      };
+      const merged = lines.map((line, i) => `${i + 1}. ${line}`).join('\n');
+      return { text: merged, selectionStart: merged.length, selectionEnd: merged.length };
     });
   };
 
@@ -576,12 +508,7 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
     mutateSelection((selectedText) => {
       const lines = createLineListFromSelection(selectedText, ui.placeholders.taskItem);
       const merged = lines.map((line) => `- [ ] ${line}`).join('\n');
-
-      return {
-        text: merged,
-        selectionStart: merged.length,
-        selectionEnd: merged.length,
-      };
+      return { text: merged, selectionStart: merged.length, selectionEnd: merged.length };
     });
   };
 
@@ -590,20 +517,10 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
       const label = selectedText || ui.placeholders.linkText;
       const merged = `[${label}](${ui.placeholders.linkUrl})`;
       const urlStart = merged.indexOf(ui.placeholders.linkUrl);
-
       if (selectedText) {
-        return {
-          text: merged,
-          selectionStart: merged.length,
-          selectionEnd: merged.length,
-        };
+        return { text: merged, selectionStart: merged.length, selectionEnd: merged.length };
       }
-
-      return {
-        text: merged,
-        selectionStart: urlStart,
-        selectionEnd: urlStart + ui.placeholders.linkUrl.length,
-      };
+      return { text: merged, selectionStart: urlStart, selectionEnd: urlStart + ui.placeholders.linkUrl.length };
     });
   };
 
@@ -612,148 +529,84 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
       const alt = selectedText || ui.placeholders.imageAlt;
       const merged = `![${alt}](${ui.placeholders.imageUrl})`;
       const urlStart = merged.indexOf(ui.placeholders.imageUrl);
-
       if (selectedText) {
-        return {
-          text: merged,
-          selectionStart: merged.length,
-          selectionEnd: merged.length,
-        };
+        return { text: merged, selectionStart: merged.length, selectionEnd: merged.length };
       }
-
-      return {
-        text: merged,
-        selectionStart: urlStart,
-        selectionEnd: urlStart + ui.placeholders.imageUrl.length,
-      };
+      return { text: merged, selectionStart: urlStart, selectionEnd: urlStart + ui.placeholders.imageUrl.length };
     });
   };
 
   const insertCodeBlock = () => {
     mutateSelection((selectedText) => {
       const block = selectedText || ui.placeholders.codeBlock;
-      const merged = `\n\`\`\`ts\n${block}\n\`\`\`\n`;
+      const merged = '\n```ts\n' + block + '\n```\n';
       const blockStart = merged.indexOf(block);
-
       if (selectedText) {
-        return {
-          text: merged,
-          selectionStart: merged.length,
-          selectionEnd: merged.length,
-        };
+        return { text: merged, selectionStart: merged.length, selectionEnd: merged.length };
       }
-
-      return {
-        text: merged,
-        selectionStart: blockStart,
-        selectionEnd: blockStart + block.length,
-      };
+      return { text: merged, selectionStart: blockStart, selectionEnd: blockStart + block.length };
     });
   };
 
   const insertTable = () => {
     const snippet = `| ${ui.placeholders.tableHeadA} | ${ui.placeholders.tableHeadB} |\n| --- | --- |\n| ${ui.placeholders.tableCellA} | ${ui.placeholders.tableCellB} |`;
-
     mutateSelection((selectedText) => {
       if (selectedText) {
-        return {
-          text: `${selectedText}\n${snippet}`,
-          selectionStart: selectedText.length + snippet.length + 1,
-          selectionEnd: selectedText.length + snippet.length + 1,
-        };
+        return { text: `${selectedText}\n${snippet}`, selectionStart: selectedText.length + snippet.length + 1, selectionEnd: selectedText.length + snippet.length + 1 };
       }
-
-      return {
-        text: snippet,
-        selectionStart: 0,
-        selectionEnd: snippet.length,
-      };
+      return { text: snippet, selectionStart: 0, selectionEnd: snippet.length };
     });
   };
 
   const insertDivider = () => {
-    mutateSelection(() => ({
-      text: '\n---\n',
-      selectionStart: 5,
-      selectionEnd: 5,
-    }));
+    mutateSelection(() => ({ text: '\n---\n', selectionStart: 5, selectionEnd: 5 }));
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     if (event.key === 'Tab') {
       event.preventDefault();
       mutateSelection((selectedText) => {
-        if (!selectedText) {
-          return {
-            text: '  ',
-            selectionStart: 2,
-            selectionEnd: 2,
-          };
-        }
-
-        const indented = selectedText
-          .split('\n')
-          .map((line) => `  ${line}`)
-          .join('\n');
-
-        return {
-          text: indented,
-          selectionStart: 0,
-          selectionEnd: indented.length,
-        };
+        if (!selectedText) return { text: '  ', selectionStart: 2, selectionEnd: 2 };
+        const indented = selectedText.split('\n').map((line) => `  ${line}`).join('\n');
+        return { text: indented, selectionStart: 0, selectionEnd: indented.length };
       });
       return;
     }
 
-    const lower = event.key.toLowerCase();
     const hasModifier = event.metaKey || event.ctrlKey;
+    if (!hasModifier) return;
 
-    if (!hasModifier) {
-      return;
-    }
-
-    if (lower === 'b') {
-      event.preventDefault();
-      applyWrap('**', '**', ui.placeholders.bold);
-    }
-
-    if (lower === 'i') {
-      event.preventDefault();
-      applyWrap('*', '*', ui.placeholders.italic);
-    }
-
-    if (lower === 'k') {
-      event.preventDefault();
-      insertLink();
-    }
+    const lower = event.key.toLowerCase();
+    if (lower === 'b') { event.preventDefault(); applyWrap('**', '**', ui.placeholders.bold); }
+    if (lower === 'i') { event.preventDefault(); applyWrap('*', '*', ui.placeholders.italic); }
+    if (lower === 'k') { event.preventDefault(); insertLink(); }
   };
 
   const toolbarButtons = [
-    { id: 'h1', label: ui.actions.h1, onClick: () => insertHeading(1) },
-    { id: 'h2', label: ui.actions.h2, onClick: () => insertHeading(2) },
-    { id: 'h3', label: ui.actions.h3, onClick: () => insertHeading(3) },
-    { id: 'bold', label: ui.actions.bold, onClick: () => applyWrap('**', '**', ui.placeholders.bold) },
-    { id: 'italic', label: ui.actions.italic, onClick: () => applyWrap('*', '*', ui.placeholders.italic) },
-    { id: 'strike', label: ui.actions.strike, onClick: () => applyWrap('~~', '~~', ui.placeholders.strike) },
-    { id: 'quote', label: ui.actions.quote, onClick: () => applyLinePrefix('> ', ui.placeholders.quote) },
-    { id: 'ul', label: ui.actions.ul, onClick: () => applyLinePrefix('- ', ui.placeholders.listItem) },
-    { id: 'ol', label: ui.actions.ol, onClick: insertOrderedList },
-    { id: 'task', label: ui.actions.task, onClick: insertTaskList },
-    { id: 'link', label: ui.actions.link, onClick: insertLink },
-    { id: 'image', label: ui.actions.image, onClick: insertImage },
-    { id: 'code', label: ui.actions.code, onClick: () => applyWrap('`', '`', ui.placeholders.codeInline) },
-    { id: 'code-block', label: ui.actions.codeBlock, onClick: insertCodeBlock },
-    { id: 'table', label: ui.actions.table, onClick: insertTable },
-    { id: 'hr', label: ui.actions.hr, onClick: insertDivider },
+    { id: 'h1', label: ui.actions.h1, onClick: () => insertHeading(1), title: 'Heading 1' },
+    { id: 'h2', label: ui.actions.h2, onClick: () => insertHeading(2), title: 'Heading 2' },
+    { id: 'h3', label: ui.actions.h3, onClick: () => insertHeading(3), title: 'Heading 3' },
+    { id: 'sep1', label: '|', onClick: undefined, title: '' },
+    { id: 'bold', label: ui.actions.bold, onClick: () => applyWrap('**', '**', ui.placeholders.bold), title: 'Bold (Ctrl+B)' },
+    { id: 'italic', label: ui.actions.italic, onClick: () => applyWrap('*', '*', ui.placeholders.italic), title: 'Italic (Ctrl+I)' },
+    { id: 'strike', label: ui.actions.strike, onClick: () => applyWrap('~~', '~~', ui.placeholders.strike), title: 'Strikethrough' },
+    { id: 'sep2', label: '|', onClick: undefined, title: '' },
+    { id: 'quote', label: ui.actions.quote, onClick: () => applyLinePrefix('> ', ui.placeholders.quote), title: 'Blockquote' },
+    { id: 'ul', label: ui.actions.ul, onClick: () => applyLinePrefix('- ', ui.placeholders.listItem), title: 'Unordered list' },
+    { id: 'ol', label: ui.actions.ol, onClick: insertOrderedList, title: 'Ordered list' },
+    { id: 'task', label: ui.actions.task, onClick: insertTaskList, title: 'Task list' },
+    { id: 'sep3', label: '|', onClick: undefined, title: '' },
+    { id: 'link', label: ui.actions.link, onClick: insertLink, title: 'Link (Ctrl+K)' },
+    { id: 'image', label: ui.actions.image, onClick: insertImage, title: 'Image' },
+    { id: 'code', label: ui.actions.code, onClick: () => applyWrap('`', '`', ui.placeholders.codeInline), title: 'Inline code' },
+    { id: 'code-block', label: ui.actions.codeBlock, onClick: insertCodeBlock, title: 'Code block' },
+    { id: 'table', label: ui.actions.table, onClick: insertTable, title: 'Table' },
+    { id: 'hr', label: ui.actions.hr, onClick: insertDivider, title: 'Horizontal rule' },
   ];
 
-  const handleUpload = async (files: File[]) => {
-    const file = files[0];
-
-    if (!file) {
-      return;
-    }
-
+  const handleUpload = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
     try {
       const loadedText = await readTextFile(file);
       setInput(loadedText);
@@ -771,7 +624,6 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
       setStatus({ tone: 'warning', text: ui.statusNoContentToExport });
       return;
     }
-
     try {
       await navigator.clipboard.writeText(renderedHtml);
       setIsHtmlCopied(true);
@@ -790,7 +642,6 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
     }
 
     const base = sanitizedBaseName || 'markdown-document';
-
     setIsExporting(true);
 
     try {
@@ -799,71 +650,32 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
         setStatus({ tone: 'success', text: ui.statusExportDone });
         return;
       }
-
       if (exportFormat === 'html') {
-        const htmlDocument = buildMarkdownHtmlDocument({
-          title: base,
-          renderedHtml,
-        });
+        const htmlDocument = buildMarkdownHtmlDocument({ title: base, renderedHtml });
         downloadTextFile(htmlDocument, `${base}.html`, 'text/html;charset=utf-8');
         setStatus({ tone: 'success', text: ui.statusExportDone });
         return;
       }
-
       if (exportFormat === 'docx') {
-        await exportMarkdownAsDocx({
-          markdownText: input,
-          filename: `${base}.docx`,
-        });
+        await exportMarkdownAsDocx({ markdownText: input, filename: `${base}.docx` });
         setStatus({ tone: 'success', text: ui.statusExportDone });
         return;
       }
 
       const previewWidth = Math.max(860, previewContainerRef.current?.clientWidth ?? 1100);
-      const buildWarningStatusText = (truncated: boolean, omittedExternalImages: number): string => {
-        if (truncated && omittedExternalImages > 0) {
-          return `${ui.statusExportDoneTruncated} ${ui.statusExportDoneExternalImages}`;
-        }
-
-        if (truncated) {
-          return ui.statusExportDoneTruncated;
-        }
-
-        if (omittedExternalImages > 0) {
-          return ui.statusExportDoneExternalImages;
-        }
-
-        return ui.statusExportDone;
-      };
 
       if (exportFormat === 'png') {
-        const result = await exportMarkdownPreviewAsPng({
-          renderedHtml,
-          filename: `${base}.png`,
-          width: previewWidth,
-        });
-
-        setStatus({
-          tone: result.truncated || result.omittedExternalImages > 0 ? 'warning' : 'success',
-          text: buildWarningStatusText(result.truncated, result.omittedExternalImages),
-        });
-
+        const result = await exportMarkdownPreviewAsPng({ renderedHtml, filename: `${base}.png`, width: previewWidth });
+        const tone = result.truncated || result.omittedExternalImages > 0 ? 'warning' : 'success';
+        const text = result.truncated ? ui.statusExportDoneTruncated : result.omittedExternalImages > 0 ? ui.statusExportDoneExternalImages : ui.statusExportDone;
+        setStatus({ tone, text });
         return;
       }
 
-      const result = await exportMarkdownPreviewAsPdf({
-        renderedHtml,
-        filename: `${base}.pdf`,
-        width: previewWidth,
-      });
-
-      const hasPdfWarnings = result.truncated || result.omittedExternalImages > 0;
-      setStatus({
-        tone: hasPdfWarnings ? 'warning' : 'success',
-        text: hasPdfWarnings
-          ? `${buildWarningStatusText(result.truncated, result.omittedExternalImages)} (${result.pages} ${result.pages > 1 ? 'pages' : 'page'})`
-          : `${ui.statusExportDone} (${result.pages} ${result.pages > 1 ? 'pages' : 'page'})`,
-      });
+      const result = await exportMarkdownPreviewAsPdf({ renderedHtml, filename: `${base}.pdf`, width: previewWidth });
+      const tone = result.truncated || result.omittedExternalImages > 0 ? 'warning' : 'success';
+      const text = result.truncated ? ui.statusExportDoneTruncated : result.omittedExternalImages > 0 ? ui.statusExportDoneExternalImages : ui.statusExportDone;
+      setStatus({ tone, text });
     } catch {
       setStatus({ tone: 'error', text: ui.statusExportError });
     } finally {
@@ -874,228 +686,221 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
   const showEditor = layoutMode !== 'preview';
   const showPreview = layoutMode !== 'editor';
 
+  // Status toast auto-dismiss
+  useEffect(() => {
+    if (!status) return;
+    const timeout = setTimeout(() => setStatus(null), 4000);
+    return () => clearTimeout(timeout);
+  }, [status]);
+
   return (
     <div
       className={cn(
-        isFocusMode && 'fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-slate-950/50 p-2 sm:p-4',
+        'flex flex-col overflow-hidden',
+        isFocusMode
+          ? 'fixed inset-0 z-50 bg-white'
+          : 'relative min-h-[560px] rounded-xl border border-slate-200',
       )}
     >
-      <Card
-        className={cn(
-          'space-y-5',
-          isFocusMode &&
-            'mx-auto flex min-h-[calc(100vh-1rem)] w-full max-w-[1900px] flex-col overflow-y-auto rounded-2xl border-slate-200 p-4 shadow-2xl sm:min-h-[calc(100vh-2rem)] sm:p-6 lg:h-[calc(100vh-2rem)] lg:min-h-0',
-        )}
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".md,.markdown,text/markdown,text/plain"
+        className="hidden"
+        onChange={(e) => { void handleUpload(e.target.files); e.target.value = ''; }}
+      />
+
+      {/* Top toolbar */}
+      <div className="flex flex-wrap items-center gap-1 border-b border-slate-200 bg-slate-50 px-2 py-1.5">
+        {/* Formatting buttons */}
+        <div className="flex flex-wrap items-center gap-0.5">
+          {toolbarButtons.map((action) => {
+            if (action.label === '|') {
+              return <span key={action.id} className="mx-1 h-5 w-px bg-slate-300" />;
+            }
+            return (
+              <button
+                key={action.id}
+                type="button"
+                title={action.title}
+                onClick={action.onClick}
+                className="rounded px-2 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-200 hover:text-slate-900"
+              >
+                {action.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Separator */}
+        <span className="mx-2 h-5 w-px bg-slate-300 hidden sm:block" />
+
+        {/* Action buttons */}
+        <div className="flex flex-wrap items-center gap-1 ml-auto">
+          {/* Layout toggle */}
+          <div className="flex items-center rounded-md border border-slate-300 bg-white overflow-hidden">
+            {(['split', 'editor', 'preview'] as LayoutMode[]).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setLayoutMode(mode)}
+                className={cn(
+                  'px-2 py-1 text-xs font-medium transition',
+                  layoutMode === mode
+                    ? 'bg-brand-600 text-white'
+                    : 'text-slate-600 hover:bg-slate-100',
+                )}
+              >
+                {mode === 'split' ? ui.splitView : mode === 'editor' ? ui.editorOnly : ui.previewOnly}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="rounded px-2 py-1 text-xs font-medium text-slate-700 border border-slate-300 bg-white hover:bg-slate-100 transition"
+          >
+            {ui.uploadFile}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setInput(ui.sampleMarkdown); setFileName('markdown-document.md'); setStatus(null); }}
+            className="rounded px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200 transition"
+          >
+            {ui.loadSample}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setInput(''); setStatus(null); }}
+            className="rounded px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-200 transition"
+          >
+            {ui.clear}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => void handleCopyHtml()}
+            className="rounded px-2 py-1 text-xs font-medium text-slate-700 border border-slate-300 bg-white hover:bg-slate-100 transition"
+          >
+            {isHtmlCopied ? ui.htmlCopied : ui.htmlCopy}
+          </button>
+
+          {/* Export group */}
+          <div className="flex items-center gap-0">
+            <select
+              value={exportFormat}
+              onChange={(e) => setExportFormat(e.target.value as ExportFormat)}
+              className="h-7 rounded-l-md border border-r-0 border-slate-300 bg-white px-2 text-xs text-slate-700 outline-none"
+            >
+              {ui.exportOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <Button
+              variant="primary"
+              className="h-7 rounded-l-none rounded-r-md px-3 text-xs"
+              onClick={() => void handleExport()}
+              disabled={isExporting}
+            >
+              {isExporting ? ui.exportingAction : ui.exportAction}
+            </Button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsFocusMode((c) => !c)}
+            className={cn(
+              'rounded px-2 py-1 text-xs font-semibold transition',
+              isFocusMode
+                ? 'bg-slate-900 text-white hover:bg-slate-700'
+                : 'text-slate-700 border border-slate-300 bg-white hover:bg-slate-100',
+            )}
+          >
+            {isFocusMode ? ui.exitFocusMode : ui.focusMode}
+          </button>
+        </div>
+      </div>
+
+      {/* Main split panel */}
+      <div
+        ref={containerRef}
+        className="flex flex-1 overflow-hidden min-h-0"
       >
-        <header className="rounded-xl border border-brand-200 bg-gradient-to-r from-brand-50 via-sky-50 to-emerald-50 p-4">
-          <h3 className="text-lg font-semibold text-slate-900">{ui.title}</h3>
-          <p className="mt-1 text-sm text-slate-700">{ui.intro}</p>
-        </header>
-
-        <section className="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-          <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <FileUploadDropzone
-              locale={locale}
-              label={ui.uploadLabel}
-              helperText={ui.uploadHint}
-              accept=".md,.markdown,text/markdown,text/plain"
-              acceptedDescription={ui.acceptedDescription}
-              multiple={false}
-              onFilesSelected={(files) => {
-                void handleUpload(files);
-              }}
+        {/* Editor panel */}
+        {showEditor && (
+          <div
+            className="flex flex-col overflow-hidden"
+            style={{ width: layoutMode === 'split' ? `${splitRatio}%` : '100%' }}
+          >
+            <textarea
+              ref={editorRef}
+              value={input}
+              onChange={(e) => { setInput(e.target.value); setStatus(null); setIsHtmlCopied(false); }}
+              onKeyDown={handleKeyDown}
+              spellCheck={false}
+              placeholder={ui.editorPlaceholder}
+              className="h-full w-full flex-1 resize-none border-none bg-white p-4 font-mono text-sm text-slate-900 outline-none placeholder:text-slate-400"
             />
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="space-y-2">
-                <span className="text-sm font-semibold text-slate-800">{ui.layoutTitle}</span>
-                <Select
-                  value={layoutMode}
-                  onChange={(event) => setLayoutMode(event.target.value as LayoutMode)}
-                >
-                  <option value="split">{ui.splitView}</option>
-                  <option value="editor">{ui.editorOnly}</option>
-                  <option value="preview">{ui.previewOnly}</option>
-                </Select>
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm font-semibold text-slate-800">{ui.exportFormatLabel}</span>
-                <Select
-                  value={exportFormat}
-                  onChange={(event) => setExportFormat(event.target.value as ExportFormat)}
-                >
-                  {ui.exportOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </label>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setIsFocusMode((current) => !current)}
-              >
-                {isFocusMode ? ui.exitFocusMode : ui.focusMode}
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setInput(ui.sampleMarkdown);
-                  setFileName('markdown-document.md');
-                  setStatus(null);
-                  setIsHtmlCopied(false);
-                }}
-              >
-                {ui.loadSample}
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setInput('');
-                  setStatus(null);
-                  setIsHtmlCopied(false);
-                }}
-              >
-                {ui.clear}
-              </Button>
-              <Button variant="secondary" onClick={handleCopyHtml}>
-                {isHtmlCopied ? ui.htmlCopied : ui.htmlCopy}
-              </Button>
-              <Button variant="primary" onClick={() => void handleExport()} disabled={isExporting}>
-                {isExporting ? ui.exportingAction : ui.exportAction}
-              </Button>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-slate-800">{ui.toolbarTitle}</p>
-              <div className="flex flex-wrap gap-2">
-                {toolbarButtons.map((action) => (
-                  <Button key={action.id} variant="secondary" className="h-9 px-3 text-xs" onClick={action.onClick}>
-                    {action.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
           </div>
+        )}
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-            <section className="rounded-xl border border-slate-200 bg-white p-4">
-              <h4 className="text-sm font-semibold text-slate-900">{ui.statsTitle}</h4>
-              <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-700">
-                <div className="rounded-lg bg-slate-50 p-2">
-                  <dt className="text-xs text-slate-500">{ui.wordsLabel}</dt>
-                  <dd className="font-semibold text-slate-900">{stats.words}</dd>
-                </div>
-                <div className="rounded-lg bg-slate-50 p-2">
-                  <dt className="text-xs text-slate-500">{ui.linesLabel}</dt>
-                  <dd className="font-semibold text-slate-900">{stats.lines}</dd>
-                </div>
-                <div className="rounded-lg bg-slate-50 p-2">
-                  <dt className="text-xs text-slate-500">{ui.charsLabel}</dt>
-                  <dd className="font-semibold text-slate-900">{stats.characters}</dd>
-                </div>
-                <div className="rounded-lg bg-slate-50 p-2">
-                  <dt className="text-xs text-slate-500">{ui.charsNoSpaceLabel}</dt>
-                  <dd className="font-semibold text-slate-900">{stats.nonWhitespaceCharacters}</dd>
-                </div>
-                <div className="col-span-2 rounded-lg bg-slate-50 p-2">
-                  <dt className="text-xs text-slate-500">{ui.readingTimeLabel}</dt>
-                  <dd className="font-semibold text-slate-900">
-                    {stats.readingMinutes} {ui.minutesSuffix}
-                  </dd>
-                </div>
-              </dl>
-            </section>
-
-            <section className="rounded-xl border border-slate-200 bg-white p-4">
-              <h4 className="text-sm font-semibold text-slate-900">{ui.exportTitle}</h4>
-              <p className="mt-2 text-xs text-slate-600">
-                {ui.currentFileLabel}:{' '}
-                <span className="font-semibold text-slate-800">{fileName}</span>
-              </p>
-              <p className="mt-3 text-xs text-slate-500">{ui.localProcessingNote}</p>
-            </section>
+        {/* Resizer handle */}
+        {showEditor && showPreview && (
+          <div
+            onMouseDown={handleResizeStart}
+            className="group relative z-10 flex w-2 flex-shrink-0 cursor-col-resize items-center justify-center border-x border-slate-200 bg-slate-100 transition-colors hover:bg-brand-100"
+          >
+            <div className="h-8 w-0.5 rounded-full bg-slate-400 transition-colors group-hover:bg-brand-500" />
           </div>
-        </section>
+        )}
 
-        {status ? (
-          <p className={cn('rounded-lg border px-3 py-2 text-sm', statusClassByTone[status.tone])}>
-            {status.text}
-          </p>
-        ) : null}
+        {/* Preview panel */}
+        {showPreview && (
+          <div
+            ref={previewContainerRef}
+            className="flex-1 overflow-auto bg-white p-6"
+            style={{ width: layoutMode === 'split' ? `${100 - splitRatio}%` : '100%' }}
+          >
+            {renderedHtml ? (
+              <article
+                className="markdown-viewer-prose mx-auto max-w-none"
+                dangerouslySetInnerHTML={{ __html: renderedHtml }}
+              />
+            ) : (
+              <p className="text-sm text-slate-400 italic">{ui.previewEmpty}</p>
+            )}
+          </div>
+        )}
+      </div>
 
-        <section
-          className={cn(
-            'grid gap-4',
-            layoutMode === 'split' ? 'xl:grid-cols-2' : 'grid-cols-1',
-            isFocusMode && 'lg:min-h-0 lg:flex-1 lg:overflow-hidden',
-          )}
-        >
-          {showEditor ? (
-            <div className={cn('space-y-2', isFocusMode && 'lg:flex lg:min-h-0 lg:flex-col lg:overflow-hidden')}>
-              <div className="flex items-center justify-between gap-2">
-                <h4 className="text-sm font-semibold text-slate-900">{ui.editorLabel}</h4>
-              </div>
-              <div
-                className={cn(
-                  'rounded-xl border border-slate-200 bg-white p-2',
-                  isFocusMode && 'flex min-h-[360px] flex-col lg:h-full lg:min-h-0',
-                )}
-              >
-                <textarea
-                  ref={editorRef}
-                  value={input}
-                  onChange={(event) => {
-                    setInput(event.target.value);
-                    setStatus(null);
-                    setIsHtmlCopied(false);
-                  }}
-                  onKeyDown={handleKeyDown}
-                  spellCheck={false}
-                  placeholder={ui.editorPlaceholder}
-                  className={cn(
-                    editorTextareaClass,
-                    isFocusMode
-                      ? 'min-h-[320px] flex-1 resize-none overflow-auto overscroll-contain lg:min-h-0'
-                      : 'min-h-[440px] resize-y',
-                  )}
-                />
-              </div>
-            </div>
-          ) : null}
+      {/* Bottom status bar */}
+      <div className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
+        <div className="flex items-center gap-3">
+          <span>{ui.wordsLabel}: <strong className="text-slate-700">{stats.words}</strong></span>
+          <span>{ui.charsLabel}: <strong className="text-slate-700">{stats.characters}</strong></span>
+          <span>{ui.linesLabel}: <strong className="text-slate-700">{stats.lines}</strong></span>
+          <span>{ui.readingTimeLabel}: <strong className="text-slate-700">{stats.readingMinutes} {ui.minutesSuffix}</strong></span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="hidden sm:inline text-slate-400">{ui.localProcessingNote}</span>
+          <span className="hidden sm:inline text-slate-400">|</span>
+          <span className="text-slate-600 font-medium">{fileName}</span>
+        </div>
+      </div>
 
-          {showPreview ? (
-            <div className={cn('space-y-2', isFocusMode && 'lg:flex lg:min-h-0 lg:flex-col lg:overflow-hidden')}>
-              <div className="flex items-center justify-between gap-2">
-                <h4 className="text-sm font-semibold text-slate-900">{ui.previewLabel}</h4>
-                <p className="text-xs text-slate-500">{ui.previewHint}</p>
-              </div>
-              <div
-                ref={previewContainerRef}
-                className={cn(
-                  'rounded-xl border border-slate-200 bg-white p-4',
-                  isFocusMode
-                    ? 'min-h-[320px] overflow-auto overscroll-contain lg:h-full lg:min-h-0'
-                    : 'max-h-[640px] overflow-auto',
-                )}
-              >
-                {renderedHtml ? (
-                  <article
-                    className="markdown-viewer-prose"
-                    dangerouslySetInnerHTML={{ __html: renderedHtml }}
-                  />
-                ) : (
-                  <p className="text-sm text-slate-500">{ui.previewEmpty}</p>
-                )}
-              </div>
-            </div>
-          ) : null}
-        </section>
-      </Card>
+      {/* Status toast */}
+      {status && (
+        <div className={cn(
+          'absolute bottom-10 left-1/2 -translate-x-1/2 rounded-lg px-4 py-2 text-xs font-medium shadow-lg z-20',
+          statusClassByTone[status.tone],
+        )}>
+          {status.text}
+        </div>
+      )}
     </div>
   );
 }

@@ -19,6 +19,11 @@ import {
   fakePersonGeneratorIntro,
 } from '@/data/content/fake-person-generator';
 import {
+  emailTemporarioContentBlocks,
+  emailTemporarioFaq,
+  emailTemporarioIntro,
+} from '@/data/content/email-temporario';
+import {
   descobrirIpPublicoContentBlocks,
   descobrirIpPublicoFaq,
   descobrirIpPublicoIntro,
@@ -667,6 +672,36 @@ export const toolsRegistry: ToolDefinition[] = [
     contentBlocks: descobrirIpPublicoContentBlocks,
     relatedToolIds: ['json-formatter', 'qr-code-generator'],
   },
+  {
+    id: 'email-temporario',
+    slug: 'email-temporario',
+    name: 'E-mail Temporario',
+    shortDescription:
+      'Gere e-mail descartavel para receber mensagens por 1 hora, com inbox temporaria e expiracao automatica.',
+    category: 'utility',
+    primaryKeyword: 'e-mail temporario gratis',
+    secondaryKeywords: [
+      'email temporario',
+      'correio temporario',
+      'inbox descartavel',
+      'gerar email descartavel',
+      'temp mail gratis',
+      'email para teste',
+      'email para cadastro rapido',
+      'protecao contra spam',
+    ],
+    searchIntent:
+      'Usuarios e times tecnicos que precisam receber e-mails por tempo limitado para testes, cadastros simples e protecao de privacidade.',
+    seoTitle: 'E-mail Temporário Grátis',
+    seoDescription:
+      'Crie um e-mail temporario gratis para receber mensagens por tempo limitado. Inbox descartavel para testes, cadastros rapidos e privacidade.',
+    h1: 'E-mail Temporário',
+    intro: emailTemporarioIntro,
+    canonicalPath: '/tools/email-temporario',
+    faq: emailTemporarioFaq,
+    contentBlocks: emailTemporarioContentBlocks,
+    relatedToolIds: ['password-generator', 'gerador-pessoa-fake', 'descobrir-ip-publico'],
+  },
 ];
 
 export const getToolBySlug = (slug: string): ToolDefinition | undefined =>
@@ -705,7 +740,8 @@ type LocalizableToolId =
   | 'sorteador'
   | 'calculadora-juros-compostos'
   | 'invisible-character'
-  | 'descobrir-ip-publico';
+  | 'descobrir-ip-publico'
+  | 'email-temporario';
 
 
 const localizableToolIds = new Set<LocalizableToolId>([
@@ -727,6 +763,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'calculadora-juros-compostos',
   'invisible-character',
   'descobrir-ip-publico',
+  'email-temporario',
 ]);
 
 const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>
