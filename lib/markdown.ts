@@ -280,7 +280,7 @@ const tokenizeInlineCode = (input: string): { value: string; tokens: string[] } 
   const tokens: string[] = [];
 
   const value = input.replace(/`([^`\n]+)`/g, (_match, code) => {
-    const token = `@@CODE_BLOCK_${tokens.length}@@`;
+    const token = `\x00ICODE${tokens.length}\x00`;
     tokens.push(`<code>${code}</code>`);
     return token;
   });
@@ -292,7 +292,7 @@ const restoreInlineCodeTokens = (input: string, tokens: string[]): string => {
   let result = input;
 
   tokens.forEach((tokenMarkup, index) => {
-    result = result.replaceAll(`@@CODE_BLOCK_${index}@@`, tokenMarkup);
+    result = result.replaceAll(`\x00ICODE${index}\x00`, tokenMarkup);
   });
 
   return result;
