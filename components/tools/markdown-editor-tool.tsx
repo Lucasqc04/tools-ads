@@ -79,6 +79,7 @@ type ToolUi = {
     bold: string;
     italic: string;
     strike: string;
+    highlight: string;
     quote: string;
     ul: string;
     ol: string;
@@ -160,6 +161,7 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
       bold: 'B',
       italic: 'I',
       strike: 'S',
+      highlight: 'Destaque',
       quote: 'Quote',
       ul: 'Lista',
       ol: '1.',
@@ -236,6 +238,7 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
       bold: 'B',
       italic: 'I',
       strike: 'S',
+      highlight: 'Mark',
       quote: 'Quote',
       ul: 'List',
       ol: '1.',
@@ -312,6 +315,7 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
       bold: 'B',
       italic: 'I',
       strike: 'S',
+      highlight: 'Resaltar',
       quote: 'Cita',
       ul: 'Lista',
       ol: '1.',
@@ -590,6 +594,7 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
     { id: 'bold', label: ui.actions.bold, onClick: () => applyWrap('**', '**', ui.placeholders.bold), title: 'Bold (Ctrl+B)' },
     { id: 'italic', label: ui.actions.italic, onClick: () => applyWrap('*', '*', ui.placeholders.italic), title: 'Italic (Ctrl+I)' },
     { id: 'strike', label: ui.actions.strike, onClick: () => applyWrap('~~', '~~', ui.placeholders.strike), title: 'Strikethrough' },
+    { id: 'highlight', label: ui.actions.highlight, onClick: () => applyWrap('==', '==', 'highlight'), title: 'Highlight' },
     { id: 'sep2', label: '|', onClick: undefined, title: '' },
     { id: 'quote', label: ui.actions.quote, onClick: () => applyLinePrefix('> ', ui.placeholders.quote), title: 'Blockquote' },
     { id: 'ul', label: ui.actions.ul, onClick: () => applyLinePrefix('- ', ui.placeholders.listItem), title: 'Unordered list' },

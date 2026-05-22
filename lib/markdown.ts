@@ -30,6 +30,11 @@ const markdownExportStyles = `
   box-sizing: border-box;
 }
 
+mark {
+  background-color: transparent;
+  color: inherit;
+}
+
 body {
   margin: 0;
 }
@@ -113,15 +118,6 @@ body {
   border-top: 1px solid #cbd5e1;
 }
 
-.markdown-export code {
-  font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
-  background: #e2e8f0;
-  color: #0f172a;
-  border-radius: 0.32rem;
-  padding: 0.12rem 0.36rem;
-  font-size: 0.88em;
-}
-
 .markdown-export pre {
   margin: 1.2rem 0;
   overflow: auto;
@@ -132,12 +128,28 @@ body {
   color: #e2e8f0;
 }
 
+.markdown-export code {
+  background: #e2e8f0;
+  color: #0f172a;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  line-height: 1.2;
+  display: inline-block;
+  vertical-align: -0.08em;
+}
+
 .markdown-export pre code {
   background: transparent;
   color: inherit;
   padding: 0;
   border-radius: 0;
   font-size: 0.9em;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  line-height: inherit;
+  display: inline;
+  vertical-align: baseline;
 }
 
 .markdown-export a {
@@ -195,6 +207,54 @@ body {
   color: #334155;
   font-size: 0.9rem;
 }
+
+.markdown-export mark {
+  background-color: #fef08a;
+  color: #0f172a;
+  padding: 2px 4px;
+  border-radius: 3px;
+  display: inline;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.markdown-export del {
+  color: #64748b;
+}
+
+.markdown-export .footnotes {
+  margin-top: 2rem;
+  font-size: 0.88rem;
+  color: #475569;
+}
+
+.markdown-export .footnotes hr {
+  margin-bottom: 1rem;
+}
+
+.markdown-export .footnotes ol {
+  padding-left: 1.2rem;
+}
+
+.markdown-export .footnote-ref a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.markdown-export .footnote-backref {
+  color: #1d4ed8;
+  text-decoration: none;
+  margin-left: 0.3rem;
+}
+
+.markdown-export ul ul,
+.markdown-export ol ol,
+.markdown-export ul ol,
+.markdown-export ol ul {
+  margin-top: 0.3rem;
+  margin-left: 1rem;
+}
 `;
 
 const escapeHtml = (value: string): string =>
@@ -211,7 +271,10 @@ const normalizeMarkdown = (input: string): string => input.replaceAll(/\r\n?/g, 
 
 const isHorizontalRule = (value: string): boolean => /^([-*_])(?:\s*\1){2,}$/.test(value.trim());
 
-const isCodeFence = (value: string): boolean => value.trim().startsWith('```');
+const isCodeFence = (value: string): boolean => {
+  const trimmed = value.trim();
+  return trimmed.startsWith('```') || trimmed.startsWith('~~~');
+};
 
 const isListLine = (value: string): boolean => /^(\s*)([-*+]|\d+\.)\s+/.test(value);
 
@@ -288,6 +351,30 @@ const tokenizeInlineCode = (input: string): { value: string; tokens: string[] } 
   return { value, tokens };
 };
 
+const ESCAPE_PLACEHOLDER = '\x01';
+
+const tokenizeEscapes = (input: string): { value: string; tokens: string[] } => {
+  const tokens: string[] = [];
+
+  const value = input.replace(/\\([\\`*_{}[\]()#+\-.!|~=^>])/g, (_match, char) => {
+    const token = `${ESCAPE_PLACEHOLDER}ESC${tokens.length}${ESCAPE_PLACEHOLDER}`;
+    tokens.push(String(char));
+    return token;
+  });
+
+  return { value, tokens };
+};
+
+const restoreEscapeTokens = (input: string, tokens: string[]): string => {
+  let result = input;
+
+  tokens.forEach((char, index) => {
+    result = result.replaceAll(`${ESCAPE_PLACEHOLDER}ESC${index}${ESCAPE_PLACEHOLDER}`, escapeHtml(char));
+  });
+
+  return result;
+};
+
 const restoreInlineCodeTokens = (input: string, tokens: string[]): string => {
   let result = input;
 
@@ -300,10 +387,17 @@ const restoreInlineCodeTokens = (input: string, tokens: string[]): string => {
 
 const parseInlineMarkdown = (input: string): string => {
   const escaped = escapeHtml(input);
-  const codeTokenized = tokenizeInlineCode(escaped);
-  let output = codeTokenized.value;
 
-  output = output.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_match, altText, target) => {
+  // Tokenize escapes first (backslash sequences)
+  const escTokenized = tokenizeEscapes(escaped);
+  let working = escTokenized.value;
+
+  // Tokenize inline code (protect from further processing)
+  const codeTokenized = tokenizeInlineCode(working);
+  working = codeTokenized.value;
+
+  // Images
+  working = working.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_match, altText, target) => {
     const safeUrl = sanitizeUrl(String(target), true);
 
     if (!safeUrl) {
@@ -313,7 +407,8 @@ const parseInlineMarkdown = (input: string): string => {
     return `<img src="${escapeAttribute(safeUrl)}" alt="${altText}" loading="lazy" />`;
   });
 
-  output = output.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label, target) => {
+  // Links
+  working = working.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label, target) => {
     const safeUrl = sanitizeUrl(String(target));
 
     if (!safeUrl) {
@@ -326,14 +421,38 @@ const parseInlineMarkdown = (input: string): string => {
     return `<a href="${escapeAttribute(safeUrl)}"${rel}>${label}</a>`;
   });
 
-  output = output.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  output = output.replace(/__([^_]+)__/g, '<strong>$1</strong>');
-  output = output.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+  // Bold
+  working = working.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  working = working.replace(/__([^_]+)__/g, '<strong>$1</strong>');
 
-  output = output.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
-  output = output.replace(/(^|[^_])_([^_\n]+)_(?!_)/g, '$1<em>$2</em>');
+  // Strikethrough (must be before subscript since ~~ vs ~)
+  working = working.replace(/~~([^~]+)~~/g, '<del>$1</del>');
 
-  return restoreInlineCodeTokens(output, codeTokenized.tokens);
+  // Highlight ==text==
+  working = working.replace(/==([^=]+)==/g, '<mark>$1</mark>');
+
+  // Superscript ^text^
+  working = working.replace(/\^([^\s^][^^]*[^\s^])\^/g, '<sup>$1</sup>');
+  working = working.replace(/\^([^\s^])\^/g, '<sup>$1</sup>');
+
+  // Subscript ~text~ (single tilde, not double)
+  working = working.replace(/(?<!~)~([^\s~][^~]*[^\s~])~(?!~)/g, '<sub>$1</sub>');
+  working = working.replace(/(?<!~)~([^\s~])~(?!~)/g, '<sub>$1</sub>');
+
+  // Italic
+  working = working.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+  working = working.replace(/(^|[^_])_([^_\n]+)_(?!_)/g, '$1<em>$2</em>');
+
+  // Auto-link bare URLs (only if not already inside an href or tag)
+  working = working.replace(/(^|[^"=])(https?:\/\/[^\s<>"')\]]+)/g, (_match, prefix, url) => {
+    return `${prefix}<a href="${escapeAttribute(url)}" rel="noopener noreferrer" target="_blank">${url}</a>`;
+  });
+
+  // Restore tokens
+  working = restoreInlineCodeTokens(working, codeTokenized.tokens);
+  working = restoreEscapeTokens(working, escTokenized.tokens);
+
+  return working;
 };
 
 const renderTableHtml = (headerCells: string[], alignments: Array<'left' | 'center' | 'right' | null>, rows: string[][]): string => {
@@ -397,6 +516,96 @@ const isBlockBoundary = (line: string, nextLine?: string): boolean => {
   return false;
 };
 
+type ListItem = {
+  content: string;
+  indent: number;
+  ordered: boolean;
+  isTask: boolean;
+  taskChecked: boolean;
+};
+
+const parseListItems = (lines: string[]): ListItem[] => {
+  const items: ListItem[] = [];
+
+  for (const line of lines) {
+    const match = /^(\s*)([-*+]|\d+\.)\s+(.*)$/.exec(line);
+    if (!match) continue;
+
+    const indent = match[1].length;
+    const marker = match[2];
+    const content = match[3] ?? '';
+    const ordered = /\d+\./.test(marker);
+    const taskMatch = /^\[( |x|X)\]\s+(.*)$/.exec(content);
+
+    if (taskMatch) {
+      items.push({
+        content: taskMatch[2] ?? '',
+        indent,
+        ordered,
+        isTask: true,
+        taskChecked: taskMatch[1].toLowerCase() === 'x',
+      });
+    } else {
+      items.push({ content, indent, ordered, isTask: false, taskChecked: false });
+    }
+  }
+
+  return items;
+};
+
+const renderNestedList = (lines: string[]): string => {
+  const items = parseListItems(lines);
+
+  if (items.length === 0) return '';
+
+  const buildList = (startIdx: number, baseIndent: number): { html: string; nextIdx: number } => {
+    const firstItem = items[startIdx];
+    if (!firstItem) return { html: '', nextIdx: startIdx };
+
+    const tag = firstItem.ordered ? 'ol' : 'ul';
+    const parts: string[] = [`<${tag}>`];
+    let i = startIdx;
+
+    while (i < items.length) {
+      const item = items[i];
+      if (!item) break;
+
+      if (item.indent < baseIndent) break;
+
+      if (item.indent > baseIndent) {
+        // Nested sublist
+        const sub = buildList(i, item.indent);
+        // Append to last <li> (remove closing tag, add sublist, re-close)
+        const lastIdx = parts.length - 1;
+        if (parts[lastIdx]?.endsWith('</li>')) {
+          parts[lastIdx] = parts[lastIdx].slice(0, -5);
+          parts.push(sub.html);
+          parts.push('</li>');
+        } else {
+          parts.push(sub.html);
+        }
+        i = sub.nextIdx;
+        continue;
+      }
+
+      if (item.isTask) {
+        parts.push(
+          `<li class="task-item"><input type="checkbox" disabled${item.taskChecked ? ' checked' : ''} /><span>${parseInlineMarkdown(item.content)}</span></li>`,
+        );
+      } else {
+        parts.push(`<li>${parseInlineMarkdown(item.content)}</li>`);
+      }
+
+      i += 1;
+    }
+
+    parts.push(`</${tag}>`);
+    return { html: parts.join(''), nextIdx: i };
+  };
+
+  return buildList(0, items[0]?.indent ?? 0).html;
+};
+
 export const parseMarkdownToHtml = (rawInput: string): string => {
   const input = normalizeMarkdown(rawInput);
 
@@ -404,7 +613,22 @@ export const parseMarkdownToHtml = (rawInput: string): string => {
     return '';
   }
 
-  const lines = input.split('\n');
+  // Extract footnote definitions before parsing
+  const footnoteDefinitions = new Map<string, string>();
+  const footnoteOrder: string[] = [];
+  const linesWithoutFootnotes: string[] = [];
+
+  for (const line of input.split('\n')) {
+    const fnDefMatch = /^\[\^([^\]]+)\]:\s+(.+)$/.exec(line);
+    if (fnDefMatch) {
+      const id = fnDefMatch[1];
+      footnoteDefinitions.set(id, fnDefMatch[2]);
+    } else {
+      linesWithoutFootnotes.push(line);
+    }
+  }
+
+  const lines = linesWithoutFootnotes;
   const output: string[] = [];
 
   let index = 0;
@@ -436,6 +660,31 @@ export const parseMarkdownToHtml = (rawInput: string): string => {
       const classAttribute = languageToken ? ` class="language-${escapeAttribute(languageToken)}"` : '';
 
       output.push(`<pre><code${classAttribute}>${escapedCode}</code></pre>`);
+      continue;
+    }
+
+    // Indented code block (4 spaces or 1 tab)
+    if (currentLine.startsWith('    ') || currentLine.startsWith('\t')) {
+      const codeLines: string[] = [currentLine.replace(/^( {4}|\t)/, '')];
+      index += 1;
+
+      while (index < lines.length) {
+        const nextCodeLine = lines[index] ?? '';
+        if (nextCodeLine.startsWith('    ') || nextCodeLine.startsWith('\t') || nextCodeLine.trim() === '') {
+          codeLines.push(nextCodeLine.replace(/^( {4}|\t)/, ''));
+          index += 1;
+        } else {
+          break;
+        }
+      }
+
+      // Remove trailing empty lines
+      while (codeLines.length > 0 && codeLines.at(-1)?.trim() === '') {
+        codeLines.pop();
+      }
+
+      const escapedCode = escapeHtml(codeLines.join('\n'));
+      output.push(`<pre><code>${escapedCode}</code></pre>`);
       continue;
     }
 
@@ -497,41 +746,27 @@ export const parseMarkdownToHtml = (rawInput: string): string => {
     }
 
     if (isListLine(currentLine)) {
-      const ordered = /\d+\./.test(trimmedLine);
-      const tag = ordered ? 'ol' : 'ul';
-      const items: string[] = [];
+      // Collect all consecutive list lines (including nested)
+      const listLines: string[] = [];
 
       while (index < lines.length) {
         const listCandidate = lines[index] ?? '';
-        const match = /^(\s*)([-*+]|\d+\.)\s+(.+)$/.exec(listCandidate);
+        const candidateTrimmed = listCandidate.trim();
 
-        if (!match) {
-          break;
-        }
-
-        const isOrderedItem = /\d+\./.test(match[2]);
-        if (isOrderedItem !== ordered) {
-          break;
-        }
-
-        const content = match[3] ?? '';
-        const taskMatch = /^\[( |x|X)\]\s+(.+)$/.exec(content);
-
-        if (taskMatch) {
-          const checked = taskMatch[1].toLowerCase() === 'x';
-          items.push(
-            `<li class="task-item"><input type="checkbox" disabled${checked ? ' checked' : ''} /><span>${parseInlineMarkdown(
-              taskMatch[2],
-            )}</span></li>`,
-          );
+        // Continue if it's a list line or an indented continuation
+        if (isListLine(listCandidate)) {
+          listLines.push(listCandidate);
+          index += 1;
+        } else if (candidateTrimmed && (listCandidate.startsWith('  ') || listCandidate.startsWith('\t'))) {
+          // Continuation of previous list item
+          listLines.push(listCandidate);
+          index += 1;
         } else {
-          items.push(`<li>${parseInlineMarkdown(content)}</li>`);
+          break;
         }
-
-        index += 1;
       }
 
-      output.push(`<${tag}>${items.join('')}</${tag}>`);
+      output.push(renderNestedList(listLines));
       continue;
     }
 
@@ -559,7 +794,29 @@ export const parseMarkdownToHtml = (rawInput: string): string => {
     output.push(`<p>${parseInlineMarkdown(paragraphLines.join('\n')).replaceAll('\n', '<br />')}</p>`);
   }
 
-  return output.join('\n');
+  // Process footnote references in output
+  let result = output.join('\n');
+
+  result = result.replace(/\[\^([^\]]+)\]/g, (_match, id) => {
+    if (!footnoteDefinitions.has(id)) return _match;
+    if (!footnoteOrder.includes(id)) {
+      footnoteOrder.push(id);
+    }
+    const num = footnoteOrder.indexOf(id) + 1;
+    return `<sup class="footnote-ref"><a href="#fn-${escapeAttribute(id)}" id="fnref-${escapeAttribute(id)}">${num}</a></sup>`;
+  });
+
+  // Render footnotes section if any
+  if (footnoteOrder.length > 0) {
+    result += '\n<section class="footnotes"><hr /><ol>';
+    for (const id of footnoteOrder) {
+      const content = footnoteDefinitions.get(id) ?? '';
+      result += `<li id="fn-${escapeAttribute(id)}">${parseInlineMarkdown(content)} <a href="#fnref-${escapeAttribute(id)}" class="footnote-backref">\u21a9</a></li>`;
+    }
+    result += '</ol></section>';
+  }
+
+  return result;
 };
 
 export type MarkdownStats = {
@@ -744,6 +1001,21 @@ const prepareRenderedHtmlForCanvasExport = async (
       omittedExternalImages += 1;
     }),
   );
+
+  // Apply inline styles to inline code elements (html2canvas doesn't handle CSS well for inline code)
+  const inlineCodes = Array.from(article.querySelectorAll('code'));
+  for (const codeEl of inlineCodes) {
+    if (codeEl.parentElement?.tagName === 'PRE') continue;
+    codeEl.style.fontFamily = 'ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+    codeEl.style.backgroundColor = '#e2e8f0';
+    codeEl.style.color = '#0f172a';
+    codeEl.style.borderRadius = '4px';
+    codeEl.style.padding = '2px 6px';
+    codeEl.style.fontSize = '0.9em';
+    codeEl.style.lineHeight = '1.2';
+    codeEl.style.display = 'inline-block';
+    codeEl.style.verticalAlign = '-0.08em';
+  }
 
   return {
     html: article.innerHTML,

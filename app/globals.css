@@ -134,6 +134,50 @@ a {
   @apply bg-slate-100 font-semibold text-slate-900;
 }
 
+.markdown-viewer-prose mark {
+  @apply rounded bg-yellow-200 px-0.5 text-slate-900;
+}
+
+.markdown-viewer-prose sup.footnote-ref {
+  @apply ml-0.5 text-xs;
+}
+
+.markdown-viewer-prose sup.footnote-ref a {
+  @apply text-brand-600 no-underline hover:underline;
+}
+
+.markdown-viewer-prose .footnotes {
+  @apply mt-8 text-sm text-slate-600;
+}
+
+.markdown-viewer-prose .footnotes ol {
+  @apply pl-5;
+}
+
+.markdown-viewer-prose .footnotes li {
+  @apply text-slate-600;
+}
+
+.markdown-viewer-prose .footnote-backref {
+  @apply ml-1 text-brand-600 no-underline hover:underline;
+}
+
+.markdown-viewer-prose del {
+  @apply text-slate-500;
+}
+
+.markdown-viewer-prose sub,
+.markdown-viewer-prose sup {
+  @apply text-[0.75em];
+}
+
+.markdown-viewer-prose ul ul,
+.markdown-viewer-prose ol ol,
+.markdown-viewer-prose ul ol,
+.markdown-viewer-prose ol ul {
+  @apply my-1 ml-4;
+}
+
 .qr-preview-render canvas,
 .qr-preview-render svg,
 .qr-preview-render img {
