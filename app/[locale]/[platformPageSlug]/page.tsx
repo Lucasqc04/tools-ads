@@ -27,6 +27,7 @@ import { PasswordGeneratorTool } from '@/components/tools/password-generator-too
 import { QrCodeGeneratorTool } from '@/components/tools/qr-code-generator';
 import { SorteadorTool } from '@/components/tools/sorteador-tool';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
+import { WhatsAppTelegramLinkGeneratorTool } from '@/components/tools/whatsapp-telegram-link-generator-tool';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import { VideoCompressionTool } from '@/components/tools/video-compression-tool';
 import { UniversalConverterTool } from '@/components/tools/universal-converter-tool';
@@ -218,6 +219,7 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'image-compression': 'UtilitiesApplication',
   'video-compression': 'UtilitiesApplication',
   'qr-code-generator': 'UtilitiesApplication',
+  'gerador-link-whatsapp-telegram': 'UtilitiesApplication',
   sorteador: 'UtilitiesApplication',
   'calculadora-juros-compostos': 'FinanceApplication',
   'invisible-character': 'UtilitiesApplication',
@@ -428,6 +430,9 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'image-compression': ({ locale }) => <ImageCompressionTool locale={locale} />,
   'video-compression': ({ locale }) => <VideoCompressionTool locale={locale} />,
   'qr-code-generator': ({ locale }) => <QrCodeGeneratorTool locale={locale} />,
+  'gerador-link-whatsapp-telegram': ({ locale }) => (
+    <WhatsAppTelegramLinkGeneratorTool locale={locale} />
+  ),
   sorteador: ({ locale }) => <SorteadorTool locale={locale} />,
   'calculadora-juros-compostos': ({ locale }) => <CompoundInterestTool locale={locale} />,
 };

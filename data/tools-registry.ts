@@ -179,6 +179,12 @@ import {
 import {
   getUniversalConverterContent,
 } from '@/data/content/universal-converter';
+import {
+  getWhatsAppTelegramLinkContent,
+  whatsappTelegramLinkContentBlocks,
+  whatsappTelegramLinkFaq,
+  whatsappTelegramLinkIntro,
+} from '@/data/content/whatsapp-telegram-link-generator';
 import { getToolTranslation } from '@/data/i18n/tool-translations';
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ToolDefinition } from '@/types/tool';
@@ -855,6 +861,35 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['image-converter', 'json-formatter'],
   },
   {
+    id: 'gerador-link-whatsapp-telegram',
+    slug: 'gerador-link-whatsapp-telegram',
+    name: 'Gerador de Link com Mensagem para WhatsApp e Telegram',
+    shortDescription:
+      'Gere link pronto para WhatsApp e Telegram com mensagem predefinida usando numero ou @nick.',
+    category: 'utility',
+    primaryKeyword: 'gerador de link whatsapp com mensagem',
+    secondaryKeywords: [
+      'link whatsapp com texto pronto',
+      'wa.me com mensagem',
+      'gerar link telegram com mensagem',
+      't.me com mensagem',
+      'link de contato whatsapp',
+      'link de contato telegram',
+      'click to chat whatsapp',
+    ],
+    searchIntent:
+      'Usuarios que precisam criar links de contato para WhatsApp e Telegram com mensagem pronta para acelerar o primeiro atendimento.',
+    seoTitle: 'Gerador de Link WhatsApp e Telegram com Mensagem Pronta',
+    seoDescription:
+      'Crie link de WhatsApp e Telegram com mensagem pronta. Informe numero ou @nick, personalize o texto e copie o link final.',
+    h1: 'Gerador de Link para WhatsApp e Telegram com Mensagem Pronta',
+    intro: whatsappTelegramLinkIntro,
+    canonicalPath: '/tools/gerador-link-whatsapp-telegram',
+    faq: whatsappTelegramLinkFaq,
+    contentBlocks: whatsappTelegramLinkContentBlocks,
+    relatedToolIds: ['qr-code-generator', 'url-encoder-decoder', 'open-graph-preview'],
+  },
+  {
     id: 'sorteador',
     slug: 'sorteador',
     name: 'Sorteador Online Completo',
@@ -1522,6 +1557,16 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'conversor-universal') {
     const localized = getUniversalConverterContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'gerador-link-whatsapp-telegram') {
+    const localized = getWhatsAppTelegramLinkContent(locale);
 
     return {
       ...tool,

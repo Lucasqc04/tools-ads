@@ -33,6 +33,7 @@ export async function GET(request: Request) {
   }
 
   try {
+    const startedAt = Date.now();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
 
@@ -63,12 +64,25 @@ export async function GET(request: Request) {
 
     const html = await response.text();
     const data = extractOpenGraphData(html, response.url || targetUrl);
+    const durationMs = Date.now() - startedAt;
 
     return NextResponse.json(
       {
         ok: true,
         fetchedUrl: response.url || targetUrl,
         data,
+        fetchMeta: {
+          status: response.status,
+          statusText: response.statusText,
+          contentType: response.headers.get('content-type') || '',
+          contentLength: response.headers.get('content-length') || '',
+          server: response.headers.get('server') || '',
+          cacheControl: response.headers.get('cache-control') || '',
+          contentLanguage: response.headers.get('content-language') || '',
+          xRobotsTag: response.headers.get('x-robots-tag') || '',
+          durationMs,
+          fetchedAt: new Date().toISOString(),
+        },
       },
       {
         status: 200,

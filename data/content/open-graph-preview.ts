@@ -12,23 +12,24 @@ export const openGraphPreviewContentBlocks: ContentBlock[] = [
     ],
   },
   {
-    title: 'Dois modos de uso: manual e busca por URL via BFF',
+    title: 'Auditoria completa por URL via backend',
     paragraphs: [
-      'No modo manual, voce preenche os campos e gera previews sem depender de acesso externo. No modo de busca por URL, a pagina usa uma rota BFF do Next.js para consultar HTML e extrair tags com menos limitacao de CORS.',
+      'A pagina usa rota backend no Next.js para buscar o HTML real da URL e extrair metadados com menos limitacao de CORS do navegador.',
       'Depois de validar os dados, voce pode copiar meta tags HTML e o objeto metadata do Next.js para aplicar diretamente no projeto.',
     ],
     list: [
       'Preview visual por plataforma com foco em titulo e descricao.',
       'Diagnostico de tags obrigatorias ausentes ou incompletas.',
+      'Coleta de icones, manifest, canonical, alternates e hreflang.',
+      'Leitura de app links, verificacoes e metatags tecnicas.',
       'Gerador de meta tags Open Graph e Twitter Card.',
       'Gerador de snippet para metadata do Next.js.',
-      'Upload local de imagem para testar card manualmente.',
     ],
   },
   {
     title: 'Privacidade, limites e boas praticas',
     paragraphs: [
-      'No modo manual, os dados ficam no navegador por padrao. No modo buscar por URL, apenas a URL informada e consultada pela rota BFF para retorno das tags.',
+      'A auditoria consulta apenas a URL informada via backend para retornar os metadados encontrados no HTML e headers de resposta.',
       'Mesmo com tags corretas, algumas redes sociais usam cache proprio de preview. Por isso, atualizacoes podem demorar para refletir apos a publicacao.',
     ],
   },
@@ -48,7 +49,7 @@ export const openGraphPreviewFaq: FaqItem[] = [
   {
     question: 'A ferramenta consegue buscar tags automaticamente de uma URL?',
     answer:
-      'Sim. Existe modo de busca via rota BFF no Next.js para reduzir limitacoes de CORS do navegador.',
+      'Sim. A coleta e feita por rota backend no Next.js para reduzir limitacoes de CORS e ampliar a auditoria tecnica.',
   },
   {
     question: 'Posso gerar metadata para Next.js?',

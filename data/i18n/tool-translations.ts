@@ -683,17 +683,17 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         ],
       },
       {
-        title: 'Manual mode and URL fetch mode with BFF',
+        title: 'Backend URL audit with deep metadata extraction',
         paragraphs: [
-          'Manual mode is fully browser-based and ideal for drafting metadata from scratch. URL fetch mode uses a backend route to retrieve and parse tags with fewer CORS constraints.',
-          'After validation, copy raw HTML meta tags or a Next.js metadata object for implementation.',
+          'The tool uses a backend route to fetch real HTML and parse metadata with fewer browser CORS limitations.',
+          'After validation, you can copy raw HTML meta tags or a Next.js metadata object for implementation.',
         ],
         list: [
           'Open Graph and Twitter field diagnostics.',
           'Multi-platform visual preview cards.',
-          'HTML meta tag generator.',
-          'Next.js metadata snippet generator.',
-          'Local image upload for card simulation.',
+          'Icon, manifest, canonical, alternate, and hreflang extraction.',
+          'App links and verification tag extraction.',
+          'HTML meta tags and Next.js metadata snippet generation.',
         ],
       },
       {
@@ -2749,17 +2749,17 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         ],
       },
       {
-        title: 'Modo manual y modo buscar URL',
+        title: 'Auditoria por URL via backend con extraccion profunda',
         paragraphs: [
-          'Modo manual funciona 100% en frontend para crear y ajustar tags desde cero. Modo buscar URL usa una ruta backend para extraer metadatos con menos friccion de CORS.',
+          'La herramienta usa una ruta backend para consultar el HTML real y extraer metadatos con menos friccion de CORS en navegador.',
           'Luego puedes copiar meta tags HTML o snippet de metadata para Next.js.',
         ],
         list: [
           'Diagnostico de campos OG/Twitter.',
           'Cards de preview multi-plataforma.',
-          'Generador de meta tags HTML.',
-          'Generador de snippet Next.js metadata.',
-          'Upload local de imagen para simulacion.',
+          'Extraccion de iconos, manifest, canonical, alternates y hreflang.',
+          'Extraccion de app links y tags de verificacion.',
+          'Generador de meta tags HTML y snippet Next.js metadata.',
         ],
       },
       {
