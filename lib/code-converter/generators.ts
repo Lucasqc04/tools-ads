@@ -128,6 +128,7 @@ interface SymbolMeta {
 interface TypeContext {
   symbols: Map<string, SymbolMeta>;
   structFields: Map<string, Set<string>>;
+  declaredSymbols: Set<string>;
 }
 
 function toKey(name: string): string {
@@ -205,6 +206,7 @@ function isPointerLikeField(field: string): boolean {
 
 function buildTypeContext(ast: ProgramNode): TypeContext {
   const symbols = new Map<string, SymbolMeta>();
+  const declaredSymbols = new Set<string>();
   const aliasPairs: Array<[string, string]> = [];
 
   const ensureSymbol = (name: string, dataType: DataType = 'unknown', rawType?: string, byRef?: boolean): SymbolMeta => {
@@ -383,12 +385,14 @@ function buildTypeContext(ast: ProgramNode): TypeContext {
   const registerVars = (vars: VariableDeclaration[]) => {
     for (const v of vars) {
       ensureSymbol(v.name, v.dataType, v.rawType);
+      declaredSymbols.add(toKey(v.name));
     }
   };
 
   const registerParams = (params: ParameterDefinition[]) => {
     for (const p of params) {
       ensureSymbol(p.name, p.dataType, p.rawType, p.byRef);
+      declaredSymbols.add(toKey(p.name));
     }
   };
 
@@ -469,7 +473,7 @@ function buildTypeContext(ast: ProgramNode): TypeContext {
     structFields.set(structName, fieldSet);
   }
 
-  return { symbols, structFields };
+  return { symbols, structFields, declaredSymbols };
 }
 
 function getSymbolMeta(ctx: TypeContext, name: string): SymbolMeta | undefined {
@@ -1334,7 +1338,10 @@ function genCStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
     case 'For': {
       const cmp = node.ascending ? '<=' : '>=';
       const inc = node.ascending ? '++' : '--';
-      let s = `${indent(lvl)}for (int ${node.variable} = ${genCExpr(node.start, ctx)}; ${node.variable} ${cmp} ${genCExpr(node.end, ctx)}; ${node.variable}${inc}) {\n`;
+      const initializer = ctx.declaredSymbols.has(toKey(node.variable))
+        ? `${node.variable} = ${genCExpr(node.start, ctx)}`
+        : `int ${node.variable} = ${genCExpr(node.start, ctx)}`;
+      let s = `${indent(lvl)}for (${initializer}; ${node.variable} ${cmp} ${genCExpr(node.end, ctx)}; ${node.variable}${inc}) {\n`;
       for (const st of node.body) s += genCStmt(st, lvl + 1, ctx) + '\n';
       s += `${indent(lvl)}}`;
       return s;

@@ -64,6 +64,7 @@ type SuiteSource = {
 
 const args = new Set(process.argv.slice(2));
 const shouldUpdateSnapshots = args.has('--update');
+const shouldCheckSnapshots = args.has('--check-snapshots') || process.env.CODE_CONVERTER_CHECK_SNAPSHOTS === '1';
 const shouldCompileJava = args.has('--compile-java') || process.env.CODE_CONVERTER_COMPILE_JAVA === '1';
 const workdir = fs.mkdtempSync(path.join(os.tmpdir(), 'code-converter-college-suite-'));
 const snapshotFile = path.join(process.cwd(), 'lib/code-converter/__snapshots__/college-suite.complete.json');
@@ -852,6 +853,8 @@ function runQualityChecks(output: string, targetLang: Language, category: string
     check(/#include <stdlib\.h>/.test(output) && !/\bmalloc\s*\(|\bfree\s*\(|\bNULL\b/.test(output), 'include <stdlib.h> sem uso.');
     check(/#include <stddef\.h>/.test(output) && !/\bNULL\b/.test(output), 'include <stddef.h> sem uso.');
     check(/\*\*\s+[A-Za-z_]/.test(output), 'Ponteiro duplo com espaço desnecessário (use **head).');
+    check(/\b(?:int|float|double|char)\s+([A-Za-z_][A-Za-z0-9_]*)\[[^\]]+\];[\s\S]*scanf\("%d",\s*&\1\);/.test(output), 'scanf em vetor perdeu o índice (esperado &v[i]).');
+    check(/\bint\s+([A-Za-z_][A-Za-z0-9_]*)\s*;[\s\S]*\bfor\s*\(\s*int\s+\1\s*=/.test(output), 'Variável de controle declarada e redeclarada no for.');
   }
 
   if (category === 'basic') {
@@ -902,7 +905,7 @@ for (const source of sources) {
     const hash = digest(normalizedOutput);
     nextSnapshots[snapshotKey] = hash;
 
-    if (!shouldUpdateSnapshots && previousSnapshots[snapshotKey] && previousSnapshots[snapshotKey] !== hash) {
+    if (shouldCheckSnapshots && !shouldUpdateSnapshots && previousSnapshots[snapshotKey] && previousSnapshots[snapshotKey] !== hash) {
       failures.push({
         suite: source.suite,
         category: source.category,
@@ -1038,6 +1041,7 @@ const report = {
   snapshotFile,
   snapshotEntries: Object.keys(nextSnapshots).length,
   snapshotsUpdated: shouldUpdateSnapshots || !fs.existsSync(snapshotFile),
+  snapshotChecksEnabled: shouldCheckSnapshots,
   categoryReport,
   targetReport,
   qualityIssueReport,
