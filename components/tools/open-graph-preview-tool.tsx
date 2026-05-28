@@ -254,7 +254,8 @@ const getAssetProxyUrl = (url: string): string => `/api/tools/open-graph-preview
 const extractFilename = (url: string): string => {
   try {
     const pathname = new URL(url).pathname;
-    return pathname.split('/').findLast(Boolean) ?? 'arquivo';
+    const segments = pathname.split('/').filter(Boolean);
+    return segments[segments.length - 1] ?? 'arquivo';
   } catch {
     return 'arquivo';
   }

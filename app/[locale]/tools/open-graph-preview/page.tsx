@@ -19,9 +19,9 @@ import { buildLocalizedMetadata } from '@/lib/seo';
 
 const toolSlug = 'open-graph-preview';
 
-type PageProps = {
+type PageProps = Readonly<{
   params: Promise<{ locale: string }>;
-};
+}>;
 
 const aliasSectionByLocale: Record<AppLocale, { title: string; description: string }> = {
   'pt-br': {
