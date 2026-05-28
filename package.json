@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "code-converter:college-suite": "npx tsx scripts/code-converter-college-suite.ts",
-    "code-converter:college-suite:update": "npx tsx scripts/code-converter-college-suite.ts --update"
+    "code-converter:college-suite": "sucrase-node scripts/code-converter-college-suite.ts",
+    "code-converter:college-suite:update": "sucrase-node scripts/code-converter-college-suite.ts --update"
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.2.0",
