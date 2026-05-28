@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { AdSlotFooter } from '@/components/ads/ad-slot-footer';
-import { AdSlotInContent } from '@/components/ads/ad-slot-in-content';
-import { AdSlotTop } from '@/components/ads/ad-slot-top';
 import { JsonLd } from '@/components/shared/json-ld';
 import { Cs2CrosshairCodesTool } from '@/components/tools/cs2-crosshair-codes-tool';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
@@ -37,7 +34,7 @@ export const buildCs2CrosshairCodesMetadata = (locale: AppLocale): Metadata => {
   });
 };
 
-export function Cs2CrosshairCodesPage({ locale }: { locale: AppLocale }) {
+export function Cs2CrosshairCodesPage({ locale }: Readonly<{ locale: AppLocale }>) {
   const dictionary = getDictionary(locale);
   const content = getCs2CrosshairCodesContent(locale);
   const tool = getLocalizedToolBySlug(locale, toolSlug);
@@ -86,10 +83,7 @@ export function Cs2CrosshairCodesPage({ locale }: { locale: AppLocale }) {
         locale={locale}
         tool={localizedTool}
         relatedTools={relatedTools}
-        beforeToolSection={<AdSlotTop />}
         toolUi={<Cs2CrosshairCodesTool locale={locale} />}
-        afterToolSection={<AdSlotInContent />}
-        afterContentSection={<AdSlotFooter />}
       />
     </>
   );

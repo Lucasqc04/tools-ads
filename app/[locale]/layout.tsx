@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/next';
 import { JsonLd } from '@/components/shared/json-ld';
+import { FloatingTelegramSuggestion } from '@/components/layout/floating-telegram-suggestion';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { organizationJsonLd, buildWebsiteJsonLd } from '@/lib/json-ld';
@@ -88,7 +89,7 @@ export default async function LocaleLayout({
         <script async src={ADSENSE_SCRIPT_SRC} crossOrigin="anonymous"></script>
         */}
       </head>
-      <body className="min-h-screen bg-slate-50 pb-16 text-slate-900 md:pb-0">
+      <body className="min-h-screen bg-slate-50 text-slate-900">
         <div className="flex min-h-screen flex-col">
           <JsonLd data={organizationJsonLd} />
           <JsonLd data={buildWebsiteJsonLd(locale)} />
@@ -102,6 +103,7 @@ export default async function LocaleLayout({
           <div className="flex-1">{children}</div>
           <SiteFooter locale={locale} />
         </div>
+        <FloatingTelegramSuggestion locale={locale} />
         {/* Ads temporariamente desativados
         <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center border-t border-slate-200 bg-slate-50/95 py-1 md:hidden">
           <MobileBottomAd />

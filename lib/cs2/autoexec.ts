@@ -5,6 +5,7 @@ export type Cs2AutoexecBuildInput = {
   generalCommandIds: string[];
   practicePresetIds: string[];
   funPresetIds: string[];
+  additionalAutoexecLines?: string[];
 };
 
 const headerAutoexec = [
@@ -54,6 +55,7 @@ export const buildCs2AutoexecFiles = ({
   generalCommandIds,
   practicePresetIds,
   funPresetIds,
+  additionalAutoexecLines = [],
 }: Cs2AutoexecBuildInput): {
   autoexec: string;
   practice: string;
@@ -67,7 +69,7 @@ export const buildCs2AutoexecFiles = ({
   const funCommands = collectPresetCommands(funPresetIds);
 
   return {
-    autoexec: buildFile(headerAutoexec, autoexecCommands),
+    autoexec: buildFile(headerAutoexec, [...autoexecCommands, ...additionalAutoexecLines]),
     practice: buildFile(headerPractice, practiceCommands),
     fun: buildFile(headerFun, funCommands),
   };

@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { AdSlotFooter } from '@/components/ads/ad-slot-footer';
-import { AdSlotInContent } from '@/components/ads/ad-slot-in-content';
-import { AdSlotTop } from '@/components/ads/ad-slot-top';
 import { JsonLd } from '@/components/shared/json-ld';
 import { GtaCheatCodesTool } from '@/components/tools/gta-cheat-codes-tool';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
@@ -61,7 +58,7 @@ export const buildGtaCheatCodesMetadata = (locale: AppLocale): Metadata => {
   });
 };
 
-export function GtaCheatCodesPage({ locale }: { locale: AppLocale }) {
+export function GtaCheatCodesPage({ locale }: Readonly<{ locale: AppLocale }>) {
   const dictionary = getDictionary(locale);
   const content = getGtaCheatsContent(locale);
   const tool = getLocalizedToolBySlug(locale, toolSlug);
@@ -115,19 +112,14 @@ export function GtaCheatCodesPage({ locale }: { locale: AppLocale }) {
         locale={locale}
         tool={localizedTool}
         relatedTools={relatedTools}
-        beforeToolSection={<AdSlotTop />}
         toolUi={<GtaCheatCodesTool locale={locale} />}
         afterToolSection={
-          <>
-            <AdSlotInContent />
-            <ToolAliasLinks
-              title={relatedGtaCopy[locale].title}
-              description={relatedGtaCopy[locale].description}
-              links={relatedGtaLinks}
-            />
-          </>
+          <ToolAliasLinks
+            title={relatedGtaCopy[locale].title}
+            description={relatedGtaCopy[locale].description}
+            links={relatedGtaLinks}
+          />
         }
-        afterContentSection={<AdSlotFooter />}
       />
     </>
   );

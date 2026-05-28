@@ -40,6 +40,204 @@ const sharedWarnings = [
 
 const sourceName = 'Seed list + public CS2 settings trackers';
 
+type ExtraCs2CrosshairCode = {
+  player: string;
+  code: string;
+  sourceName: string;
+  confidence: Cs2CrosshairConfidence;
+};
+
+const extraCs2CrosshairCodes: ExtraCs2CrosshairCode[] = [
+  // Source: TheSpike
+  { player: 'Ax1Le', code: 'CSGO-nZtuj-eHzcb-8fyLe-Cxbwc-NHpEM', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'sh1ro', code: 'CSGO-oit62-q2AsV-L2SHE-3hoEJ-cMwLA', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Spinx', code: 'CSGO-HsTKJ-UzdPk-qvWjm-Y2FDE-eJH8D', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'stavn', code: 'CSGO-mw7Mq-5QZfQ-Bj8m7-LHMTr-cVGOP', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Twistzz', code: 'CSGO-YdL4P-d4kJy-eq2pc-M8Yxa-zqLDR', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'YEKINDAR', code: 'CSGO-7ANjy-XxRae-25YoE-7Bfnp-QQSFE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'ZywOo', code: 'CSGO-Qzpx5-BRLw8-xFPCS-hTns4-GHDhP', sourceName: 'TheSpike', confidence: 'medium' },
+
+  { player: 'acoR', code: 'CSGO-OCYWo-fVLim-wYDHU-cr4Bx-8Er7C', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'afro', code: 'CSGO-LdMBa-OpRHK-8EzpG-dUpTo-rZoAL', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Aleksib', code: 'CSGO-Jp4hk-AfzML-FcpUT-2pfxZ-kSLoD', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'apEX', code: 'CSGO-idk3k-MD5qw-6b9rH-tr7u7-KPh8E', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'arT', code: 'CSGO-KYFYs-tNLXD-WXmzG-raZEx-8Er7C', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'b0RUP', code: 'CSGO-FHKLW-mD7bh-Sw5Zf-oQ2fb-pwhCG', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'b1t', code: 'CSGO-9OysP-sFw9b-dHiXx-VXUA2-hif4D', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'bodyy', code: 'CSGO-yPcDi-PUw9D-k4EYk-icUZT-ey3JE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'br0', code: 'CSGO-3xF36-jQavn-Mdy3f-HDNTM-s5qRP', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'broky', code: 'CSGO-2uABj-Rr3dC-yhVt3-bXe8v-tDu8O', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Brollan', code: 'CSGO-Lxrrb-tK89n-WWPxK-K7VuY-m4urD', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Bymas', code: 'CSGO-zv8qh-H6qoW-Wr7t9-nRbYL-ESVGQ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'cadiaN', code: 'CSGO-OsK33-i3cCK-C3HFj-8NFp3-HpCxH', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'chopper', code: 'CSGO-HQHVG-KsvGP-QKZvd-Kr5xZ-OP3ED', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'coldzera', code: 'CSGO-3Ppuw-omUQp-VYbMN-CKMnA-frPcF', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'CYPHER', code: 'CSGO-oO8GR-2EQ6f-f2nF4-Unqkk-8VopQ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'degster', code: 'CSGO-i6W7e-7dNbB-7u2hV-vwvQd-97DRE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'deko', code: 'CSGO-9GVqi-ixpNa-JuGa8-ae6hd-H7xDK', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'DemQQ', code: 'CSGO-yRzoc-J9Bsq-ie7Nx-Fwocb-hej5P', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'dexter', code: 'CSGO-9eiwq-mMjSm-xxq2V-QbWVL-XKk9Q', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'donk', code: 'CSGO-HRUtd-7NxSn-DxZ6w-M4OPW-wjA6Q', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'drop', code: 'CSGO-DPj6U-yqW4T-JK2Q3-qKmWo-JkA6Q', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'dupreeh', code: 'CSGO-fBSrW-FdDK7-5PyDT-44XfM-2zpxA', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'dycha', code: 'CSGO-pSVO4-UQ7Kx-Gqrph-OL8ym-8qW5F', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'electroNic', code: 'CSGO-RF8AU-LQcx8-erXvR-V45TS-Rx6KQ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'es3tag', code: 'CSGO-xfN3h-wkA7f-O7aYZ-T5hye-YPVeL', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'f0rest', code: 'CSGO-bb5AU-JhTh5-nGMJd-rNGao-2XJaA', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'FalleN', code: 'CSGO-TpORA-p9Ley-TLQ3P-HzXJY-U9z6A', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'faveN', code: 'CSGO-c7eHb-Yx2jx-vQwca-UvkmQ-zPQNN', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'fer', code: 'CSGO-mR2CH-u4Rq3-KXx9L-MTeQF-ZVkoE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'fl0m', code: 'CSGO-buEFV-9brG5-R3Wci-mArtZ-uQJLH', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'FL1T', code: 'CSGO-fJuKk-iQHe3-LaZ3E-KxztJ-DqmHB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'flameZ', code: 'CSGO-VxTDO-uUGK3-wsSfC-kO6Yz-iyXsO', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'floppy', code: 'CSGO-bPCHW-QE9T8-BiTdO-VUro6-ihaAB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'frozen', code: 'CSGO-jmBsb-LKp6T-aqzyY-f6Uaj-aGUSH', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'GeT_RiGhT', code: 'CSGO-WaJwT-OLPAJ-j8L4t-R3czv-rx8CH', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'gla1ve', code: 'CSGO-zDttN-kEnho-ZJWKN-QZNPC-LSJvM', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Grim', code: 'CSGO-UctxS-6UnxO-t4mpX-3kHaP-EUx9H', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'hallzerk', code: 'CSGO-bPCHW-QE9T8-BiTdO-VUro6-ihaAB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'hampus', code: 'CSGO-o7hPx-NGTtE-HR47f-Pespq-PprBE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'headtr1ck', code: 'CSGO-CmPqs-mhQJt-YmNOa-XhqMq-HvDmQ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Hext', code: 'CSGO-BbpMk-MmUC6-ARdeP-jXptx-p4FyB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'HObbit', code: 'CSGO-tNKL3-nvYRR-MyrEa-Ds9kN-bkWjM', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'HooXi', code: 'CSGO-Rxkq5-myqax-3ZL5k-xBQOd-m4urD', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'huNter-', code: 'CSGO-fefXh-O6xYZ-FdCHQ-OP9Kq-qKwLA', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'iM', code: 'CSGO-P6stL-JmHys-zdzY6-XAXeF-xmKPJ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'interz', code: 'CSGO-faOLP-TddAt-XY5dS-AD4QF-xmKPJ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'isak', code: 'CSGO-ss9Yd-KZU3V-Ef5cp-fpRiX-tzAkE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'jabbi', code: 'CSGO-4PQMC-kA9Ho-muNQv-9u2BJ-tLXoN', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'JACKZ', code: 'CSGO-aEGLu-5mZds-w9NsK-ey5v8-oSqNO', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Jame', code: 'CSGO-kQLy3-knZHs-y5tkt-wF7Ca-c8ksF', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'JDC', code: 'CSGO-9SjKr-iELty-os5zZ-No4TU-cjRqJ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'jkaem', code: 'CSGO-hVsp6-Q3u2R-mdmxr-eKEYe-u6GSQ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'JKS', code: 'CSGO-Un7wk-YEcd5-YUnK4-eoFqZ-LbRVP', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'jL', code: 'CSGO-9dfjd-wceEf-XpL53-uTWTC-OM6FP', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'JT', code: 'CSGO-YEwts-Kh7OE-eTAqK-jYsQ8-jMn2H', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'k0nfig', code: 'CSGO-jPHWX-2Rv8b-oAAaP-eRHBs-pevvE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'k1to', code: 'CSGO-CVSiS-H5249-BMc7Y-79HEq-J6sKG', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'karrigan', code: 'CSGO-CP44i-z2D7K-dpJhE-TvPaj-MaMbM', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'kennyS', code: 'CSGO-uS4Vm-DRWHr-CVvFA-OZpMu-VtjjD', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Keoz', code: 'CSGO-pAQRT-fetaX-8pkY5-pcqHk-BhiaB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'kRaSnaL', code: 'CSGO-4a954-cxOkF-KtWjh-BMsLR-HiTiA', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Krimbo', code: 'CSGO-UuYyL-sDunF-me8AR-8PCWi-sn5BO', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'KRIMZ', code: 'CSGO-K2YXS-7sKY2-j3ENd-cKSkm-ekrqK', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'kyxsan', code: 'CSGO-XbrUC-tPcxn-3wFQi-jNJzY-VnCxH', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'maden', code: 'CSGO-N6xFY-FfmYx-e2Hxe-LCDnY-U9z6A', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Magisk', code: 'CSGO-Ch7e4-W6rmt-rj9Tw-2HmUn-RfK5O', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'magixx', code: 'CSGO-NjLqK-AirMP-rxErc-NHF7j-AmPJM', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'mantuu', code: 'CSGO-DGKFj-chisK-9OiVY-vSfTC-fDHnK', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'mezii', code: 'CSGO-vNrUo-WXqBv-YQunk-4WXQz-sbK5O', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'misutaaa', code: 'CSGO-aPp5Y-F4vDK-AGRik-EcDzO-KCbYO', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'MoDo', code: 'CSGO-Xh7jQ-P7q6q-9BdxP-VP8p3-HsnkP', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'n0rb3r7', code: 'CSGO-CVSiS-H5249-BMc7Y-79HEq-J6sKG', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'NAF', code: 'CSGO-EETNw-LVXuB-spcMc-LmGSt-R5c7L', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'nafany', code: 'CSGO-mNc4L-68Sza-URkJt-deCDq-4PkTL', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Nertz', code: 'CSGO-BKWBy-hHOaB-Hp9CR-hFWX4-T3SKF', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'nicoodoz', code: 'CSGO-MHXPv-hJ6dw-rYutZ-6fS2S-jW2UO', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'nitr0', code: 'CSGO-QZBWH-FDWcz-qtjct-Kk6HR-BdmbN', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'oSee', code: 'CSGO-GaZSZ-RJren-h3W4X-iJMhH-ZVkoE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Patsi', code: 'CSGO-ty4wQ-Va3B2-rMK8r-ROvoR-yopJN', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Perfecto', code: 'CSGO-7ONPA-H47zM-w3cuA-sm76J-SBCtG', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Pimp', code: 'CSGO-T2LCq-cZqO7-3b8bP-STQyB-YuAkE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Qikert', code: 'CSGO-8EwnL-nAeyG-3LVxZ-5YGop-BhiaB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'rain', code: 'CSGO-mbppN-WGdqq-XeBH8-bmdyV-fxwPB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'rallen', code: 'CSGO-4s443-hfo2Z-o945B-d34RJ-eaiGH', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'REZ', code: 'CSGO-3XPK5-uwisF-Qx4SC-KqGWC-z2urD', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'roeJ', code: 'CSGO-ocXGn-bHWWj-YASHy-hawvk-9R88F', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 's1ren', code: 'CSGO-exHAn-WdmaY-ARu3B-4qbRa-pbywQ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'saffee', code: 'CSGO-HRVZh-G56yO-FMjPN-o7ed2-VwLXL', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'sdy', code: 'CSGO-OFYz6-i7Dk2-BGLDd-f4nNe-5eRqJ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Shroud', code: 'CSGO-DbrRD-BX8kL-fmQhq-cRuEt-KfTOG', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'siuhy', code: 'CSGO-POePx-nrfn5-rRXKx-tZASS-fcEBM', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'sjuush', code: 'CSGO-tJvHe-BjTBA-ZUXpi-hMCGU-NoRBD', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'smooya', code: 'CSGO-i2z3i-7o4Qx-u7R8Z-oMHCb-tOUnB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Snappi', code: 'CSGO-4fzx2-TkZbP-pY6wU-Sd29X-9itOH', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Snax', code: 'CSGO-Pu3P9-naPQF-ytXbf-kuMLC-E43JE', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Staehr', code: 'CSGO-f9GtS-qWjMe-MCLVm-HvGWS-vJN2G', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Stewie2K', code: 'CSGO-QVV9H-dfdPZ-G97WJ-E3SxF-tHwzF', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'STYKO', code: 'CSGO-PnLaT-aVXkK-aFmeK-d8dcY-pbywQ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'SunPayus', code: 'CSGO-fBSrW-FdDK7-5PyDT-44XfM-2zpxA', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'syrsoN', code: 'CSGO-W8jkT-uNOEN-cs8QS-85HPd-m7VeL', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'tabseN', code: 'CSGO-xjXqo-C9vj8-kzmGn-UKdLu-HRsuL', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'tarik', code: 'CSGO-qHspL-bfENE-7WTdW-FVNiY-cn3cQ', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'TeSeS', code: 'CSGO-E4fBA-LVbNn-csRqe-Uq3A2-SzwPB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'torzsi', code: 'CSGO-GfmnY-hWjk8-MbJ2T-caSFb-OSc3K', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'valde', code: 'CSGO-V2d2V-CFPGF-ZJkvZ-bDL65-HsnkP', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'w0nderful', code: 'CSGO-jhrTh-eXR6k-6LeUL-C5ukE-FkdVG', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Woro2k', code: 'CSGO-eomfW-Zi5do-6CFye-wueDp-UxQRO', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'XANTARES', code: 'CSGO-UOrzd-vO3VJ-d9GDb-f96Sj-K564E', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'Xyp9x', code: 'CSGO-D7JYc-fwCWJ-wThKn-ReFfT-478WB', sourceName: 'TheSpike', confidence: 'medium' },
+  { player: 'yuurih', code: 'CSGO-8fzkO-nCvOi-FKNjN-qoXpf-3kYbD', sourceName: 'TheSpike', confidence: 'medium' },
+
+  // Source: Draft5
+  { player: 'KSCERATO', code: 'CSGO-ufZUO-V27Te-WQRmC-LhG9C-6AU8N', sourceName: 'Draft5', confidence: 'high' },
+  { player: 'insani', code: 'CSGO-CMGBn-pQxfO-kpa72-HNGuF-94GSQ', sourceName: 'Draft5', confidence: 'high' },
+  { player: 'snow', code: 'CSGO-a7v6E-GC3GN-JfUQj-KqSLV-7T8SA', sourceName: 'Draft5', confidence: 'high' },
+  { player: 'FalleN', code: 'CSGO-ssxCh-Y9LFi-B9amu-NWkZo-ObaAB', sourceName: 'Draft5', confidence: 'high' },
+  { player: 'molodoy', code: 'CSGO-MF6jh-x8NF3-ofrbK-CNqmt-jZxTC', sourceName: 'Draft5', confidence: 'high' },
+  { player: 'yuurih', code: 'CSGO-sWedv-tMPzY-FFN6Z-MzLTr-zYYwP', sourceName: 'Draft5', confidence: 'high' },
+  { player: 'YEKINDAR', code: 'CSGO-CBO9K-Nev5f-DkCEb-Hj7uY-OnMHA', sourceName: 'Draft5', confidence: 'high' },
+  { player: 'donk', code: 'CSGO-4ttyQ-vfwMK-Gz9fL-hY6zW-4fWjM', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'sh1ro', code: 'CSGO-8bY8u-77J8O-kRLD7-JJrYj-EGnfO', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'NiKo', code: 'CSGO-iLkzw-SZREZ-oqHvG-poHhw-oSeuB', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 's1mple', code: 'CSGO-jtX7Q-mXibz-Rq6tA-8djcz-VH5mA', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'ZywOo', code: 'CSGO-ad967-SKtHG-7vA3B-iUqpJ-wGnfO', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'apEX', code: 'CSGO-US8wR-VECem-xkyHs-Vz5CY-wwXsO', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'mezii', code: 'CSGO-zD76C-Kf7Dy-MBNJD-kDSZz-mGeFO', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'flameZ', code: 'CSGO-ANFqt-s6dDk-cZGKb-dMXSu-wzUrC', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'ropz', code: 'CSGO-nCfX7-54ue9-aC5eV-6Womf-Q6izO', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'electroNic', code: 'CSGO-qN3Fi-SfRGz-SAAw8-5M8xa-8Bu8O', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'Nertz', code: 'CSGO-LTr6t-hcq9b-toKqL-5rLq7-DmjPK', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'device', code: 'CSGO-EvvTA-D6U88-mXTHk-acm3G-bkMHA', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'm0NESY', code: 'CSGO-uSeWF-F4v3i-yzDJ7-OEThH-CFCEB', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'stavn', code: 'CSGO-wAD3c-ykt5L-zvZ98-vBisR-6sWPA', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'Spinx', code: 'CSGO-sjVZs-jEpkp-qcTTG-bcmmB-4ZywQ', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'frozen', code: 'CSGO-nX4aQ-nMxvT-vWUn8-fkCTG-CuSyL', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'Twistzz', code: 'CSGO-JU2jV-vzchu-svymm-AjmBN-4jw5G', sourceName: 'Draft5', confidence: 'medium' },
+  { player: 'malbsMd', code: 'CSGO-yZSG6-syQiN-RsWZS-TS5mU-X3nQD', sourceName: 'Draft5', confidence: 'medium' },
+
+  // Source: Esports Insider
+  { player: 'donk', code: 'CSGO-Jhfkc-4UpR6-DJftC-VfGek-pL3ED', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 's1mple', code: 'CSGO-m58cB-AyBDC-AV6tp-Gwq2K-QGKeB', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'm0NESY', code: 'CSGO-wAD3c-ykt5L-zvZ98-vBisR-6sWPA', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'NiKo', code: 'CSGO-s5Qbj-nvF89-cJjDd-mRdSG-5Yt4N', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'ZywOo', code: 'CSGO-rUZB2-rVwbU-u8f7J-4yu8T-6sWPA', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'XANTARES', code: 'CSGO-xbpe2-E24RJ-YXNuO-pQvt8-ppNAK', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'ropz', code: 'CSGO-MMQuh-Hs3Sj-Qv9zd-VaCmc-3QqNO', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'b1t', code: 'CSGO-mEr3O-qc3qm-Py58r-YjQpR-Ms8rN', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'jL', code: 'CSGO-x68V4-XVQU8-KU3tY-rV5Ua-42FyB', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'Twistzz', code: 'CSGO-rAP9j-NWCBz-esDKK-SNzcw-5RGOP', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'w0nderful', code: 'CSGO-MQS69-VdhoT-Ee2E7-ycyr7-ZmRBD', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'broky', code: 'CSGO-nX4aQ-nMxvT-vWUn8-fkCTG-CuSyL', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'electronic', code: 'CSGO-hyGTZ-LuE7X-wAmdJ-D5wt3-9DmDA', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'karrigan', code: 'CSGO-7er9p-dWfdr-MsBpm-FxyCU-8Bu8O', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'rain', code: 'CSGO-KoKYK-eL4FP-Tj6db-Y9pAt-bciaB', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'iM', code: 'CSGO-rsDHb-QDmGE-VikD2-dApWC-kJCEB', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'FalleN', code: 'CSGO-DySAA-sWtfq-GEBcO-27WOS-cBCEB', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'device', code: 'CSGO-q6V25-QEBHr-ahOJi-bzYJO-PiKPJ', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'sh1ro', code: 'CSGO-s8VZE-8fftF-TKOHV-qzbrR-TA7yD', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'EliGE', code: 'CSGO-NweMb-HbLTu-TTvxf-CqHXD-yTvaL', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'magixx', code: 'CSGO-meoXd-BMnXp-RUxfU-XpVPi-LwAkE', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'woxic', code: 'CSGO-hVyt6-6w7hL-hQyc6-xReeD-3sNkO', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'cadiaN', code: 'CSGO-qkkHe-wUdL7-HvPrQ-7q4PF-htuWK', sourceName: 'EsportsInsider', confidence: 'medium' },
+  { player: 'flameZ', code: 'CSGO-Ts59P-UHNG6-Nsnwp-eBrtF-Ln2AC', sourceName: 'EsportsInsider', confidence: 'medium' },
+
+  // Source: SkyCoach
+  { player: 's1mple', code: 'CSGO-RiaU3-DDuB5-rCqXD-GUhfw-pevvE', sourceName: 'SkyCoach', confidence: 'low' },
+  { player: 'NiKo', code: 'CSGO-UwUWf-AScRw-fmW79-woFNe-wLsuL', sourceName: 'SkyCoach', confidence: 'low' },
+  { player: 'dev1ce', code: 'CSGO-jvnbx-S3xFK-iEJXD-Y27Nd-AO6FP', sourceName: 'SkyCoach', confidence: 'low' },
+  { player: 'EliGE', code: 'CSGO-BFTzN-avOyU-djZEM-FmwKd-v5TCP', sourceName: 'SkyCoach', confidence: 'low' },
+  { player: 'Twistzz', code: 'CSGO-9axTZ-n8pEc-uCqW3-SWTK7-3WOAK', sourceName: 'SkyCoach', confidence: 'low' },
+  { player: 'ZywOo', code: 'CSGO-Qzpx5-BRLw8-xFPCS-hTns4-GHDhP', sourceName: 'SkyCoach', confidence: 'low' },
+  { player: 'm0NESY', code: 'CSGO-9DiTj-65KbT-sfshG-qB5ce-mRFuA', sourceName: 'SkyCoach', confidence: 'low' },
+
+  // Generic/non-pro intent pages
+  { player: 'Dot crosshair', code: 'CSGO-JaaMN-QODox-vueWF-sdtLn-PU9vO', sourceName: 'Xplay', confidence: 'medium' },
+  { player: 'No-outline crosshair', code: 'CSGO-rpnKr-SAeJq-EDzHA-e9Ocf-tUfOQ', sourceName: 'Xplay', confidence: 'medium' },
+  { player: 'donk white variant', code: 'CSGO-LdXHk-hatWX-JjEa8-tuLDN-5tbJD', sourceName: 'Xplay', confidence: 'medium' },
+  { player: 'donk variant', code: 'CSGO-3ozJu-2aJQf-8zDfP-4YGJV-yCAMK', sourceName: 'Xplay', confidence: 'medium' },
+];
+
 const seedPlayers: SeedPlayer[] = [
   {
     id: 'donk',
@@ -1304,7 +1502,61 @@ const computeEdpi = (sensitivity?: number, dpi?: number): number | undefined => 
   return Number((sensitivity * dpi).toFixed(2));
 };
 
-export const cs2CrosshairPlayers: Cs2PlayerCrosshair[] = [...seedPlayers]
+const normalizeForMatch = (value: string): string =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+
+const toSlug = (value: string): string => {
+  const base = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return base || 'crosshair';
+};
+
+const mergedSeedPlayers: SeedPlayer[] = [...seedPlayers];
+
+for (const extra of extraCs2CrosshairCodes) {
+  const normalizedPlayer = normalizeForMatch(extra.player);
+  const existingIndex = mergedSeedPlayers.findIndex((player) => {
+    if (normalizeForMatch(player.displayName) === normalizedPlayer) {
+      return true;
+    }
+
+    return player.aliases.some((alias) => normalizeForMatch(alias) === normalizedPlayer);
+  });
+
+  if (existingIndex >= 0) {
+    const current = mergedSeedPlayers[existingIndex];
+    mergedSeedPlayers[existingIndex] = {
+      ...current,
+      crosshairCode: extra.code,
+      sourceName: extra.sourceName,
+      confidence: extra.confidence,
+      lastCheckedAt,
+    };
+    continue;
+  }
+
+  const slug = toSlug(extra.player);
+  mergedSeedPlayers.push({
+    id: slug,
+    slug,
+    aliases: [extra.player],
+    displayName: extra.player,
+    crosshairCode: extra.code,
+    sourceName: extra.sourceName,
+    lastCheckedAt,
+    confidence: extra.confidence,
+    warnings: sharedWarnings,
+  });
+}
+
+export const cs2CrosshairPlayers: Cs2PlayerCrosshair[] = [...mergedSeedPlayers]
   .map((player) => ({
     ...player,
     edpi: computeEdpi(player.sensitivity, player.dpi),

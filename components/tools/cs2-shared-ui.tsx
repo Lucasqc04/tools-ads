@@ -2,7 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { cs2CommandCategories, type Cs2Command, type Cs2CommandCategory } from '@/data/cs2/commands';
+import {
+  cs2CommandCategories,
+  getCs2CommandById,
+  type Cs2Command,
+  type Cs2CommandCategory,
+} from '@/data/cs2/commands';
 import type {
   Cs2CommandPreset,
   Cs2CommandPresetCategory,
@@ -407,7 +412,7 @@ export function Cs2RadarGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
 
   return (
     <Card className="space-y-3">
-      <h3 className="text-base font-semibold text-slate-900">Radar Generator</h3>
+      <h3 className="text-base font-semibold text-slate-900">{copy.radarGeneratorTitle}</h3>
       <div className="grid gap-3 sm:grid-cols-2">
         <Input value={radarScale} onChange={(event) => setRadarScale(event.target.value)} />
         <Input value={hudScale} onChange={(event) => setHudScale(event.target.value)} />
@@ -452,7 +457,7 @@ export function Cs2HudColorGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
 
   return (
     <Card className="space-y-3">
-      <h3 className="text-base font-semibold text-slate-900">HUD Color Generator</h3>
+      <h3 className="text-base font-semibold text-slate-900">{copy.hudColorGeneratorTitle}</h3>
       <Select value={color} onChange={(event) => setColor(event.target.value)}>
         {hudColorOptions.map((option) => (
           <option key={option.value} value={option.value}>
@@ -491,7 +496,7 @@ export function Cs2ViewmodelGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
 
   return (
     <Card className="space-y-3">
-      <h3 className="text-base font-semibold text-slate-900">Viewmodel Generator</h3>
+      <h3 className="text-base font-semibold text-slate-900">{copy.viewmodelGeneratorTitle}</h3>
       <div className="grid gap-3 sm:grid-cols-2">
         <Input value={fov} onChange={(event) => setFov(event.target.value)} />
         <Input value={x} onChange={(event) => setX(event.target.value)} />
@@ -521,7 +526,7 @@ export function Cs2VolumeGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
 
   return (
     <Card className="space-y-3">
-      <h3 className="text-base font-semibold text-slate-900">Volume Generator</h3>
+      <h3 className="text-base font-semibold text-slate-900">{copy.volumeGeneratorTitle}</h3>
       <Input
         type="range"
         min={0}
@@ -552,7 +557,7 @@ export function Cs2FpsCommandGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
 
   return (
     <Card className="space-y-3">
-      <h3 className="text-base font-semibold text-slate-900">FPS Generator</h3>
+      <h3 className="text-base font-semibold text-slate-900">{copy.fpsGeneratorTitle}</h3>
       <div className="grid gap-3 sm:grid-cols-3">
         <Select value={fpsMax} onChange={(event) => setFpsMax(event.target.value)}>
           {['0', '144', '165', '240', '300', '400'].map((option) => (
@@ -597,21 +602,136 @@ export function Cs2AutoexecGenerator({
   practicePresetIds: string[];
   funPresetIds: string[];
 }) {
+  const [includeRadar, setIncludeRadar] = useState(true);
+  const [includeHud, setIncludeHud] = useState(true);
+  const [includeViewmodel, setIncludeViewmodel] = useState(true);
+  const [includeFps, setIncludeFps] = useState(true);
+  const [includeAudio, setIncludeAudio] = useState(true);
+  const [includeBinds, setIncludeBinds] = useState(true);
+  const [includePractice, setIncludePractice] = useState(true);
+  const [includeFun, setIncludeFun] = useState(true);
+  const [crosshairBlock, setCrosshairBlock] = useState('');
+
+  const selectedGeneralCommandIds = useMemo(() => {
+    const enabledCategories = new Set<Cs2CommandCategory>();
+
+    if (includeRadar) {
+      enabledCategories.add('radar');
+    }
+    if (includeHud) {
+      enabledCategories.add('hud');
+    }
+    if (includeViewmodel) {
+      enabledCategories.add('viewmodel');
+    }
+    if (includeFps) {
+      enabledCategories.add('fps');
+    }
+    if (includeAudio) {
+      enabledCategories.add('audio');
+    }
+    if (includeBinds) {
+      enabledCategories.add('binds');
+    }
+
+    return generalCommandIds.filter((commandId) => {
+      const command = getCs2CommandById(commandId);
+      return Boolean(command && enabledCategories.has(command.category));
+    });
+  }, [generalCommandIds, includeAudio, includeBinds, includeFps, includeHud, includeRadar, includeViewmodel]);
+
+  const normalizedCrosshairLines = useMemo(
+    () =>
+      crosshairBlock
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean),
+    [crosshairBlock],
+  );
+
   const files = useMemo(
     () =>
       buildCs2AutoexecFiles({
-        generalCommandIds,
-        practicePresetIds,
-        funPresetIds,
+        generalCommandIds: selectedGeneralCommandIds,
+        practicePresetIds: includePractice ? practicePresetIds : [],
+        funPresetIds: includeFun ? funPresetIds : [],
+        additionalAutoexecLines: normalizedCrosshairLines,
       }),
-    [funPresetIds, generalCommandIds, practicePresetIds],
+    [
+      funPresetIds,
+      includeFun,
+      includePractice,
+      normalizedCrosshairLines,
+      practicePresetIds,
+      selectedGeneralCommandIds,
+    ],
   );
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+      <h3 className="text-base font-semibold text-slate-900">{copy.autoexecGeneratorTitle}</h3>
+      <p className="text-sm leading-6 text-slate-700">{copy.autoexecHelp}</p>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input type="checkbox" checked={includeRadar} onChange={(event) => setIncludeRadar(event.target.checked)} />
+          <span>{copy.autoexecIncludeRadar}</span>
+        </label>
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input type="checkbox" checked={includeHud} onChange={(event) => setIncludeHud(event.target.checked)} />
+          <span>{copy.autoexecIncludeHud}</span>
+        </label>
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            checked={includeViewmodel}
+            onChange={(event) => setIncludeViewmodel(event.target.checked)}
+          />
+          <span>{copy.autoexecIncludeViewmodel}</span>
+        </label>
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input type="checkbox" checked={includeFps} onChange={(event) => setIncludeFps(event.target.checked)} />
+          <span>{copy.autoexecIncludeFps}</span>
+        </label>
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input type="checkbox" checked={includeAudio} onChange={(event) => setIncludeAudio(event.target.checked)} />
+          <span>{copy.autoexecIncludeAudio}</span>
+        </label>
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input type="checkbox" checked={includeBinds} onChange={(event) => setIncludeBinds(event.target.checked)} />
+          <span>{copy.autoexecIncludeBinds}</span>
+        </label>
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            checked={includePractice}
+            onChange={(event) => setIncludePractice(event.target.checked)}
+          />
+          <span>{copy.autoexecIncludePractice}</span>
+        </label>
+        <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input type="checkbox" checked={includeFun} onChange={(event) => setIncludeFun(event.target.checked)} />
+          <span>{copy.autoexecIncludeFun}</span>
+        </label>
+      </div>
+
+      <label className="space-y-2">
+        <span className="text-sm font-semibold text-slate-800">{copy.autoexecCrosshairLabel}</span>
+        <Textarea
+          value={crosshairBlock}
+          onChange={(event) => setCrosshairBlock(event.target.value)}
+          className="min-h-[100px] font-mono text-xs"
+          placeholder={copy.autoexecCrosshairPlaceholder}
+        />
+      </label>
+
       <Cs2ConfigPreview title="autoexec.cfg" filename="autoexec.cfg" content={files.autoexec} copy={copy} />
-      <Cs2ConfigPreview title="practice.cfg" filename="practice.cfg" content={files.practice} copy={copy} />
-      <Cs2ConfigPreview title="fun.cfg" filename="fun.cfg" content={files.fun} copy={copy} />
+      {includePractice ? (
+        <Cs2ConfigPreview title="practice.cfg" filename="practice.cfg" content={files.practice} copy={copy} />
+      ) : null}
+      {includeFun ? (
+        <Cs2ConfigPreview title="fun.cfg" filename="fun.cfg" content={files.fun} copy={copy} />
+      ) : null}
     </section>
   );
 }

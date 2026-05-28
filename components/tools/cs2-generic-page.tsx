@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { AdSlotFooter } from '@/components/ads/ad-slot-footer';
-import { AdSlotInContent } from '@/components/ads/ad-slot-in-content';
-import { AdSlotTop } from '@/components/ads/ad-slot-top';
 import { JsonLd } from '@/components/shared/json-ld';
 import { Cs2ToolSuite } from '@/components/tools/cs2-tool-suite';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
@@ -36,7 +33,7 @@ export const buildCs2ToolMetadata = (locale: AppLocale, toolId: Cs2ToolId): Meta
   });
 };
 
-export function Cs2GenericToolPage({ locale, toolId }: { locale: AppLocale; toolId: Cs2ToolId }) {
+export function Cs2GenericToolPage({ locale, toolId }: Readonly<{ locale: AppLocale; toolId: Cs2ToolId }>) {
   const dictionary = getDictionary(locale);
   const content = getCs2ToolContent(toolId, locale);
   const registryTool = getLocalizedToolById(locale, toolId);
@@ -89,10 +86,7 @@ export function Cs2GenericToolPage({ locale, toolId }: { locale: AppLocale; tool
         locale={locale}
         tool={localizedTool}
         relatedTools={relatedTools}
-        beforeToolSection={<AdSlotTop />}
         toolUi={<Cs2ToolSuite locale={locale} toolId={toolId} />}
-        afterToolSection={<AdSlotInContent />}
-        afterContentSection={<AdSlotFooter />}
       />
     </>
   );

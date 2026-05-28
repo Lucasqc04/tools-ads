@@ -34,7 +34,7 @@ const defaultFilters: Cs2CrosshairFilters = {
   withCodeOnly: false,
 };
 
-export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Cs2CrosshairCodesToolProps) {
+export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2CrosshairCodesToolProps>) {
   const [filters, setFilters] = useState<Cs2CrosshairFilters>(defaultFilters);
   const [copiedSlug, setCopiedSlug] = useState<string>('');
 
@@ -53,7 +53,7 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Cs2CrosshairCodesToo
     try {
       await navigator.clipboard.writeText(code);
       setCopiedSlug(slug);
-      window.setTimeout(() => {
+      globalThis.setTimeout(() => {
         setCopiedSlug((current) => (current === slug ? '' : current));
       }, 1600);
     } catch {
@@ -74,6 +74,15 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Cs2CrosshairCodesToo
       <section className="space-y-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
         <h3 className="text-base font-semibold text-amber-900">{content.ui.cautionTitle}</h3>
         <p className="text-sm leading-6 text-amber-900">{content.ui.cautionText}</p>
+      </section>
+
+      <section className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+        <h3 className="font-semibold text-slate-900">{content.ui.importTitle}</h3>
+        <ol className="list-decimal space-y-1 pl-5">
+          {content.ui.importSteps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
       </section>
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -222,15 +231,6 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Cs2CrosshairCodesToo
                   {content.ui.noCode}
                 </p>
               )}
-
-              <section className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <h5 className="font-semibold text-slate-900">{content.ui.importTitle}</h5>
-                <ol className="list-decimal space-y-1 pl-5">
-                  {content.ui.importSteps.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-              </section>
 
               <footer className="space-y-1 text-xs text-slate-600">
                 <p>

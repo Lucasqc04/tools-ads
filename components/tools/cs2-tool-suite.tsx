@@ -1,15 +1,19 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { cs2Commands } from '@/data/cs2/commands';
 import { cs2CommandPresets } from '@/data/cs2/command-presets';
 import {
   cs2SharedUiCopyByLocale,
-  getCs2ToolContent,
 } from '@/data/content/cs2-tools';
 import { getCs2ToolUiConfig } from '@/data/cs2/tool-ui-config';
-import type { Cs2ToolId } from '@/data/cs2/tools';
+import {
+  cs2ToolNavigationItems,
+  getCs2ToolPathForLocale,
+  type Cs2ToolId,
+} from '@/data/cs2/tools';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   defaultCs2CommandFilters,
@@ -33,10 +37,14 @@ type Cs2ToolSuiteProps = {
   toolId: Cs2ToolId;
 };
 
-export function Cs2ToolSuite({ locale, toolId }: Cs2ToolSuiteProps) {
+export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
   const copy = cs2SharedUiCopyByLocale[locale];
-  const content = getCs2ToolContent(toolId, locale);
   const uiConfig = getCs2ToolUiConfig(toolId);
+
+  let modeTitle = 'Modo CS2';
+  if (locale === 'en') {
+    modeTitle = 'CS2 mode';
+  }
 
   const [filters, setFilters] = useState({
     ...defaultCs2CommandFilters,
@@ -88,6 +96,31 @@ export function Cs2ToolSuite({ locale, toolId }: Cs2ToolSuiteProps) {
 
   return (
     <div className="space-y-6">
+      <Card className="space-y-3">
+        <h3 className="text-base font-semibold text-slate-900">{modeTitle}</h3>
+        <div className="flex flex-wrap gap-2">
+          {cs2ToolNavigationItems.map((item) => {
+            const href = getCs2ToolPathForLocale(item.id, locale);
+            const isActive = item.id === toolId;
+
+            return (
+              <Link
+                key={item.id}
+                href={href}
+                className={
+                  isActive
+                    ? 'rounded-full border border-brand-300 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-800'
+                    : 'rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50'
+                }
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.labelByLocale[locale]}
+              </Link>
+            );
+          })}
+        </div>
+      </Card>
+
       <Card className="space-y-3 border-amber-200 bg-amber-50">
         <h3 className="text-base font-semibold text-amber-900">{copy.safetyTitle}</h3>
         <p className="text-sm leading-6 text-amber-900">{copy.safetyText}</p>

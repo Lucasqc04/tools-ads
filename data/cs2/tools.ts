@@ -26,6 +26,11 @@ export type Cs2ToolConfig = {
     | 'SecurityApplication';
 };
 
+  export type Cs2ToolNavItem = {
+    id: Cs2ToolId;
+    labelByLocale: Record<AppLocale, string>;
+  };
+
 export const cs2ToolConfigs: Cs2ToolConfig[] = [
   {
     id: 'cs2-practice-commands',
@@ -152,6 +157,121 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       es: 'comandos-divertidos-cs2',
     },
     softwareCategory: 'UtilitiesApplication',
+  },
+];
+
+export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
+  {
+    id: 'cs2-practice-commands',
+    labelByLocale: {
+      'pt-br': 'Treino',
+      en: 'Practice',
+      es: 'Practica',
+    },
+  },
+  {
+    id: 'cs2-practice-config',
+    labelByLocale: {
+      'pt-br': 'Practice.cfg',
+      en: 'Practice.cfg',
+      es: 'Practice.cfg',
+    },
+  },
+  {
+    id: 'cs2-grenade-practice-commands',
+    labelByLocale: {
+      'pt-br': 'Granadas',
+      en: 'Grenades',
+      es: 'Granadas',
+    },
+  },
+  {
+    id: 'cs2-smoke-practice-commands',
+    labelByLocale: {
+      'pt-br': 'Smokes',
+      en: 'Smokes',
+      es: 'Smokes',
+    },
+  },
+  {
+    id: 'cs2-bot-commands',
+    labelByLocale: {
+      'pt-br': 'Bots',
+      en: 'Bots',
+      es: 'Bots',
+    },
+  },
+  {
+    id: 'cs2-radar-settings',
+    labelByLocale: {
+      'pt-br': 'Radar',
+      en: 'Radar',
+      es: 'Radar',
+    },
+  },
+  {
+    id: 'cs2-hud-commands',
+    labelByLocale: {
+      'pt-br': 'HUD',
+      en: 'HUD',
+      es: 'HUD',
+    },
+  },
+  {
+    id: 'cs2-hud-color',
+    labelByLocale: {
+      'pt-br': 'Cor HUD',
+      en: 'HUD color',
+      es: 'Color HUD',
+    },
+  },
+  {
+    id: 'cs2-viewmodel-generator',
+    labelByLocale: {
+      'pt-br': 'Viewmodel',
+      en: 'Viewmodel',
+      es: 'Viewmodel',
+    },
+  },
+  {
+    id: 'cs2-fps-commands',
+    labelByLocale: {
+      'pt-br': 'FPS',
+      en: 'FPS',
+      es: 'FPS',
+    },
+  },
+  {
+    id: 'cs2-autoexec-generator',
+    labelByLocale: {
+      'pt-br': 'Autoexec',
+      en: 'Autoexec',
+      es: 'Autoexec',
+    },
+  },
+  {
+    id: 'cs2-competitive-config',
+    labelByLocale: {
+      'pt-br': 'Competitivo',
+      en: 'Competitive',
+      es: 'Competitivo',
+    },
+  },
+  {
+    id: 'cs2-tournament-safe-config',
+    labelByLocale: {
+      'pt-br': 'Campeonato',
+      en: 'Tournament',
+      es: 'Torneo',
+    },
+  },
+  {
+    id: 'cs2-fun-commands',
+    labelByLocale: {
+      'pt-br': 'Fun',
+      en: 'Fun',
+      es: 'Fun',
+    },
   },
 ];
 

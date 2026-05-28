@@ -2609,7 +2609,8 @@ export const cs2Commands: Cs2Command[] = [
     showInPracticeConfig: false,
     showInFunConfig: false,
     showInTournamentSafeConfig: true,
-    warningLevel: 'none',
+    needsValidation: true,
+    warningLevel: 'caution',
     name: {
       'pt-br': 'Mutar todos no voice',
       en: 'Mute everyone in voice',
@@ -2619,6 +2620,11 @@ export const cs2Commands: Cs2Command[] = [
       'pt-br': 'Silencia comunicacao de voz para foco total.',
       en: 'Mutes voice chat for full focus.',
       es: 'Silencia voz para foco total.',
+    },
+    warning: {
+      'pt-br': 'Se nao funcionar no seu build, use voice_modenable 0/1 como alternativa.',
+      en: 'If it does not work on your build, use voice_modenable 0/1 instead.',
+      es: 'Si no funciona en tu build, usa voice_modenable 0/1 como alternativa.',
     },
   }),
 
@@ -2633,7 +2639,8 @@ export const cs2Commands: Cs2Command[] = [
     showInPracticeConfig: false,
     showInFunConfig: false,
     showInTournamentSafeConfig: true,
-    warningLevel: 'none',
+    needsValidation: true,
+    warningLevel: 'caution',
     name: {
       'pt-br': 'Desmutar todos no voice',
       en: 'Unmute everyone in voice',
@@ -2643,6 +2650,11 @@ export const cs2Commands: Cs2Command[] = [
       'pt-br': 'Restaura voz global da partida.',
       en: 'Restores global voice communication.',
       es: 'Restaura comunicacion de voz global.',
+    },
+    warning: {
+      'pt-br': 'Se nao funcionar no seu build, use voice_modenable 1 como alternativa.',
+      en: 'If it does not work on your build, use voice_modenable 1 as fallback.',
+      es: 'Si no funciona en tu build, usa voice_modenable 1 como alternativa.',
     },
   }),
 
@@ -2931,6 +2943,30 @@ export const cs2Commands: Cs2Command[] = [
       'pt-br': 'Carrega comandos de treino local em arquivo separado.',
       en: 'Loads local practice commands from dedicated file.',
       es: 'Carga comandos de practica local desde archivo separado.',
+    },
+  }),
+
+  cmd({
+    id: 'exec-fun',
+    command: 'exec fun',
+    category: 'autoexec',
+    requiresSvCheats: false,
+    localOnly: true,
+    safeForOfficialServers: false,
+    showInCompetitiveConfig: false,
+    showInPracticeConfig: false,
+    showInFunConfig: true,
+    showInTournamentSafeConfig: false,
+    warningLevel: 'info',
+    name: {
+      'pt-br': 'Executar fun.cfg',
+      en: 'Execute fun.cfg',
+      es: 'Ejecutar fun.cfg',
+    },
+    description: {
+      'pt-br': 'Carrega comandos de servidor privado/local em arquivo separado.',
+      en: 'Loads private/local server commands from dedicated file.',
+      es: 'Carga comandos de servidor privado/local desde archivo separado.',
     },
   }),
 

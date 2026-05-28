@@ -6,11 +6,15 @@ import {
   getImageConversionResolutionBySlug,
   type ImageConversionPage,
 } from '@/data/image-conversion-pages';
+import {
+  getUniversalConversionResolutionBySlug,
+} from '@/data/universal-converter-pages';
 import { invisiblePlatformPages } from '@/data/invisible-platform-pages';
 import { toolAliasKeywordSeeds } from '@/data/tool-alias-keywords';
 import { getLocalizedToolBySlug, toolsRegistry } from '@/data/tools-registry';
 import { localizePath, locales, type AppLocale } from '@/lib/i18n/config';
 import { invisiblePlatforms } from '@/lib/invisible-character';
+import type { UniversalConversionId, UniversalPresetId } from '@/lib/universal-converter';
 
 type LocalizedText = Record<AppLocale, string>;
 
@@ -20,6 +24,9 @@ export type ToolAliasPage = {
   keywordByLocale: LocalizedText;
   imageConversionSlug?: string;
   cryptoConversionSlug?: string;
+  universalConversionSlug?: string;
+  universalConversionId?: UniversalConversionId;
+  universalPresetId?: UniversalPresetId;
   invisiblePlatformId?: string;
   invisiblePlatformSlug?: string;
 };
@@ -85,7 +92,7 @@ const sanitizeSlug = (value: string): string =>
 const normalizePhrase = (value: string): string =>
   value
     .replaceAll(/\s+/g, ' ')
-    .replaceAll(/\u00a0/g, ' ')
+    .replaceAll('\u00a0', ' ')
     .trim();
 
 const humanizeSlug = (slug: string): string => slug.replaceAll('-', ' ');
@@ -171,6 +178,27 @@ const detectCryptoConversionSlug = (slug: string): string | undefined => {
   return resolution?.page.slug;
 };
 
+const detectUniversalConversionSlug = (slug: string): string | undefined => {
+  const resolution = getUniversalConversionResolutionBySlug(slug);
+  return resolution?.page.slug;
+};
+
+const detectUniversalPresetId = (slug: string): UniversalPresetId | undefined => {
+  if (slug.includes('gerador-md5') || slug.includes('gerador-sha')) {
+    return 'all-hashes';
+  }
+
+  if (slug.includes('conversor-de-bases')) {
+    return 'all-bases';
+  }
+
+  if (slug.includes('conversor-de-cifras')) {
+    return 'all-classic-ciphers';
+  }
+
+  return undefined;
+};
+
 const shouldKeepAliasSlug = (slug: string): boolean => {
   if (!slug || slug.length < 4 || slug.length > 96) {
     return false;
@@ -189,6 +217,52 @@ const shouldKeepAliasSlug = (slug: string): boolean => {
   }
 
   return true;
+};
+
+const aliasEnrichers: Record<string, (basePage: ToolAliasPage) => void> = {
+  'image-converter': (basePage) => {
+    const imageConversionSlug = detectImageConversionSlug(basePage.slug);
+    if (imageConversionSlug) {
+      basePage.imageConversionSlug = imageConversionSlug;
+    }
+  },
+  'crypto-unit-converter': (basePage) => {
+    const cryptoConversionSlug = detectCryptoConversionSlug(basePage.slug);
+    if (cryptoConversionSlug) {
+      basePage.cryptoConversionSlug = cryptoConversionSlug;
+    }
+  },
+  'conversor-universal': (basePage) => {
+    const universalConversionSlug = detectUniversalConversionSlug(basePage.slug);
+    if (universalConversionSlug) {
+      const resolution = getUniversalConversionResolutionBySlug(universalConversionSlug);
+      if (resolution) {
+        basePage.universalConversionSlug = universalConversionSlug;
+        basePage.universalConversionId = resolution.conversionId;
+      }
+    }
+
+    const universalPresetId = detectUniversalPresetId(basePage.slug);
+    if (universalPresetId) {
+      basePage.universalPresetId = universalPresetId;
+    }
+  },
+  'invisible-character': (basePage) => {
+    const platformMatch = detectInvisiblePlatform(basePage.slug);
+    if (platformMatch) {
+      basePage.invisiblePlatformId = platformMatch.invisiblePlatformId;
+      basePage.invisiblePlatformSlug = platformMatch.invisiblePlatformSlug;
+    }
+  },
+};
+
+const enrichAliasByTool = (basePage: ToolAliasPage): ToolAliasPage => {
+  const enricher = aliasEnrichers[basePage.toolSlug];
+  if (enricher) {
+    enricher(basePage);
+  }
+
+  return basePage;
 };
 
 const buildToolAliasPages = (): ToolAliasPage[] => {
@@ -234,29 +308,7 @@ const buildToolAliasPages = (): ToolAliasPage[] => {
         keywordByLocale,
       };
 
-      if (tool.slug === 'image-converter') {
-        const imageConversionSlug = detectImageConversionSlug(slug);
-        if (imageConversionSlug) {
-          basePage.imageConversionSlug = imageConversionSlug;
-        }
-      }
-
-      if (tool.slug === 'crypto-unit-converter') {
-        const cryptoConversionSlug = detectCryptoConversionSlug(slug);
-        if (cryptoConversionSlug) {
-          basePage.cryptoConversionSlug = cryptoConversionSlug;
-        }
-      }
-
-      if (tool.slug === 'invisible-character') {
-        const platformMatch = detectInvisiblePlatform(slug);
-        if (platformMatch) {
-          basePage.invisiblePlatformId = platformMatch.invisiblePlatformId;
-          basePage.invisiblePlatformSlug = platformMatch.invisiblePlatformSlug;
-        }
-      }
-
-      pages.push(basePage);
+      pages.push(enrichAliasByTool(basePage));
       usedSlugs.add(slug);
     });
   });
@@ -274,7 +326,9 @@ export const getToolAliasPageBySlug = (slug: string): ToolAliasPage | undefined 
 export const getToolAliasStaticParamsByLocale = (
   locale: AppLocale,
 ): Array<{ platformPageSlug: string }> => {
-  void locale;
+  if (!locale) {
+    return [];
+  }
 
   return toolAliasPages.map((page) => ({
     platformPageSlug: page.slug,
@@ -402,5 +456,30 @@ export const getToolAliasCryptoPreset = (
     assetId: resolution.page.assetId,
     fromUnitId: resolution.page.fromUnitId,
     toUnitId: resolution.page.toUnitId,
+  };
+};
+
+export const getToolAliasUniversalPreset = (
+  page: ToolAliasPage,
+): {
+  conversionId?: UniversalConversionId;
+  presetId?: UniversalPresetId;
+  exampleInput?: string;
+} | undefined => {
+  if (!page.universalConversionSlug && !page.universalPresetId) {
+    return undefined;
+  }
+
+  let exampleInput: string | undefined;
+
+  if (page.universalConversionSlug) {
+    const resolution = getUniversalConversionResolutionBySlug(page.universalConversionSlug);
+    exampleInput = resolution?.page.exampleInput;
+  }
+
+  return {
+    conversionId: page.universalConversionId,
+    presetId: page.universalPresetId,
+    exampleInput,
   };
 };

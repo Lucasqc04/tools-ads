@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { type AppLocale } from '@/lib/i18n/config';
 import {
   assets,
@@ -15,12 +15,12 @@ import {
   type CryptoAssetId,
 } from '@/lib/crypto-units';
 
-type CryptoUnitConverterToolProps = {
+type CryptoUnitConverterToolProps = Readonly<{
   locale?: AppLocale;
   initialAssetId?: CryptoAssetId;
   initialFromUnitId?: string;
   initialToUnitId?: string;
-};
+}>;
 
 const cryptoConverterUi = {
   'pt-br': {
@@ -158,21 +158,38 @@ export function CryptoUnitConverterTool({
   const fromUnit = selectedAsset.units.find((unit) => unit.id === fromUnitId);
   const toUnit = selectedAsset.units.find((unit) => unit.id === toUnitId);
 
+  const assetOptions = useMemo(
+    () =>
+      assets.map((asset) => ({
+        value: asset.id,
+        label: asset.name,
+        keywords: [asset.id],
+      })),
+    [],
+  );
+
+  const unitOptions = useMemo(
+    () =>
+      selectedAsset.units.map((unit) => ({
+        value: unit.id,
+        label: unit.label,
+        keywords: [unit.id, unit.description],
+      })),
+    [selectedAsset.units],
+  );
+
   return (
     <Card className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-800">{ui.asset}</span>
-          <Select
+          <SearchableSelect
             value={assetId}
-            onChange={(event) => handleAssetChange(event.target.value as CryptoAssetId)}
-          >
-            {assets.map((asset) => (
-              <option key={asset.id} value={asset.id}>
-                {asset.name}
-              </option>
-            ))}
-          </Select>
+            onValueChange={(nextValue) => handleAssetChange(nextValue as CryptoAssetId)}
+            options={assetOptions}
+            searchPlaceholder="Buscar ativo..."
+            noResultsText="Nenhum ativo encontrado."
+          />
         </label>
 
         <label className="space-y-2">
@@ -202,13 +219,13 @@ export function CryptoUnitConverterTool({
       <div className="grid items-end gap-4 md:grid-cols-[1fr_auto_1fr]">
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-800">{ui.sourceUnit}</span>
-          <Select value={fromUnitId} onChange={(event) => setFromUnitId(event.target.value)}>
-            {selectedAsset.units.map((unit) => (
-              <option key={unit.id} value={unit.id}>
-                {unit.label}
-              </option>
-            ))}
-          </Select>
+          <SearchableSelect
+            value={fromUnitId}
+            onValueChange={setFromUnitId}
+            options={unitOptions}
+            searchPlaceholder="Buscar unidade de origem..."
+            noResultsText="Nenhuma unidade encontrada."
+          />
         </label>
 
         <Button variant="secondary" className="w-full md:w-auto" onClick={handleInvert}>
@@ -217,13 +234,13 @@ export function CryptoUnitConverterTool({
 
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-800">{ui.targetUnit}</span>
-          <Select value={toUnitId} onChange={(event) => setToUnitId(event.target.value)}>
-            {selectedAsset.units.map((unit) => (
-              <option key={unit.id} value={unit.id}>
-                {unit.label}
-              </option>
-            ))}
-          </Select>
+          <SearchableSelect
+            value={toUnitId}
+            onValueChange={setToUnitId}
+            options={unitOptions}
+            searchPlaceholder="Buscar unidade de destino..."
+            noResultsText="Nenhuma unidade encontrada."
+          />
         </label>
       </div>
 

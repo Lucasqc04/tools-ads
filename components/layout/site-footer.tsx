@@ -9,9 +9,14 @@ type SiteFooterProps = {
   locale?: AppLocale;
 };
 
-export function SiteFooter({ locale = 'pt-br' }: SiteFooterProps) {
+export function SiteFooter({ locale = 'pt-br' }: Readonly<SiteFooterProps>) {
   const year = new Date().getFullYear();
   const dictionary = getDictionary(locale);
+  const telegramSuggestionCopy = {
+    'pt-br': 'Sugestoes e melhorias',
+    en: 'Suggestions and improvements',
+    es: 'Sugerencias y mejoras',
+  }[locale];
 
   return (
     <footer className="mt-16 border-t border-slate-200 bg-white">
@@ -35,6 +40,13 @@ export function SiteFooter({ locale = 'pt-br' }: SiteFooterProps) {
               {dictionary.common.privacyPolicy}
             </Link>
             <Link href={localizePath(locale, '/terms')}>{dictionary.common.terms}</Link>
+            <a
+              href="https://t.me/Lucasqc04"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+            >
+              {telegramSuggestionCopy}
+            </a>
           </nav>
         </div>
 

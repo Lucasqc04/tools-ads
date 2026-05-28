@@ -14,6 +14,7 @@
     "@ffmpeg/core": "^0.12.10",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
+    "@paralleldrive/cuid2": "^3.3.0",
     "@scure/bip32": "^2.2.0",
     "@scure/bip39": "^2.2.0",
     "@upstash/redis": "^1.38.0",
@@ -27,6 +28,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
+    "ksuid": "^3.0.0",
     "lucide-react": "^1.8.0",
     "next": "15.5.15",
     "pdfjs-dist": "^5.6.205",
@@ -34,7 +36,9 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-dropzone": "^15.0.0",
-    "sanitize-html": "^2.17.3"
+    "sanitize-html": "^2.17.3",
+    "ulid": "^3.0.2",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@types/node": "20.17.57",

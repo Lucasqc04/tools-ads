@@ -113,6 +113,57 @@ import {
   sorteadorFaq,
   sorteadorIntro,
 } from '@/data/content/sorteador';
+import {
+  characterCounterContentBlocks,
+  characterCounterFaq,
+  characterCounterIntro,
+  getCharacterCounterContent,
+} from '@/data/content/character-counter';
+import {
+  getJwtDecoderContent,
+  jwtDecoderContentBlocks,
+  jwtDecoderFaq,
+  jwtDecoderIntro,
+} from '@/data/content/jwt-decoder';
+import {
+  getRegexTesterContent,
+  regexTesterContentBlocks,
+  regexTesterFaq,
+  regexTesterIntro,
+} from '@/data/content/regex-tester';
+import {
+  getUuidNanoIdContent,
+  uuidNanoIdContentBlocks,
+  uuidNanoIdFaq,
+  uuidNanoIdIntro,
+} from '@/data/content/uuid-nanoid-generator';
+import {
+  getUnixTimestampContent,
+  unixTimestampContentBlocks,
+  unixTimestampFaq,
+  unixTimestampIntro,
+} from '@/data/content/unix-timestamp-converter';
+import {
+  getUrlEncoderDecoderContent,
+  urlEncoderDecoderContentBlocks,
+  urlEncoderDecoderFaq,
+  urlEncoderDecoderIntro,
+} from '@/data/content/url-encoder-decoder';
+import {
+  getSlugGeneratorContent,
+  slugGeneratorContentBlocks,
+  slugGeneratorFaq,
+  slugGeneratorIntro,
+} from '@/data/content/slug-generator';
+import {
+  getRemoveAccentsContent,
+  removeAccentsContentBlocks,
+  removeAccentsFaq,
+  removeAccentsIntro,
+} from '@/data/content/remove-accents';
+import {
+  getUniversalConverterContent,
+} from '@/data/content/universal-converter';
 import { getToolTranslation } from '@/data/i18n/tool-translations';
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ToolDefinition } from '@/types/tool';
@@ -733,6 +784,256 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['calculadora-juros-compostos', 'password-generator', 'qr-code-generator'],
   },
   {
+    id: 'contador-de-caracteres',
+    slug: 'contador-de-caracteres',
+    name: 'Contador de Caracteres e Palavras Online',
+    shortDescription:
+      'Conte caracteres, palavras, linhas, frases, paragrafos, emojis e limites para SEO, redes sociais, redacao e programacao.',
+    category: 'utility',
+    primaryKeyword: 'contador de caracteres e palavras online',
+    secondaryKeywords: [
+      'contador de caracteres',
+      'contador de palavras',
+      'contador de linhas',
+      'contador para instagram',
+      'contador para x twitter',
+      'tempo de leitura texto',
+      'contador de hashtags',
+      'detector de caracteres invisiveis',
+    ],
+    searchIntent:
+      'Usuarios que precisam analisar texto de forma completa para SEO, social media, estudos, redacao e tarefas tecnicas.',
+    seoTitle:
+      'Contador de Caracteres e Palavras Online | SEO, Instagram, X, YouTube e Redacao',
+    seoDescription:
+      'Ferramenta completa para contar caracteres, palavras, linhas, frases, emojis, hashtags e limites por plataforma com analise e exportacao.',
+    h1: 'Contador de Caracteres e Palavras Online',
+    intro: characterCounterIntro,
+    canonicalPath: '/tools/contador-de-caracteres',
+    faq: characterCounterFaq,
+    contentBlocks: characterCounterContentBlocks,
+    relatedToolIds: ['markdown-editor', 'json-formatter', 'invisible-character', 'sorteador'],
+  },
+  {
+    id: 'jwt-decoder',
+    slug: 'jwt-decoder',
+    name: 'JWT Decoder Online',
+    shortDescription:
+      'Decodifique JWT e visualize header, payload e assinatura com JSON legivel, claims comuns e alerta de expiracao.',
+    category: 'dev',
+    primaryKeyword: 'jwt decoder online',
+    secondaryKeywords: [
+      'decodificar jwt',
+      'jwt payload decoder',
+      'ler token jwt',
+      'jwt exp iat nbf',
+      'jwt debugger',
+    ],
+    searchIntent:
+      'Devs que precisam inspecionar conteudo de token JWT para debug de autenticacao e integracoes.',
+    seoTitle: 'JWT Decoder Online | Header, Payload, Signature e Claims',
+    seoDescription:
+      'Cole seu token JWT e veja header, payload e signature com JSON formatado, claims comuns e aviso de expiracao.',
+    h1: 'JWT Decoder Online com Header, Payload e Claims',
+    intro: jwtDecoderIntro,
+    canonicalPath: '/tools/jwt-decoder',
+    faq: jwtDecoderFaq,
+    contentBlocks: jwtDecoderContentBlocks,
+    relatedToolIds: ['json-formatter', 'base64-image-viewer', 'conversor-unix-timestamp', 'url-encoder-decoder'],
+  },
+  {
+    id: 'regex-tester',
+    slug: 'regex-tester',
+    name: 'Regex Tester Online',
+    shortDescription:
+      'Teste regex em tempo real com flags, destaque de matches, grupos capturados e preview de substituicao.',
+    category: 'dev',
+    primaryKeyword: 'regex tester online',
+    secondaryKeywords: [
+      'testar regex',
+      'regex javascript online',
+      'regex replace tester',
+      'regex groups',
+      'validar expressao regular',
+    ],
+    searchIntent:
+      'Devs e estudantes que precisam validar expressoes regulares, capturas e substituicoes em texto real.',
+    seoTitle: 'Regex Tester Online | Matches, Grupos e Replace',
+    seoDescription:
+      'Ferramenta para testar regex com flags, destaque visual de matches, grupos capturados, posicoes e replace preview.',
+    h1: 'Regex Tester Online com Matches e Substituicao',
+    intro: regexTesterIntro,
+    canonicalPath: '/tools/regex-tester',
+    faq: regexTesterFaq,
+    contentBlocks: regexTesterContentBlocks,
+    relatedToolIds: ['contador-de-caracteres', 'json-formatter', 'url-encoder-decoder', 'remover-acentos'],
+  },
+  {
+    id: 'gerador-de-uuid-e-nanoid',
+    slug: 'gerador-de-uuid-e-nanoid',
+    name: 'Gerador de UUID, ULID, KSUID, CUID2 e NanoID',
+    shortDescription:
+      'Gere UUID v1-v7, NanoID, ULID, KSUID, CUID2 e ObjectId em lote com copia rapida e exportacao TXT/CSV.',
+    category: 'dev',
+    primaryKeyword: 'gerador de uuid ulid ksuid cuid2 e nanoid online',
+    secondaryKeywords: [
+      'uuid v7 generator',
+      'uuid v1 v3 v4 v5 v6 v7',
+      'gerar nanoid',
+      'gerar ulid',
+      'gerar ksuid',
+    ],
+    searchIntent:
+      'Desenvolvedores que precisam gerar identificadores unicos para APIs, bancos de dados, eventos e dados de teste.',
+    seoTitle: 'Gerador de UUID v1-v7, ULID, KSUID, CUID2 e NanoID Online',
+    seoDescription:
+      'Crie IDs com UUID (todas as versoes), NanoID, ULID, KSUID, CUID2 e ObjectId. Copie e exporte em TXT e CSV.',
+    h1: 'Gerador de UUID, ULID, KSUID, CUID2 e NanoID Online',
+    intro: uuidNanoIdIntro,
+    canonicalPath: '/tools/gerador-de-uuid-e-nanoid',
+    faq: uuidNanoIdFaq,
+    contentBlocks: uuidNanoIdContentBlocks,
+    relatedToolIds: ['password-generator', 'json-formatter', 'base64-image-viewer', 'conversor-unix-timestamp'],
+  },
+  {
+    id: 'conversor-unix-timestamp',
+    slug: 'conversor-unix-timestamp',
+    name: 'Conversor Unix Timestamp',
+    shortDescription:
+      'Converta Unix timestamp para data legivel e data para timestamp em segundos e milissegundos com UTC e horario local.',
+    category: 'dev',
+    primaryKeyword: 'conversor unix timestamp online',
+    secondaryKeywords: [
+      'timestamp para data',
+      'data para timestamp',
+      'epoch converter',
+      'timestamp segundos milissegundos',
+      'converter exp jwt',
+    ],
+    searchIntent:
+      'Usuarios tecnicos que precisam interpretar timestamps em logs, APIs, JWT e banco de dados.',
+    seoTitle: 'Conversor Unix Timestamp Online | Data, UTC e Epoch',
+    seoDescription:
+      'Converta timestamp Unix para data local/UTC e converta data para timestamp em segundos e milissegundos.',
+    h1: 'Conversor Unix Timestamp para Data e Data para Timestamp',
+    intro: unixTimestampIntro,
+    canonicalPath: '/tools/conversor-unix-timestamp',
+    faq: unixTimestampFaq,
+    contentBlocks: unixTimestampContentBlocks,
+    relatedToolIds: ['jwt-decoder', 'json-formatter', 'url-encoder-decoder', 'html-viewer'],
+  },
+  {
+    id: 'url-encoder-decoder',
+    slug: 'url-encoder-decoder',
+    name: 'URL Encoder e Decoder',
+    shortDescription:
+      'Codifique e decodifique URL completa ou parametros, parse query string e reconstrua links com seguranca.',
+    category: 'dev',
+    primaryKeyword: 'url encoder e decoder online',
+    secondaryKeywords: [
+      'encode url',
+      'decode url',
+      'query param encoder',
+      'query string decode',
+      'utm encoder',
+    ],
+    searchIntent:
+      'Devs, analistas e marketing que precisam tratar links e parametros para APIs, redirects e campanhas.',
+    seoTitle: 'URL Encoder e Decoder Online | Encode e Decode de URL',
+    seoDescription:
+      'Ferramenta para encode/decode de URL, parametro e query string com tabela de parametros e reconstruir URL final.',
+    h1: 'URL Encoder e Decoder Online',
+    intro: urlEncoderDecoderIntro,
+    canonicalPath: '/tools/url-encoder-decoder',
+    faq: urlEncoderDecoderFaq,
+    contentBlocks: urlEncoderDecoderContentBlocks,
+    relatedToolIds: ['regex-tester', 'json-formatter', 'gerador-de-slug', 'jwt-decoder'],
+  },
+  {
+    id: 'gerador-de-slug',
+    slug: 'gerador-de-slug',
+    name: 'Gerador de Slug para URL',
+    shortDescription:
+      'Converta titulos e frases em slugs amigaveis com controle de separador, limite de tamanho e preview da URL final.',
+    category: 'utility',
+    primaryKeyword: 'gerador de slug para url',
+    secondaryKeywords: [
+      'slug generator',
+      'criar slug online',
+      'url amigavel',
+      'slug wordpress',
+      'slug nextjs',
+    ],
+    searchIntent:
+      'Criadores de conteudo e desenvolvedores que precisam padronizar URLs limpas para blogs, CMS e e-commerce.',
+    seoTitle: 'Gerador de Slug para URL Online | Criar Slug Amigavel',
+    seoDescription:
+      'Gere slug para URL removendo acentos e simbolos, ajuste separador, limite tamanho e copie URL completa.',
+    h1: 'Gerador de Slug para URL',
+    intro: slugGeneratorIntro,
+    canonicalPath: '/tools/gerador-de-slug',
+    faq: slugGeneratorFaq,
+    contentBlocks: slugGeneratorContentBlocks,
+    relatedToolIds: ['remover-acentos', 'url-encoder-decoder', 'contador-de-caracteres', 'json-formatter'],
+  },
+  {
+    id: 'remover-acentos',
+    slug: 'remover-acentos',
+    name: 'Remover Acentos de Texto',
+    shortDescription:
+      'Remova acentos, cedilha e caracteres especiais para padronizar texto em URLs, arquivos e sistemas.',
+    category: 'utility',
+    primaryKeyword: 'remover acentos de texto online',
+    secondaryKeywords: [
+      'tirar acento',
+      'remover cedilha',
+      'texto sem acento',
+      'normalizar texto',
+      'gerar texto para slug',
+    ],
+    searchIntent:
+      'Usuarios que precisam normalizar textos para planilhas, integracoes, identificadores e URL.',
+    seoTitle: 'Remover Acentos de Texto Online | Texto Sem Acentuacao',
+    seoDescription:
+      'Converta texto com acentos para versao normalizada com opcoes de caixa, simbolos, emojis e modo slug.',
+    h1: 'Remover Acentos de Texto Online',
+    intro: removeAccentsIntro,
+    canonicalPath: '/tools/remover-acentos',
+    faq: removeAccentsFaq,
+    contentBlocks: removeAccentsContentBlocks,
+    relatedToolIds: ['gerador-de-slug', 'url-encoder-decoder', 'contador-de-caracteres', 'markdown-editor'],
+  },
+  {
+    id: 'conversor-universal',
+    slug: 'conversor-universal',
+    name: 'Conversor Universal de Texto, Codigos, Hashes, Cifras e Bases',
+    shortDescription:
+      'Central unica para converter texto, codigos, hashes, cifras classicas e bases numericas com validacao, lote e multiplas saidas.',
+    category: 'dev',
+    primaryKeyword: 'conversor universal de texto codigo hash cifras e bases',
+    secondaryKeywords: [
+      'texto para binario',
+      'binario para texto',
+      'texto para sha256',
+      'gerador md5 online',
+      'conversor de bases',
+      'cifra de cesar online',
+      'texto para morse',
+      'url encode decode',
+    ],
+    searchIntent:
+      'Usuarios tecnicos e estudantes que precisam converter formatos em uma central unica com validacao clara e fluxo rapido.',
+    seoTitle: 'Conversor Universal de Texto, Codigo, Hash e Cifras Online',
+    seoDescription:
+      'Converta texto, hashes, cifras classicas, encodings web e bases numericas com presets, lote e processamento local no navegador.',
+    h1: 'Conversor Universal de Texto, Codigo, Hash e Cifras',
+    intro: 'Converta formatos tecnicos em uma central unica com filtros, presets e validacao de entrada.',
+    canonicalPath: '/tools/conversor-universal',
+    faq: getUniversalConverterContent('pt-br').faq,
+    contentBlocks: getUniversalConverterContent('pt-br').contentBlocks,
+    relatedToolIds: ['url-encoder-decoder', 'gerador-de-slug', 'remover-acentos', 'json-formatter'],
+  },
+  {
     id: 'calculadora-juros-compostos',
     slug: 'calculadora-juros-compostos',
     name: 'Calculadora de Juros Compostos',
@@ -1020,6 +1321,96 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'gta-cheat-codes') {
     const localized = getGtaCheatsContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'contador-de-caracteres') {
+    const localized = getCharacterCounterContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'jwt-decoder') {
+    const localized = getJwtDecoderContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'regex-tester') {
+    const localized = getRegexTesterContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'gerador-de-uuid-e-nanoid') {
+    const localized = getUuidNanoIdContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'conversor-unix-timestamp') {
+    const localized = getUnixTimestampContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'url-encoder-decoder') {
+    const localized = getUrlEncoderDecoderContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'gerador-de-slug') {
+    const localized = getSlugGeneratorContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'remover-acentos') {
+    const localized = getRemoveAccentsContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'conversor-universal') {
+    const localized = getUniversalConverterContent(locale);
 
     return {
       ...tool,

@@ -15,7 +15,7 @@ export default function NotFound() {
         <script async src={ADSENSE_SCRIPT_SRC} crossOrigin="anonymous"></script>
         */}
       </head>
-      <body className="min-h-screen bg-slate-50 pb-16 text-slate-900 md:pb-0">
+      <body className="min-h-screen bg-slate-50 text-slate-900">
         <div className="mx-auto max-w-xl px-4 py-16">
           {/* Ads temporariamente desativados
           <div className="mb-6 hidden justify-center md:flex">

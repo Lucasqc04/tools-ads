@@ -47,6 +47,23 @@ export type Cs2SharedUiCopy = {
   dangerBadge: string;
   presetTitle: string;
   emptyState: string;
+  radarGeneratorTitle: string;
+  hudColorGeneratorTitle: string;
+  viewmodelGeneratorTitle: string;
+  volumeGeneratorTitle: string;
+  fpsGeneratorTitle: string;
+  autoexecGeneratorTitle: string;
+  autoexecHelp: string;
+  autoexecIncludeRadar: string;
+  autoexecIncludeHud: string;
+  autoexecIncludeViewmodel: string;
+  autoexecIncludeFps: string;
+  autoexecIncludeAudio: string;
+  autoexecIncludeBinds: string;
+  autoexecIncludePractice: string;
+  autoexecIncludeFun: string;
+  autoexecCrosshairLabel: string;
+  autoexecCrosshairPlaceholder: string;
 };
 
 const safeWarning: Record<AppLocale, string> = {
@@ -102,6 +119,25 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     dangerBadge: 'Nao recomendado',
     presetTitle: 'Presets prontos',
     emptyState: 'Nenhum comando encontrado com os filtros atuais.',
+    radarGeneratorTitle: 'Gerador de radar',
+    hudColorGeneratorTitle: 'Gerador de cor da HUD',
+    viewmodelGeneratorTitle: 'Gerador de viewmodel',
+    volumeGeneratorTitle: 'Gerador de volume',
+    fpsGeneratorTitle: 'Gerador de FPS',
+    autoexecGeneratorTitle: 'Gerador de autoexec',
+    autoexecHelp:
+      'Gere arquivos separados para competitivo (autoexec.cfg), treino local (practice.cfg) e servidor privado (fun.cfg).',
+    autoexecIncludeRadar: 'Incluir bloco de radar',
+    autoexecIncludeHud: 'Incluir bloco de HUD',
+    autoexecIncludeViewmodel: 'Incluir bloco de viewmodel',
+    autoexecIncludeFps: 'Incluir bloco de FPS',
+    autoexecIncludeAudio: 'Incluir bloco de audio',
+    autoexecIncludeBinds: 'Incluir binds simples',
+    autoexecIncludePractice: 'Incluir practice.cfg',
+    autoexecIncludeFun: 'Incluir fun.cfg',
+    autoexecCrosshairLabel: 'Bloco opcional de crosshair',
+    autoexecCrosshairPlaceholder:
+      'Cole comandos de mira aqui (ex.: cl_crosshairstyle 4, cl_crosshairsize 2)',
   },
   en: {
     searchLabel: 'Search command',
@@ -134,6 +170,25 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     dangerBadge: 'Not recommended',
     presetTitle: 'Ready presets',
     emptyState: 'No commands found for current filters.',
+    radarGeneratorTitle: 'Radar generator',
+    hudColorGeneratorTitle: 'HUD color generator',
+    viewmodelGeneratorTitle: 'Viewmodel generator',
+    volumeGeneratorTitle: 'Volume generator',
+    fpsGeneratorTitle: 'FPS generator',
+    autoexecGeneratorTitle: 'Autoexec generator',
+    autoexecHelp:
+      'Build separate files for competitive play (autoexec.cfg), local practice (practice.cfg), and private fun servers (fun.cfg).',
+    autoexecIncludeRadar: 'Include radar block',
+    autoexecIncludeHud: 'Include HUD block',
+    autoexecIncludeViewmodel: 'Include viewmodel block',
+    autoexecIncludeFps: 'Include FPS block',
+    autoexecIncludeAudio: 'Include audio block',
+    autoexecIncludeBinds: 'Include simple binds',
+    autoexecIncludePractice: 'Include practice.cfg',
+    autoexecIncludeFun: 'Include fun.cfg',
+    autoexecCrosshairLabel: 'Optional crosshair block',
+    autoexecCrosshairPlaceholder:
+      'Paste crosshair commands here (e.g., cl_crosshairstyle 4, cl_crosshairsize 2)',
   },
   es: {
     searchLabel: 'Buscar comando',
@@ -166,6 +221,25 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     dangerBadge: 'No recomendado',
     presetTitle: 'Presets listos',
     emptyState: 'No se encontraron comandos con esos filtros.',
+    radarGeneratorTitle: 'Generador de radar',
+    hudColorGeneratorTitle: 'Generador de color HUD',
+    viewmodelGeneratorTitle: 'Generador de viewmodel',
+    volumeGeneratorTitle: 'Generador de volumen',
+    fpsGeneratorTitle: 'Generador de FPS',
+    autoexecGeneratorTitle: 'Generador de autoexec',
+    autoexecHelp:
+      'Genera archivos separados para competitivo (autoexec.cfg), practica local (practice.cfg) y servidor privado (fun.cfg).',
+    autoexecIncludeRadar: 'Incluir bloque de radar',
+    autoexecIncludeHud: 'Incluir bloque de HUD',
+    autoexecIncludeViewmodel: 'Incluir bloque de viewmodel',
+    autoexecIncludeFps: 'Incluir bloque de FPS',
+    autoexecIncludeAudio: 'Incluir bloque de audio',
+    autoexecIncludeBinds: 'Incluir binds simples',
+    autoexecIncludePractice: 'Incluir practice.cfg',
+    autoexecIncludeFun: 'Incluir fun.cfg',
+    autoexecCrosshairLabel: 'Bloque opcional de crosshair',
+    autoexecCrosshairPlaceholder:
+      'Pega comandos de mira aqui (ej.: cl_crosshairstyle 4, cl_crosshairsize 2)',
   },
 };
 
