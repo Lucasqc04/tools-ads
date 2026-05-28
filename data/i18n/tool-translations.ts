@@ -24,6 +24,9 @@ type ToolId =
   | 'html-viewer'
   | 'markdown-editor'
   | 'json-formatter'
+  | 'csv-viewer'
+  | 'text-diff'
+  | 'open-graph-preview'
   | 'cpf-generator'
   | 'gerador-pessoa-fake'
   | 'password-generator'
@@ -488,6 +491,244 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Is my JSON uploaded to a server?',
         answer:
           'No by default. Processing runs locally in your browser.',
+      },
+    ],
+  },
+  'csv-viewer': {
+    name: 'CSV Viewer and Converter',
+    shortDescription:
+      'Paste CSV or upload file to preview table, auto-detect delimiter, switch separators, and export to XLSX for free.',
+    primaryKeyword: 'csv viewer online',
+    secondaryKeywords: [
+      'csv to xlsx converter',
+      'open csv file online',
+      'auto detect csv delimiter',
+      'change csv separator',
+      'csv table viewer',
+      'semicolon csv viewer',
+      'tab separated csv viewer',
+      'csv tool no sign up',
+    ],
+    searchIntent:
+      'Users and developers needing a fast browser tool to inspect CSV as table, handle delimiter differences, and export to XLSX.',
+    seoTitle: 'CSV Viewer Online | Auto Delimiter Detection and XLSX Export',
+    seoDescription:
+      'Paste or upload CSV to preview table, detect separator automatically, switch delimiters, and export as XLSX. Free, no sign-up, no login.',
+    h1: 'CSV Viewer Online with Smart Delimiter Detection and XLSX Export',
+    intro:
+      'Open CSV from paste or upload, review as table, adjust separators, and export spreadsheet output in seconds.',
+    contentBlocks: [
+      {
+        title: 'Smart delimiter detection for mixed CSV sources',
+        paragraphs: [
+          'CSV exports from different systems may use commas, semicolons, tabs, or pipes. This page detects likely delimiters automatically and renders the table with minimal setup.',
+          'If detection is not ideal for your file, you can manually switch the read separator and instantly reparse rows and columns.',
+        ],
+      },
+      {
+        title: 'Paste, upload, preview, and export in one flow',
+        paragraphs: [
+          'You can paste raw CSV text or upload .csv and .txt files. The preview table is optimized for desktop and mobile with internal horizontal scrolling inside the tool card.',
+          'After validation, export to XLSX for Excel and spreadsheet workflows, or regenerate CSV using another delimiter when needed.',
+        ],
+        list: [
+          'Read CSV from text paste or file upload.',
+          'Auto or manual separator selection.',
+          'Table preview with column and row count.',
+          'Convert delimiter and copy/download normalized CSV.',
+          'Export parsed table to XLSX.',
+        ],
+      },
+      {
+        title: 'Privacy and practical limits',
+        paragraphs: [
+          'Processing happens locally in your browser by default, so CSV content does not need to be sent to a backend for preview or conversion.',
+          'Very large files can still consume memory on low-end devices. For better mobile performance, split huge datasets into smaller chunks before inspection.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I both paste CSV and upload a file?',
+        answer:
+          'Yes. The tool supports both input methods in the same interface.',
+      },
+      {
+        question: 'Is delimiter detection automatic?',
+        answer:
+          'Yes. The tool detects common separators automatically, and you can override it manually anytime.',
+      },
+      {
+        question: 'Can I export the table as XLSX?',
+        answer:
+          'Yes. Export to XLSX is available after parsing the CSV.',
+      },
+      {
+        question: 'Is my CSV uploaded to a server?',
+        answer:
+          'No by default. Parsing and export run locally in your browser.',
+      },
+    ],
+  },
+  'text-diff': {
+    name: 'Text Comparator and Online Diff',
+    shortDescription:
+      'Compare two text versions with visual diff, change summary, and list mode for quick audits.',
+    primaryKeyword: 'online text comparator',
+    secondaryKeywords: [
+      'online diff tool',
+      'compare two texts',
+      'compare contracts online',
+      'compare lists online',
+      'line by line diff',
+      'text changes checker',
+      'before after text compare',
+      'markdown diff online',
+    ],
+    searchIntent:
+      'Users, developers, and content teams who need to review differences between text versions quickly.',
+    seoTitle: 'Text Comparator and Online Diff | Compare Versions with Summary',
+    seoDescription:
+      'Compare two texts online with word/line/paragraph diff, additions and removals, executive summary, and report export.',
+    h1: 'Text Comparator and Online Diff for Versions, Contracts, and Content',
+    intro:
+      'Use this tool to compare old and new text versions side by side or inline, with practical metrics and export options.',
+    contentBlocks: [
+      {
+        title: 'Compare versions by word, line, paragraph, or list',
+        paragraphs: [
+          'This page lets you inspect differences between text versions using multiple comparison levels based on your workflow. It works for contracts, documentation, SEO copy, blog updates, and code snippets.',
+          'You can switch mode to detect fine-grained changes or broader structural edits without leaving the same interface.',
+        ],
+      },
+      {
+        title: 'Practical metrics for review and approval',
+        paragraphs: [
+          'The result includes similarity score, additions, removals, size delta, and an executive summary to speed up approval cycles.',
+          'Optional normalization helps ignore cosmetic differences such as case, accents, extra spaces, punctuation, and line breaks.',
+        ],
+        list: [
+          'Side-by-side diff for visual review.',
+          'Inline diff for continuous reading.',
+          'Change list for quick auditing.',
+          'List comparison mode with common and unique items.',
+          'TXT and JSON report export.',
+        ],
+      },
+      {
+        title: 'Privacy and usage limits',
+        paragraphs: [
+          'Text processing runs locally in your browser by default, so content does not need to be sent to a backend for comparison.',
+          'Large documents may still require more memory. For mobile stability, compare in smaller sections when needed.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'How do I compare two texts online?',
+        answer:
+          'Paste the original and new versions, choose comparison mode, and run compare to generate the diff.',
+      },
+      {
+        question: 'Does it show added and removed content?',
+        answer:
+          'Yes. The output highlights additions, removals, and a change summary.',
+      },
+      {
+        question: 'Can I compare contracts and code?',
+        answer:
+          'Yes. It works for contracts, code, markdown, html, and generic text versions.',
+      },
+      {
+        question: 'Is there a mode for comparing lists?',
+        answer:
+          'Yes. List mode shows common items, unique items, and duplicates by side.',
+      },
+      {
+        question: 'Is my text sent to a server?',
+        answer:
+          'No by default. Diff processing runs locally in-browser.',
+      },
+    ],
+  },
+  'open-graph-preview': {
+    name: 'Open Graph Preview and Meta Tag Generator',
+    shortDescription:
+      'Preview shared links, validate Open Graph and Twitter Card fields, and generate HTML/Next.js snippets.',
+    primaryKeyword: 'open graph preview online',
+    secondaryKeywords: [
+      'link preview tool',
+      'open graph validator',
+      'twitter card preview',
+      'meta tags generator',
+      'whatsapp link preview',
+      'linkedin preview tool',
+      'nextjs metadata generator',
+      'open graph tester',
+    ],
+    searchIntent:
+      'Developers and marketers looking to test social link previews and generate consistent metadata.',
+    seoTitle: 'Open Graph Preview Online | Validate Link Cards and Generate Meta Tags',
+    seoDescription:
+      'Preview links for social platforms, validate OG/Twitter fields, and generate HTML and Next.js metadata snippets.',
+    h1: 'Open Graph Preview Online with Diagnostics and Meta Tag Generator',
+    intro:
+      'Test how your URL appears on social cards, fix missing tags, and copy production-ready metadata snippets.',
+    contentBlocks: [
+      {
+        title: 'Preview your link across major platforms',
+        paragraphs: [
+          'This tool simulates social card appearance for platforms such as Facebook, LinkedIn, WhatsApp, X, and Discord.',
+          'You can verify title, description, image, and domain presentation before publishing campaigns or product updates.',
+        ],
+      },
+      {
+        title: 'Manual mode and URL fetch mode with BFF',
+        paragraphs: [
+          'Manual mode is fully browser-based and ideal for drafting metadata from scratch. URL fetch mode uses a backend route to retrieve and parse tags with fewer CORS constraints.',
+          'After validation, copy raw HTML meta tags or a Next.js metadata object for implementation.',
+        ],
+        list: [
+          'Open Graph and Twitter field diagnostics.',
+          'Multi-platform visual preview cards.',
+          'HTML meta tag generator.',
+          'Next.js metadata snippet generator.',
+          'Local image upload for card simulation.',
+        ],
+      },
+      {
+        title: 'Cache and practical behavior',
+        paragraphs: [
+          'Even with valid metadata, social platforms may continue showing cached previews temporarily.',
+          'If your URL changed recently, allow propagation time and re-check using platform debugging tools when needed.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'What is Open Graph?',
+        answer:
+          'Open Graph is a metadata standard used to control how pages appear when shared on social platforms.',
+      },
+      {
+        question: 'Why is my shared link missing image?',
+        answer:
+          'Common reasons are missing og:image, inaccessible image URL, no HTTPS, or stale social cache.',
+      },
+      {
+        question: 'Can this tool fetch tags automatically from a URL?',
+        answer:
+          'Yes. It supports URL fetch through a backend route for more reliable cross-origin retrieval.',
+      },
+      {
+        question: 'Can I generate Next.js metadata from this?',
+        answer:
+          'Yes. The tool outputs a ready-to-use metadata object including openGraph and twitter sections.',
+      },
+      {
+        question: 'What image size works best for social previews?',
+        answer:
+          'A common baseline is 1200x630 with an absolute HTTPS URL for broad compatibility.',
       },
     ],
   },
@@ -2316,6 +2557,244 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿El JSON se envía a servidor?',
         answer:
           'No por defecto. El procesamiento se realiza localmente en tu navegador.',
+      },
+    ],
+  },
+  'csv-viewer': {
+    name: 'Visualizador y Convertidor de CSV',
+    shortDescription:
+      'Pega CSV o sube archivo para ver tabla, detectar separador automaticamente, cambiar delimitador y exportar a XLSX gratis.',
+    primaryKeyword: 'visualizador csv online',
+    secondaryKeywords: [
+      'csv a xlsx',
+      'abrir archivo csv online',
+      'detectar separador csv',
+      'cambiar separador csv',
+      'ver tabla csv',
+      'csv con punto y coma',
+      'csv con tabulacion',
+      'herramienta csv sin registro',
+    ],
+    searchIntent:
+      'Usuarios y desarrolladores que necesitan abrir CSV como tabla, ajustar separadores y exportar en XLSX de forma rapida.',
+    seoTitle: 'Visualizador CSV Online | Detectar Separador y Exportar XLSX',
+    seoDescription:
+      'Pega o sube CSV para ver tabla, detectar delimitador automaticamente, cambiar separador y exportar en XLSX. Gratis, sin registro y sin login.',
+    h1: 'Visualizador CSV Online con Deteccion Inteligente de Separador y Exportacion XLSX',
+    intro:
+      'Abre CSV desde texto pegado o archivo, revisa datos en tabla, ajusta delimitadores y exporta a XLSX en segundos.',
+    contentBlocks: [
+      {
+        title: 'Deteccion inteligente de separadores CSV',
+        paragraphs: [
+          'Muchos sistemas exportan CSV con separadores distintos, como coma, punto y coma, tab o barra vertical. Esta herramienta detecta el separador probable para acelerar la apertura.',
+          'Si el resultado detectado no coincide con tu archivo, puedes elegir manualmente otro separador y la tabla se recalcula al instante.',
+        ],
+      },
+      {
+        title: 'Pegar, subir, previsualizar y convertir en un solo flujo',
+        paragraphs: [
+          'Puedes pegar texto CSV o subir archivos .csv y .txt. La tabla se muestra con scroll interno para mantener buena experiencia en desktop y celular.',
+          'Despues de revisar los datos, puedes exportar a XLSX o convertir el CSV para otro delimitador segun tu flujo.',
+        ],
+        list: [
+          'Entrada por texto pegado o carga de archivo.',
+          'Separador automatico o manual.',
+          'Previsualizacion de filas y columnas.',
+          'Conversion de delimitador con copia y descarga.',
+          'Exportacion a XLSX en un clic.',
+        ],
+      },
+      {
+        title: 'Privacidad y limites practicos',
+        paragraphs: [
+          'El procesamiento ocurre localmente en el navegador por defecto, sin necesidad de enviar datos CSV a backend para previsualizar o exportar.',
+          'Archivos muy grandes pueden consumir memoria en equipos limitados. En movil, conviene revisar datasets enormes por partes.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Puedo pegar CSV y tambien subir archivo?',
+        answer:
+          'Si. La herramienta acepta ambos metodos en la misma interfaz.',
+      },
+      {
+        question: '¿La deteccion de separador es automatica?',
+        answer:
+          'Si. Detecta separadores comunes automaticamente y puedes cambiarlo manualmente cuando quieras.',
+      },
+      {
+        question: '¿Se puede exportar a XLSX?',
+        answer:
+          'Si. Puedes exportar la tabla parseada como archivo XLSX.',
+      },
+      {
+        question: '¿El CSV se envia a un servidor?',
+        answer:
+          'No por defecto. El parseo y la exportacion ocurren localmente en tu navegador.',
+      },
+    ],
+  },
+  'text-diff': {
+    name: 'Comparador de Textos y Diff Online',
+    shortDescription:
+      'Compara dos versiones de texto con diff visual, resumen ejecutivo y modo lista para auditoria rapida.',
+    primaryKeyword: 'comparador de textos online',
+    secondaryKeywords: [
+      'diff online',
+      'comparar dos textos',
+      'comparar contratos online',
+      'comparar listas online',
+      'diff por linea',
+      'comparar cambios de texto',
+      'antes y despues texto',
+      'comparar markdown online',
+    ],
+    searchIntent:
+      'Usuarios, desarrolladores y equipos de contenido que necesitan revisar diferencias entre versiones de texto.',
+    seoTitle: 'Comparador de Textos y Diff Online | Comparar Versiones con Resumen',
+    seoDescription:
+      'Compara dos textos online con diff por palabra, linea o parrafo, detecta adiciones/eliminaciones y exporta reporte.',
+    h1: 'Comparador de Textos y Diff Online para Versiones, Contratos y Contenido',
+    intro:
+      'Compara texto original y nuevo lado a lado o inline, con metricas practicas y exportacion de reporte.',
+    contentBlocks: [
+      {
+        title: 'Comparacion flexible por nivel',
+        paragraphs: [
+          'La herramienta permite comparar por caracter, palabra, linea, parrafo o lista segun el tipo de contenido.',
+          'Funciona para contratos, articulos, descripciones SEO, documentacion y codigo.',
+        ],
+      },
+      {
+        title: 'Metricas claras para revision',
+        paragraphs: [
+          'El resultado muestra similitud, adiciones, eliminaciones, diferencia de tamano y resumen ejecutivo.',
+          'Puedes aplicar normalizacion para ignorar diferencias cosmeticas como mayusculas, acentos, espacios y puntuacion.',
+        ],
+        list: [
+          'Diff lado a lado.',
+          'Diff inline.',
+          'Lista de cambios.',
+          'Modo comparacion de listas.',
+          'Exportacion TXT y JSON.',
+        ],
+      },
+      {
+        title: 'Privacidad y limites',
+        paragraphs: [
+          'El procesamiento se realiza localmente en el navegador por defecto.',
+          'En textos muy grandes, conviene comparar por bloques para mejor rendimiento en movil.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Como comparar dos textos online?',
+        answer:
+          'Pega ambas versiones, elige modo y ejecuta comparar para generar el diff.',
+      },
+      {
+        question: 'Muestra adiciones y eliminaciones?',
+        answer:
+          'Si. El resultado resalta contenido agregado y removido.',
+      },
+      {
+        question: 'Sirve para contratos y codigo?',
+        answer:
+          'Si. Funciona para texto legal, tecnico, markdown, html y codigo.',
+      },
+      {
+        question: 'Tiene modo para listas?',
+        answer:
+          'Si. Muestra elementos en comun, unicos y duplicados por lado.',
+      },
+      {
+        question: 'El texto se envia al servidor?',
+        answer:
+          'No por defecto. El diff se calcula en el navegador.',
+      },
+    ],
+  },
+  'open-graph-preview': {
+    name: 'Open Graph Preview y Generador de Meta Tags',
+    shortDescription:
+      'Previsualiza enlaces, valida Open Graph/Twitter Card y genera snippets HTML y Next.js.',
+    primaryKeyword: 'open graph preview online',
+    secondaryKeywords: [
+      'preview de link',
+      'validador open graph',
+      'twitter card preview',
+      'generador de meta tags',
+      'preview link whatsapp',
+      'preview linkedin link',
+      'metadata nextjs',
+      'open graph tester',
+    ],
+    searchIntent:
+      'Desarrolladores y marketing que necesitan validar cards sociales y generar metadatos consistentes.',
+    seoTitle: 'Open Graph Preview Online | Validar Cards y Generar Meta Tags',
+    seoDescription:
+      'Previsualiza enlaces para redes sociales, valida campos OG/Twitter y genera meta tags HTML y metadata para Next.js.',
+    h1: 'Open Graph Preview Online con Diagnostico y Generador de Meta Tags',
+    intro:
+      'Prueba como se vera tu enlace al compartirlo, ajusta tags y copia snippets listos para produccion.',
+    contentBlocks: [
+      {
+        title: 'Preview visual por plataforma',
+        paragraphs: [
+          'Simula cards para Facebook, LinkedIn, WhatsApp, X y Discord para validar titulo, descripcion e imagen.',
+          'Esto reduce errores de presentacion antes de publicar campañas o contenidos.',
+        ],
+      },
+      {
+        title: 'Modo manual y modo buscar URL',
+        paragraphs: [
+          'Modo manual funciona 100% en frontend para crear y ajustar tags desde cero. Modo buscar URL usa una ruta backend para extraer metadatos con menos friccion de CORS.',
+          'Luego puedes copiar meta tags HTML o snippet de metadata para Next.js.',
+        ],
+        list: [
+          'Diagnostico de campos OG/Twitter.',
+          'Cards de preview multi-plataforma.',
+          'Generador de meta tags HTML.',
+          'Generador de snippet Next.js metadata.',
+          'Upload local de imagen para simulacion.',
+        ],
+      },
+      {
+        title: 'Cache y comportamiento real',
+        paragraphs: [
+          'Algunas redes mantienen cache de preview y no actualizan al instante aunque las tags ya esten correctas.',
+          'Cuando haya cambios recientes, revisa nuevamente tras un tiempo y usa validadores oficiales si es necesario.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Que es Open Graph?',
+        answer:
+          'Es un estandar de metadatos para controlar como aparece una pagina al compartir un enlace.',
+      },
+      {
+        question: 'Por que mi link sale sin imagen?',
+        answer:
+          'Suele ocurrir por og:image faltante, URL de imagen inaccesible, sin HTTPS o cache antiguo.',
+      },
+      {
+        question: 'Puede buscar tags automaticamente desde una URL?',
+        answer:
+          'Si. Usa una ruta backend para extraer tags de forma mas confiable.',
+      },
+      {
+        question: 'Puedo generar metadata para Next.js?',
+        answer:
+          'Si. La herramienta genera objeto metadata con openGraph y twitter.',
+      },
+      {
+        question: 'Que tamano de imagen OG recomiendan?',
+        answer:
+          'Un formato comun es 1200x630 con URL absoluta HTTPS.',
       },
     ],
   },

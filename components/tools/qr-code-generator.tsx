@@ -1048,6 +1048,7 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
           accept="image/*"
           acceptedDescription={ui.supportedFormats}
           multiple={false}
+          compact
           onFilesSelected={(files) => {
             void processLogoFile(files[0] ?? null);
           }}

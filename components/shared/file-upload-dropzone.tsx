@@ -2,7 +2,7 @@
 
 import { type AppLocale } from '@/lib/i18n/config';
 import { FileText, Image as ImageIcon, Upload, Video, X } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useDropzone, type Accept, type FileRejection } from 'react-dropzone';
 
 type FileUploadDropzoneProps = Readonly<{
@@ -15,6 +15,7 @@ type FileUploadDropzoneProps = Readonly<{
   onRemoveFile?: (index: number) => void;
   helperText?: string;
   acceptedDescription?: string;
+  compact?: boolean;
   locale?: AppLocale;
 }>;
 
@@ -32,6 +33,9 @@ type DropzoneUi = {
   images: string;
   videos: string;
   documents: string;
+  compactOpenLabel: string;
+  compactCloseLabel: string;
+  compactHint: string;
 };
 
 const uiByLocale: Record<AppLocale, DropzoneUi> = {
@@ -49,6 +53,9 @@ const uiByLocale: Record<AppLocale, DropzoneUi> = {
     images: 'imagens',
     videos: 'videos',
     documents: 'documentos',
+    compactOpenLabel: 'Mostrar upload completo',
+    compactCloseLabel: 'Ocultar upload completo',
+    compactHint: 'Clique para abrir a area de arrastar e soltar',
   },
   en: {
     dropFilesHere: (target) => `Drop ${target} here...`,
@@ -64,6 +71,9 @@ const uiByLocale: Record<AppLocale, DropzoneUi> = {
     images: 'images',
     videos: 'videos',
     documents: 'documents',
+    compactOpenLabel: 'Show full upload area',
+    compactCloseLabel: 'Hide full upload area',
+    compactHint: 'Click to expand drag-and-drop upload',
   },
   es: {
     dropFilesHere: (target) => `Suelta ${target} aqui...`,
@@ -79,6 +89,9 @@ const uiByLocale: Record<AppLocale, DropzoneUi> = {
     images: 'imagenes',
     videos: 'videos',
     documents: 'documentos',
+    compactOpenLabel: 'Mostrar carga completa',
+    compactCloseLabel: 'Ocultar carga completa',
+    compactHint: 'Haz clic para abrir el area de arrastrar y soltar',
   },
 };
 
@@ -233,9 +246,11 @@ export function FileUploadDropzone({
   onRemoveFile,
   helperText,
   acceptedDescription,
+  compact = false,
   locale = 'pt-br',
 }: FileUploadDropzoneProps) {
   const ui = uiByLocale[locale];
+  const [isExpanded, setIsExpanded] = useState(!compact);
 
   const acceptConfig = useMemo(() => buildDropzoneAccept(accept), [accept]);
   const acceptedText = useMemo(
@@ -253,6 +268,9 @@ export function FileUploadDropzone({
     },
   });
 
+  const keepExpandedBecauseOfFiles = selectedFiles.length > 0 || fileRejections.length > 0;
+  const showExpanded = !compact || isExpanded || keepExpandedBecauseOfFiles;
+
   return (
     <div className="space-y-3">
       <div className="space-y-1">
@@ -260,38 +278,71 @@ export function FileUploadDropzone({
         {helperText ? <p className="text-xs text-slate-600">{helperText}</p> : null}
       </div>
 
-      <div
-        {...getRootProps()}
-        className={`cursor-pointer rounded-xl border-2 border-dashed p-6 text-center transition-all duration-200 ${
-          isDragActive
-            ? 'border-brand-500 bg-brand-50 scale-[1.01]'
-            : 'border-slate-300 hover:border-brand-400 hover:bg-slate-50'
-        }`}
-      >
-        <input {...getInputProps()} />
-        <div className="flex flex-col items-center gap-3">
-          <div className="rounded-full bg-gradient-to-r from-brand-600 to-cyan-600 p-3">
-            <Upload className="h-6 w-6 text-white" />
-          </div>
+      {compact && !showExpanded ? (
+        <button
+          type="button"
+          onClick={() => setIsExpanded(true)}
+          className="flex w-full items-center justify-between rounded-xl border border-slate-300 bg-white px-4 py-3 text-left transition hover:border-brand-400 hover:bg-slate-50"
+        >
+          <span className="min-w-0">
+            <span className="block text-sm font-medium text-slate-700">{ui.compactOpenLabel}</span>
+            <span className="mt-0.5 block truncate text-xs text-slate-500">
+              {ui.acceptedPrefix} {acceptedText} • {ui.maxPrefix} {formatMaxSize(maxSize)}
+            </span>
+            <span className="mt-0.5 block text-xs text-slate-500">{ui.compactHint}</span>
+          </span>
+          <Upload className="h-5 w-5 shrink-0 text-brand-600" />
+        </button>
+      ) : null}
 
-          <div>
-            <p className="text-base font-medium text-slate-700">
-              {isDragActive
-                ? ui.dropFilesHere(acceptedText)
-                : ui.dragFilesHere(acceptedText)}
-            </p>
-            <p className="mt-1 text-sm text-slate-500">{ui.tapToSelect}</p>
-          </div>
+      {showExpanded ? (
+        <>
+          {compact && !keepExpandedBecauseOfFiles ? (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsExpanded(false)}
+                className="text-xs font-medium text-slate-500 transition hover:text-slate-700"
+              >
+                {ui.compactCloseLabel}
+              </button>
+            </div>
+          ) : null}
 
-          <div className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500">
-            {multiple ? ui.multipleFiles : ui.singleFile} • {ui.maxPrefix} {formatMaxSize(maxSize)}
-          </div>
+          <div
+            {...getRootProps()}
+            className={`cursor-pointer rounded-xl border-2 border-dashed p-6 text-center transition-all duration-200 ${
+              isDragActive
+                ? 'border-brand-500 bg-brand-50 scale-[1.01]'
+                : 'border-slate-300 hover:border-brand-400 hover:bg-slate-50'
+            }`}
+          >
+            <input {...getInputProps()} />
+            <div className="flex flex-col items-center gap-3">
+              <div className="rounded-full bg-gradient-to-r from-brand-600 to-cyan-600 p-3">
+                <Upload className="h-6 w-6 text-white" />
+              </div>
 
-          <p className="text-xs text-slate-500">
-            {ui.acceptedPrefix} {acceptedText}
-          </p>
-        </div>
-      </div>
+              <div>
+                <p className="text-base font-medium text-slate-700">
+                  {isDragActive
+                    ? ui.dropFilesHere(acceptedText)
+                    : ui.dragFilesHere(acceptedText)}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">{ui.tapToSelect}</p>
+              </div>
+
+              <div className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500">
+                {multiple ? ui.multipleFiles : ui.singleFile} • {ui.maxPrefix} {formatMaxSize(maxSize)}
+              </div>
+
+              <p className="text-xs text-slate-500">
+                {ui.acceptedPrefix} {acceptedText}
+              </p>
+            </div>
+          </div>
+        </>
+      ) : null}
 
       {fileRejections.length ? (
         <div className="rounded-lg border border-red-200 bg-red-50 p-3">

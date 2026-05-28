@@ -367,6 +367,11 @@ export function UniversalConverterTool({
       .map((page) => toLocalizedUniversalConversionLink(page, locale));
   }, [availableConversions, locale]);
 
+  const recommendedDynamicLinks = useMemo(() => {
+    const source = outputDynamicLinks.length > 0 ? outputDynamicLinks : inputDynamicLinks;
+    return source.slice(0, 4);
+  }, [inputDynamicLinks, outputDynamicLinks]);
+
   const detection = useMemo(() => detectInputType(input), [input]);
 
   const options = useMemo(
@@ -506,18 +511,6 @@ export function UniversalConverterTool({
       {selectedConversion?.existingDedicatedToolSlug ? (
         <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">{ui.dedicatedToolHint}</p>
       ) : null}
-
-      <UniversalConversionLinks
-        title={ui.outputRoutesTitle}
-        description={ui.outputRoutesDescription}
-        links={outputDynamicLinks}
-      />
-
-      <UniversalConversionLinks
-        title={ui.inputRoutesTitle}
-        description={ui.inputRoutesDescription}
-        links={inputDynamicLinks}
-      />
 
       <label className="space-y-2">
         <span className="text-sm font-semibold text-slate-800">{ui.sourceLabel}</span>
@@ -709,6 +702,12 @@ export function UniversalConverterTool({
           </div>
         ) : null}
       </section>
+
+      <UniversalConversionLinks
+        title={ui.outputRoutesTitle}
+        description={ui.outputRoutesDescription}
+        links={recommendedDynamicLinks}
+      />
     </Card>
   );
 }

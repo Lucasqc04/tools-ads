@@ -104,6 +104,21 @@ import {
   jsonFormatterIntro,
 } from '@/data/content/json-formatter';
 import {
+  csvViewerContentBlocks,
+  csvViewerFaq,
+  csvViewerIntro,
+} from '@/data/content/csv-viewer';
+import {
+  textDiffContentBlocks,
+  textDiffFaq,
+  textDiffIntro,
+} from '@/data/content/text-diff';
+import {
+  openGraphPreviewContentBlocks,
+  openGraphPreviewFaq,
+  openGraphPreviewIntro,
+} from '@/data/content/open-graph-preview';
+import {
   qrCodeGeneratorContentBlocks,
   qrCodeGeneratorFaq,
   qrCodeGeneratorIntro,
@@ -461,6 +476,96 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: jsonFormatterFaq,
     contentBlocks: jsonFormatterContentBlocks,
     relatedToolIds: ['html-viewer', 'image-converter'],
+  },
+  {
+    id: 'csv-viewer',
+    slug: 'csv-viewer',
+    name: 'Visualizador e Conversor de CSV',
+    shortDescription:
+      'Cole CSV ou envie arquivo para visualizar tabela, detectar separador, ajustar delimitador e exportar XLSX.',
+    category: 'dev',
+    primaryKeyword: 'visualizador de csv online',
+    secondaryKeywords: [
+      'csv para xlsx',
+      'abrir arquivo csv online',
+      'detectar separador csv',
+      'converter delimitador csv',
+      'visualizar tabela csv',
+      'csv com ponto e virgula',
+      'csv com tab',
+      'ferramenta csv sem cadastro',
+    ],
+    searchIntent:
+      'Usuarios e devs que precisam abrir, validar e converter CSV em tabela rapidamente, com suporte a separadores diferentes e exportacao XLSX.',
+    seoTitle: 'Visualizador de CSV Online | Detectar Separador e Exportar XLSX',
+    seoDescription:
+      'Cole ou envie CSV para visualizar tabela, detectar delimitador automaticamente, trocar separador e exportar em XLSX. Gratis, sem cadastro e sem login.',
+    h1: 'Visualizador de CSV Online com Deteccao de Separador e Exportacao XLSX',
+    intro: csvViewerIntro,
+    canonicalPath: '/tools/csv-viewer',
+    faq: csvViewerFaq,
+    contentBlocks: csvViewerContentBlocks,
+    relatedToolIds: ['json-formatter', 'conversor-universal', 'contador-de-caracteres'],
+  },
+  {
+    id: 'text-diff',
+    slug: 'text-diff',
+    name: 'Comparador de Textos e Diff Online',
+    shortDescription:
+      'Compare duas versoes de texto com diff visual, resumo executivo, metricas e modo para listas.',
+    category: 'dev',
+    primaryKeyword: 'comparador de textos online',
+    secondaryKeywords: [
+      'diff online',
+      'comparar dois textos',
+      'comparar contratos online',
+      'comparar listas',
+      'comparar codigo online',
+      'comparador de diferencas de texto',
+      'texto antes e depois',
+      'diff por linha',
+    ],
+    searchIntent:
+      'Usuarios, devs e times de conteudo que precisam identificar mudancas entre versoes de texto com clareza e rapidez.',
+    seoTitle: 'Comparador de Textos e Diff Online | Compare Versoes com Resumo',
+    seoDescription:
+      'Compare dois textos online com diff por palavra, linha ou paragrafo, veja adicoes/remocoes, resumo executivo e exporte relatorio. Gratis e sem cadastro.',
+    h1: 'Comparador de Textos e Diff Online para Versoes, Contratos e Conteudo',
+    intro: textDiffIntro,
+    canonicalPath: '/tools/text-diff',
+    faq: textDiffFaq,
+    contentBlocks: textDiffContentBlocks,
+    relatedToolIds: ['json-formatter', 'markdown-editor', 'contador-de-caracteres', 'regex-tester'],
+  },
+  {
+    id: 'open-graph-preview',
+    slug: 'open-graph-preview',
+    name: 'Open Graph Preview e Gerador de Meta Tags',
+    shortDescription:
+      'Veja preview de links para redes sociais, valide tags OG/Twitter e gere snippets HTML e Next.js.',
+    category: 'dev',
+    primaryKeyword: 'open graph preview',
+    secondaryKeywords: [
+      'preview de link',
+      'validador open graph',
+      'twitter card preview',
+      'gerador de meta tags',
+      'preview whatsapp link',
+      'meta tags nextjs',
+      'open graph tester',
+      'linkedin link preview',
+    ],
+    searchIntent:
+      'Devs e profissionais de marketing que precisam validar como um link aparece em plataformas sociais antes de publicar.',
+    seoTitle: 'Open Graph Preview Online | Testar Link e Gerar Meta Tags',
+    seoDescription:
+      'Visualize previews de link para Facebook, LinkedIn, WhatsApp e X, valide Open Graph/Twitter Card e gere meta tags HTML e metadata Next.js.',
+    h1: 'Open Graph Preview Online com Diagnostico e Gerador de Meta Tags',
+    intro: openGraphPreviewIntro,
+    canonicalPath: '/tools/open-graph-preview',
+    faq: openGraphPreviewFaq,
+    contentBlocks: openGraphPreviewContentBlocks,
+    relatedToolIds: ['json-formatter', 'html-viewer', 'markdown-editor', 'url-encoder-decoder'],
   },
   {
     id: 'cpf-generator',
@@ -1267,6 +1372,9 @@ type LocalizableToolId =
   | 'html-viewer'
   | 'markdown-editor'
   | 'json-formatter'
+  | 'csv-viewer'
+  | 'text-diff'
+  | 'open-graph-preview'
   | 'cpf-generator'
   | 'gerador-pessoa-fake'
   | 'password-generator'
@@ -1289,6 +1397,9 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'html-viewer',
   'markdown-editor',
   'json-formatter',
+  'csv-viewer',
+  'text-diff',
+  'open-graph-preview',
   'cpf-generator',
   'gerador-pessoa-fake',
   'password-generator',

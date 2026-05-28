@@ -6,6 +6,9 @@ import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-to
 import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
 import { CompoundInterestTool } from '@/components/tools/compound-interest-tool';
 import { CpfGeneratorTool } from '@/components/tools/cpf-generator-tool';
+import { CsvViewerTool } from '@/components/tools/csv-viewer-tool';
+import { TextDiffTool } from '@/components/tools/text-diff-tool';
+import { OpenGraphPreviewTool } from '@/components/tools/open-graph-preview-tool';
 import { Cs2ToolSuite } from '@/components/tools/cs2-tool-suite';
 import { FakePersonGeneratorTool } from '@/components/tools/fake-person-generator-tool';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
@@ -203,6 +206,9 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'html-viewer': 'DeveloperApplication',
   'markdown-editor': 'DeveloperApplication',
   'json-formatter': 'DeveloperApplication',
+  'csv-viewer': 'DeveloperApplication',
+  'text-diff': 'DeveloperApplication',
+  'open-graph-preview': 'DeveloperApplication',
   'cpf-generator': 'UtilitiesApplication',
   'gerador-pessoa-fake': 'DeveloperApplication',
   [credentialGeneratorToolSlug]: 'SecurityApplication',
@@ -411,6 +417,9 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'html-viewer': ({ locale }) => <HtmlViewerTool locale={locale} />,
   'markdown-editor': ({ locale }) => <MarkdownEditorTool locale={locale} />,
   'json-formatter': ({ locale }) => <JsonFormatterTool locale={locale} />,
+  'csv-viewer': ({ locale }) => <CsvViewerTool locale={locale} />,
+  'text-diff': ({ locale }) => <TextDiffTool locale={locale} />,
+  'open-graph-preview': ({ locale }) => <OpenGraphPreviewTool locale={locale} />,
   'cpf-generator': ({ locale }) => <CpfGeneratorTool locale={locale} />,
   'gerador-pessoa-fake': ({ locale }) => <FakePersonGeneratorTool locale={locale} />,
   [credentialGeneratorToolSlug]: ({ locale }) => <PasswordGeneratorTool locale={locale} />,
