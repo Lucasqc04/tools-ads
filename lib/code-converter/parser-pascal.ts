@@ -112,14 +112,37 @@ export function parsePascal(source: string): ProgramNode {
     }
   }
 
-  function skipConstSection(): void {
+  function inferDataTypeFromValue(value: ASTNode): DataType {
+    if (value.type === 'Literal') return value.dataType;
+    if (value.type === 'Unary') return inferDataTypeFromValue(value.operand);
+    if (value.type === 'Binary') {
+      const leftType = inferDataTypeFromValue(value.left);
+      const rightType = inferDataTypeFromValue(value.right);
+      if (leftType === 'real' || rightType === 'real') return 'real';
+      if (leftType === 'string' || rightType === 'string') return 'string';
+      return 'integer';
+    }
+    return 'integer';
+  }
+
+  function parseConstSection(targetVars: VariableDeclaration[]): void {
     expect('const');
     while (peek().type !== 'eof') {
       const lower = peek().value.toLowerCase();
       if (['var', 'function', 'procedure', 'begin', 'type'].includes(lower)) return;
       if (peek().type === 'identifier' || peek().type === 'keyword') {
-        advance();
+        const name = advance().value;
         if (match('=')) {
+          const initialValue = parseExpression();
+          targetVars.push({
+            type: 'VariableDeclaration',
+            name,
+            dataType: inferDataTypeFromValue(initialValue),
+            rawType: 'const',
+            initialValue,
+          });
+          match(';');
+        } else {
           skipSectionUntilSemicolonOrTopLevel();
         }
         continue;
@@ -150,7 +173,7 @@ export function parsePascal(source: string): ProgramNode {
         continue;
       }
       if (isAt('const')) {
-        skipConstSection();
+        parseConstSection(prog.variables);
         continue;
       }
       if (isAt('function')) {

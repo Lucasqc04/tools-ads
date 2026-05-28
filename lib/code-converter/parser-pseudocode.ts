@@ -223,18 +223,24 @@ export function parsePseudocode(source: string): ProgramNode {
     if (val === 'retorne') return parseReturn();
 
     if (t.type === 'identifier') {
-      const name = advance().value;
-      if (match('<-') || match(':=')) {
-        const value = parseExpression();
-        return { type: 'Assignment', target: { type: 'Identifier', name }, value } as Assignment;
+      const name = parseDesignatorName();
+      if (!name) {
+        advance();
+        return null;
       }
       if (isAt('[')) {
         advance();
         const index = parseExpression();
         match(']');
-        match('<-');
+        if (!(match('<-') || match(':='))) {
+          return null;
+        }
         const value = parseExpression();
         return { type: 'Assignment', target: { type: 'ArrayAccess', array: name, index }, value } as Assignment;
+      }
+      if (match('<-') || match(':=')) {
+        const value = parseExpression();
+        return { type: 'Assignment', target: { type: 'Identifier', name }, value } as Assignment;
       }
       if (isAt('(')) {
         advance();
@@ -253,16 +259,33 @@ export function parsePseudocode(source: string): ProgramNode {
   function parseIf(): IfNode {
     advance(); // se
     const condition = parseExpression();
-    match('então'); match('entao');
+    let thenInline = false;
+    let entaoLine = peek().line;
+    if (isAt('então') || isAt('entao')) {
+      entaoLine = advance().line;
+      thenInline = peek().line === entaoLine && peek().type !== 'eof';
+    }
 
-    const thenBody = parseStatements();
+    const thenBody = thenInline
+      ? (() => {
+        const stmt = parseStatement();
+        return stmt ? [stmt] : [];
+      })()
+      : parseStatements();
 
     let elseBody: ASTNode[] | undefined;
     if (isAt('senão') || isAt('senao')) {
-      advance();
-      elseBody = parseStatements();
+      const senaoLine = advance().line;
+      const elseInline = peek().line === senaoLine && peek().type !== 'eof';
+      elseBody = elseInline
+        ? (() => {
+          const stmt = parseStatement();
+          return stmt ? [stmt] : [];
+        })()
+        : parseStatements();
     }
-    match('fimse');
+
+    if (isAt('fimse')) match('fimse');
     return { type: 'If', condition, thenBody, elseBody };
   }
 
@@ -340,8 +363,8 @@ export function parsePseudocode(source: string): ProgramNode {
     const variables: string[] = [];
 
     const parseDesignator = () => {
-      if (peek().type !== 'identifier') return;
-      const name = advance().value;
+      const name = parseDesignatorName();
+      if (!name) return;
       if (isAt('[')) {
         advance();
         const index = parseExpression();
@@ -361,12 +384,38 @@ export function parsePseudocode(source: string): ProgramNode {
 
   function parseReturn(): ReturnStatement {
     advance(); // retorne
-    if (peek().type === 'eof' || isAt('fimfuncao') || isAt('fimprocedimento')) return { type: 'Return' };
+    if (
+      peek().type === 'eof' ||
+      isAt('fimfuncao') ||
+      isAt('fimprocedimento') ||
+      isAt('fimse') ||
+      isAt('fimenquanto') ||
+      isAt('fimpara') ||
+      isAt('fimescolha') ||
+      isAt('senão') ||
+      isAt('senao') ||
+      isAt('outrocaso') ||
+      isAt('até') ||
+      isAt('ate')
+    ) {
+      return { type: 'Return' };
+    }
     const value = parseExpression();
     return { type: 'Return', value };
   }
 
   function parseExpression(): ASTNode { return parseOr(); }
+
+  function parseDesignatorName(): string | null {
+    if (peek().type !== 'identifier' && peek().type !== 'keyword') return null;
+    let name = advance().value;
+    while (isAt('.')) {
+      advance();
+      if (peek().type !== 'identifier' && peek().type !== 'keyword') break;
+      name += `.${advance().value}`;
+    }
+    return name;
+  }
 
   function exprToText(node: ASTNode): string {
     switch (node.type) {
@@ -440,8 +489,12 @@ export function parsePseudocode(source: string): ProgramNode {
     if (t.value.toLowerCase() === 'falso') { advance(); return { type: 'Literal', value: false, dataType: 'boolean' } as LiteralNode; }
     if (t.value === '(') { advance(); const e = parseExpression(); match(')'); return e; }
 
-    if (t.type === 'identifier') {
-      const name = advance().value;
+    if (t.type === 'identifier' || t.type === 'keyword') {
+      const name = parseDesignatorName();
+      if (!name) {
+        advance();
+        return { type: 'Literal', value: 0, dataType: 'integer' } as LiteralNode;
+      }
       if (isAt('(')) { advance(); const args: ASTNode[] = []; if (!isAt(')')) { args.push(parseExpression()); while (match(',')) args.push(parseExpression()); } match(')'); return { type: 'Call', name, args } as CallExpression; }
       if (isAt('[')) { advance(); const idx = parseExpression(); match(']'); return { type: 'ArrayAccess', array: name, index: idx }; }
       return { type: 'Identifier', name } as IdentifierNode;

@@ -36,6 +36,25 @@ export function parseJava(source: string): ProgramNode {
   };
   const isModifier = (): boolean => ['public', 'private', 'protected', 'static', 'final', 'abstract'].includes(peek().value);
 
+  function consumeBraceInitializer(): void {
+    if (!isAt('{')) return;
+    let depth = 0;
+    while (peek().type !== 'eof') {
+      if (isAt('{')) {
+        advance();
+        depth++;
+        continue;
+      }
+      if (isAt('}')) {
+        advance();
+        depth--;
+        if (depth <= 0) break;
+        continue;
+      }
+      advance();
+    }
+  }
+
   function parseProgram(): ProgramNode {
     const prog: ProgramNode = { type: 'Program', body: [], functions: [], variables: [] };
 
@@ -72,12 +91,36 @@ export function parseJava(source: string): ProgramNode {
               prog.functions.push(fn);
             }
           } else {
-            // Field
-            const varDecl: VariableDeclaration = { type: 'VariableDeclaration', name, dataType: dt };
-            if (dtInfo.isArray) varDecl.rawType = 'array';
-            if (match('=')) varDecl.initialValue = parseExpression();
+            // Field(s)
+            const decls: VariableDeclaration[] = [];
+            const parseOneFieldDecl = (fieldName: string) => {
+              const varDecl: VariableDeclaration = { type: 'VariableDeclaration', name: fieldName, dataType: dt };
+              if (dtInfo.isArray) varDecl.rawType = 'array';
+              if (isAt('[')) {
+                advance();
+                if (peek().type === 'number') varDecl.arraySize = parseInt(advance().value, 10);
+                while (!isAt(']') && peek().type !== 'eof') advance();
+                match(']');
+                varDecl.rawType = 'array';
+              }
+              if (match('=')) {
+                if (isAt('{')) {
+                  consumeBraceInitializer();
+                } else {
+                  varDecl.initialValue = parseExpression();
+                }
+              }
+              decls.push(varDecl);
+            };
+
+            parseOneFieldDecl(name);
+            while (match(',')) {
+              if (peek().type === 'identifier' || peek().type === 'keyword') {
+                parseOneFieldDecl(advance().value);
+              }
+            }
             match(';');
-            prog.variables.push(varDecl);
+            prog.variables.push(...decls);
           }
         } else {
           advance();
@@ -150,7 +193,13 @@ export function parseJava(source: string): ProgramNode {
             match(']');
             varDecl.rawType = 'array';
           }
-          if (match('=')) varDecl.initialValue = parseExpression();
+          if (match('=')) {
+            if (isAt('{')) {
+              consumeBraceInitializer();
+            } else {
+              varDecl.initialValue = parseExpression();
+            }
+          }
           decls.push(varDecl);
         };
 
@@ -516,6 +565,9 @@ export function parseJava(source: string): ProgramNode {
       if (isAt('.')) {
         advance();
         const method = advance().value;
+        if (method === 'length' && !isAt('(')) {
+          return { type: 'Call', name: 'length', args: [{ type: 'Identifier', name } as IdentifierNode] } as CallExpression;
+        }
         if (isAt('(')) {
           advance();
           const args: ASTNode[] = [];

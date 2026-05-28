@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "code-converter:college-suite": "npx tsx scripts/code-converter-college-suite.ts",
+    "code-converter:college-suite:update": "npx tsx scripts/code-converter-college-suite.ts --update"
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.2.0",

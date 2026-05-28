@@ -39,6 +39,13 @@ const ui = {
   loops: { 'pt-br': 'Laços', en: 'Loops', es: 'Bucles' },
   functions: { 'pt-br': 'Funções', en: 'Functions', es: 'Funciones' },
   conditionals: { 'pt-br': 'Condicionais', en: 'Conditionals', es: 'Condicionales' },
+  arrays: { 'pt-br': 'Arrays', en: 'Arrays', es: 'Arreglos' },
+  pointers: { 'pt-br': 'Ponteiros', en: 'Pointers', es: 'Punteros' },
+  ioOps: { 'pt-br': 'Entrada/Saída', en: 'I/O Ops', es: 'E/S' },
+  commentsCount: { 'pt-br': 'Comentários', en: 'Comments', es: 'Comentarios' },
+  userTypes: { 'pt-br': 'Tipos definidos', en: 'User types', es: 'Tipos definidos' },
+  sourceStats: { 'pt-br': 'Origem', en: 'Source', es: 'Origen' },
+  resultStats: { 'pt-br': 'Resultado', en: 'Result', es: 'Resultado' },
   warnings: { 'pt-br': 'Avisos', en: 'Warnings', es: 'Avisos' },
   educational: { 'pt-br': '🎓 Conversão educacional — revise antes de compilar.', en: '🎓 Educational conversion — review before compiling.', es: '🎓 Conversión educacional — revise antes de compilar.' },
   privacy: { 'pt-br': '🔒 100% local. Nenhum código é enviado ao servidor.', en: '🔒 100% local. No code is sent to any server.', es: '🔒 100% local. Ningún código se envía al servidor.' },
@@ -110,6 +117,11 @@ export function CodeConverterTool({ locale }: Props) {
     if (!sourceCode.trim()) return null;
     return analyzeCode(sourceCode);
   }, [sourceCode]);
+
+  const resultStats = useMemo<CodeStats | null>(() => {
+    if (!result?.output?.trim()) return null;
+    return analyzeCode(result.output);
+  }, [result?.output]);
 
   const exampleCategories = useMemo(() => {
     const order = ['basic', 'structures', 'recursion', 'data-structures', 'algorithms', 'sorting', 'search', 'trees'];
@@ -400,13 +412,44 @@ export function CodeConverterTool({ locale }: Props) {
       {stats && (
         <section className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
           <h4 className="text-sm font-semibold text-slate-800">{t('stats', locale)}</h4>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-            <StatBadge label={t('lines', locale)} value={stats.lines} />
-            <StatBadge label={t('variables', locale)} value={stats.variables} />
-            <StatBadge label={t('loops', locale)} value={stats.loops} />
-            <StatBadge label={t('functions', locale)} value={stats.functions} />
-            <StatBadge label={t('conditionals', locale)} value={stats.conditionals} />
+          <div className="space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{t('sourceStats', locale)}</p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+              <StatBadge label={t('lines', locale)} value={stats.lines} />
+              <StatBadge label={t('variables', locale)} value={stats.variables} />
+              <StatBadge label={t('loops', locale)} value={stats.loops} />
+              <StatBadge label={t('functions', locale)} value={stats.functions} />
+              <StatBadge label={t('conditionals', locale)} value={stats.conditionals} />
+              <StatBadge label={t('arrays', locale)} value={stats.arrays} />
+              <StatBadge label={t('pointers', locale)} value={stats.pointers} />
+              <StatBadge label={t('ioOps', locale)} value={stats.ioOperations} />
+              <StatBadge label={t('commentsCount', locale)} value={stats.comments} />
+              <StatBadge label={t('userTypes', locale)} value={stats.userTypes} />
+            </div>
           </div>
+
+          {resultStats && (
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{t('resultStats', locale)}</p>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                <StatBadge label={t('lines', locale)} value={resultStats.lines} />
+                <StatBadge label={t('variables', locale)} value={resultStats.variables} />
+                <StatBadge label={t('loops', locale)} value={resultStats.loops} />
+                <StatBadge label={t('functions', locale)} value={resultStats.functions} />
+                <StatBadge label={t('conditionals', locale)} value={resultStats.conditionals} />
+                <StatBadge label={t('arrays', locale)} value={resultStats.arrays} />
+                <StatBadge label={t('pointers', locale)} value={resultStats.pointers} />
+                <StatBadge label={t('ioOps', locale)} value={resultStats.ioOperations} />
+                <StatBadge label={t('commentsCount', locale)} value={resultStats.comments} />
+                <StatBadge label={t('userTypes', locale)} value={resultStats.userTypes} />
+              </div>
+            </div>
+          )}
+          {!resultStats && (
+            <div className="text-[11px] text-slate-500">
+              {locale === 'en' ? 'Convert first to compare source vs result metrics.' : locale === 'es' ? 'Convierta primero para comparar métricas de origen y resultado.' : 'Converta primeiro para comparar métricas da origem e do resultado.'}
+            </div>
+          )}
         </section>
       )}
 

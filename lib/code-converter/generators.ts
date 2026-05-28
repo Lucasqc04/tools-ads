@@ -153,7 +153,14 @@ function guessShapeFromRawType(rawType?: string): ValueShape | null {
   if (!rawType) return null;
   const lower = rawType.toLowerCase();
   if (lower.includes('array') || lower.includes('vetor') || lower.includes('[]')) return 'array';
-  if (lower.startsWith('end') || lower.includes('ptr') || lower.includes('ponteiro') || lower.includes('record')) return 'node';
+  if (lower === 'ptr') return null;
+  if (lower.includes('*')) {
+    const base = lower.replace(/\*/g, '').trim();
+    if (!base) return null;
+    const primitives = new Set(['int', 'integer', 'float', 'double', 'char', 'short', 'long', 'unsigned', 'signed', 'bool', 'boolean', 'void']);
+    if (!primitives.has(base)) return 'node';
+  }
+  if (lower.startsWith('end') || lower.includes('ponteiro') || lower.includes('record')) return 'node';
   return null;
 }
 
@@ -164,6 +171,9 @@ function deriveStructName(symbol: SymbolMeta): string {
   raw = raw.replace(/[^a-zA-Z0-9_]/g, ' ');
   const firstToken = raw.trim().split(/\s+/)[0] ?? symbol.name;
   let normalized = firstToken.replace(/^end/i, '');
+  if (/^[Pp][A-Z]/.test(normalized) && normalized.length > 1) normalized = normalized.slice(1);
+  if (/^[Tt][A-Z]/.test(normalized) && normalized.length > 1) normalized = normalized.slice(1);
+  normalized = normalized.replace(/ptr$/i, '');
   if (!normalized) normalized = `${symbol.name}Node`;
   const pascal = toPascalCase(normalized);
   const reserved = new Set(['Int', 'Integer', 'Real', 'Double', 'Float', 'Char', 'String', 'Boolean', 'Void', 'Array', 'Vetor']);
@@ -171,8 +181,26 @@ function deriveStructName(symbol: SymbolMeta): string {
   return symbol.structName;
 }
 
+function pascalPointerTypeName(structName: string): string {
+  return `P${structName}`;
+}
+
+function isNodeScalarField(field: string): boolean {
+  const lower = field.toLowerCase();
+  return ['info', 'valor', 'value', 'dado', 'chave', 'key', 'num', 'numero', 'id', 'altura', 'height', 'peso', 'weight'].includes(lower);
+}
+
+function isPointerLikeField(field: string): boolean {
+  const lower = field.toLowerCase();
+  return [
+    'prox', 'next', 'esq', 'dir', 'left', 'right', 'pai', 'parent', 'prev', 'anterior',
+    'filho', 'child', 'head', 'tail', 'topo', 'top', 'raiz', 'root',
+  ].includes(lower);
+}
+
 function buildTypeContext(ast: ProgramNode): TypeContext {
   const symbols = new Map<string, SymbolMeta>();
+  const aliasPairs: Array<[string, string]> = [];
 
   const ensureSymbol = (name: string, dataType: DataType = 'unknown', rawType?: string, byRef?: boolean): SymbolMeta => {
     const key = toKey(name);
@@ -207,6 +235,17 @@ function buildTypeContext(ast: ProgramNode): TypeContext {
     }
   };
 
+  const noteAlias = (leftName: string, rightName: string) => {
+    const leftRoot = baseIdentifier(leftName);
+    const rightRoot = baseIdentifier(rightName);
+    if (!leftRoot || !rightRoot) return;
+    const leftLower = leftRoot.toLowerCase();
+    const rightLower = rightRoot.toLowerCase();
+    if (leftLower === rightLower) return;
+    if (['nil', 'null', 'nulo'].includes(leftLower) || ['nil', 'null', 'nulo'].includes(rightLower)) return;
+    aliasPairs.push([leftRoot, rightRoot]);
+  };
+
   const collectFromName = (name: string) => {
     const root = baseIdentifier(name);
     if (!root) return;
@@ -217,14 +256,33 @@ function buildTypeContext(ast: ProgramNode): TypeContext {
     const fieldMatches = Array.from(name.matchAll(/(?:\^\.|->|\.)([A-Za-z_][A-Za-z0-9_]*)/g)).map(match => match[1]);
     if (name.includes('^') || name.includes('->')) {
       markNode(root, fieldMatches);
-    } else if (fieldMatches.length > 0 && symbols.get(toKey(root))?.shape === 'node') {
-      markNode(root, fieldMatches);
+    } else if (fieldMatches.length > 0) {
+      const existing = symbols.get(toKey(root));
+      if (
+        existing?.shape === 'node' ||
+        fieldMatches.some(isPointerLikeField) ||
+        ['raiz', 'root', 'head', 'tail', 'node', 'no', 'arvore', 'tree'].includes(root.toLowerCase())
+      ) {
+        markNode(root, fieldMatches);
+      }
     }
   };
 
   const collectFromNode = (node: ASTNode) => {
     switch (node.type) {
       case 'Assignment':
+        if (node.target.type === 'Identifier') {
+          const targetRoot = baseIdentifier(node.target.name);
+          const targetIsPlain = targetRoot === node.target.name;
+          if (targetIsPlain && node.value.type === 'Identifier' && baseIdentifier(node.value.name) === node.value.name) {
+            noteAlias(targetRoot, node.value.name);
+          } else if (node.value.type === 'Call') {
+            const lower = node.value.name.toLowerCase();
+            if (lower === 'malloc' || lower === 'calloc' || lower === 'new') {
+              markNode(targetRoot);
+            }
+          }
+        }
         collectFromNode(node.target);
         collectFromNode(node.value);
         return;
@@ -259,6 +317,24 @@ function buildTypeContext(ast: ProgramNode): TypeContext {
       case 'Read':
         node.variables.forEach(name => collectFromName(name));
         return;
+      case 'VariableDeclaration':
+        ensureSymbol(node.name, node.dataType, node.rawType);
+        if (node.initialValue) {
+          if (
+            node.initialValue.type === 'Identifier' &&
+            baseIdentifier(node.name) === node.name &&
+            baseIdentifier(node.initialValue.name) === node.initialValue.name
+          ) {
+            noteAlias(node.name, node.initialValue.name);
+          } else if (node.initialValue.type === 'Call') {
+            const lower = node.initialValue.name.toLowerCase();
+            if (lower === 'malloc' || lower === 'calloc' || lower === 'new') {
+              markNode(node.name);
+            }
+          }
+          collectFromNode(node.initialValue);
+        }
+        return;
       case 'Call':
         if (node.name.toLowerCase() === 'new' && node.args.length > 0) {
           const first = node.args[0];
@@ -275,8 +351,8 @@ function buildTypeContext(ast: ProgramNode): TypeContext {
         collectFromNode(node.left);
         collectFromNode(node.right);
         if ((node.operator === '=' || node.operator === '<>')) {
-          const leftNil = node.left.type === 'Identifier' && ['nil', 'null'].includes(node.left.name.toLowerCase());
-          const rightNil = node.right.type === 'Identifier' && ['nil', 'null'].includes(node.right.name.toLowerCase());
+          const leftNil = node.left.type === 'Identifier' && ['nil', 'null', 'nulo'].includes(node.left.name.toLowerCase());
+          const rightNil = node.right.type === 'Identifier' && ['nil', 'null', 'nulo'].includes(node.right.name.toLowerCase());
           if (leftNil && node.right.type === 'Identifier') markNode(baseIdentifier(node.right.name));
           if (rightNil && node.left.type === 'Identifier') markNode(baseIdentifier(node.left.name));
         }
@@ -307,10 +383,7 @@ function buildTypeContext(ast: ProgramNode): TypeContext {
 
   const registerParams = (params: ParameterDefinition[]) => {
     for (const p of params) {
-      const symbol = ensureSymbol(p.name, p.dataType, p.rawType, p.byRef);
-      if (p.byRef && symbol.shape === 'scalar' && symbol.dataType === 'unknown') {
-        symbol.shape = 'node';
-      }
+      ensureSymbol(p.name, p.dataType, p.rawType, p.byRef);
     }
   };
 
@@ -323,6 +396,64 @@ function buildTypeContext(ast: ProgramNode): TypeContext {
   }
 
   ast.body.forEach(collectFromNode);
+
+  // Resolve aliases such as aux := head so both symbols share the same node type.
+  const parent = new Map<string, string>();
+  const find = (key: string): string => {
+    const current = parent.get(key);
+    if (!current) {
+      parent.set(key, key);
+      return key;
+    }
+    if (current === key) return key;
+    const root = find(current);
+    parent.set(key, root);
+    return root;
+  };
+  const union = (a: string, b: string) => {
+    const rootA = find(a);
+    const rootB = find(b);
+    if (rootA !== rootB) parent.set(rootB, rootA);
+  };
+
+  for (const [leftName, rightName] of aliasPairs) {
+    const left = ensureSymbol(leftName);
+    const right = ensureSymbol(rightName);
+    const leftNodeHint = left.shape === 'node' || guessShapeFromRawType(left.rawType) === 'node';
+    const rightNodeHint = right.shape === 'node' || guessShapeFromRawType(right.rawType) === 'node';
+    if (!leftNodeHint && !rightNodeHint) continue;
+
+    left.shape = 'node';
+    right.shape = 'node';
+    union(toKey(left.name), toKey(right.name));
+  }
+
+  const groupedNodeSymbols = new Map<string, SymbolMeta[]>();
+  for (const symbol of symbols.values()) {
+    if (symbol.shape !== 'node') continue;
+    const groupKey = find(toKey(symbol.name));
+    const group = groupedNodeSymbols.get(groupKey) ?? [];
+    group.push(symbol);
+    groupedNodeSymbols.set(groupKey, group);
+  }
+
+  for (const group of groupedNodeSymbols.values()) {
+    const mergedFields = new Set<string>();
+    for (const symbol of group) {
+      symbol.fields.forEach(field => mergedFields.add(field));
+    }
+    const preferred =
+      group.find(symbol => guessShapeFromRawType(symbol.rawType) === 'node' && !!symbol.rawType) ??
+      group[0];
+    const canonicalStructName = deriveStructName(preferred);
+    for (const symbol of group) {
+      symbol.shape = 'node';
+      symbol.structName = canonicalStructName;
+      for (const field of mergedFields) {
+        symbol.fields.add(field);
+      }
+    }
+  }
 
   const structFields = new Map<string, Set<string>>();
   for (const symbol of symbols.values()) {
@@ -360,8 +491,8 @@ function cVarDeclaration(v: VariableDeclaration, ctx: TypeContext, withIndent = 
     return `${withIndent}${base} ${v.name}[${size}];`;
   }
   const symbol = getSymbolMeta(ctx, v.name);
-  if (symbol) return `${withIndent}${cTypeForSymbol(symbol, false)} ${v.name};`;
-  return `${withIndent}${base} ${v.name};`;
+  if (symbol) return `${withIndent}${formatCTypeAndName(cTypeForSymbol(symbol, false), v.name)};`;
+  return `${withIndent}${formatCTypeAndName(base, v.name)};`;
 }
 
 function javaVarDeclaration(v: VariableDeclaration, ctx: TypeContext, withIndent = ''): string {
@@ -392,6 +523,12 @@ function cTypeForSymbol(symbol: SymbolMeta, asParam: boolean): string {
   return primitive;
 }
 
+function formatCTypeAndName(type: string, name: string): string {
+  const trimmed = type.trim();
+  if (trimmed.endsWith('*')) return `${trimmed}${name}`;
+  return `${trimmed} ${name}`;
+}
+
 function javaTypeForSymbol(symbol: SymbolMeta): string {
   if (symbol.shape === 'node') {
     return deriveStructName(symbol);
@@ -405,18 +542,21 @@ function javaTypeForSymbol(symbol: SymbolMeta): string {
   return javaPrimitiveType(symbol.dataType);
 }
 
+function pascalTypeForSymbol(symbol: SymbolMeta): string {
+  if (symbol.shape === 'node') {
+    return pascalPointerTypeName(deriveStructName(symbol));
+  }
+
+  if (symbol.shape === 'array') {
+    return `array of ${mapType(symbol.dataType === 'unknown' ? 'integer' : symbol.dataType, 'pascal')}`;
+  }
+
+  return mapType(symbol.dataType === 'unknown' ? 'integer' : symbol.dataType, 'pascal');
+}
+
 // ---------- Pascal Generator ----------
 
 export function generatePascal(ast: ProgramNode): string {
-  const typeLabel = (dt: DataType, rawType?: string): string => {
-    if (dt !== 'unknown') return mapType(dt, 'pascal');
-    if (!rawType) return 'integer';
-    const lower = rawType.toLowerCase();
-    if (lower.includes('*') || lower === 'ptr' || lower.includes('struct') || lower.includes('scanner')) return 'integer';
-    if (lower.includes('array') || lower.includes('vetor') || lower.includes('[')) return 'integer';
-    return 'integer';
-  };
-
   const lines: string[] = [];
 
   const inlineMainDecls = collectInlineVariableDeclarations(ast.body);
@@ -444,19 +584,62 @@ export function generatePascal(ast: ProgramNode): string {
     }
   }
   ast.variables = dedupeVariableDeclarations(ast.variables);
+  const ctx = buildTypeContext(ast);
+
+  const typeLabel = (v: VariableDeclaration): string => {
+    const symbol = getSymbolMeta(ctx, v.name);
+    if (symbol) return pascalTypeForSymbol(symbol);
+    if (v.dataType !== 'unknown') return mapType(v.dataType, 'pascal');
+    return 'integer';
+  };
 
   lines.push(`program ${ast.name || 'Programa'};`);
   lines.push('');
 
+  if (ctx.structFields.size > 0) {
+    lines.push('type');
+    for (const [structName, fields] of ctx.structFields.entries()) {
+      const ptrName = pascalPointerTypeName(structName);
+      lines.push(`  ${ptrName} = ^${structName};`);
+      lines.push(`  ${structName} = record`);
+      if (fields.size === 0) {
+        lines.push('    value: integer;');
+      } else {
+        for (const field of fields) {
+          if (isNodeScalarField(field)) {
+            lines.push(`    ${field}: integer;`);
+          } else {
+            lines.push(`    ${field}: ${ptrName};`);
+          }
+        }
+      }
+      lines.push('  end;');
+    }
+    lines.push('');
+  }
+
+  const constVars = ast.variables.filter(v => (v.rawType?.toLowerCase() ?? '') === 'const' && v.initialValue?.type === 'Literal');
+  const runtimeVars = ast.variables.filter(v => !constVars.includes(v));
+
+  if (constVars.length > 0) {
+    lines.push('const');
+    for (const v of constVars) {
+      const literal = v.initialValue as ASTNode;
+      lines.push(`  ${v.name} = ${genPascalExpr(literal, ctx)};`);
+    }
+    lines.push('');
+  }
+
   // Variables
-  if (ast.variables.length > 0) {
+  if (runtimeVars.length > 0) {
     lines.push('var');
-    for (const v of ast.variables) {
+    for (const v of runtimeVars) {
       if (isArrayDeclarationVar(v)) {
         const size = v.arraySize && v.arraySize > 0 ? v.arraySize : 100;
-        lines.push(`  ${v.name}: array[0..${size - 1}] of ${mapType(v.dataType === 'unknown' ? 'integer' : v.dataType, 'pascal')};`);
+        const elementType = mapType(v.dataType === 'unknown' ? 'integer' : v.dataType, 'pascal');
+        lines.push(`  ${v.name}: array[0..${size - 1}] of ${elementType};`);
       } else {
-        lines.push(`  ${v.name}: ${typeLabel(v.dataType, v.rawType)};`);
+        lines.push(`  ${v.name}: ${typeLabel(v)};`);
       }
     }
     lines.push('');
@@ -493,12 +676,20 @@ export function generatePascal(ast: ProgramNode): string {
     const isPascalFunction = fn.type === 'Function' && fn.returnType !== 'void';
     if (isPascalFunction) {
       const params = fn.params
-        .map(p => `${p.byRef ? 'var ' : ''}${p.name}: ${typeLabel(p.dataType, p.rawType)}`)
+        .map(p => {
+          const symbol = getSymbolMeta(ctx, p.name);
+          const paramType = symbol ? pascalTypeForSymbol(symbol) : mapType(p.dataType === 'unknown' ? 'integer' : p.dataType, 'pascal');
+          return `${p.byRef ? 'var ' : ''}${p.name}: ${paramType}`;
+        })
         .join('; ');
       lines.push(`function ${fn.name}(${params}): ${mapType(fn.returnType, 'pascal')};`);
     } else {
       const params = fn.params
-        .map(p => `${p.byRef ? 'var ' : ''}${p.name}: ${typeLabel(p.dataType, p.rawType)}`)
+        .map(p => {
+          const symbol = getSymbolMeta(ctx, p.name);
+          const paramType = symbol ? pascalTypeForSymbol(symbol) : mapType(p.dataType === 'unknown' ? 'integer' : p.dataType, 'pascal');
+          return `${p.byRef ? 'var ' : ''}${p.name}: ${paramType}`;
+        })
         .join('; ');
       lines.push(`procedure ${fn.name}(${params});`);
     }
@@ -509,24 +700,24 @@ export function generatePascal(ast: ProgramNode): string {
           const size = v.arraySize && v.arraySize > 0 ? v.arraySize : 100;
           lines.push(`  ${v.name}: array[0..${size - 1}] of ${mapType(v.dataType === 'unknown' ? 'integer' : v.dataType, 'pascal')};`);
         } else {
-          lines.push(`  ${v.name}: ${typeLabel(v.dataType, v.rawType)};`);
+          lines.push(`  ${v.name}: ${typeLabel(v)};`);
         }
       }
     }
     lines.push('begin');
     for (const v of fn.localVars) {
       if (v.initialValue && !isArrayDeclarationVar(v)) {
-        lines.push(`${indent(1)}${v.name} := ${genPascalExpr(v.initialValue)};`);
+        lines.push(`${indent(1)}${v.name} := ${genPascalExpr(v.initialValue, ctx)};`);
       }
     }
-    for (const stmt of fn.body) lines.push(genPascalStmt(stmt, 1, isPascalFunction ? fn.name : undefined));
+    for (const stmt of fn.body) lines.push(genPascalStmt(stmt, 1, ctx, isPascalFunction ? fn.name : undefined));
     lines.push('end;');
     lines.push('');
   }
 
   // Main body
   lines.push('begin');
-  for (const stmt of ast.body) lines.push(genPascalStmt(stmt, 1));
+  for (const stmt of ast.body) lines.push(genPascalStmt(stmt, 1, ctx));
   lines.push('end.');
 
   return lines.join('\n');
@@ -673,6 +864,53 @@ function collectAssignedIdentifierVariables(nodes: ASTNode[]): string[] {
   return Array.from(out);
 }
 
+function collectReadIdentifierVariables(nodes: ASTNode[]): string[] {
+  const out = new Set<string>();
+
+  const visit = (node: ASTNode) => {
+    switch (node.type) {
+      case 'Read':
+        for (const variable of node.variables) {
+          const root = baseIdentifier(variable);
+          if (root) out.add(root);
+        }
+        return;
+      case 'If':
+        visit(node.condition);
+        node.thenBody.forEach(visit);
+        node.elseBody?.forEach(visit);
+        return;
+      case 'While':
+      case 'DoWhile':
+      case 'RepeatUntil':
+        visit(node.condition);
+        node.body.forEach(visit);
+        return;
+      case 'For':
+        visit(node.start);
+        visit(node.end);
+        node.body.forEach(visit);
+        return;
+      case 'Switch':
+        visit(node.expression);
+        node.cases.forEach(entry => {
+          visit(entry.value);
+          entry.body.forEach(visit);
+        });
+        node.defaultBody?.forEach(visit);
+        return;
+      case 'Block':
+        node.body.forEach(visit);
+        return;
+      default:
+        return;
+    }
+  };
+
+  nodes.forEach(visit);
+  return Array.from(out);
+}
+
 function flattenConcatArg(node: ASTNode): ASTNode[] | null {
   if (node.type !== 'Binary' || node.operator !== '+') return null;
   const left = flattenConcatArg(node.left) ?? [node.left];
@@ -690,97 +928,119 @@ function expandConcatenatedWriteArgs(args: ASTNode[]): ASTNode[] {
   return expanded;
 }
 
-function genPascalStmt(node: ASTNode, lvl: number, currentFunctionName?: string): string {
+function mapPascalIdentifierWithContext(name: string, ctx: TypeContext): string {
+  let mapped = mapIdentifierName(name, 'pascal');
+  const root = baseIdentifier(name);
+  const meta = getSymbolMeta(ctx, root);
+  if (!meta || meta.shape !== 'node') return mapped;
+  if (mapped.includes('^.')) return mapped;
+  if (mapped.includes('.')) mapped = mapped.replace(/\./g, '^.');
+  return mapped;
+}
+
+function genPascalStmt(node: ASTNode, lvl: number, ctx: TypeContext, currentFunctionName?: string): string {
   switch (node.type) {
     case 'Assignment':
-      return `${indent(lvl)}${genPascalExpr(node.target)} := ${genPascalExpr(node.value)};`;
+      if (node.target.type === 'Identifier' && node.value.type === 'Call') {
+        const callName = node.value.name.toLowerCase();
+        if (callName === 'malloc' || callName === 'calloc') {
+          return `${indent(lvl)}new(${genPascalExpr(node.target, ctx)});`;
+        }
+      }
+      return `${indent(lvl)}${genPascalExpr(node.target, ctx)} := ${genPascalExpr(node.value, ctx)};`;
     case 'VariableDeclaration':
-      if (node.initialValue && !isArrayDeclarationVar(node)) return `${indent(lvl)}${node.name} := ${genPascalExpr(node.initialValue)};`;
+      if (node.initialValue && !isArrayDeclarationVar(node)) return `${indent(lvl)}${node.name} := ${genPascalExpr(node.initialValue, ctx)};`;
       return '';
     case 'If': {
-      let s = `${indent(lvl)}if ${genPascalExpr(node.condition)} then\n`;
+      let s = `${indent(lvl)}if ${genPascalExpr(node.condition, ctx)} then\n`;
       s += `${indent(lvl)}begin\n`;
-      for (const st of node.thenBody) s += genPascalStmt(st, lvl + 1, currentFunctionName) + '\n';
+      for (const st of node.thenBody) s += genPascalStmt(st, lvl + 1, ctx, currentFunctionName) + '\n';
       s += `${indent(lvl)}end`;
       if (node.elseBody && node.elseBody.length > 0) {
         s += `\n${indent(lvl)}else\n`;
         s += `${indent(lvl)}begin\n`;
-        for (const st of node.elseBody) s += genPascalStmt(st, lvl + 1, currentFunctionName) + '\n';
+        for (const st of node.elseBody) s += genPascalStmt(st, lvl + 1, ctx, currentFunctionName) + '\n';
         s += `${indent(lvl)}end`;
       }
       return `${s};`;
     }
     case 'While': {
-      let s = `${indent(lvl)}while ${genPascalExpr(node.condition)} do\n`;
+      let s = `${indent(lvl)}while ${genPascalExpr(node.condition, ctx)} do\n`;
       s += `${indent(lvl)}begin\n`;
-      for (const st of node.body) s += genPascalStmt(st, lvl + 1, currentFunctionName) + '\n';
+      for (const st of node.body) s += genPascalStmt(st, lvl + 1, ctx, currentFunctionName) + '\n';
       s += `${indent(lvl)}end;`;
       return s;
     }
     case 'For': {
       const dir = node.ascending ? 'to' : 'downto';
-      let s = `${indent(lvl)}for ${node.variable} := ${genPascalExpr(node.start)} ${dir} ${genPascalExpr(node.end)} do\n`;
+      let s = `${indent(lvl)}for ${node.variable} := ${genPascalExpr(node.start, ctx)} ${dir} ${genPascalExpr(node.end, ctx)} do\n`;
       s += `${indent(lvl)}begin\n`;
-      for (const st of node.body) s += genPascalStmt(st, lvl + 1, currentFunctionName) + '\n';
+      for (const st of node.body) s += genPascalStmt(st, lvl + 1, ctx, currentFunctionName) + '\n';
       s += `${indent(lvl)}end;`;
       return s;
     }
     case 'RepeatUntil': {
       let s = `${indent(lvl)}repeat\n`;
-      for (const st of node.body) s += genPascalStmt(st, lvl + 1, currentFunctionName) + '\n';
-      s += `${indent(lvl)}until ${genPascalExpr(node.condition)};`;
+      for (const st of node.body) s += genPascalStmt(st, lvl + 1, ctx, currentFunctionName) + '\n';
+      s += `${indent(lvl)}until ${genPascalExpr(node.condition, ctx)};`;
       return s;
     }
     case 'DoWhile': {
       let s = `${indent(lvl)}repeat\n`;
-      for (const st of node.body) s += genPascalStmt(st, lvl + 1, currentFunctionName) + '\n';
-      s += `${indent(lvl)}until not (${genPascalExpr(node.condition)});`;
+      for (const st of node.body) s += genPascalStmt(st, lvl + 1, ctx, currentFunctionName) + '\n';
+      s += `${indent(lvl)}until not (${genPascalExpr(node.condition, ctx)});`;
       return s;
     }
     case 'Write': {
       const fn = node.newline ? 'writeln' : 'write';
-      const args = expandConcatenatedWriteArgs(node.args).map(a => genPascalExpr(a)).join(', ');
+      const args = expandConcatenatedWriteArgs(node.args).map(a => genPascalExpr(a, ctx)).join(', ');
       return `${indent(lvl)}${fn}(${args});`;
     }
     case 'Read':
       return `${indent(lvl)}readln(${node.variables.join(', ')});`;
     case 'Call':
       if (node.name.toLowerCase().startsWith('next')) return '';
+      if (node.name.toLowerCase() === 'free' && node.args.length > 0) {
+        return `${indent(lvl)}dispose(${genPascalExpr(node.args[0], ctx)});`;
+      }
+      if ((node.name.toLowerCase() === 'malloc' || node.name.toLowerCase() === 'calloc') && node.args.length > 0) {
+        return '';
+      }
       if (node.name.includes('.')) {
         const method = node.name.split('.').pop() ?? node.name;
         if (method.toLowerCase() === 'close') return '';
         if (method.toLowerCase().startsWith('next')) return '';
         return node.args.length > 0
-          ? `${indent(lvl)}${method}(${node.args.map(a => genPascalExpr(a)).join(', ')});`
+          ? `${indent(lvl)}${method}(${node.args.map(a => genPascalExpr(a, ctx)).join(', ')});`
           : `${indent(lvl)}${method};`;
       }
       return node.args.length > 0
-        ? `${indent(lvl)}${node.name}(${node.args.map(a => genPascalExpr(a)).join(', ')});`
+        ? `${indent(lvl)}${node.name}(${node.args.map(a => genPascalExpr(a, ctx)).join(', ')});`
         : `${indent(lvl)}${node.name};`;
     case 'Return':
       if (!node.value) return `${indent(lvl)}exit;`;
       if (currentFunctionName) {
-        return `${indent(lvl)}${currentFunctionName} := ${genPascalExpr(node.value)};\n${indent(lvl)}exit;`;
+        return `${indent(lvl)}${currentFunctionName} := ${genPascalExpr(node.value, ctx)};\n${indent(lvl)}exit;`;
       }
       return `${indent(lvl)}exit;`;
     case 'Switch': {
-      let s = `${indent(lvl)}case ${genPascalExpr(node.expression)} of\n`;
+      let s = `${indent(lvl)}case ${genPascalExpr(node.expression, ctx)} of\n`;
       for (const c of node.cases) {
-        s += `${indent(lvl + 1)}${genPascalExpr(c.value)}:\n`;
+        s += `${indent(lvl + 1)}${genPascalExpr(c.value, ctx)}:\n`;
         s += `${indent(lvl + 1)}begin\n`;
-        for (const st of c.body) s += genPascalStmt(st, lvl + 2, currentFunctionName) + '\n';
+        for (const st of c.body) s += genPascalStmt(st, lvl + 2, ctx, currentFunctionName) + '\n';
         s += `${indent(lvl + 1)}end;\n`;
       }
       if (node.defaultBody) {
         s += `${indent(lvl)}else\n`;
-        for (const st of node.defaultBody) s += genPascalStmt(st, lvl + 1, currentFunctionName) + '\n';
+        for (const st of node.defaultBody) s += genPascalStmt(st, lvl + 1, ctx, currentFunctionName) + '\n';
       }
       s += `${indent(lvl)}end;`;
       return s;
     }
     case 'Block': {
       let s = `${indent(lvl)}begin\n`;
-      for (const st of node.body) s += genPascalStmt(st, lvl + 1, currentFunctionName) + '\n';
+      for (const st of node.body) s += genPascalStmt(st, lvl + 1, ctx, currentFunctionName) + '\n';
       s += `${indent(lvl)}end;`;
       return s;
     }
@@ -789,26 +1049,93 @@ function genPascalStmt(node: ASTNode, lvl: number, currentFunctionName?: string)
   }
 }
 
-function genPascalExpr(node: ASTNode): string {
+function pascalBinaryPrecedence(op: string): number {
+  switch (op) {
+    case 'or': return 10;
+    case 'and': return 20;
+    case '=':
+    case '<>':
+    case '<':
+    case '<=':
+    case '>':
+    case '>=': return 30;
+    case '+':
+    case '-': return 40;
+    case '*':
+    case '/':
+    case 'div':
+    case 'mod': return 50;
+    default: return 5;
+  }
+}
+
+function genPascalExpr(node: ASTNode, ctx: TypeContext, parentPrecedence = 0): string {
   switch (node.type) {
     case 'Literal':
       if (node.dataType === 'string') return `'${node.value}'`;
       if (node.dataType === 'boolean') return node.value ? 'true' : 'false';
-      return String(node.value);
-    case 'Identifier': return mapIdentifierName(node.name, 'pascal');
-    case 'ArrayAccess': return `${node.array}[${genPascalExpr(node.index)}]`;
-    case 'Binary': return `(${genPascalExpr(node.left)} ${mapOp(node.operator, 'pascal')} ${genPascalExpr(node.right)})`;
-    case 'Unary': return `${mapOp(node.operator, 'pascal')} ${genPascalExpr(node.operand)}`;
+      return wrapByPrecedence(String(node.value), 90, parentPrecedence);
+    case 'Identifier':
+      return wrapByPrecedence(mapPascalIdentifierWithContext(node.name, ctx), 90, parentPrecedence);
+    case 'ArrayAccess':
+      return wrapByPrecedence(`${mapPascalIdentifierWithContext(node.array, ctx)}[${genPascalExpr(node.index, ctx)}]`, 90, parentPrecedence);
+    case 'Binary': {
+      const integerDivision =
+        node.operator === '/' &&
+        isLikelyIntegerPascalExpr(node.left) &&
+        isLikelyIntegerPascalExpr(node.right);
+      const op = integerDivision ? 'div' : mapOp(node.operator, 'pascal');
+      const precedence = pascalBinaryPrecedence(op);
+      const left = genPascalExpr(node.left, ctx, precedence);
+      const right = genPascalExpr(node.right, ctx, precedence + 1);
+      const expr = `${left} ${op} ${right}`;
+      return wrapByPrecedence(expr, precedence, parentPrecedence);
+    }
+    case 'Unary': {
+      const op = mapOp(node.operator, 'pascal');
+      const precedence = 70;
+      if (op === 'not') {
+        const expr = `not ${genPascalExpr(node.operand, ctx, precedence)}`;
+        return wrapByPrecedence(expr, precedence, parentPrecedence);
+      }
+      const expr = `${op}${genPascalExpr(node.operand, ctx, precedence)}`;
+      return wrapByPrecedence(expr, precedence, parentPrecedence);
+    }
     case 'Call': {
       if (node.name.toLowerCase().startsWith('next')) return '0';
+      if (node.name.toLowerCase() === 'sizeof') return '0';
+      if (node.name.toLowerCase() === 'malloc' || node.name.toLowerCase() === 'calloc') return 'nil';
       if (node.name.includes('.')) {
         const method = node.name.split('.').pop() ?? node.name;
         if (method.toLowerCase().startsWith('next') || method.toLowerCase() === 'close') return '0';
-        return node.args.length > 0 ? `${method}(${node.args.map(a => genPascalExpr(a)).join(', ')})` : method;
+        const expr = node.args.length > 0 ? `${method}(${node.args.map(a => genPascalExpr(a, ctx)).join(', ')})` : method;
+        return wrapByPrecedence(expr, 90, parentPrecedence);
       }
-      return node.args.length > 0 ? `${node.name}(${node.args.map(a => genPascalExpr(a)).join(', ')})` : node.name;
+      const expr = node.args.length > 0 ? `${node.name}(${node.args.map(a => genPascalExpr(a, ctx)).join(', ')})` : node.name;
+      return wrapByPrecedence(expr, 90, parentPrecedence);
     }
     default: return '';
+  }
+}
+
+function isLikelyIntegerPascalExpr(node: ASTNode): boolean {
+  switch (node.type) {
+    case 'Literal':
+      return node.dataType === 'integer' || node.dataType === 'boolean' || node.dataType === 'char';
+    case 'Identifier':
+    case 'ArrayAccess':
+      return true;
+    case 'Unary':
+      if (node.operator === '-') return isLikelyIntegerPascalExpr(node.operand);
+      return false;
+    case 'Binary':
+      if (node.operator === '/') return false;
+      if (['+', '-', '*', 'mod', 'div'].includes(node.operator)) {
+        return isLikelyIntegerPascalExpr(node.left) && isLikelyIntegerPascalExpr(node.right);
+      }
+      return false;
+    default:
+      return false;
   }
 }
 
@@ -844,10 +1171,6 @@ export function generateC(ast: ProgramNode): string {
   const ctx = buildTypeContext(ast);
   const lines: string[] = [];
 
-  lines.push('#include <stdio.h>');
-  lines.push('#include <stdlib.h>');
-  lines.push('');
-
   for (const [structName, fields] of ctx.structFields.entries()) {
     lines.push(`typedef struct ${structName} {`);
     if (fields.size === 0) {
@@ -882,11 +1205,11 @@ export function generateC(ast: ProgramNode): string {
   for (const fn of ast.functions) {
     const params = fn.params.map(p => {
       const symbol = getSymbolMeta(ctx, p.name);
-      if (!symbol) return `${cPrimitiveType(p.dataType)} ${p.name}`;
+      if (!symbol) return formatCTypeAndName(cPrimitiveType(p.dataType), p.name);
       if (symbol.shape === 'array') {
         return `${cPrimitiveType(symbol.dataType)} ${p.name}[]`;
       }
-      return `${cTypeForSymbol(symbol, true)} ${p.name}`;
+      return formatCTypeAndName(cTypeForSymbol(symbol, true), p.name);
     }).join(', ');
 
     const retType = fn.type === 'Function'
@@ -913,7 +1236,16 @@ export function generateC(ast: ProgramNode): string {
   lines.push('  return 0;');
   lines.push('}');
 
-  return lines.join('\n');
+  const body = lines.join('\n');
+  const includes: string[] = [];
+  const usesStdIo = /\bprintf\s*\(|\bscanf\s*\(/.test(body);
+  const usesStdLib = /\bmalloc\s*\(|\bfree\s*\(/.test(body);
+  const usesNull = /\bNULL\b/.test(body);
+  if (usesStdIo) includes.push('#include <stdio.h>');
+  if (usesStdLib) includes.push('#include <stdlib.h>');
+  if (usesNull && !usesStdLib) includes.push('#include <stddef.h>');
+  if (includes.length === 0) return body;
+  return `${includes.join('\n')}\n\n${body}`;
 }
 
 function genCStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
@@ -1002,7 +1334,7 @@ function genCStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
           const symbol = getSymbolMeta(ctx, varName);
           const structName = symbol && symbol.shape === 'node' ? deriveStructName(symbol) : 'int';
           const target = mapCIdentifierWithContext(varName, ctx);
-          return `${indent(lvl)}${target} = (${structName}*)malloc(sizeof(${structName}));`;
+          return `${indent(lvl)}${target} = malloc(sizeof(${structName}));`;
         }
       }
       if (node.name.toLowerCase() === 'dispose' && node.args.length > 0) {
@@ -1053,35 +1385,92 @@ function mapCIdentifierWithContext(name: string, ctx: TypeContext): string {
 
   const root = baseIdentifier(name);
   const meta = getSymbolMeta(ctx, root);
+  if (meta?.shape === 'node' && mapped.includes('.')) {
+    mapped = mapped.replace(/\./g, '->');
+  }
   if (!meta || !meta.byRef) return mapped;
 
   if (meta.shape === 'node') {
+    if (mapped === root) return `*${root}`;
     mapped = mapped.replace(new RegExp(`^${root}(?=->|\\.|\\[|$)`), `(*${root})`);
     return mapped;
   }
 
+  if (mapped === root) return `*${root}`;
   mapped = mapped.replace(new RegExp(`^${root}(?=\\b|\\[)`), `(*${root})`);
   return mapped;
 }
 
-function genCExpr(node: ASTNode, ctx: TypeContext): string {
+function cBinaryPrecedence(op: string): number {
+  switch (op) {
+    case '||': return 10;
+    case '&&': return 20;
+    case '==':
+    case '!=': return 30;
+    case '<':
+    case '<=':
+    case '>':
+    case '>=': return 40;
+    case '+':
+    case '-': return 50;
+    case '*':
+    case '/':
+    case '%': return 60;
+    default: return 5;
+  }
+}
+
+function wrapByPrecedence(expr: string, precedence: number, parentPrecedence: number): string {
+  if (precedence < parentPrecedence) return `(${expr})`;
+  return expr;
+}
+
+function genCExpr(node: ASTNode, ctx: TypeContext, parentPrecedence = 0): string {
   switch (node.type) {
     case 'Literal':
       if (node.dataType === 'string') return `"${node.value}"`;
       if (node.dataType === 'boolean') return node.value ? '1' : '0';
       return String(node.value);
-    case 'Identifier': return mapCIdentifierWithContext(node.name, ctx);
-    case 'ArrayAccess': return `${mapCIdentifierWithContext(node.array, ctx)}[${genCExpr(node.index, ctx)}]`;
-    case 'Binary': return `(${genCExpr(node.left, ctx)} ${mapOp(node.operator, 'c')} ${genCExpr(node.right, ctx)})`;
-    case 'Unary': return `${mapOp(node.operator, 'c')}(${genCExpr(node.operand, ctx)})`;
+    case 'Identifier':
+      return mapCIdentifierWithContext(node.name, ctx);
+    case 'ArrayAccess': {
+      const expr = `${mapCIdentifierWithContext(node.array, ctx)}[${genCExpr(node.index, ctx)}]`;
+      return wrapByPrecedence(expr, 90, parentPrecedence);
+    }
+    case 'Binary': {
+      const op = mapOp(node.operator, 'c');
+      const precedence = cBinaryPrecedence(op);
+      const left = genCExpr(node.left, ctx, precedence);
+      const right = genCExpr(node.right, ctx, precedence + 1);
+      const expr = `${left} ${op} ${right}`;
+      return wrapByPrecedence(expr, precedence, parentPrecedence);
+    }
+    case 'Unary': {
+      const op = mapOp(node.operator, 'c');
+      const precedence = 70;
+      const operand = genCExpr(node.operand, ctx, precedence);
+      const expr = `${op}${operand}`;
+      return wrapByPrecedence(expr, precedence, parentPrecedence);
+    }
     case 'Call': {
+      if (node.name.toLowerCase() === 'length' && node.args.length === 1) {
+        const arg = node.args[0];
+        if (arg.type === 'Identifier') {
+          const arrayName = mapCIdentifierWithContext(arg.name, ctx);
+          const expr = `(int)(sizeof(${arrayName}) / sizeof(${arrayName}[0]))`;
+          return wrapByPrecedence(expr, 90, parentPrecedence);
+        }
+        return '0';
+      }
       if (node.name.toLowerCase().startsWith('next')) return '0';
       if (node.name.includes('.')) {
         const method = node.name.split('.').pop() ?? node.name;
         if (method.toLowerCase().startsWith('next') || method.toLowerCase() === 'close') return '0';
-        return `${method}(${node.args.map(a => genCExpr(a, ctx)).join(', ')})`;
+        const expr = `${method}(${node.args.map(a => genCExpr(a, ctx)).join(', ')})`;
+        return wrapByPrecedence(expr, 90, parentPrecedence);
       }
-      return `${node.name}(${node.args.map(a => genCExpr(a, ctx)).join(', ')})`;
+      const expr = `${node.name}(${node.args.map(a => genCExpr(a, ctx)).join(', ')})`;
+      return wrapByPrecedence(expr, 90, parentPrecedence);
     }
     default: return '';
   }
@@ -1091,8 +1480,22 @@ function genCExpr(node: ASTNode, ctx: TypeContext): string {
 
 export function generateJava(ast: ProgramNode): string {
   const mainAssignedVars = collectAssignedIdentifierVariables(ast.body);
-  const globalNames = new Set(ast.variables.map(v => v.name.toLowerCase()));
+  const mainReadVars = collectReadIdentifierVariables(ast.body);
+  let hasReadStatements = mainReadVars.length > 0;
+  const inlineMainDecls = collectInlineVariableDeclarations(ast.body);
+  const globalNames = new Set([
+    ...ast.variables.map(v => v.name.toLowerCase()),
+    ...inlineMainDecls.map(v => v.name.toLowerCase()),
+  ]);
   for (const name of mainAssignedVars) {
+    const normalized = name.toLowerCase();
+    if (normalized === 'nil' || normalized === 'null') continue;
+    if (!globalNames.has(normalized)) {
+      ast.variables.push({ type: 'VariableDeclaration', name, dataType: 'integer' });
+      globalNames.add(normalized);
+    }
+  }
+  for (const name of mainReadVars) {
     const normalized = name.toLowerCase();
     if (normalized === 'nil' || normalized === 'null') continue;
     if (!globalNames.has(normalized)) {
@@ -1103,9 +1506,23 @@ export function generateJava(ast: ProgramNode): string {
   ast.variables = dedupeVariableDeclarations(ast.variables);
 
   for (const fn of ast.functions) {
-    const localVarNames = new Set(fn.localVars.map(v => v.name.toLowerCase()));
+    const inlineLocalDecls = collectInlineVariableDeclarations(fn.body);
+    const localVarNames = new Set([
+      ...fn.localVars.map(v => v.name.toLowerCase()),
+      ...inlineLocalDecls.map(v => v.name.toLowerCase()),
+    ]);
     const assignedVars = collectAssignedIdentifierVariables(fn.body);
+    const readVars = collectReadIdentifierVariables(fn.body);
+    if (readVars.length > 0) hasReadStatements = true;
     for (const name of assignedVars) {
+      const normalized = name.toLowerCase();
+      if (normalized === 'nil' || normalized === 'null') continue;
+      if (!localVarNames.has(normalized) && !globalNames.has(normalized) && !fn.params.some(p => p.name.toLowerCase() === normalized)) {
+        fn.localVars.push({ type: 'VariableDeclaration', name, dataType: 'integer' });
+        localVarNames.add(normalized);
+      }
+    }
+    for (const name of readVars) {
       const normalized = name.toLowerCase();
       if (normalized === 'nil' || normalized === 'null') continue;
       if (!localVarNames.has(normalized) && !globalNames.has(normalized) && !fn.params.some(p => p.name.toLowerCase() === normalized)) {
@@ -1120,9 +1537,15 @@ export function generateJava(ast: ProgramNode): string {
   const lines: string[] = [];
   const className = ast.name || 'Programa';
 
-  lines.push(`import java.util.Scanner;`);
-  lines.push('');
+  if (hasReadStatements) {
+    lines.push('import java.util.Scanner;');
+    lines.push('');
+  }
   lines.push(`public class ${className} {`);
+  if (hasReadStatements) {
+    lines.push('  private static final Scanner SCANNER = new Scanner(System.in);');
+    lines.push('');
+  }
 
   for (const [structName, fields] of ctx.structFields.entries()) {
     lines.push(`  static class ${structName} {`);
@@ -1165,7 +1588,7 @@ export function generateJava(ast: ProgramNode): string {
         lines.push(`    ${v.name} = ${genJavaExpr(v.initialValue, ctx)};`);
       }
     }
-    for (const stmt of fn.body) lines.push(genJavaStmt(stmt, 2, ctx));
+    for (const stmt of fn.body) lines.push(genJavaStmt(stmt, 2, ctx, retType === 'void'));
     if (fn.type === 'Procedure' && byRefSymbol && firstByRef) {
       lines.push(`    return ${firstByRef.name};`);
     }
@@ -1175,7 +1598,6 @@ export function generateJava(ast: ProgramNode): string {
 
   // Main method
   lines.push('  public static void main(String[] args) {');
-  lines.push('    Scanner scanner = new Scanner(System.in);');
   for (const v of ast.variables) {
     lines.push(javaVarDeclaration(v, ctx, '    '));
   }
@@ -1185,15 +1607,21 @@ export function generateJava(ast: ProgramNode): string {
     }
   }
   if (ast.variables.length > 0) lines.push('');
-  for (const stmt of ast.body) lines.push(genJavaStmt(stmt, 2, ctx));
-  lines.push('    scanner.close();');
+  const mainBody = ast.body.filter((stmt, idx) => {
+    if (idx !== ast.body.length - 1) return true;
+    return !(stmt.type === 'Return' && stmt.value?.type === 'Literal' && stmt.value.value === 0);
+  });
+  for (const stmt of mainBody) lines.push(genJavaStmt(stmt, 2, ctx, true));
+  if (hasReadStatements) {
+    lines.push('    SCANNER.close();');
+  }
   lines.push('  }');
   lines.push('}');
 
   return lines.join('\n');
 }
 
-function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
+function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext, voidContext = false): string {
   switch (node.type) {
     case 'Assignment':
       return `${indent(lvl)}${genJavaExpr(node.target, ctx)} = ${genJavaExpr(node.value, ctx)};`;
@@ -1204,18 +1632,18 @@ function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
     }
     case 'If': {
       let s = `${indent(lvl)}if (${genJavaExpr(node.condition, ctx)}) {\n`;
-      for (const st of node.thenBody) s += genJavaStmt(st, lvl + 1, ctx) + '\n';
+      for (const st of node.thenBody) s += genJavaStmt(st, lvl + 1, ctx, voidContext) + '\n';
       s += `${indent(lvl)}}`;
       if (node.elseBody && node.elseBody.length > 0) {
         s += ` else {\n`;
-        for (const st of node.elseBody) s += genJavaStmt(st, lvl + 1, ctx) + '\n';
+        for (const st of node.elseBody) s += genJavaStmt(st, lvl + 1, ctx, voidContext) + '\n';
         s += `${indent(lvl)}}`;
       }
       return s;
     }
     case 'While': {
       let s = `${indent(lvl)}while (${genJavaExpr(node.condition, ctx)}) {\n`;
-      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx) + '\n';
+      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx, voidContext) + '\n';
       s += `${indent(lvl)}}`;
       return s;
     }
@@ -1223,19 +1651,19 @@ function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
       const cmp = node.ascending ? '<=' : '>=';
       const inc = node.ascending ? '++' : '--';
       let s = `${indent(lvl)}for (${node.variable} = ${genJavaExpr(node.start, ctx)}; ${node.variable} ${cmp} ${genJavaExpr(node.end, ctx)}; ${node.variable}${inc}) {\n`;
-      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx) + '\n';
+      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx, voidContext) + '\n';
       s += `${indent(lvl)}}`;
       return s;
     }
     case 'RepeatUntil': {
       let s = `${indent(lvl)}do {\n`;
-      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx) + '\n';
+      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx, voidContext) + '\n';
       s += `${indent(lvl)}} while (!(${genJavaExpr(node.condition, ctx)}));`;
       return s;
     }
     case 'DoWhile': {
       let s = `${indent(lvl)}do {\n`;
-      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx) + '\n';
+      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx, voidContext) + '\n';
       s += `${indent(lvl)}} while (${genJavaExpr(node.condition, ctx)});`;
       return s;
     }
@@ -1245,7 +1673,7 @@ function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
       return `${indent(lvl)}${method}(${args || '""'});`;
     }
     case 'Read':
-      return node.variables.map(v => `${indent(lvl)}${v} = scanner.nextInt();`).join('\n');
+      return node.variables.map(v => `${indent(lvl)}${v} = SCANNER.nextInt();`).join('\n');
     case 'Call':
       if (node.name.toLowerCase().startsWith('next')) return '';
       if (node.name.includes('.')) {
@@ -1272,17 +1700,18 @@ function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
         ? `${indent(lvl)}${node.name}(${node.args.map(a => genJavaExpr(a, ctx)).join(', ')});`
         : `${indent(lvl)}${node.name}();`;
     case 'Return':
+      if (voidContext) return `${indent(lvl)}return;`;
       return node.value ? `${indent(lvl)}return ${genJavaExpr(node.value, ctx)};` : `${indent(lvl)}return;`;
     case 'Switch': {
       let s = `${indent(lvl)}switch (${genJavaExpr(node.expression, ctx)}) {\n`;
       for (const c of node.cases) {
         s += `${indent(lvl + 1)}case ${genJavaExpr(c.value, ctx)}:\n`;
-        for (const st of c.body) s += genJavaStmt(st, lvl + 2, ctx) + '\n';
+        for (const st of c.body) s += genJavaStmt(st, lvl + 2, ctx, voidContext) + '\n';
         s += `${indent(lvl + 2)}break;\n`;
       }
       if (node.defaultBody) {
         s += `${indent(lvl + 1)}default:\n`;
-        for (const st of node.defaultBody) s += genJavaStmt(st, lvl + 2, ctx) + '\n';
+        for (const st of node.defaultBody) s += genJavaStmt(st, lvl + 2, ctx, voidContext) + '\n';
       }
       s += `${indent(lvl)}}`;
       return s;
@@ -1290,7 +1719,7 @@ function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
     case 'Break': return `${indent(lvl)}break;`;
     case 'Block': {
       let s = `${indent(lvl)}{\n`;
-      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx) + '\n';
+      for (const st of node.body) s += genJavaStmt(st, lvl + 1, ctx, voidContext) + '\n';
       s += `${indent(lvl)}}`;
       return s;
     }
@@ -1298,23 +1727,65 @@ function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
   }
 }
 
-function genJavaExpr(node: ASTNode, ctx: TypeContext): string {
+function javaBinaryPrecedence(op: string): number {
+  switch (op) {
+    case '||': return 10;
+    case '&&': return 20;
+    case '==':
+    case '!=': return 30;
+    case '<':
+    case '<=':
+    case '>':
+    case '>=': return 40;
+    case '+':
+    case '-': return 50;
+    case '*':
+    case '/':
+    case '%': return 60;
+    default: return 5;
+  }
+}
+
+function genJavaExpr(node: ASTNode, ctx: TypeContext, parentPrecedence = 0): string {
   switch (node.type) {
     case 'Literal':
       if (node.dataType === 'string') return `"${node.value}"`;
       if (node.dataType === 'boolean') return node.value ? 'true' : 'false';
-      return String(node.value);
-    case 'Identifier': return mapIdentifierName(node.name, 'java');
-    case 'ArrayAccess': return `${mapIdentifierName(node.array, 'java')}[${genJavaExpr(node.index, ctx)}]`;
-    case 'Binary': return `(${genJavaExpr(node.left, ctx)} ${mapOp(node.operator, 'java')} ${genJavaExpr(node.right, ctx)})`;
-    case 'Unary': return `${mapOp(node.operator, 'java')}(${genJavaExpr(node.operand, ctx)})`;
+      return wrapByPrecedence(String(node.value), 90, parentPrecedence);
+    case 'Identifier':
+      return wrapByPrecedence(mapIdentifierName(node.name, 'java'), 90, parentPrecedence);
+    case 'ArrayAccess':
+      return wrapByPrecedence(`${mapIdentifierName(node.array, 'java')}[${genJavaExpr(node.index, ctx)}]`, 90, parentPrecedence);
+    case 'Binary': {
+      const op = mapOp(node.operator, 'java');
+      const precedence = javaBinaryPrecedence(op);
+      const left = genJavaExpr(node.left, ctx, precedence);
+      const right = genJavaExpr(node.right, ctx, precedence + 1);
+      const expr = `${left} ${op} ${right}`;
+      return wrapByPrecedence(expr, precedence, parentPrecedence);
+    }
+    case 'Unary': {
+      const op = mapOp(node.operator, 'java');
+      const precedence = 70;
+      const expr = `${op}${genJavaExpr(node.operand, ctx, precedence)}`;
+      return wrapByPrecedence(expr, precedence, parentPrecedence);
+    }
     case 'Call': {
+      if (node.name.toLowerCase() === 'length' && node.args.length === 1) {
+        const arg = node.args[0];
+        if (arg.type === 'Identifier') {
+          const expr = `${mapIdentifierName(arg.name, 'java')}.length`;
+          return wrapByPrecedence(expr, 90, parentPrecedence);
+        }
+        return '0';
+      }
       if (node.name.toLowerCase().startsWith('next')) return '0';
       if (node.name.includes('.')) {
         const method = node.name.split('.').pop() ?? node.name;
         if (method.toLowerCase().startsWith('next') || method.toLowerCase() === 'close') return '0';
       }
-      return `${node.name}(${node.args.map(a => genJavaExpr(a, ctx)).join(', ')})`;
+      const expr = `${node.name}(${node.args.map(a => genJavaExpr(a, ctx)).join(', ')})`;
+      return wrapByPrecedence(expr, 90, parentPrecedence);
     }
     default: return '';
   }

@@ -1,4 +1,4 @@
-import type { CodeExample, CodeStats, ConversionResult, ConversionWarning, Language, ProgramNode } from './types';
+import type { ASTNode, CodeExample, CodeStats, ConversionResult, ConversionWarning, Language, ProgramNode } from './types';
 import { parsePascal } from './parser-pascal';
 import { parseC } from './parser-c';
 import { parseJava } from './parser-java';
@@ -58,6 +58,11 @@ export function analyzeCode(source: string): CodeStats {
   const loopPattern = /\b(while|for|repeat|repita|enquanto|para|do)\b/gi;
   const funcPattern = /\b(function|procedure|funcao|procedimento|void\s+\w+\s*\(|static\s+\w+\s+\w+\s*\()/gi;
   const condPattern = /\b(if|se|switch|escolha|case)\b/gi;
+  const arrayPattern = /\[[^\]]*\]|\barray\b|\bvetor\b|\[\]/gi;
+  const pointerPattern = /->|\^|\*[\s]*[A-Za-z_][A-Za-z0-9_]*\b/g;
+  const ioPattern = /\b(readln|read|scanf|printf|writeln|write|System\.out\.print|System\.out\.println|leia|escreva|escreval)\b/gi;
+  const commentPattern = /\/\/[^\n]*|\/\*[\s\S]*?\*\/|\{[\s\S]*?\}|\(\*[\s\S]*?\*\)/g;
+  const userTypePattern = /\b(record|struct|class|typedef|type)\b/gi;
 
   return {
     lines,
@@ -65,6 +70,11 @@ export function analyzeCode(source: string): CodeStats {
     loops: (source.match(loopPattern) || []).length,
     functions: (source.match(funcPattern) || []).length,
     conditionals: (source.match(condPattern) || []).length,
+    arrays: (source.match(arrayPattern) || []).length,
+    pointers: (source.match(pointerPattern) || []).length,
+    ioOperations: (source.match(ioPattern) || []).length,
+    comments: (source.match(commentPattern) || []).length,
+    userTypes: (source.match(userTypePattern) || []).length,
     detectedLanguage: detectLanguage(source),
   };
 }
@@ -75,11 +85,37 @@ export function convertCode(source: string, from: Language, to: Language): Conve
   const warnings: ConversionWarning[] = [];
 
   if (!source.trim()) {
-    return { success: false, output: '', explanations: [], warnings: [{ line: 0, message: 'Nenhum código fornecido.', severity: 'error' }], stats: { lines: 0, variables: 0, loops: 0, functions: 0, conditionals: 0, detectedLanguage: null } };
+    return {
+      success: false,
+      output: '',
+      explanations: [],
+      warnings: [{ line: 0, message: 'Nenhum código fornecido.', severity: 'error' }],
+      stats: {
+        lines: 0,
+        variables: 0,
+        loops: 0,
+        functions: 0,
+        conditionals: 0,
+        arrays: 0,
+        pointers: 0,
+        ioOperations: 0,
+        comments: 0,
+        userTypes: 0,
+        detectedLanguage: null,
+      },
+    };
   }
 
   if (from === to) {
-    return { success: true, output: source, explanations: [], warnings: [{ line: 0, message: 'Linguagens de origem e destino são iguais.', severity: 'info' }], stats: analyzeCode(source) };
+    const sameLangWarnings: ConversionWarning[] = [{ line: 0, message: 'Linguagens de origem e destino são iguais.', severity: 'info' }];
+    sameLangWarnings.push(...generateContextualWarnings(source, source, from, to));
+    return {
+      success: true,
+      output: source,
+      explanations: generateExplanations(from, to, source, source),
+      warnings: sameLangWarnings,
+      stats: analyzeCode(source),
+    };
   }
 
   let ast: ProgramNode;
@@ -126,12 +162,15 @@ export function convertCode(source: string, from: Language, to: Language): Conve
 
   output = prependTranslatedComments(source, from, to, output);
 
+  const contextualWarnings = generateContextualWarnings(source, output, from, to);
+  warnings.push(...contextualWarnings);
+
   warnings.push({ line: 0, message: 'Conversão educacional. Revise o código manualmente antes de compilar.', severity: 'info' });
 
   return {
     success: true,
     output,
-    explanations: generateExplanations(from, to),
+    explanations: generateExplanations(from, to, source, output),
     warnings,
     stats: analyzeCode(source),
   };
@@ -246,7 +285,7 @@ function renderCommentForLanguage(comment: string, lang: Language): string {
 
 // ---------- Explanations ----------
 
-function generateExplanations(from: Language, to: Language) {
+function generateExplanations(from: Language, to: Language, source: string, output: string) {
   const explanations: { sourceLine: number; targetLine: number; sourceCode: string; targetCode: string; explanation: string }[] = [];
 
   const syntaxDiffs: Record<string, { from: Record<Language, string>; to: Record<Language, string>; explanation: string }[]> = {
@@ -270,7 +309,215 @@ function generateExplanations(from: Language, to: Language) {
     });
   });
 
+  let dynamicLine = diffs.length + 1;
+  const hasForLoop = /\b(for|while|para|enquanto)\b/i.test(source) || /\b(for|while|para|enquanto)\b/i.test(output);
+  const hasArray = /\[[^\]]+\]|\barray\b|\bvetor\b/i.test(source) || /\[[^\]]+\]|\barray\b|\bvetor\b/i.test(output);
+
+  if (hasForLoop) {
+    explanations.push({
+      sourceLine: dynamicLine,
+      targetLine: dynamicLine,
+      sourceCode: from === 'pascal' ? 'for i := 1 to n do' : from === 'pseudocode' ? 'para i de 1 ate n faca' : 'for (i = 0; i < n; i++)',
+      targetCode: to === 'pascal' ? 'for i := 1 to n do' : to === 'pseudocode' ? 'para i de 1 ate n faca' : 'for (i = 0; i < n; i++)',
+      explanation: 'A sintaxe de laços muda entre linguagens. Confira início, condição e incremento/decremento.',
+    });
+    dynamicLine += 1;
+  }
+
+  if (hasArray) {
+    explanations.push({
+      sourceLine: dynamicLine,
+      targetLine: dynamicLine,
+      sourceCode: from === 'pascal' ? 'v[1]' : 'v[0]',
+      targetCode: to === 'pascal' ? 'v[1]' : 'v[0]',
+      explanation: 'Índices de vetor podem mudar por convenção: Pascal costuma usar 1..N, C/Java geralmente 0..N-1.',
+    });
+  }
+
   return explanations;
+}
+
+function generateContextualWarnings(source: string, output: string, from: Language, to: Language): ConversionWarning[] {
+  const warnings: ConversionWarning[] = [];
+
+  const pushWarning = (message: string, severity: ConversionWarning['severity']) => {
+    if (warnings.some(w => w.message === message)) return;
+    warnings.push({ line: 0, message, severity });
+  };
+
+  if ((from === 'pascal' && (to === 'c' || to === 'java')) && /\barray\s*\[\s*1\s*\.\./i.test(source)) {
+    pushWarning('Diferença de índice detectada: vetor Pascal com base 1 pode exigir ajuste para base 0 em C/Java.', 'info');
+  }
+
+  if ((from === 'c' || from === 'java') && to === 'pascal' && /\[[^\]]+\]/.test(source)) {
+    pushWarning('Revisão sugerida: confirme os limites de índice no Pascal (0..N-1 ou 1..N) conforme a declaração do vetor.', 'info');
+  }
+
+  if (to === 'java') {
+    const javaWarnings = analyzeJavaLearningWarnings(output);
+    for (const warning of javaWarnings) {
+      pushWarning(warning.message, warning.severity);
+    }
+
+    const forHeaderPattern = /for\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*([1-9][0-9]*)\s*;\s*\1\s*(?:<=|<)\s*[^;]+;\s*\1(?:\+\+|--)?/g;
+    let forMatch = forHeaderPattern.exec(output);
+    while (forMatch) {
+      const loopVar = forMatch[1];
+      const start = forMatch[2];
+      const bodyPattern = new RegExp(`\\[[\\s]*${loopVar}[\\s]*\\]`);
+      if (bodyPattern.test(output)) {
+        pushWarning(`Laço Java iniciando em ${start} com acesso por índice '${loopVar}' detectado. Revise possível diferença de base (0..N-1).`, 'info');
+        break;
+      }
+      forMatch = forHeaderPattern.exec(output);
+    }
+  }
+
+  return warnings;
+}
+
+function analyzeJavaLearningWarnings(output: string): ConversionWarning[] {
+  const warnings: ConversionWarning[] = [];
+  const pushWarning = (message: string, severity: ConversionWarning['severity']) => {
+    if (warnings.some(w => w.message === message)) return;
+    warnings.push({ line: 0, message, severity });
+  };
+
+  let ast: ProgramNode;
+  try {
+    ast = parseJava(output);
+  } catch {
+    return warnings;
+  }
+
+  const declared = new Map<string, { isArray: boolean }>();
+  const registerDecl = (name: string, isArray: boolean) => {
+    if (!name) return;
+    declared.set(name.toLowerCase(), { isArray });
+  };
+
+  const collectDeclarations = (nodes: ProgramNode['body']) => {
+    for (const node of nodes) {
+      if (node.type === 'VariableDeclaration') {
+        const raw = node.rawType?.toLowerCase() ?? '';
+        registerDecl(node.name, typeof node.arraySize === 'number' || raw.includes('array') || raw.includes('[]'));
+      }
+    }
+  };
+
+  collectDeclarations(ast.body);
+  collectDeclarations(ast.variables);
+  for (const fn of ast.functions) {
+    for (const p of fn.params) {
+      const raw = p.rawType?.toLowerCase() ?? '';
+      registerDecl(p.name, raw.includes('array') || raw.includes('[]'));
+    }
+    collectDeclarations(fn.localVars);
+  }
+
+  const rootIdentifier = (value: string): string => {
+    const trimmed = value.trim();
+    const bracket = trimmed.indexOf('[');
+    const dot = trimmed.indexOf('.');
+    const end = [bracket, dot].filter(idx => idx >= 0).sort((a, b) => a - b)[0];
+    return (end === undefined ? trimmed : trimmed.slice(0, end)).trim();
+  };
+
+  const nodeUsesArrayIndexVar = (node: ProgramNode['body'][number], loopVar: string): boolean => {
+    const check = (n: ASTNode): boolean => {
+      if (!n || typeof n !== 'object') return false;
+
+      if (n.type === 'ArrayAccess') {
+        return n.index?.type === 'Identifier' && String(n.index.name).toLowerCase() === loopVar.toLowerCase();
+      }
+
+      if (n.type === 'Assignment') {
+        return check(n.target) || check(n.value);
+      }
+
+      if (n.type === 'If') {
+        return check(n.condition) || (n.thenBody?.some(check) ?? false) || (n.elseBody?.some(check) ?? false);
+      }
+
+      if (n.type === 'While' || n.type === 'DoWhile' || n.type === 'RepeatUntil') {
+        return check(n.condition) || (n.body?.some(check) ?? false);
+      }
+
+      if (n.type === 'Block') {
+        return n.body?.some(check) ?? false;
+      }
+
+      if (n.type === 'For') {
+        return check(n.start) || check(n.end) || (n.body?.some(check) ?? false);
+      }
+
+      if (n.type === 'Switch') {
+        return check(n.expression)
+          || (n.cases?.some(entry => check(entry.value) || (entry.body?.some(check) ?? false)) ?? false)
+          || (n.defaultBody?.some(check) ?? false);
+      }
+
+      if (n.type === 'Write') return n.args?.some(check) ?? false;
+      if (n.type === 'Call') return n.args?.some(check) ?? false;
+      if (n.type === 'Return') return n.value ? check(n.value) : false;
+      if (n.type === 'Binary') return check(n.left) || check(n.right);
+      if (n.type === 'Unary') return check(n.operand);
+      if (n.type === 'Read') {
+        return n.variables?.some((variable: string) => variable.includes('[') && rootIdentifier(variable).toLowerCase() !== loopVar.toLowerCase() ? false : variable.includes(`[${loopVar}]`) || variable.includes(`[${loopVar.toLowerCase()}]`)) ?? false;
+      }
+      return false;
+    };
+
+    return check(node);
+  };
+
+  const walkNodes = (nodes: ProgramNode['body'], inFor: boolean) => {
+    for (const node of nodes) {
+      if (node.type === 'For') {
+        const startValue = node.start.type === 'Literal' && typeof node.start.value === 'number' ? node.start.value : null;
+        if (startValue !== null && startValue >= 1) {
+          const usesLoopVarAsArrayIndex = node.body.some(bodyNode => nodeUsesArrayIndexVar(bodyNode, node.variable));
+          if (usesLoopVarAsArrayIndex) {
+            pushWarning(`Laço com índice iniciando em ${startValue} acessando vetor com '${node.variable}'. Em Java, revise se o vetor deveria começar em índice 0.`, 'info');
+          }
+        }
+        walkNodes(node.body, true);
+        continue;
+      }
+
+      if (node.type === 'If') {
+        walkNodes(node.thenBody, inFor);
+        if (node.elseBody) walkNodes(node.elseBody, inFor);
+        continue;
+      }
+
+      if (node.type === 'While' || node.type === 'DoWhile' || node.type === 'RepeatUntil' || node.type === 'Block') {
+        walkNodes(node.body, inFor);
+        continue;
+      }
+
+      if (node.type === 'Switch') {
+        for (const entry of node.cases) walkNodes(entry.body, inFor);
+        if (node.defaultBody) walkNodes(node.defaultBody, inFor);
+        continue;
+      }
+
+      if (node.type !== 'Read') continue;
+
+      for (const variable of node.variables) {
+        const root = rootIdentifier(variable);
+        if (!root) continue;
+        if (!declared.get(root.toLowerCase())) continue;
+      }
+    }
+  };
+
+  walkNodes(ast.body, false);
+  for (const fn of ast.functions) {
+    walkNodes(fn.body, false);
+  }
+
+  return warnings;
 }
 
 // ---------- Examples ----------

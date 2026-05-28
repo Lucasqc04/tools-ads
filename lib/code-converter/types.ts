@@ -244,6 +244,11 @@ export interface CodeStats {
   loops: number;
   functions: number;
   conditionals: number;
+  arrays: number;
+  pointers: number;
+  ioOperations: number;
+  comments: number;
+  userTypes: number;
   detectedLanguage: Language | null;
 }
 

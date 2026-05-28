@@ -22,6 +22,75 @@ export function parseC(source: string): ProgramNode {
   };
   const isAt = (val: string): boolean => peek().value === val;
 
+  function parsePreprocessorDefine(prog: ProgramNode): boolean {
+    if (!isAt('#')) return false;
+
+    const hashToken = advance();
+    const directiveLine = hashToken.line;
+    if (!isAt('define')) {
+      while (peek().type !== 'eof' && peek().line === directiveLine) advance();
+      return true;
+    }
+
+    advance(); // define
+    const nameToken = advance();
+    if (nameToken.type !== 'identifier' && nameToken.type !== 'keyword') {
+      while (peek().type !== 'eof' && peek().line === directiveLine) advance();
+      return true;
+    }
+
+    if (isAt('(')) {
+      while (peek().type !== 'eof' && peek().line === directiveLine) advance();
+      return true;
+    }
+
+    let valueToken = peek();
+    let sign = 1;
+    if (valueToken.value === '-') {
+      advance();
+      sign = -1;
+      valueToken = peek();
+    }
+
+    let varDecl: VariableDeclaration | null = null;
+    if (valueToken.type === 'number') {
+      advance();
+      const isReal = valueToken.value.includes('.');
+      const parsed = isReal ? parseFloat(valueToken.value) : parseInt(valueToken.value, 10);
+      varDecl = {
+        type: 'VariableDeclaration',
+        name: nameToken.value,
+        dataType: isReal ? 'real' : 'integer',
+        rawType: 'const',
+        initialValue: {
+          type: 'Literal',
+          value: sign < 0 ? -parsed : parsed,
+          dataType: isReal ? 'real' : 'integer',
+        } as LiteralNode,
+      };
+    } else if (valueToken.type === 'string') {
+      advance();
+      varDecl = {
+        type: 'VariableDeclaration',
+        name: nameToken.value,
+        dataType: 'string',
+        rawType: 'const',
+        initialValue: {
+          type: 'Literal',
+          value: valueToken.value.slice(1, -1),
+          dataType: 'string',
+        } as LiteralNode,
+      };
+    }
+
+    if (varDecl) {
+      prog.variables.push(varDecl);
+    }
+
+    while (peek().type !== 'eof' && peek().line === directiveLine) advance();
+    return true;
+  }
+
   function nextValue(offset = 1): string {
     return tokens[pos + offset]?.value ?? '';
   }
@@ -41,11 +110,54 @@ export function parseC(source: string): ProgramNode {
     return false;
   };
 
+  function skipDeclarationUntilSemicolon(): void {
+    let braceDepth = 0;
+    while (peek().type !== 'eof') {
+      if (peek().value === '{') {
+        braceDepth++;
+        advance();
+        continue;
+      }
+      if (peek().value === '}') {
+        if (braceDepth > 0) braceDepth--;
+        advance();
+        continue;
+      }
+      if (peek().value === ';' && braceDepth === 0) {
+        advance();
+        break;
+      }
+      advance();
+    }
+  }
+
+  function skipTypeDefinition(): boolean {
+    if (isAt('typedef')) {
+      advance();
+      skipDeclarationUntilSemicolon();
+      return true;
+    }
+
+    if (isAt('struct')) {
+      const next = tokens[pos + 1];
+      const afterNext = tokens[pos + 2];
+      if ((next?.type === 'identifier' || next?.type === 'keyword') && afterNext?.value === '{') {
+        advance(); // struct
+        advance(); // struct name
+        skipDeclarationUntilSemicolon();
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   function parseProgram(): ProgramNode {
     const prog: ProgramNode = { type: 'Program', body: [], functions: [], variables: [] };
 
     while (peek().type !== 'eof') {
-      if (isAt('#')) { advance(); continue; } // skip remaining preprocessor
+      if (parsePreprocessorDefine(prog)) continue;
+      if (skipTypeDefinition()) continue;
 
       if (!isType()) {
         advance();
