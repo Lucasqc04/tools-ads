@@ -29,7 +29,13 @@ import {
   cs2CrosshairCodesIntro,
   getCs2CrosshairCodesContent,
 } from '@/data/content/cs2-crosshair-codes';
+import { getCs2ToolContent } from '@/data/content/cs2-tools';
 import { getCs2CrosshairToolBasePathForLocale } from '@/data/cs2/crosshair-pages';
+import {
+  getCs2ToolBasePathForLocale,
+  isCs2ToolId,
+  type Cs2ToolId,
+} from '@/data/cs2/tools';
 import {
   gtaCheatsContentBlocks,
   gtaCheatsFaq,
@@ -110,6 +116,141 @@ import {
 import { getToolTranslation } from '@/data/i18n/tool-translations';
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ToolDefinition } from '@/types/tool';
+
+const cs2ToolIds: Cs2ToolId[] = [
+  'cs2-practice-commands',
+  'cs2-practice-config',
+  'cs2-grenade-practice-commands',
+  'cs2-smoke-practice-commands',
+  'cs2-bot-commands',
+  'cs2-radar-settings',
+  'cs2-hud-commands',
+  'cs2-hud-color',
+  'cs2-viewmodel-generator',
+  'cs2-fps-commands',
+  'cs2-autoexec-generator',
+  'cs2-competitive-config',
+  'cs2-tournament-safe-config',
+  'cs2-fun-commands',
+];
+
+const cs2ToolRelatedById: Record<Cs2ToolId, string[]> = {
+  'cs2-practice-commands': [
+    'cs2-practice-config',
+    'cs2-grenade-practice-commands',
+    'cs2-autoexec-generator',
+    'cs2-crosshair-codes',
+  ],
+  'cs2-practice-config': [
+    'cs2-practice-commands',
+    'cs2-smoke-practice-commands',
+    'cs2-bot-commands',
+    'cs2-autoexec-generator',
+  ],
+  'cs2-grenade-practice-commands': [
+    'cs2-smoke-practice-commands',
+    'cs2-practice-commands',
+    'cs2-practice-config',
+    'cs2-autoexec-generator',
+  ],
+  'cs2-smoke-practice-commands': [
+    'cs2-grenade-practice-commands',
+    'cs2-practice-config',
+    'cs2-practice-commands',
+    'cs2-autoexec-generator',
+  ],
+  'cs2-bot-commands': [
+    'cs2-practice-commands',
+    'cs2-practice-config',
+    'cs2-fun-commands',
+    'cs2-autoexec-generator',
+  ],
+  'cs2-radar-settings': [
+    'cs2-competitive-config',
+    'cs2-viewmodel-generator',
+    'cs2-hud-commands',
+    'cs2-crosshair-codes',
+  ],
+  'cs2-hud-commands': [
+    'cs2-hud-color',
+    'cs2-competitive-config',
+    'cs2-viewmodel-generator',
+    'cs2-radar-settings',
+  ],
+  'cs2-hud-color': [
+    'cs2-hud-commands',
+    'cs2-competitive-config',
+    'cs2-autoexec-generator',
+    'cs2-radar-settings',
+  ],
+  'cs2-viewmodel-generator': [
+    'cs2-radar-settings',
+    'cs2-hud-commands',
+    'cs2-competitive-config',
+    'cs2-crosshair-codes',
+  ],
+  'cs2-fps-commands': [
+    'cs2-competitive-config',
+    'cs2-autoexec-generator',
+    'cs2-hud-commands',
+    'cs2-viewmodel-generator',
+  ],
+  'cs2-autoexec-generator': [
+    'cs2-practice-config',
+    'cs2-competitive-config',
+    'cs2-tournament-safe-config',
+    'cs2-fun-commands',
+  ],
+  'cs2-competitive-config': [
+    'cs2-tournament-safe-config',
+    'cs2-radar-settings',
+    'cs2-viewmodel-generator',
+    'cs2-crosshair-codes',
+  ],
+  'cs2-tournament-safe-config': [
+    'cs2-competitive-config',
+    'cs2-radar-settings',
+    'cs2-viewmodel-generator',
+    'cs2-hud-commands',
+  ],
+  'cs2-fun-commands': [
+    'cs2-practice-commands',
+    'cs2-bot-commands',
+    'cs2-practice-config',
+    'cs2-autoexec-generator',
+  ],
+};
+
+const buildCs2ToolDefinition = (id: Cs2ToolId): ToolDefinition => {
+  const ptBrContent = getCs2ToolContent(id, 'pt-br');
+  const slugEn = getCs2ToolBasePathForLocale(id, 'en').replace('/tools/', '');
+
+  return {
+    id,
+    slug: slugEn,
+    name: ptBrContent.name,
+    shortDescription: ptBrContent.shortDescription,
+    category: 'gaming',
+    primaryKeyword: ptBrContent.primaryKeyword,
+    secondaryKeywords: ptBrContent.secondaryKeywords,
+    searchIntent: ptBrContent.searchIntent,
+    seoTitle: ptBrContent.seoTitle,
+    seoDescription: ptBrContent.seoDescription,
+    h1: ptBrContent.h1,
+    intro: ptBrContent.intro,
+    canonicalPath: getCs2ToolBasePathForLocale(id, 'en'),
+    canonicalPathByLocale: {
+      'pt-br': getCs2ToolBasePathForLocale(id, 'pt-br'),
+      en: getCs2ToolBasePathForLocale(id, 'en'),
+      es: getCs2ToolBasePathForLocale(id, 'es'),
+    },
+    faq: ptBrContent.faq,
+    contentBlocks: ptBrContent.contentBlocks,
+    relatedToolIds: cs2ToolRelatedById[id],
+  };
+};
+
+const cs2ToolDefinitions: ToolDefinition[] = cs2ToolIds.map((id) => buildCs2ToolDefinition(id));
 
 export const toolsRegistry: ToolDefinition[] = [
   {
@@ -691,6 +832,7 @@ export const toolsRegistry: ToolDefinition[] = [
     contentBlocks: cs2CrosshairCodesContentBlocks,
     relatedToolIds: ['invisible-character', 'json-formatter', 'sorteador'],
   },
+  ...cs2ToolDefinitions,
   {
     id: 'gta-cheat-codes',
     slug: 'gta-cheat-codes',
@@ -878,6 +1020,16 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'gta-cheat-codes') {
     const localized = getGtaCheatsContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (isCs2ToolId(tool.id)) {
+    const localized = getCs2ToolContent(tool.id, locale);
 
     return {
       ...tool,

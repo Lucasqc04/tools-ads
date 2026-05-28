@@ -6,6 +6,7 @@ import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-to
 import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
 import { CompoundInterestTool } from '@/components/tools/compound-interest-tool';
 import { CpfGeneratorTool } from '@/components/tools/cpf-generator-tool';
+import { Cs2ToolSuite } from '@/components/tools/cs2-tool-suite';
 import { FakePersonGeneratorTool } from '@/components/tools/fake-person-generator-tool';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
@@ -85,6 +86,7 @@ import { getDictionary } from '@/lib/i18n/dictionary';
 import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { getInvisiblePlatformById } from '@/lib/invisible-character';
 import { buildLocalizedMetadata } from '@/lib/seo';
+import { isCs2ToolId } from '@/data/cs2/tools';
 import type { ToolDefinition } from '@/types/tool';
 
 export const dynamicParams = false;
@@ -750,6 +752,8 @@ export default async function LandingPage({ params }: LandingPageProps) {
         links={platformLinks}
       />
     );
+  } else if (isCs2ToolId(aliasPage.toolSlug)) {
+    toolUi = <Cs2ToolSuite locale={locale} toolId={aliasPage.toolSlug} />;
   }
 
   if (!toolUi) {

@@ -787,6 +787,109 @@ const baseKeywordsByTool: ToolKeywordMap = {
       'interes compuesto anual',
     ],
   },
+  'cs2-practice-commands': {
+    'pt-br': [
+      'comandos-de-treino-cs2',
+      'comandos-para-treinar-cs2',
+      'comandos-sv-cheats-cs2',
+      'comandos-private-cs2',
+    ],
+    en: [
+      'cs2-practice-commands',
+      'cs2-training-commands',
+      'cs2-sv-cheats-commands',
+      'cs2-private-server-commands',
+    ],
+    es: [
+      'comandos-de-practica-cs2',
+      'comandos-para-entrenar-cs2',
+      'comandos-sv-cheats-cs2',
+      'comandos-servidor-privado-cs2',
+    ],
+  },
+  'cs2-practice-config': {
+    'pt-br': ['config-de-treino-cs2'],
+    en: ['cs2-practice-config'],
+    es: ['config-de-practica-cs2'],
+  },
+  'cs2-grenade-practice-commands': {
+    'pt-br': [
+      'comandos-granadas-cs2',
+      'comando-rastro-granada-cs2',
+      'comando-repetir-granada-cs2',
+      'treinar-flash-cs2',
+      'treinar-molotov-cs2',
+    ],
+    en: [
+      'cs2-grenade-practice-commands',
+      'cs2-grenade-trajectory-command',
+      'cs2-rethrow-last-grenade-command',
+      'cs2-flash-practice-commands',
+      'cs2-molotov-practice-commands',
+    ],
+    es: [
+      'comandos-granadas-cs2',
+      'comando-trayectoria-granada-cs2',
+      'comando-repetir-granada-cs2',
+      'practicar-flash-cs2',
+      'practicar-molotov-cs2',
+    ],
+  },
+  'cs2-smoke-practice-commands': {
+    'pt-br': ['comandos-smoke-cs2', 'treinar-smoke-cs2'],
+    en: ['cs2-smoke-practice-commands'],
+    es: ['comandos-smoke-cs2', 'practicar-smoke-cs2'],
+  },
+  'cs2-bot-commands': {
+    'pt-br': ['comandos-bot-cs2', 'como-colocar-bot-cs2'],
+    en: ['cs2-bot-commands', 'how-to-place-bots-cs2'],
+    es: ['comandos-bots-cs2', 'como-poner-bots-cs2'],
+  },
+  'cs2-radar-settings': {
+    'pt-br': ['comandos-radar-cs2', 'configuracao-radar-cs2'],
+    en: ['cs2-radar-settings', 'cs2-radar-commands'],
+    es: ['configuracion-radar-cs2', 'comandos-radar-cs2'],
+  },
+  'cs2-hud-commands': {
+    'pt-br': ['comandos-hud-cs2', 'binds-cs2', 'binds-seguros-cs2'],
+    en: ['cs2-hud-commands', 'cs2-binds', 'safe-cs2-binds'],
+    es: ['comandos-hud-cs2', 'binds-cs2', 'binds-seguros-cs2'],
+  },
+  'cs2-hud-color': {
+    'pt-br': ['mudar-cor-hud-cs2'],
+    en: ['cs2-hud-color'],
+    es: ['color-hud-cs2'],
+  },
+  'cs2-viewmodel-generator': {
+    'pt-br': ['gerador-viewmodel-cs2', 'viewmodel-cs2'],
+    en: ['cs2-viewmodel-generator', 'cs2-viewmodel-settings'],
+    es: ['generador-viewmodel-cs2', 'viewmodel-cs2'],
+  },
+  'cs2-fps-commands': {
+    'pt-br': ['comandos-fps-cs2', 'aumentar-fps-cs2'],
+    en: ['cs2-fps-commands', 'best-cs2-performance-commands'],
+    es: ['comandos-fps-cs2', 'aumentar-fps-cs2'],
+  },
+  'cs2-autoexec-generator': {
+    'pt-br': ['autoexec-cs2', 'gerador-autoexec-cs2'],
+    en: ['cs2-autoexec', 'cs2-autoexec-generator'],
+    es: ['autoexec-cs2', 'generador-autoexec-cs2'],
+  },
+  'cs2-competitive-config': {
+    'pt-br': ['config-competitiva-cs2'],
+    en: ['cs2-competitive-config'],
+    es: ['config-competitiva-cs2'],
+  },
+  'cs2-tournament-safe-config': {
+    'pt-br': ['config-campeonato-cs2'],
+    en: ['cs2-tournament-safe-config'],
+    es: ['config-torneo-cs2'],
+  },
+  'cs2-fun-commands': {
+    'pt-br': ['comandos-divertidos-cs2'],
+    en: ['cs2-fun-commands'],
+    es: ['comandos-divertidos-cs2'],
+  },
   'invisible-character': {
     'pt-br': [
       'caractere invisivel',
