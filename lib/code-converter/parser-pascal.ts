@@ -381,11 +381,13 @@ export function parsePascal(source: string): ProgramNode {
         advance();
         const index = parseExpression();
         expect(']');
+        const indexedName = `${displayName}[${inlineExpr(index)}]`;
 
         if (!hasComplexSuffix && target.type === 'Identifier' && target.name === name) {
           target = { type: 'ArrayAccess', array: name, index };
+          displayName = indexedName;
         } else {
-          displayName += `[${inlineExpr(index)}]`;
+          displayName = indexedName;
           target = { type: 'Identifier', name: displayName };
         }
 

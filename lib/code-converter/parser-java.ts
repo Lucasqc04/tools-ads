@@ -36,6 +36,25 @@ export function parseJava(source: string): ProgramNode {
   };
   const isModifier = (): boolean => ['public', 'private', 'protected', 'static', 'final', 'abstract'].includes(peek().value);
 
+  function skipBalancedBlock(): void {
+    if (!isAt('{')) return;
+    let depth = 0;
+    while (peek().type !== 'eof') {
+      if (isAt('{')) {
+        advance();
+        depth++;
+        continue;
+      }
+      if (isAt('}')) {
+        advance();
+        depth--;
+        if (depth <= 0) break;
+        continue;
+      }
+      advance();
+    }
+  }
+
   function consumeBraceInitializer(): void {
     if (!isAt('{')) return;
     let depth = 0;
@@ -77,6 +96,18 @@ export function parseJava(source: string): ProgramNode {
       while (!isAt('}') && peek().type !== 'eof') {
         while (isModifier()) advance();
 
+        if (isAt('class')) {
+          advance();
+          if (peek().type === 'identifier' || peek().type === 'keyword') advance();
+          if (isAt('extends')) { advance(); advance(); }
+          if (isAt('implements')) {
+            advance();
+            while (!isAt('{') && peek().type !== 'eof') advance();
+          }
+          skipBalancedBlock();
+          continue;
+        }
+
         if (isType()) {
           const dtInfo = parseJavaDataType();
           const dt = dtInfo.dataType;
@@ -94,8 +125,7 @@ export function parseJava(source: string): ProgramNode {
             // Field(s)
             const decls: VariableDeclaration[] = [];
             const parseOneFieldDecl = (fieldName: string) => {
-              const varDecl: VariableDeclaration = { type: 'VariableDeclaration', name: fieldName, dataType: dt };
-              if (dtInfo.isArray) varDecl.rawType = 'array';
+              const varDecl: VariableDeclaration = { type: 'VariableDeclaration', name: fieldName, dataType: dt, rawType: dtInfo.isArray ? 'array' : dtInfo.rawType };
               if (isAt('[')) {
                 advance();
                 if (peek().type === 'number') varDecl.arraySize = parseInt(advance().value, 10);
@@ -110,7 +140,7 @@ export function parseJava(source: string): ProgramNode {
                   varDecl.initialValue = parseExpression();
                 }
               }
-              decls.push(varDecl);
+              if (dtInfo.rawType !== 'Scanner') decls.push(varDecl);
             };
 
             parseOneFieldDecl(name);
@@ -132,26 +162,26 @@ export function parseJava(source: string): ProgramNode {
     return prog;
   }
 
-  function parseJavaDataType(): { dataType: DataType; isArray: boolean } {
+  function parseJavaDataType(): { dataType: DataType; isArray: boolean; rawType?: string } {
     const t = advance().value;
     let isArray = false;
     // Skip [] for arrays
     if (isAt('[')) { advance(); match(']'); isArray = true; }
     switch (t) {
-      case 'int': case 'long': case 'short': case 'byte': return { dataType: 'integer', isArray };
-      case 'float': case 'double': return { dataType: 'real', isArray };
-      case 'char': return { dataType: 'char', isArray };
-      case 'boolean': return { dataType: 'boolean', isArray };
-      case 'String': return { dataType: 'string', isArray };
-      case 'Scanner': return { dataType: 'unknown', isArray };
-      case 'void': return { dataType: 'void', isArray };
-      default: return { dataType: 'unknown', isArray };
+      case 'int': case 'long': case 'short': case 'byte': return { dataType: 'integer', isArray, rawType: t };
+      case 'float': case 'double': return { dataType: 'real', isArray, rawType: t };
+      case 'char': return { dataType: 'char', isArray, rawType: t };
+      case 'boolean': return { dataType: 'boolean', isArray, rawType: t };
+      case 'String': return { dataType: 'string', isArray, rawType: t };
+      case 'Scanner': return { dataType: 'unknown', isArray, rawType: t };
+      case 'void': return { dataType: 'void', isArray, rawType: t };
+      default: return { dataType: 'unknown', isArray, rawType: t };
     }
   }
 
   function parseMethodDef(returnType: DataType, name: string): FunctionNode {
     expect('(');
-    const params: { name: string; dataType: DataType; rawType?: string }[] = [];
+    const params: { name: string; dataType: DataType; rawType?: string; byRef?: boolean }[] = [];
     if (!isAt(')')) {
       do {
         // Skip String[] args for main
@@ -162,7 +192,14 @@ export function parseJava(source: string): ProgramNode {
         } else if (isType()) {
           const pType = parseJavaDataType();
           const pName = advance().value;
-          params.push({ name: pName, dataType: pType.dataType, rawType: pType.isArray ? 'array' : undefined });
+          const isNodeRefArray = pType.isArray && pType.rawType && !['int', 'long', 'short', 'byte', 'float', 'double', 'char', 'boolean', 'String'].includes(pType.rawType);
+          const isRefWrapper = !!pType.rawType && /Ref$/i.test(pType.rawType);
+          params.push({
+            name: pName,
+            dataType: isRefWrapper ? 'integer' : pType.dataType,
+            rawType: pType.isArray ? (isNodeRefArray ? pType.rawType : 'array') : pType.rawType,
+            byRef: isNodeRefArray || isRefWrapper,
+          });
         } else break;
       } while (match(','));
     }
@@ -184,8 +221,7 @@ export function parseJava(source: string): ProgramNode {
         const decls: VariableDeclaration[] = [];
 
         const parseOneDecl = (name: string) => {
-          const varDecl: VariableDeclaration = { type: 'VariableDeclaration', name, dataType: dt };
-          if (dtInfo.isArray) varDecl.rawType = 'array';
+          const varDecl: VariableDeclaration = { type: 'VariableDeclaration', name, dataType: dt, rawType: dtInfo.isArray ? 'array' : dtInfo.rawType };
           if (isAt('[')) {
             advance();
             if (peek().type === 'number') varDecl.arraySize = parseInt(advance().value, 10);
@@ -200,7 +236,7 @@ export function parseJava(source: string): ProgramNode {
               varDecl.initialValue = parseExpression();
             }
           }
-          decls.push(varDecl);
+          if (dtInfo.rawType !== 'Scanner') decls.push(varDecl);
         };
 
         if (peek().type === 'identifier' || peek().type === 'keyword') {
@@ -299,10 +335,27 @@ export function parseJava(source: string): ProgramNode {
         return { type: 'Assignment', target: { type: 'Identifier', name }, value: { type: 'Binary', operator: op, left: { type: 'Identifier', name }, right: value } } as Assignment;
       }
 
-      // Method call with dot notation
+      // Field assignment or method call with dot notation
       if (isAt('.')) {
         advance();
-        const methodName = advance().value;
+        const memberName = advance().value;
+        const qualifiedName = `${name}.${memberName}`;
+        if (isAt('=')) {
+          advance();
+          const value = parseExpression();
+          match(';');
+          return { type: 'Assignment', target: { type: 'Identifier', name: qualifiedName }, value } as Assignment;
+        }
+        if (isAt('++')) {
+          advance();
+          match(';');
+          return { type: 'Assignment', target: { type: 'Identifier', name: qualifiedName }, value: { type: 'Binary', operator: '+', left: { type: 'Identifier', name: qualifiedName }, right: { type: 'Literal', value: 1, dataType: 'integer' } } } as Assignment;
+        }
+        if (isAt('--')) {
+          advance();
+          match(';');
+          return { type: 'Assignment', target: { type: 'Identifier', name: qualifiedName }, value: { type: 'Binary', operator: '-', left: { type: 'Identifier', name: qualifiedName }, right: { type: 'Literal', value: 1, dataType: 'integer' } } } as Assignment;
+        }
         if (isAt('(')) {
           advance();
           const args: ASTNode[] = [];
@@ -312,9 +365,9 @@ export function parseJava(source: string): ProgramNode {
           }
           expect(')');
           match(';');
-          if (methodName === 'close') return null;
-          if (methodName.toLowerCase().startsWith('next')) return null;
-          return { type: 'Call', name: `${name}.${methodName}`, args } as CallExpression;
+          if (memberName === 'close') return null;
+          if (memberName.toLowerCase().startsWith('next')) return null;
+          return { type: 'Call', name: qualifiedName, args } as CallExpression;
         }
       }
 
@@ -542,21 +595,25 @@ export function parseJava(source: string): ProgramNode {
 
     if (t.value === 'new') {
       advance();
-      if (peek().type === 'identifier' || peek().type === 'keyword') advance();
+      const typeName = (peek().type === 'identifier' || peek().type === 'keyword') ? advance().value : 'Object';
       if (isAt('[')) {
         advance();
         if (!isAt(']')) parseExpression();
         expect(']');
+        return { type: 'Literal', value: 0, dataType: 'integer' } as LiteralNode;
       }
+      const args: ASTNode[] = [{ type: 'Identifier', name: typeName } as IdentifierNode];
+      const constructorArgs: ASTNode[] = [];
       if (isAt('(')) {
         advance();
         if (!isAt(')')) {
-          parseExpression();
-          while (match(',')) parseExpression();
+          constructorArgs.push(parseExpression());
+          while (match(',')) constructorArgs.push(parseExpression());
         }
         expect(')');
       }
-      return { type: 'Literal', value: 0, dataType: 'integer' } as LiteralNode;
+      if (/Ref$/i.test(typeName) && constructorArgs.length > 0) return constructorArgs[0];
+      return { type: 'Call', name: 'new', args } as CallExpression;
     }
 
     const tokenCanBehaveAsIdentifier = t.type === 'identifier' || (t.type === 'keyword' && ['System', 'out', 'in', 'Scanner', 'this', 'super', 'nextInt', 'nextDouble', 'nextLine', 'next'].includes(t.value));

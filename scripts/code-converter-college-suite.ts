@@ -15,13 +15,19 @@ import type { Language } from '../lib/code-converter/types';
 
 type CompileResult = { ok: boolean; message?: string };
 
+type RoundTripStats = {
+  total: number;
+  ok: number;
+  maxLineRatio: number;
+};
+
 type SuiteFailure = {
   suite: string;
   category: string;
   topic: string;
   sourceLang: Language;
   targetLang: Language;
-  stage: 'convert' | 'compile-c' | 'compile-pascal' | 'snapshot' | 'quality';
+  stage: 'convert' | 'compile-c' | 'compile-java' | 'compile-pascal' | 'snapshot' | 'quality' | 'roundtrip';
   message: string;
 };
 
@@ -34,6 +40,8 @@ type CategoryTotals = {
   qualityOk: number;
   cCompileTotal: number;
   cCompileOk: number;
+  javaCompileTotal: number;
+  javaCompileOk: number;
   pasCompileTotal: number;
   pasCompileOk: number;
 };
@@ -56,6 +64,7 @@ type SuiteSource = {
 
 const args = new Set(process.argv.slice(2));
 const shouldUpdateSnapshots = args.has('--update');
+const shouldCompileJava = args.has('--compile-java') || process.env.CODE_CONVERTER_COMPILE_JAVA === '1';
 const workdir = fs.mkdtempSync(path.join(os.tmpdir(), 'code-converter-college-suite-'));
 const snapshotFile = path.join(process.cwd(), 'lib/code-converter/__snapshots__/college-suite.complete.json');
 const mode: StudyExampleMode = 'complete';
@@ -88,7 +97,7 @@ function digest(code: string): string {
 
 function runCmd(command: string, cwd: string): CompileResult {
   try {
-    execSync(command, { cwd, stdio: 'pipe', maxBuffer: 1024 * 1024 * 8 });
+    execSync(command, { cwd, stdio: 'pipe', maxBuffer: 1024 * 1024 * 8, timeout: 15_000 });
     return { ok: true };
   } catch (error: any) {
     const stderr = (error?.stderr ? String(error.stderr) : '').trim();
@@ -113,7 +122,19 @@ function compilePascal(code: string, name: string): CompileResult {
   return runCmd(`fpc -vw -S2 -Mobjfpc -FE"${dir}" -FU"${dir}" "${file}"`, dir);
 }
 
+function compileJava(code: string, name: string): CompileResult {
+  const dir = path.join(workdir, 'java', slug(name));
+  fs.mkdirSync(dir, { recursive: true });
+  const classMatch = code.match(/public\s+class\s+([A-Za-z_][A-Za-z0-9_]*)/);
+  const className = classMatch?.[1] ?? 'Programa';
+  const file = path.join(dir, `${className}.java`);
+  fs.writeFileSync(file, code, 'utf8');
+  return runCmd(`javac -Xlint:none "${file}"`, dir);
+}
+
 const hasGcc = hasCmd('gcc');
+const hasJavac = hasCmd('javac');
+const canCompileJava = shouldCompileJava && hasJavac;
 const hasFpc = hasCmd('fpc');
 const previousSnapshots: SnapshotRecord = fs.existsSync(snapshotFile)
   ? JSON.parse(fs.readFileSync(snapshotFile, 'utf8')) as SnapshotRecord
@@ -124,6 +145,7 @@ const failures: SuiteFailure[] = [];
 const perCategory = new Map<string, CategoryTotals>();
 const perTarget = new Map<Language, TargetTotals>();
 const qualityIssueBreakdown = new Map<string, number>();
+const roundTripStats: RoundTripStats = { total: 0, ok: 0, maxLineRatio: 0 };
 
 function categoryTotals(category: string): CategoryTotals {
   const existing = perCategory.get(category);
@@ -135,6 +157,8 @@ function categoryTotals(category: string): CategoryTotals {
     qualityOk: 0,
     cCompileTotal: 0,
     cCompileOk: 0,
+    javaCompileTotal: 0,
+    javaCompileOk: 0,
     pasCompileTotal: 0,
     pasCompileOk: 0,
   };
@@ -721,6 +745,67 @@ int main() {
   },
 ];
 
+
+function countNonEmptyLines(code: string): number {
+  return normalizeOutput(code).split('\n').filter(line => line.trim().length > 0).length;
+}
+
+function assertPascalRoundTripQuality(source: SuiteSource): void {
+  if (source.lang !== 'pascal') return;
+
+  roundTripStats.total += 1;
+  const originalLines = Math.max(1, countNonEmptyLines(source.code));
+  let currentCode = source.code;
+  let currentLang: Language = 'pascal';
+  const chain: Language[] = ['c', 'java', 'pascal'];
+
+  for (const nextLang of chain) {
+    const converted = convertCode(currentCode, currentLang, nextLang);
+    if (!converted.success) {
+      failures.push({
+        suite: source.suite,
+        category: source.category,
+        topic: source.topic,
+        sourceLang: currentLang,
+        targetLang: nextLang,
+        stage: 'roundtrip',
+        message: converted.warnings.map(w => w.message).join(' | ') || 'roundtrip conversion failed',
+      });
+      return;
+    }
+    currentCode = converted.output;
+    currentLang = nextLang;
+  }
+
+  const finalPascal = normalizeOutput(currentCode);
+  const finalLines = countNonEmptyLines(finalPascal);
+  const ratio = finalLines / originalLines;
+  roundTripStats.maxLineRatio = Math.max(roundTripStats.maxLineRatio, Number(ratio.toFixed(2)));
+  const issues = runQualityChecks(finalPascal, 'pascal', source.category);
+  if (ratio > 1.9) issues.push(`Roundtrip Pascal ficou grande demais (${finalLines}/${originalLines} linhas).`);
+  if (!/\bprocedure\s+|\bfunction\s+/i.test(finalPascal) && /\bprocedure\s+|\bfunction\s+/i.test(source.code)) {
+    issues.push('Roundtrip Pascal perdeu procedures/functions do exemplo original.');
+  }
+
+  if (issues.length > 0) {
+    for (const issue of issues) {
+      qualityIssueBreakdown.set(`roundtrip: ${issue}`, (qualityIssueBreakdown.get(`roundtrip: ${issue}`) ?? 0) + 1);
+      failures.push({
+        suite: source.suite,
+        category: source.category,
+        topic: source.topic,
+        sourceLang: 'pascal',
+        targetLang: 'pascal',
+        stage: 'roundtrip',
+        message: issue,
+      });
+    }
+    return;
+  }
+
+  roundTripStats.ok += 1;
+}
+
 function buildSources(): SuiteSource[] {
   const sources: SuiteSource[] = [];
 
@@ -758,6 +843,8 @@ function runQualityChecks(output: string, targetLang: Language, category: string
     check(/\bif\s+\(/i.test(output), 'If Pascal com parênteses desnecessários.');
     check(/\bwhile\s+\(/i.test(output), 'While Pascal com parênteses desnecessários.');
     check(/:=\s*\([A-Za-z_][A-Za-z0-9_.^]*(?:\^\.\w+)?\)\s*;/i.test(output), 'Atribuição Pascal com parênteses redundantes.');
+    check(/\b([A-Za-z_][A-Za-z0-9_]*)\s*:=\s*nil;\s*\n\s*\1\^\./i.test(output), 'Ponteiro Pascal inicializado com nil antes de acessar campos; use new(nome).');
+    check(/begin\s*\n\s*exit;\s*\nend\./i.test(output), 'Programa Pascal com exit final desnecessário vindo de return 0.');
   }
 
   if (targetLang === 'c') {
@@ -765,6 +852,8 @@ function runQualityChecks(output: string, targetLang: Language, category: string
     check(/#include <stdlib\.h>/.test(output) && !/\bmalloc\s*\(|\bfree\s*\(|\bNULL\b/.test(output), 'include <stdlib.h> sem uso.');
     check(/#include <stddef\.h>/.test(output) && !/\bNULL\b/.test(output), 'include <stddef.h> sem uso.');
     check(/\*\*\s+[A-Za-z_]/.test(output), 'Ponteiro duplo com espaço desnecessário (use **head).');
+    check(/\b(?:int|float|double|char)\s+([A-Za-z_][A-Za-z0-9_]*)\[[^\]]+\];[\s\S]*scanf\("%d",\s*&\1\);/.test(output), 'scanf em vetor perdeu o índice (esperado &v[i]).');
+    check(/\bint\s+([A-Za-z_][A-Za-z0-9_]*)\s*;[\s\S]*\bfor\s*\(\s*int\s+\1\s*=/.test(output), 'Variável de controle declarada e redeclarada no for.');
   }
 
   if (category === 'basic') {
@@ -783,6 +872,8 @@ function runQualityChecks(output: string, targetLang: Language, category: string
 }
 
 const sources = buildSources();
+
+for (const source of sources) assertPascalRoundTripQuality(source);
 
 for (const source of sources) {
   for (const targetLang of SUPPORTED_LANGUAGES) {
@@ -867,6 +958,27 @@ for (const source of sources) {
       }
     }
 
+    if (targetLang === 'java' && canCompileJava) {
+      totals.javaCompileTotal += 1;
+      perTargetTotals.compileTotal += 1;
+      const compiled = compileJava(normalizedOutput, `${source.topic}-${source.lang}-to-java`);
+      if (compiled.ok) {
+        totals.javaCompileOk += 1;
+        perTargetTotals.compileOk += 1;
+      }
+      else {
+        failures.push({
+          suite: source.suite,
+          category: source.category,
+          topic: source.topic,
+          sourceLang: source.lang,
+          targetLang,
+          stage: 'compile-java',
+          message: compiled.message || 'compile java failed',
+        });
+      }
+    }
+
     if (targetLang === 'pascal' && hasFpc) {
       totals.pasCompileTotal += 1;
       perTargetTotals.compileTotal += 1;
@@ -901,6 +1013,7 @@ const categoryReport = Object.fromEntries(
     conversionsFail: totals.conversions - totals.conversionsOk,
     qualityFail: totals.qualityTotal - totals.qualityOk,
     cCompileFail: totals.cCompileTotal - totals.cCompileOk,
+    javaCompileFail: totals.javaCompileTotal - totals.javaCompileOk,
     pasCompileFail: totals.pasCompileTotal - totals.pasCompileOk,
   }]),
 );
@@ -922,13 +1035,18 @@ const report = {
   mode,
   sourceCount: sources.length,
   workdir,
-  compilerAvailability: { gcc: hasGcc, fpc: hasFpc },
+  compilerAvailability: { gcc: hasGcc, javac: hasJavac, fpc: hasFpc },
+  enabledCompilers: { c: hasGcc, java: canCompileJava, pascal: hasFpc },
   snapshotFile,
   snapshotEntries: Object.keys(nextSnapshots).length,
   snapshotsUpdated: shouldUpdateSnapshots || !fs.existsSync(snapshotFile),
   categoryReport,
   targetReport,
   qualityIssueReport,
+  roundTripReport: {
+    ...roundTripStats,
+    fail: roundTripStats.total - roundTripStats.ok,
+  },
   failureCount: failures.length,
   failures,
 };
