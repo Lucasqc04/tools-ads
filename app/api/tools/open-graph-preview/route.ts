@@ -7,6 +7,66 @@ const defaultHeaders = {
   'Cache-Control': 'no-store',
 };
 
+type ManifestEntry = {
+  src?: string;
+  url?: string;
+  href?: string;
+  type?: string;
+  sizes?: string;
+  purpose?: string;
+};
+
+const safeAbsoluteUrl = (candidate: string, baseUrl: string): string => {
+  if (!candidate.trim()) {
+    return '';
+  }
+
+  try {
+    return new URL(candidate, baseUrl).toString();
+  } catch {
+    return '';
+  }
+};
+
+const dedupeBy = <T,>(items: T[], getKey: (item: T) => string): T[] => {
+  const seen = new Set<string>();
+  const result: T[] = [];
+
+  items.forEach((item) => {
+    const key = getKey(item);
+    if (!key || seen.has(key)) {
+      return;
+    }
+
+    seen.add(key);
+    result.push(item);
+  });
+
+  return result;
+};
+
+const fetchJson = async (url: string, signal: AbortSignal): Promise<object | null> => {
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      cache: 'no-store',
+      signal,
+      headers: {
+        'User-Agent': 'adtools-og-preview-bot/1.0 (+https://adtools.local)',
+        Accept: 'application/json,text/plain,*/*',
+      },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return (await response.json()) as object;
+  } catch {
+    return null;
+  }
+};
+
 const isValidPublicUrl = (value: string): boolean => {
   try {
     const url = new URL(value);
@@ -64,6 +124,68 @@ export async function GET(request: Request) {
 
     const html = await response.text();
     const data = extractOpenGraphData(html, response.url || targetUrl);
+
+    if (data.manifest) {
+      const manifestPayload = await fetchJson(data.manifest, controller.signal);
+
+      if (manifestPayload && typeof manifestPayload === 'object') {
+        const manifestObject = manifestPayload as {
+          icons?: ManifestEntry[];
+          screenshots?: ManifestEntry[];
+          shortcuts?: Array<{ url?: string; icons?: ManifestEntry[] }>;
+        };
+
+        const manifestIcons = (manifestObject.icons ?? [])
+          .map((entry) => ({
+            rel: 'manifest-icon',
+            href: safeAbsoluteUrl(entry.src ?? entry.url ?? entry.href ?? '', data.manifest),
+            type: entry.type ?? '',
+            sizes: entry.sizes ?? '',
+            media: '',
+            color: '',
+            purpose: entry.purpose ?? '',
+          }))
+          .filter((item) => Boolean(item.href));
+
+        const manifestAssets = [
+          ...(manifestObject.icons ?? []).map((entry) => ({
+            url: safeAbsoluteUrl(entry.src ?? entry.url ?? entry.href ?? '', data.manifest),
+            kind: 'icon' as const,
+            source: 'manifest-icon',
+            mimeHint: entry.type ?? '',
+            sameOrigin: true,
+          })),
+          ...(manifestObject.screenshots ?? []).map((entry) => ({
+            url: safeAbsoluteUrl(entry.src ?? entry.url ?? entry.href ?? '', data.manifest),
+            kind: 'image' as const,
+            source: 'manifest-screenshot',
+            mimeHint: entry.type ?? 'image/*',
+            sameOrigin: true,
+          })),
+          ...(manifestObject.shortcuts ?? []).flatMap((entry) => [
+            ...(entry.url
+              ? [{
+                  url: safeAbsoluteUrl(entry.url, data.manifest),
+                  kind: 'link' as const,
+                  source: 'manifest-shortcut',
+                  mimeHint: '',
+                  sameOrigin: true,
+                }]
+              : []),
+            ...((entry.icons ?? []).map((icon) => ({
+              url: safeAbsoluteUrl(icon.src ?? icon.url ?? icon.href ?? '', data.manifest),
+              kind: 'icon' as const,
+              source: 'manifest-shortcut-icon',
+              mimeHint: icon.type ?? '',
+              sameOrigin: true,
+            }))),
+          ]),
+        ].filter((item) => Boolean(item.url));
+
+        data.icons = dedupeBy([...data.icons, ...manifestIcons], (item) => item.href);
+        data.discoveredAssets = dedupeBy([...data.discoveredAssets, ...manifestAssets], (item) => item.url);
+      }
+    }
     const durationMs = Date.now() - startedAt;
 
     return NextResponse.json(

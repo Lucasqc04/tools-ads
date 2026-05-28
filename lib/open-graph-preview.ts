@@ -43,6 +43,13 @@ export type OpenGraphPreviewData = {
   }>;
   feeds: Array<{ title: string; type: string; href: string }>;
   allMetaTags: Array<{ key: string; value: string; source: 'name' | 'property' | 'http-equiv' | 'itemprop' }>;
+  discoveredAssets: Array<{
+    url: string;
+    kind: 'image' | 'icon' | 'script' | 'stylesheet' | 'font' | 'video' | 'audio' | 'document' | 'feed' | 'manifest' | 'link' | 'other';
+    source: string;
+    mimeHint: string;
+    sameOrigin: boolean;
+  }>;
   linkTagsCount: number;
   metaTagsCount: number;
   structuredDataCount: number;
@@ -50,6 +57,7 @@ export type OpenGraphPreviewData = {
 
 const metaTagRegex = /<meta\s+[^>]*>/gi;
 const linkTagRegex = /<link\s+[^>]*>/gi;
+const assetTagRegex = /<(img|script|source|video|audio|a|link)\s+[^>]*>/gi;
 const htmlLangRegex = /<html[^>]*\blang\s*=\s*(["'])(.*?)\1/i;
 const attrRegex = /([^\s=/>"]+)\s*=\s*(["'])(.*?)\2/gi;
 const titleRegex = /<title[^>]*>([\s\S]*?)<\/title>/i;
@@ -73,6 +81,154 @@ const safeAbsoluteUrl = (candidate: string, baseUrl: string): string => {
   } catch {
     return candidate;
   }
+};
+
+const getOrigin = (value: string): string => {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return '';
+  }
+};
+
+const isSameOriginUrl = (candidate: string, baseUrl: string): boolean => {
+  const candidateOrigin = getOrigin(candidate);
+  const baseOrigin = getOrigin(baseUrl);
+
+  return Boolean(candidateOrigin && baseOrigin && candidateOrigin === baseOrigin);
+};
+
+const dedupeBy = <T,>(items: T[], getKey: (item: T) => string): T[] => {
+  const seen = new Set<string>();
+  const result: T[] = [];
+
+  items.forEach((item) => {
+    const key = getKey(item);
+
+    if (!key || seen.has(key)) {
+      return;
+    }
+
+    seen.add(key);
+    result.push(item);
+  });
+
+  return result;
+};
+
+const classifyAssetKind = (
+  url: string,
+  source: string,
+  mimeHint: string,
+): OpenGraphPreviewData['discoveredAssets'][number]['kind'] => {
+  const lowerUrl = url.toLowerCase();
+  const lowerMime = mimeHint.toLowerCase();
+  const lowerSource = source.toLowerCase();
+
+  if (lowerSource.includes('icon') || lowerMime.includes('icon')) {
+    return 'icon';
+  }
+
+  if (lowerSource.includes('manifest') || lowerMime.includes('manifest') || lowerUrl.endsWith('.webmanifest') || lowerUrl.endsWith('.json')) {
+    return 'manifest';
+  }
+
+  if (lowerMime.startsWith('image/') || /\.(png|jpe?g|gif|webp|svg|ico|avif|bmp)(\?|#|$)/.test(lowerUrl)) {
+    return 'image';
+  }
+
+  if (lowerMime.startsWith('video/') || /\.(mp4|webm|ogg|mov|m4v)(\?|#|$)/.test(lowerUrl)) {
+    return 'video';
+  }
+
+  if (lowerMime.startsWith('audio/') || /\.(mp3|wav|ogg|m4a|aac|flac)(\?|#|$)/.test(lowerUrl)) {
+    return 'audio';
+  }
+
+  if (lowerMime.includes('css') || lowerUrl.endsWith('.css')) {
+    return 'stylesheet';
+  }
+
+  if (lowerMime.includes('javascript') || lowerSource === 'script' || /\.(js|mjs)(\?|#|$)/.test(lowerUrl)) {
+    return 'script';
+  }
+
+  if (lowerMime.includes('font') || /\.(woff2?|ttf|otf|eot)(\?|#|$)/.test(lowerUrl)) {
+    return 'font';
+  }
+
+  if (lowerMime.includes('rss') || lowerMime.includes('atom') || lowerMime.includes('xml')) {
+    return 'feed';
+  }
+
+  if (/\.(pdf|docx?|xlsx?|pptx?|zip|rar|7z|txt)(\?|#|$)/.test(lowerUrl)) {
+    return 'document';
+  }
+
+  if (lowerSource === 'a') {
+    return 'link';
+  }
+
+  return 'other';
+};
+
+const addDiscoveredAsset = (
+  list: OpenGraphPreviewData['discoveredAssets'],
+  candidateUrl: string,
+  baseUrl: string,
+  source: string,
+  mimeHint = '',
+) => {
+  const absoluteUrl = safeAbsoluteUrl(candidateUrl, baseUrl);
+
+  if (!absoluteUrl.startsWith('http://') && !absoluteUrl.startsWith('https://')) {
+    return;
+  }
+
+  list.push({
+    url: absoluteUrl,
+    kind: classifyAssetKind(absoluteUrl, source, mimeHint),
+    source,
+    mimeHint,
+    sameOrigin: isSameOriginUrl(absoluteUrl, baseUrl),
+  });
+};
+
+const extractSrcSetUrls = (srcsetValue: string): string[] =>
+  srcsetValue
+    .split(',')
+    .map((entry) => entry.trim().split(/\s+/)[0] ?? '')
+    .filter(Boolean);
+
+const getDiscoveredAssets = (html: string, baseUrl: string): OpenGraphPreviewData['discoveredAssets'] => {
+  const assets: OpenGraphPreviewData['discoveredAssets'] = [];
+  const tags = html.match(assetTagRegex) ?? [];
+
+  tags.forEach((tag) => {
+    const attrs = collectTagAttributes(tag);
+    const tagNameMatch = /^<([a-z]+)/i.exec(tag);
+    const tagName = tagNameMatch?.[1]?.toLowerCase() ?? 'other';
+
+    if (attrs.href) {
+      addDiscoveredAsset(assets, attrs.href, baseUrl, attrs.rel || tagName, attrs.type || '');
+    }
+
+    if (attrs.src) {
+      addDiscoveredAsset(assets, attrs.src, baseUrl, tagName, attrs.type || '');
+    }
+
+    if (attrs.poster) {
+      addDiscoveredAsset(assets, attrs.poster, baseUrl, `${tagName}:poster`, 'image/*');
+    }
+
+    if (attrs.srcset) {
+      extractSrcSetUrls(attrs.srcset).forEach((entry) => {
+        addDiscoveredAsset(assets, entry, baseUrl, `${tagName}:srcset`, attrs.type || 'image/*');
+      });
+    }
+  });
+
+  return dedupeBy(assets, (item) => item.url);
 };
 
 const collectTagAttributes = (tag: string): Record<string, string> => {
@@ -333,6 +489,49 @@ export const extractOpenGraphData = (html: string, sourceUrl: string): OpenGraph
 
   const htmlLang = getHtmlLang(html);
   const language = firstValue(meta.firstByKey, ['language']) || htmlLang;
+  const discoveredAssets = dedupeBy(
+    [
+      ...getDiscoveredAssets(html, sourceUrl),
+      ...icons.map((icon) => ({
+        url: icon.href,
+        kind: 'icon' as const,
+        source: icon.rel,
+        mimeHint: icon.type,
+        sameOrigin: isSameOriginUrl(icon.href, sourceUrl),
+      })),
+      ...alternates.map((item) => ({
+        url: item.href,
+        kind: classifyAssetKind(item.href, item.rel, item.type),
+        source: item.rel,
+        mimeHint: item.type,
+        sameOrigin: isSameOriginUrl(item.href, sourceUrl),
+      })),
+      ...ogImages.map((item) => ({
+        url: item,
+        kind: 'image' as const,
+        source: 'og:image',
+        mimeHint: 'image/*',
+        sameOrigin: isSameOriginUrl(item, sourceUrl),
+      })),
+      ...twitterImages.map((item) => ({
+        url: item,
+        kind: 'image' as const,
+        source: 'twitter:image',
+        mimeHint: 'image/*',
+        sameOrigin: isSameOriginUrl(item, sourceUrl),
+      })),
+      ...(manifest
+        ? [{
+            url: manifest,
+            kind: 'manifest' as const,
+            source: 'manifest',
+            mimeHint: 'application/manifest+json',
+            sameOrigin: isSameOriginUrl(manifest, sourceUrl),
+          }]
+        : []),
+    ],
+    (item) => item.url,
+  );
 
   return {
     url: firstValue(meta.firstByKey, ['og:url']) || canonical || sourceUrl,
@@ -368,6 +567,7 @@ export const extractOpenGraphData = (html: string, sourceUrl: string): OpenGraph
     alternates,
     feeds: getFeeds(alternates),
     allMetaTags: meta.allMetaTags,
+    discoveredAssets,
     linkTagsCount: (html.match(linkTagRegex) ?? []).length,
     metaTagsCount: (html.match(metaTagRegex) ?? []).length,
     structuredDataCount: countStructuredData(html),
