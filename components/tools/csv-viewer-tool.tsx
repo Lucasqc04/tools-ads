@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -48,6 +48,11 @@ type CsvViewerUi = {
   filteredRowsLabel: string;
   sortAsc: string;
   sortDesc: string;
+  rowsPerPageLabel: string;
+  pageLabel: string;
+  ofLabel: string;
+  prevPage: string;
+  nextPage: string;
 };
 
 const uiByLocale: Record<AppLocale, CsvViewerUi> = {
@@ -82,6 +87,11 @@ const uiByLocale: Record<AppLocale, CsvViewerUi> = {
     filteredRowsLabel: 'Linhas visiveis',
     sortAsc: 'Crescente',
     sortDesc: 'Decrescente',
+    rowsPerPageLabel: 'Linhas por pagina',
+    pageLabel: 'Pagina',
+    ofLabel: 'de',
+    prevPage: 'Anterior',
+    nextPage: 'Proxima',
   },
   en: {
     localNotice:
@@ -114,6 +124,11 @@ const uiByLocale: Record<AppLocale, CsvViewerUi> = {
     filteredRowsLabel: 'Visible rows',
     sortAsc: 'Ascending',
     sortDesc: 'Descending',
+    rowsPerPageLabel: 'Rows per page',
+    pageLabel: 'Page',
+    ofLabel: 'of',
+    prevPage: 'Previous',
+    nextPage: 'Next',
   },
   es: {
     localNotice:
@@ -146,6 +161,11 @@ const uiByLocale: Record<AppLocale, CsvViewerUi> = {
     filteredRowsLabel: 'Filas visibles',
     sortAsc: 'Ascendente',
     sortDesc: 'Descendente',
+    rowsPerPageLabel: 'Filas por pagina',
+    pageLabel: 'Pagina',
+    ofLabel: 'de',
+    prevPage: 'Anterior',
+    nextPage: 'Siguiente',
   },
 };
 
@@ -225,6 +245,8 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
   const [columnFilters, setColumnFilters] = useState<Record<number, string>>({});
   const [sortColumn, setSortColumn] = useState<number | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const detected = useMemo(() => detectCsvDelimiter(input), [input]);
 
@@ -304,7 +326,21 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
     return sorted;
   }, [bodyRows, columnFilters, globalFilter, sortColumn, sortDirection]);
 
-  const visibleRows = useMemo(() => filteredAndSortedRows.slice(0, 500), [filteredAndSortedRows]);
+  const visibleRows = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredAndSortedRows.slice(start, start + pageSize);
+  }, [filteredAndSortedRows, currentPage, pageSize]);
+
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(filteredAndSortedRows.length / pageSize)),
+    [filteredAndSortedRows.length, pageSize],
+  );
+
+  // Reset page when filters/sort/pageSize change
+  const filteredLength = filteredAndSortedRows.length;
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [filteredLength, pageSize]);
 
   const toggleSort = (columnIndex: number) => {
     if (sortColumn !== columnIndex) {
@@ -485,6 +521,7 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
             setColumnFilters({});
             setSortColumn(null);
             setSortDirection('asc');
+            setCurrentPage(0);
           }}
         >
           {ui.clear}
@@ -526,6 +563,7 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
         <h3 className="text-sm font-semibold text-slate-800">{ui.previewLabel}</h3>
 
         {parsed.rows.length ? (
+          <>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
             <table className="min-w-full border-collapse text-left text-sm">
               <thead className="bg-slate-50">
@@ -581,6 +619,44 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
               </tbody>
             </table>
           </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 px-1 pt-2">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-slate-700">{ui.rowsPerPageLabel}:</span>
+              <select
+                value={pageSize}
+                onChange={(event) => setPageSize(Number(event.target.value))}
+                className="h-8 rounded-md border border-slate-300 bg-white px-2 text-sm text-slate-800"
+              >
+                {[10, 25, 50, 100, 250].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-slate-700">
+                {ui.pageLabel} {currentPage + 1} {ui.ofLabel} {totalPages}
+              </span>
+              <Button
+                variant="ghost"
+                onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                disabled={currentPage === 0}
+              >
+                {ui.prevPage}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={currentPage >= totalPages - 1}
+              >
+                {ui.nextPage}
+              </Button>
+            </div>
+          </div>
+          </>
         ) : (
           <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-4 text-sm text-slate-600">
             {ui.noDataLabel}

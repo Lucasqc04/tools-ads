@@ -534,6 +534,21 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
     setSelectedHtmlFileId(firstHtml?.id ?? '');
     setMode('files');
 
+    // Also populate editor textareas so user can edit the uploaded content
+    const htmlContent = firstHtml?.content ?? '';
+    const cssContent = supported
+      .filter((file) => file.kind === 'css')
+      .map((file) => file.content)
+      .join('\n\n');
+    const jsContent = supported
+      .filter((file) => file.kind === 'js')
+      .map((file) => file.content)
+      .join('\n\n');
+
+    setHtmlInput(htmlContent);
+    setCssInput(cssContent);
+    setJsInput(jsContent);
+
     if (!firstHtml) {
       setWarningMessage(ui.noHtmlFileWarning);
       return;

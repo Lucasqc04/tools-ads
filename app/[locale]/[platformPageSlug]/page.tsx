@@ -24,6 +24,7 @@ import { InvisiblePlatformLinks } from '@/components/tools/invisible-platform-li
 import { JsonFormatterTool } from '@/components/tools/json-formatter-tool';
 import { GtaCheatCodesTool } from '@/components/tools/gta-cheat-codes-tool';
 import { PasswordGeneratorTool } from '@/components/tools/password-generator-tool';
+import { PixDecoderTool } from '@/components/tools/pix-decoder-tool';
 import { QrCodeGeneratorTool } from '@/components/tools/qr-code-generator';
 import { SorteadorTool } from '@/components/tools/sorteador-tool';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
@@ -435,6 +436,7 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   ),
   sorteador: ({ locale }) => <SorteadorTool locale={locale} />,
   'calculadora-juros-compostos': ({ locale }) => <CompoundInterestTool locale={locale} />,
+  'pix-decoder': ({ locale }) => <PixDecoderTool locale={locale} />,
 };
 
 const resolveCryptoAliasUi = (

@@ -185,6 +185,36 @@ import {
   whatsappTelegramLinkFaq,
   whatsappTelegramLinkIntro,
 } from '@/data/content/whatsapp-telegram-link-generator';
+import {
+  getCssGeneratorContent,
+  cssGeneratorContentBlocks,
+  cssGeneratorFaq,
+  cssGeneratorIntro,
+} from '@/data/content/css-generator';
+import {
+  getColorConverterContent,
+  colorConverterContentBlocks,
+  colorConverterFaq,
+  colorConverterIntro,
+} from '@/data/content/color-converter';
+import {
+  getImageColorExtractorContent,
+  imageColorExtractorContentBlocks,
+  imageColorExtractorFaq,
+  imageColorExtractorIntro,
+} from '@/data/content/image-color-extractor';
+import {
+  getPixDecoderContent,
+  pixDecoderContentBlocks,
+  pixDecoderFaq,
+  pixDecoderIntro,
+} from '@/data/content/pix-decoder';
+import {
+  codeConverterContentBlocks,
+  codeConverterFaq,
+  codeConverterIntro,
+  getCodeConverterContent,
+} from '@/data/content/code-converter';
 import { getToolTranslation } from '@/data/i18n/tool-translations';
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ToolDefinition } from '@/types/tool';
@@ -984,24 +1014,31 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'regex-tester',
     slug: 'regex-tester',
-    name: 'Regex Tester Online',
+    name: 'Regex Studio: Testador, Gerador e Explicador',
     shortDescription:
-      'Teste regex em tempo real com flags, destaque de matches, grupos capturados e preview de substituicao.',
+      'Teste, gere, explique, valide, extraia e substitua com regex. Biblioteca de padrões, construtor visual, diagnóstico e snippets em 7 linguagens.',
     category: 'dev',
     primaryKeyword: 'regex tester online',
     secondaryKeywords: [
-      'testar regex',
+      'testar regex online',
+      'gerador de regex',
+      'explicador de regex',
       'regex javascript online',
-      'regex replace tester',
-      'regex groups',
-      'validar expressao regular',
+      'validar email regex',
+      'extrair dados regex',
+      'regex cpf cnpj',
+      'regex telefone brasileiro',
+      'regex replace online',
+      'construtor de regex visual',
+      'regex para python java php',
+      'testador de expressao regular',
     ],
     searchIntent:
-      'Devs e estudantes que precisam validar expressoes regulares, capturas e substituicoes em texto real.',
-    seoTitle: 'Regex Tester Online | Matches, Grupos e Replace',
+      'Devs e estudantes que querem testar, gerar, explicar, validar e extrair dados com expressoes regulares.',
+    seoTitle: 'Regex Studio Online | Testador, Gerador e Explicador de Regex',
     seoDescription:
-      'Ferramenta para testar regex com flags, destaque visual de matches, grupos capturados, posicoes e replace preview.',
-    h1: 'Regex Tester Online com Matches e Substituicao',
+      'Teste, gere, explique e valide regex online. Biblioteca de padrões, construtor visual, extração de dados, substituição, diagnóstico e código para JS, Python, PHP, Java, C# e Go.',
+    h1: 'Regex Studio: Testador, Gerador e Explicador de Expressões Regulares',
     intro: regexTesterIntro,
     canonicalPath: '/tools/regex-tester',
     faq: regexTesterFaq,
@@ -1363,6 +1400,162 @@ export const toolsRegistry: ToolDefinition[] = [
     contentBlocks: emailTemporarioContentBlocks,
     relatedToolIds: ['password-generator', 'gerador-pessoa-fake', 'descobrir-ip-publico'],
   },
+  {
+    id: 'css-generator',
+    slug: 'css-generator',
+    name: 'Gerador Visual de CSS',
+    shortDescription:
+      'Crie gradientes, sombras, bordas, border-radius, glassmorphism, filtros e animações com sliders e copie o CSS pronto.',
+    category: 'dev',
+    primaryKeyword: 'gerador de css visual online',
+    secondaryKeywords: [
+      'gerador de gradiente css',
+      'gerador de sombra css',
+      'gerador border-radius',
+      'gerador glassmorphism',
+      'gerador box-shadow',
+      'css generator online',
+      'gerador de botao css',
+      'gerador neumorphism',
+    ],
+    searchIntent:
+      'Desenvolvedores e designers que precisam criar efeitos CSS visualmente sem memorizar propriedades e valores.',
+    seoTitle: 'Gerador Visual de CSS Online | Gradiente, Sombra, Glass, Radius',
+    seoDescription:
+      'Crie CSS visual com sliders: gradientes, box-shadow, border-radius, glassmorphism, filtros, transforms e animações. Preview ao vivo e código pronto para copiar.',
+    h1: 'Gerador Visual de CSS com Preview em Tempo Real',
+    intro: cssGeneratorIntro,
+    canonicalPath: '/tools/css-generator',
+    faq: cssGeneratorFaq,
+    contentBlocks: cssGeneratorContentBlocks,
+    relatedToolIds: ['json-formatter', 'html-viewer', 'image-converter'],
+  },
+  {
+    id: 'color-converter',
+    slug: 'color-converter',
+    name: 'Conversor HEX, RGB e HSL',
+    shortDescription:
+      'Converta cores entre HEX, RGB, HSL, HSV, CMYK e outros formatos, veja preview ao vivo, copie CSS pronto e compare contraste entre cores.',
+    category: 'dev',
+    primaryKeyword: 'conversor hex rgb hsl online',
+    secondaryKeywords: [
+      'hex para rgb',
+      'rgb para hex',
+      'hex para hsl',
+      'hsl para hex',
+      'rgb para hsl',
+      'conversor de cores',
+      'color converter online',
+      'conversor rgba',
+      'gerador escala tailwind',
+      'verificador de contraste',
+    ],
+    searchIntent:
+      'Desenvolvedores e designers que precisam converter cores entre HEX, RGB, HSL e outros formatos com preview e código CSS pronto.',
+    seoTitle: 'Conversor HEX, RGB, HSL Online | Converter Cores CSS',
+    seoDescription:
+      'Converta cores entre HEX, RGB, HSL, HSV e CMYK online. Preview ao vivo, contraste, escala Tailwind e código CSS pronto para copiar.',
+    h1: 'Conversor de Cores HEX, RGB, HSL, HSV e CMYK Online',
+    intro: colorConverterIntro,
+    canonicalPath: '/tools/color-converter',
+    faq: colorConverterFaq,
+    contentBlocks: colorConverterContentBlocks,
+    relatedToolIds: ['image-color-extractor', 'css-generator', 'image-converter'],
+  },
+  {
+    id: 'image-color-extractor',
+    slug: 'image-color-extractor',
+    name: 'Extrator de Cores de Imagem',
+    shortDescription:
+      'Extraia cores de qualquer imagem direto no navegador, gere paletas, copie variáveis CSS e crie temas para seus projetos — tudo localmente.',
+    category: 'dev',
+    primaryKeyword: 'extrair cores de imagem online',
+    secondaryKeywords: [
+      'gerador de paleta de cores',
+      'extrator de cores de foto',
+      'color palette from image',
+      'cores predominantes imagem',
+      'paleta de cores css',
+      'extrair cor de logo',
+      'paleta de cores tailwind',
+      'gerador tema cores',
+      'image color picker online',
+    ],
+    searchIntent:
+      'Designers e desenvolvedores que precisam extrair uma paleta de cores de uma imagem ou logo para usar em CSS, Tailwind ou design systems.',
+    seoTitle: 'Extrator de Cores de Imagem Online | Gerador de Paleta',
+    seoDescription:
+      'Extraia cores de qualquer imagem online. Gere paletas, copie CSS, JSON ou Tailwind config. Processamento 100% local no navegador.',
+    h1: 'Extrator de Cores de Imagem e Gerador de Paleta Online',
+    intro: imageColorExtractorIntro,
+    canonicalPath: '/tools/image-color-extractor',
+    faq: imageColorExtractorFaq,
+    contentBlocks: imageColorExtractorContentBlocks,
+    relatedToolIds: ['color-converter', 'css-generator', 'image-converter'],
+  },
+  {
+    id: 'pix-decoder',
+    slug: 'pix-decoder',
+    name: 'Validador e Gerador de Pix',
+    shortDescription:
+      'Gere Pix Copia e Cola estático, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador.',
+    category: 'utility',
+    primaryKeyword: 'gerador pix copia e cola online',
+    secondaryKeywords: [
+      'validar pix copia e cola',
+      'decoder pix emv',
+      'decodificar pix',
+      'gerador qr code pix',
+      'pix qr code decoder',
+      'calcular crc pix',
+      'corrigir crc pix',
+      'extrair dados pix',
+      'br code pix',
+      'pix emv decoder',
+    ],
+    searchIntent:
+      'Desenvolvedores, lojistas e usuários que precisam gerar, validar, decodificar ou corrigir payloads Pix Copia e Cola (BR Code EMV).',
+    seoTitle: 'Gerador e Validador de Pix Copia e Cola Online | Decoder EMV',
+    seoDescription:
+      'Gere Pix Copia e Cola, valide payload, decodifique campos EMV, corrija CRC16, visualize árvore e baixe QR Code. 100% local no navegador.',
+    h1: 'Validador e Gerador de Pix Copia e Cola Online',
+    intro: pixDecoderIntro,
+    canonicalPath: '/tools/pix-decoder',
+    faq: pixDecoderFaq,
+    contentBlocks: pixDecoderContentBlocks,
+    relatedToolIds: ['qr-code-generator', 'cpf-generator', 'conversor-universal'],
+  },
+  {
+    id: 'code-converter',
+    slug: 'code-converter',
+    name: 'Conversor Educacional de Código',
+    shortDescription:
+      'Converta código entre Pascal, C, Java e Pseudocódigo com explicações de sintaxe, exemplos prontos e análise estrutural — tudo 100% local no navegador.',
+    category: 'dev',
+    primaryKeyword: 'conversor de código pascal c java pseudocódigo online',
+    secondaryKeywords: [
+      'converter pascal para c',
+      'pseudocódigo para java',
+      'conversor educacional de código',
+      'pascal para java online',
+      'conversor de pseudocódigo',
+      'converter c para pascal',
+      'code converter online',
+      'pascal to c converter',
+      'converter pseudocodigo para c',
+    ],
+    searchIntent:
+      'Estudantes e professores que precisam converter código entre Pascal, C, Java e Pseudocódigo para fins educacionais.',
+    seoTitle: 'Conversor de Código Educacional | Pascal, C, Java e Pseudocódigo',
+    seoDescription:
+      'Converta código entre Pascal, C, Java e Pseudocódigo de forma educacional. Veja explicações de sintaxe, exemplos prontos e análise estrutural — tudo 100% local no navegador.',
+    h1: 'Conversor Educacional de Código — Pascal, C, Java e Pseudocódigo',
+    intro: codeConverterIntro,
+    canonicalPath: '/tools/code-converter',
+    faq: codeConverterFaq,
+    contentBlocks: codeConverterContentBlocks,
+    relatedToolIds: ['json-formatter', 'text-diff', 'regex-tester'],
+  },
 ];
 
 export const getToolBySlug = (slug: string): ToolDefinition | undefined =>
@@ -1567,6 +1760,56 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'gerador-link-whatsapp-telegram') {
     const localized = getWhatsAppTelegramLinkContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'css-generator') {
+    const localized = getCssGeneratorContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'color-converter') {
+    const localized = getColorConverterContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'image-color-extractor') {
+    const localized = getImageColorExtractorContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'pix-decoder') {
+    const localized = getPixDecoderContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'code-converter') {
+    const localized = getCodeConverterContent(locale);
 
     return {
       ...tool,
