@@ -104,7 +104,7 @@ function mapIdentifierName(name: string, target: 'pascal' | 'c' | 'java' | 'pseu
   }
 
   if (target === 'java') {
-    if (lower === 'nil' || lower === 'nulo') return 'null';
+    if (lower === 'nil' || lower === 'nulo' || lower === 'null') return 'null';
     return name.replace(/\^/g, '');
   }
 
@@ -154,13 +154,18 @@ function guessShapeFromRawType(rawType?: string): ValueShape | null {
   const lower = rawType.toLowerCase();
   if (lower.includes('array') || lower.includes('vetor') || lower.includes('[]')) return 'array';
   if (lower === 'ptr') return null;
+  if (/ref$/i.test(rawType)) return null;
+  const primitives = new Set([
+    'int', 'integer', 'float', 'double', 'real', 'char', 'short', 'long', 'byte',
+    'unsigned', 'signed', 'bool', 'boolean', 'void', 'string', 'scanner',
+  ]);
   if (lower.includes('*')) {
     const base = lower.replace(/\*/g, '').trim();
     if (!base) return null;
-    const primitives = new Set(['int', 'integer', 'float', 'double', 'char', 'short', 'long', 'unsigned', 'signed', 'bool', 'boolean', 'void']);
     if (!primitives.has(base)) return 'node';
   }
   if (lower.startsWith('end') || lower.includes('ponteiro') || lower.includes('record')) return 'node';
+  if (/^[A-Z][A-Za-z0-9_]*$/.test(rawType) && !primitives.has(lower)) return 'node';
   return null;
 }
 
@@ -506,6 +511,13 @@ function javaVarDeclaration(v: VariableDeclaration, ctx: TypeContext, withIndent
   return `${withIndent}${base} ${v.name};`;
 }
 
+function cAllocationExpressionForTarget(name: string, ctx: TypeContext): string {
+  const varName = baseIdentifier(name);
+  const symbol = getSymbolMeta(ctx, varName);
+  const structName = symbol && symbol.shape === 'node' ? deriveStructName(symbol) : 'int';
+  return `malloc(sizeof(${structName}))`;
+}
+
 function cTypeForSymbol(symbol: SymbolMeta, asParam: boolean): string {
   if (symbol.shape === 'node') {
     const structName = deriveStructName(symbol);
@@ -542,12 +554,21 @@ function javaTypeForSymbol(symbol: SymbolMeta): string {
   return javaPrimitiveType(symbol.dataType);
 }
 
+function javaParamTypeForSymbol(symbol: SymbolMeta): string {
+  if (symbol.shape === 'node' && symbol.byRef) {
+    return `${deriveStructName(symbol)}[]`;
+  }
+  return javaTypeForSymbol(symbol);
+}
+
 function pascalTypeForSymbol(symbol: SymbolMeta): string {
   if (symbol.shape === 'node') {
     return pascalPointerTypeName(deriveStructName(symbol));
   }
 
   if (symbol.shape === 'array') {
+    const rawShape = guessShapeFromRawType(symbol.rawType);
+    if (rawShape === 'node') return pascalPointerTypeName(deriveStructName(symbol));
     return `array of ${mapType(symbol.dataType === 'unknown' ? 'integer' : symbol.dataType, 'pascal')}`;
   }
 
@@ -707,7 +728,11 @@ export function generatePascal(ast: ProgramNode): string {
     lines.push('begin');
     for (const v of fn.localVars) {
       if (v.initialValue && !isArrayDeclarationVar(v)) {
-        lines.push(`${indent(1)}${v.name} := ${genPascalExpr(v.initialValue, ctx)};`);
+        if (isAllocationCall(v.initialValue)) {
+          lines.push(`${indent(1)}new(${mapPascalIdentifierWithContext(v.name, ctx)});`);
+        } else {
+          lines.push(`${indent(1)}${v.name} := ${genPascalExpr(v.initialValue, ctx)};`);
+        }
       }
     }
     for (const stmt of fn.body) lines.push(genPascalStmt(stmt, 1, ctx, isPascalFunction ? fn.name : undefined));
@@ -717,7 +742,11 @@ export function generatePascal(ast: ProgramNode): string {
 
   // Main body
   lines.push('begin');
-  for (const stmt of ast.body) lines.push(genPascalStmt(stmt, 1, ctx));
+  const mainBody = ast.body.filter((stmt, idx) => {
+    if (idx !== ast.body.length - 1) return true;
+    return !(stmt.type === 'Return' && stmt.value?.type === 'Literal' && stmt.value.value === 0);
+  });
+  for (const stmt of mainBody) lines.push(genPascalStmt(stmt, 1, ctx));
   lines.push('end.');
 
   return lines.join('\n');
@@ -932,24 +961,36 @@ function mapPascalIdentifierWithContext(name: string, ctx: TypeContext): string 
   let mapped = mapIdentifierName(name, 'pascal');
   const root = baseIdentifier(name);
   const meta = getSymbolMeta(ctx, root);
-  if (!meta || meta.shape !== 'node') return mapped;
+  if (meta?.rawType && /ref$/i.test(meta.rawType)) mapped = mapped.replace(new RegExp(`^${root}\\.value$`, 'i'), root);
+  if (meta?.shape === 'array' && meta.byRef && guessShapeFromRawType(meta.rawType) === 'node') {
+    mapped = mapped.replace(new RegExp(`^${root}\\[0\\]`), root);
+  }
+  const normalizedRoot = baseIdentifier(mapped);
+  const normalizedMeta = getSymbolMeta(ctx, normalizedRoot);
+  const effectiveMeta = normalizedMeta ?? meta;
+  if (!effectiveMeta || (effectiveMeta.shape !== 'node' && guessShapeFromRawType(effectiveMeta.rawType) !== 'node')) return mapped;
   if (mapped.includes('^.')) return mapped;
   if (mapped.includes('.')) mapped = mapped.replace(/\./g, '^.');
   return mapped;
 }
 
+
+function isAllocationCall(node: ASTNode | undefined): boolean {
+  return node?.type === 'Call' && ['malloc', 'calloc', 'new'].includes(node.name.toLowerCase());
+}
+
 function genPascalStmt(node: ASTNode, lvl: number, ctx: TypeContext, currentFunctionName?: string): string {
   switch (node.type) {
     case 'Assignment':
-      if (node.target.type === 'Identifier' && node.value.type === 'Call') {
-        const callName = node.value.name.toLowerCase();
-        if (callName === 'malloc' || callName === 'calloc') {
-          return `${indent(lvl)}new(${genPascalExpr(node.target, ctx)});`;
-        }
+      if (node.target.type === 'Identifier' && isAllocationCall(node.value)) {
+        return `${indent(lvl)}new(${genPascalExpr(node.target, ctx)});`;
       }
       return `${indent(lvl)}${genPascalExpr(node.target, ctx)} := ${genPascalExpr(node.value, ctx)};`;
     case 'VariableDeclaration':
-      if (node.initialValue && !isArrayDeclarationVar(node)) return `${indent(lvl)}${node.name} := ${genPascalExpr(node.initialValue, ctx)};`;
+      if (node.initialValue && !isArrayDeclarationVar(node)) {
+        if (isAllocationCall(node.initialValue)) return `${indent(lvl)}new(${mapPascalIdentifierWithContext(node.name, ctx)});`;
+        return `${indent(lvl)}${node.name} := ${genPascalExpr(node.initialValue, ctx)};`;
+      }
       return '';
     case 'If': {
       let s = `${indent(lvl)}if ${genPascalExpr(node.condition, ctx)} then\n`;
@@ -1077,8 +1118,14 @@ function genPascalExpr(node: ASTNode, ctx: TypeContext, parentPrecedence = 0): s
       return wrapByPrecedence(String(node.value), 90, parentPrecedence);
     case 'Identifier':
       return wrapByPrecedence(mapPascalIdentifierWithContext(node.name, ctx), 90, parentPrecedence);
-    case 'ArrayAccess':
-      return wrapByPrecedence(`${mapPascalIdentifierWithContext(node.array, ctx)}[${genPascalExpr(node.index, ctx)}]`, 90, parentPrecedence);
+    case 'ArrayAccess': {
+      const arrayName = mapPascalIdentifierWithContext(node.array, ctx);
+      const symbol = getSymbolMeta(ctx, baseIdentifier(node.array));
+      if (symbol?.byRef && guessShapeFromRawType(symbol.rawType) === 'node') {
+        return wrapByPrecedence(arrayName, 90, parentPrecedence);
+      }
+      return wrapByPrecedence(`${arrayName}[${genPascalExpr(node.index, ctx)}]`, 90, parentPrecedence);
+    }
     case 'Binary': {
       const integerDivision =
         node.operator === '/' &&
@@ -1141,6 +1188,8 @@ function isLikelyIntegerPascalExpr(node: ASTNode): boolean {
 
 // ---------- C Generator ----------
 
+let currentCByRefParams = new Map<string, boolean[]>();
+
 export function generateC(ast: ProgramNode): string {
   const mainAssignedVars = collectAssignedIdentifierVariables(ast.body);
   const globalNames = new Set(ast.variables.map(v => v.name.toLowerCase()));
@@ -1169,6 +1218,7 @@ export function generateC(ast: ProgramNode): string {
   }
 
   const ctx = buildTypeContext(ast);
+  currentCByRefParams = new Map(ast.functions.map(fn => [fn.name.toLowerCase(), fn.params.map(param => !!param.byRef)]));
   const lines: string[] = [];
 
   for (const [structName, fields] of ctx.structFields.entries()) {
@@ -1222,7 +1272,11 @@ export function generateC(ast: ProgramNode): string {
     }
     for (const v of fn.localVars) {
       if (v.initialValue && !isArrayDeclarationVar(v)) {
-        lines.push(`  ${v.name} = ${genCExpr(v.initialValue, ctx)};`);
+        if (isAllocationCall(v.initialValue)) {
+          lines.push(`  ${v.name} = ${cAllocationExpressionForTarget(v.name, ctx)};`);
+        } else {
+          lines.push(`  ${v.name} = ${genCExpr(v.initialValue, ctx)};`);
+        }
       }
     }
     for (const stmt of fn.body) lines.push(genCStmt(stmt, 1, ctx));
@@ -1251,6 +1305,9 @@ export function generateC(ast: ProgramNode): string {
 function genCStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
   switch (node.type) {
     case 'Assignment':
+      if (node.target.type === 'Identifier' && isAllocationCall(node.value)) {
+        return `${indent(lvl)}${genCExpr(node.target, ctx)} = ${cAllocationExpressionForTarget(node.target.name, ctx)};`;
+      }
       return `${indent(lvl)}${genCExpr(node.target, ctx)} = ${genCExpr(node.value, ctx)};`;
     case 'VariableDeclaration': {
       const decl = cVarDeclaration(node, ctx, indent(lvl));
@@ -1345,9 +1402,16 @@ function genCStmt(node: ASTNode, lvl: number, ctx: TypeContext): string {
           return `${indent(lvl)}free(${target});`;
         }
       }
-      return node.args.length > 0
-        ? `${indent(lvl)}${node.name}(${node.args.map(a => genCExpr(a, ctx)).join(', ')});`
-        : `${indent(lvl)}${node.name}();`;
+      if (node.args.length > 0) {
+        const byRefParams = currentCByRefParams.get(node.name.toLowerCase()) ?? [];
+        const args = node.args.map((arg, index) => {
+          const expr = genCExpr(arg, ctx);
+          if (!byRefParams[index] || expr.startsWith('&') || expr.startsWith('*')) return expr;
+          return `&${expr}`;
+        });
+        return `${indent(lvl)}${node.name}(${args.join(', ')});`;
+      }
+      return `${indent(lvl)}${node.name}();`;
     case 'Return':
       return node.value ? `${indent(lvl)}return ${genCExpr(node.value, ctx)};` : `${indent(lvl)}return;`;
     case 'Switch': {
@@ -1385,6 +1449,7 @@ function mapCIdentifierWithContext(name: string, ctx: TypeContext): string {
 
   const root = baseIdentifier(name);
   const meta = getSymbolMeta(ctx, root);
+  if (meta?.rawType && /ref$/i.test(meta.rawType)) mapped = mapped.replace(new RegExp(`^${root}\\.value$`, 'i'), root);
   if (meta?.shape === 'node' && mapped.includes('.')) {
     mapped = mapped.replace(/\./g, '->');
   }
@@ -1453,6 +1518,7 @@ function genCExpr(node: ASTNode, ctx: TypeContext, parentPrecedence = 0): string
       return wrapByPrecedence(expr, precedence, parentPrecedence);
     }
     case 'Call': {
+      if (node.name.toLowerCase() === 'new' && node.args.length > 0) return 'NULL';
       if (node.name.toLowerCase() === 'length' && node.args.length === 1) {
         const arg = node.args[0];
         if (arg.type === 'Identifier') {
@@ -1570,14 +1636,12 @@ export function generateJava(ast: ProgramNode): string {
     const params = fn.params.map(p => {
       const symbol = getSymbolMeta(ctx, p.name);
       if (!symbol) return `${javaPrimitiveType(p.dataType)} ${p.name}`;
-      return `${javaTypeForSymbol(symbol)} ${p.name}`;
+      return `${javaParamTypeForSymbol(symbol)} ${p.name}`;
     }).join(', ');
 
-    const firstByRef = fn.type === 'Procedure' ? fn.params.find(param => param.byRef) : undefined;
-    const byRefSymbol = firstByRef ? getSymbolMeta(ctx, firstByRef.name) : undefined;
     const retType = fn.type === 'Function'
       ? mapType(fn.returnType === 'unknown' ? 'integer' : fn.returnType, 'java')
-      : byRefSymbol ? javaTypeForSymbol(byRefSymbol) : 'void';
+      : 'void';
 
     lines.push(`  public static ${retType} ${fn.name}(${params}) {`);
     for (const v of fn.localVars) {
@@ -1585,13 +1649,14 @@ export function generateJava(ast: ProgramNode): string {
     }
     for (const v of fn.localVars) {
       if (v.initialValue && !isArrayDeclarationVar(v)) {
-        lines.push(`    ${v.name} = ${genJavaExpr(v.initialValue, ctx)};`);
+        if (isAllocationCall(v.initialValue)) {
+          lines.push(`    ${v.name} = ${javaAllocationExpressionForTarget(v.name, ctx)};`);
+        } else {
+          lines.push(`    ${v.name} = ${genJavaExpr(v.initialValue, ctx)};`);
+        }
       }
     }
     for (const stmt of fn.body) lines.push(genJavaStmt(stmt, 2, ctx, retType === 'void'));
-    if (fn.type === 'Procedure' && byRefSymbol && firstByRef) {
-      lines.push(`    return ${firstByRef.name};`);
-    }
     lines.push('  }');
     lines.push('');
   }
@@ -1603,7 +1668,11 @@ export function generateJava(ast: ProgramNode): string {
   }
   for (const v of ast.variables) {
     if (v.initialValue && !isArrayDeclarationVar(v)) {
-      lines.push(`    ${v.name} = ${genJavaExpr(v.initialValue, ctx)};`);
+      if (isAllocationCall(v.initialValue)) {
+        lines.push(`    ${v.name} = ${javaAllocationExpressionForTarget(v.name, ctx)};`);
+      } else {
+        lines.push(`    ${v.name} = ${genJavaExpr(v.initialValue, ctx)};`);
+      }
     }
   }
   if (ast.variables.length > 0) lines.push('');
@@ -1621,13 +1690,35 @@ export function generateJava(ast: ProgramNode): string {
   return lines.join('\n');
 }
 
+
+function javaAllocationExpressionForTarget(name: string, ctx: TypeContext): string {
+  const varName = baseIdentifier(name);
+  const symbol = getSymbolMeta(ctx, varName);
+  const classType = symbol && symbol.shape === 'node' ? deriveStructName(symbol) : 'Object';
+  return `new ${classType}()`;
+}
+
+function mapJavaIdentifierWithContext(name: string, ctx: TypeContext): string {
+  let mapped = mapIdentifierName(name, 'java');
+  const root = baseIdentifier(mapped);
+  const meta = getSymbolMeta(ctx, root);
+  if (meta?.rawType && /ref$/i.test(meta.rawType)) mapped = mapped.replace(new RegExp(`^${root}\\.value$`, 'i'), root);
+  if (meta?.shape === 'node' && meta.byRef && mapped === root) return `${root}[0]`;
+  if (meta?.shape === 'node' && meta.byRef && mapped.startsWith(`${root}.`)) return `${root}[0].${mapped.slice(root.length + 1)}`;
+  return mapped;
+}
+
 function genJavaStmt(node: ASTNode, lvl: number, ctx: TypeContext, voidContext = false): string {
   switch (node.type) {
     case 'Assignment':
+      if (node.target.type === 'Identifier' && isAllocationCall(node.value)) {
+        return `${indent(lvl)}${genJavaExpr(node.target, ctx)} = ${javaAllocationExpressionForTarget(node.target.name, ctx)};`;
+      }
       return `${indent(lvl)}${genJavaExpr(node.target, ctx)} = ${genJavaExpr(node.value, ctx)};`;
     case 'VariableDeclaration': {
       const decl = javaVarDeclaration(node, ctx, indent(lvl));
       if (!node.initialValue || isArrayDeclarationVar(node)) return decl;
+      if (isAllocationCall(node.initialValue)) return `${decl}\n${indent(lvl)}${node.name} = ${javaAllocationExpressionForTarget(node.name, ctx)};`;
       return `${decl}\n${indent(lvl)}${node.name} = ${genJavaExpr(node.initialValue, ctx)};`;
     }
     case 'If': {
@@ -1753,9 +1844,9 @@ function genJavaExpr(node: ASTNode, ctx: TypeContext, parentPrecedence = 0): str
       if (node.dataType === 'boolean') return node.value ? 'true' : 'false';
       return wrapByPrecedence(String(node.value), 90, parentPrecedence);
     case 'Identifier':
-      return wrapByPrecedence(mapIdentifierName(node.name, 'java'), 90, parentPrecedence);
+      return wrapByPrecedence(mapJavaIdentifierWithContext(node.name, ctx), 90, parentPrecedence);
     case 'ArrayAccess':
-      return wrapByPrecedence(`${mapIdentifierName(node.array, 'java')}[${genJavaExpr(node.index, ctx)}]`, 90, parentPrecedence);
+      return wrapByPrecedence(`${mapJavaIdentifierWithContext(node.array, ctx)}[${genJavaExpr(node.index, ctx)}]`, 90, parentPrecedence);
     case 'Binary': {
       const op = mapOp(node.operator, 'java');
       const precedence = javaBinaryPrecedence(op);
@@ -1774,11 +1865,13 @@ function genJavaExpr(node: ASTNode, ctx: TypeContext, parentPrecedence = 0): str
       if (node.name.toLowerCase() === 'length' && node.args.length === 1) {
         const arg = node.args[0];
         if (arg.type === 'Identifier') {
-          const expr = `${mapIdentifierName(arg.name, 'java')}.length`;
+          const expr = `${mapJavaIdentifierWithContext(arg.name, ctx)}.length`;
           return wrapByPrecedence(expr, 90, parentPrecedence);
         }
         return '0';
       }
+      if (node.name.toLowerCase() === 'sizeof') return '0';
+      if (node.name.toLowerCase() === 'malloc' || node.name.toLowerCase() === 'calloc') return 'null';
       if (node.name.toLowerCase().startsWith('next')) return '0';
       if (node.name.includes('.')) {
         const method = node.name.split('.').pop() ?? node.name;
