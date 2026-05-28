@@ -2,8 +2,9 @@ import type { MetadataRoute } from 'next';
 import { getCryptoConversionStaticParams } from '@/data/crypto-conversion-pages';
 import { getImageConversionStaticParams } from '@/data/image-conversion-pages';
 import { getInvisiblePlatformStaticParamsByLocale } from '@/data/invisible-platform-pages';
+import { getGtaSeoStaticParamsByLocale } from '@/data/gta/gta-seo-pages';
 import { getToolAliasStaticParamsByLocale } from '@/data/tool-alias-pages';
-import { toolsRegistry } from '@/data/tools-registry';
+import { getToolLocalePathMap, toolsRegistry } from '@/data/tools-registry';
 import {
   defaultLocale,
   localeMetadata,
@@ -84,6 +85,18 @@ const collectToolAliasSlugs = (): string[] => {
   return Array.from(slugs);
 };
 
+const collectGtaSeoSlugs = (): string[] => {
+  const slugs = new Set<string>();
+
+  locales.forEach((locale) => {
+    getGtaSeoStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      slugs.add(platformPageSlug);
+    });
+  });
+
+  return Array.from(slugs);
+};
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
@@ -108,13 +121,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
   );
 
-  const toolRoutes: MetadataRoute.Sitemap = toolsRegistry.flatMap((tool) =>
-    createLocalizedEntries(`/tools/${tool.slug}`, {
+  const toolRoutes: MetadataRoute.Sitemap = toolsRegistry.flatMap((tool) => {
+    const pathMap = getToolLocalePathMap(tool);
+
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
-    }),
-  );
+      alternates: buildAlternates(pathMap),
+    }));
+  });
 
   const cryptoConversionRoutes: MetadataRoute.Sitemap = getCryptoConversionStaticParams().flatMap(
     ({ conversionSlug }) =>
@@ -151,6 +168,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
   );
 
+  const gtaSeoRoutes: MetadataRoute.Sitemap = collectGtaSeoSlugs().flatMap((slug) =>
+    createLocalizedEntries(`/${slug}`, {
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.76,
+    }),
+  );
+
   return dedupeByUrl([
     ...staticRoutes,
     ...toolRoutes,
@@ -158,5 +183,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...imageConversionRoutes,
     ...invisibleLandingRoutes,
     ...toolAliasRoutes,
+    ...gtaSeoRoutes,
   ]);
 }

@@ -13,7 +13,9 @@ type ToolPageShellProps = {
   tool: ToolDefinition;
   relatedTools: ToolDefinition[];
   toolUi: ReactNode;
+  beforeToolSection?: ReactNode;
   afterToolSection?: ReactNode;
+  afterContentSection?: ReactNode;
   locale?: AppLocale;
 };
 
@@ -21,7 +23,9 @@ export function ToolPageShell({
   tool,
   relatedTools,
   toolUi,
+  beforeToolSection,
   afterToolSection,
+  afterContentSection,
   locale = 'pt-br',
 }: ToolPageShellProps) {
   const dictionary = getDictionary(locale);
@@ -42,6 +46,8 @@ export function ToolPageShell({
       </header>
 
       <div className="mt-8">
+        {beforeToolSection ? <div className="mb-8">{beforeToolSection}</div> : null}
+
         <main className="space-y-8">
           <section aria-labelledby="tool-interface-title" className="space-y-3">
             <h2 id="tool-interface-title" className="text-2xl font-bold tracking-tight text-slate-900">
@@ -66,6 +72,8 @@ export function ToolPageShell({
           <Faq items={tool.faq} title={dictionary.toolShell.faqTitle} />
 
           <RelatedTools tools={relatedTools} locale={locale} />
+
+          {afterContentSection ? afterContentSection : null}
 
           <TrustNote
             title={dictionary.toolShell.trustTitle}

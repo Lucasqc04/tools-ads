@@ -24,6 +24,20 @@ import {
   emailTemporarioIntro,
 } from '@/data/content/email-temporario';
 import {
+  cs2CrosshairCodesContentBlocks,
+  cs2CrosshairCodesFaq,
+  cs2CrosshairCodesIntro,
+  getCs2CrosshairCodesContent,
+} from '@/data/content/cs2-crosshair-codes';
+import { getCs2CrosshairToolBasePathForLocale } from '@/data/cs2/crosshair-pages';
+import {
+  gtaCheatsContentBlocks,
+  gtaCheatsFaq,
+  gtaCheatsIntro,
+  getGtaCheatsContent,
+} from '@/data/content/gta-cheat-codes';
+import { getGtaToolBasePathForLocale } from '@/data/gta/gta-seo-pages';
+import {
   descobrirIpPublicoContentBlocks,
   descobrirIpPublicoFaq,
   descobrirIpPublicoIntro,
@@ -646,6 +660,70 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['qr-code-generator', 'password-generator', 'json-formatter'],
   },
   {
+    id: 'cs2-crosshair-codes',
+    slug: 'cs2-crosshair-codes',
+    name: 'Codigos de Mira CS2 de Pro Players',
+    shortDescription:
+      'Encontre codigos de mira CS2 e CS:GO de jogadores profissionais, filtre por time/pais/funcao e copie em um clique.',
+    category: 'gaming',
+    primaryKeyword: 'codigos de mira cs2',
+    secondaryKeywords: [
+      'codigo de mira cs go',
+      'miras de pro players cs2',
+      'cs2 crosshair codes',
+      'crosshair code csgo',
+      'mira yuurih cs2',
+    ],
+    searchIntent:
+      'Jogadores de Counter-Strike que querem copiar codigos de mira de pro players e ajustar rapidamente para seu proprio estilo.',
+    seoTitle: 'Codigos de Mira CS2 e CS:GO de Pro Players | Copiar Crosshair',
+    seoDescription:
+      'Copie codigos de mira CS2/CS:GO de jogadores profissionais, filtre por time, pais e funcao e veja como importar no Counter-Strike 2.',
+    h1: 'Codigos de Mira CS2 e CS:GO de Pro Players',
+    intro: cs2CrosshairCodesIntro,
+    canonicalPath: '/tools/cs2-crosshair-codes',
+    canonicalPathByLocale: {
+      'pt-br': getCs2CrosshairToolBasePathForLocale('pt-br'),
+      en: getCs2CrosshairToolBasePathForLocale('en'),
+      es: getCs2CrosshairToolBasePathForLocale('es'),
+    },
+    faq: cs2CrosshairCodesFaq,
+    contentBlocks: cs2CrosshairCodesContentBlocks,
+    relatedToolIds: ['invisible-character', 'json-formatter', 'sorteador'],
+  },
+  {
+    id: 'gta-cheat-codes',
+    slug: 'gta-cheat-codes',
+    name: 'Codigos GTA (San Andreas, V, IV, III e Vice City)',
+    shortDescription:
+      'Busque e copie codigos GTA por jogo, categoria e plataforma com filtros inteligentes em pt-br/en/es.',
+    category: 'gaming',
+    primaryKeyword: 'codigos gta',
+    secondaryKeywords: [
+      'gta cheat codes',
+      'codigos gta san andreas',
+      'codigos gta 5',
+      'codigos gta 4',
+      'codigos gta vice city',
+    ],
+    searchIntent:
+      'Jogadores que querem encontrar e copiar cheats GTA por jogo, categoria e plataforma com busca semantica rapida.',
+    seoTitle: 'Codigos GTA: San Andreas, GTA 5, GTA 4, GTA 3 e Vice City',
+    seoDescription:
+      'Copie codigos GTA para single-player/story mode com filtros por jogo e categoria, busca inteligente e avisos de compatibilidade.',
+    h1: 'Codigos GTA por jogo, categoria e plataforma',
+    intro: gtaCheatsIntro,
+    canonicalPath: '/tools/gta-cheat-codes',
+    canonicalPathByLocale: {
+      'pt-br': getGtaToolBasePathForLocale('pt-br'),
+      en: getGtaToolBasePathForLocale('en'),
+      es: getGtaToolBasePathForLocale('es'),
+    },
+    faq: gtaCheatsFaq,
+    contentBlocks: gtaCheatsContentBlocks,
+    relatedToolIds: ['cs2-crosshair-codes', 'sorteador', 'qr-code-generator'],
+  },
+  {
     id: 'descobrir-ip-publico',
     slug: 'descobrir-ip-publico',
     name: 'Descobrir IP Público e Informações',
@@ -722,6 +800,24 @@ export const getRelatedTools = (toolId: string): ToolDefinition[] => {
     .filter((tool): tool is ToolDefinition => Boolean(tool));
 };
 
+const getToolBaseCanonicalPathByLocale = (
+  tool: ToolDefinition,
+  locale: AppLocale,
+): string => tool.canonicalPathByLocale?.[locale] ?? tool.canonicalPath;
+
+export const getToolCanonicalPathByLocale = (
+  tool: ToolDefinition,
+  locale: AppLocale,
+): string => localizePath(locale, getToolBaseCanonicalPathByLocale(tool, locale));
+
+export const getToolLocalePathMap = (
+  tool: ToolDefinition,
+): Record<AppLocale, string> => ({
+  'pt-br': getToolCanonicalPathByLocale(tool, 'pt-br'),
+  en: getToolCanonicalPathByLocale(tool, 'en'),
+  es: getToolCanonicalPathByLocale(tool, 'es'),
+});
+
 type LocalizableToolId =
   | 'bitcoin-wallet'
   | 'crypto-unit-converter'
@@ -770,17 +866,37 @@ const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>
   localizableToolIds.has(toolId as LocalizableToolId);
 
 const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition => {
+  if (tool.id === 'cs2-crosshair-codes') {
+    const localized = getCs2CrosshairCodesContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'gta-cheat-codes') {
+    const localized = getGtaCheatsContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
   if (locale === 'pt-br') {
     return {
       ...tool,
-      canonicalPath: localizePath(locale, tool.canonicalPath),
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
     };
   }
 
   if (!isLocalizableToolId(tool.id)) {
     return {
       ...tool,
-      canonicalPath: localizePath(locale, tool.canonicalPath),
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
     };
   }
 
@@ -789,7 +905,7 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
   return {
     ...tool,
     ...translation,
-    canonicalPath: localizePath(locale, tool.canonicalPath),
+    canonicalPath: getToolCanonicalPathByLocale(tool, locale),
   };
 };
 

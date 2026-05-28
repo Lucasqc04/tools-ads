@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { localizePath, type AppLocale } from '@/lib/i18n/config';
+import type { AppLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
 import type { ToolDefinition } from '@/types/tool';
 
@@ -27,7 +27,7 @@ export function RelatedTools({ tools, locale = 'pt-br' }: RelatedToolsProps) {
         {tools.map((tool) => (
           <Link
             key={tool.id}
-            href={localizePath(locale, `/tools/${tool.slug}`)}
+            href={tool.canonicalPath}
             className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-card"
           >
             <p className="text-base font-semibold text-slate-900">{tool.name}</p>

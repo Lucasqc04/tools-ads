@@ -18,6 +18,7 @@ import { ImageToBase64Tool } from '@/components/tools/image-to-base64-tool';
 import { InvisibleCharacterTool } from '@/components/tools/invisible-character-tool';
 import { InvisiblePlatformLinks } from '@/components/tools/invisible-platform-links';
 import { JsonFormatterTool } from '@/components/tools/json-formatter-tool';
+import { GtaCheatCodesTool } from '@/components/tools/gta-cheat-codes-tool';
 import { PasswordGeneratorTool } from '@/components/tools/password-generator-tool';
 import { QrCodeGeneratorTool } from '@/components/tools/qr-code-generator';
 import { SorteadorTool } from '@/components/tools/sorteador-tool';
@@ -51,6 +52,16 @@ import {
   getLocalizedRelatedTools,
   getLocalizedToolBySlug,
 } from '@/data/tools-registry';
+import {
+  getGtaSeoLocalePathMap,
+  getGtaSeoPageBySlug,
+  getGtaSeoPathByLocale,
+  getGtaSeoStaticParamsByLocale,
+  getLocalizedGtaSeoContent,
+  getLocalizedGtaSeoLabel,
+  getRelatedGtaSeoPages,
+  type GtaSeoPage,
+} from '@/data/gta/gta-seo-pages';
 import {
   getLocalizedToolAliasContent,
   getRelatedToolAliasPages,
@@ -123,6 +134,24 @@ const toolAliasCopy: Record<AppLocale, { title: string; description: string }> =
   },
 };
 
+const gtaRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
+  'pt-br': {
+    title: 'Outras paginas de codigos GTA',
+    description:
+      'Acesse variacoes por jogo e intencao de busca para copiar cheats mais rapido.',
+  },
+  en: {
+    title: 'Related GTA cheat pages',
+    description:
+      'Browse game-specific and intent-driven variations to find the exact cheat faster.',
+  },
+  es: {
+    title: 'Otras paginas de codigos GTA',
+    description:
+      'Navega variaciones por juego e intencion para encontrar el cheat correcto mas rapido.',
+  },
+};
+
 const imageConversionSectionByLocale: Record<AppLocale, { title: string; description: string }> = {
   'pt-br': {
     title: 'Conversoes populares de imagem e PDF',
@@ -181,6 +210,10 @@ const softwareCategoryByToolSlug: Record<string, string> = {
 
 type LandingResolution =
   | {
+      kind: 'gta-seo-page';
+      page: GtaSeoPage;
+    }
+  | {
       kind: 'invisible-platform';
       resolution: NonNullable<ReturnType<typeof getInvisiblePlatformResolutionBySlug>>;
     }
@@ -203,6 +236,14 @@ const dedupeKeywords = (keywords: string[]): string[] =>
   Array.from(new Set(keywords.map((item) => item.trim()).filter(Boolean)));
 
 const resolveLanding = (slug: string): LandingResolution | undefined => {
+  const gtaSeoPage = getGtaSeoPageBySlug(slug);
+  if (gtaSeoPage) {
+    return {
+      kind: 'gta-seo-page',
+      page: gtaSeoPage,
+    };
+  }
+
   const invisibleResolution = getInvisiblePlatformResolutionBySlug(slug);
   if (invisibleResolution) {
     return {
@@ -286,6 +327,10 @@ export function generateStaticParams() {
   const params = new Set<string>();
 
   locales.forEach((locale) => {
+    getGtaSeoStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      params.add(`${locale}:${platformPageSlug}`);
+    });
+
     getInvisiblePlatformStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
       params.add(`${locale}:${platformPageSlug}`);
     });
@@ -344,6 +389,18 @@ export async function generateMetadata({ params }: LandingPageProps): Promise<Me
     });
   }
 
+  if (landing.kind === 'gta-seo-page') {
+    const localizedContent = getLocalizedGtaSeoContent(landing.page, locale);
+
+    return buildLocalizedMetadata({
+      locale,
+      title: localizedContent.seoTitle,
+      description: localizedContent.seoDescription,
+      localePaths: getGtaSeoLocalePathMap(landing.page),
+      keywords: [localizedContent.primaryKeyword, ...localizedContent.secondaryKeywords],
+    });
+  }
+
   const baseTool = getLocalizedToolBySlug(locale, landing.page.toolSlug);
   if (!baseTool) {
     return buildLocalizedMetadata({
@@ -379,6 +436,90 @@ export default async function LandingPage({ params }: LandingPageProps) {
 
   if (!landing) {
     notFound();
+  }
+
+  if (landing.kind === 'gta-seo-page') {
+    const baseTool = getLocalizedToolBySlug(locale, 'gta-cheat-codes');
+
+    if (!baseTool) {
+      notFound();
+    }
+
+    const localizedContent = getLocalizedGtaSeoContent(landing.page, locale);
+    const relatedTools = getLocalizedRelatedTools(locale, baseTool.id);
+    const canonicalPath = getGtaSeoPathByLocale(landing.page, locale);
+
+    const relatedGtaLinks = getRelatedGtaSeoPages(landing.page.id, 4).map((page) => ({
+      slug: page.slugs[locale],
+      path: getGtaSeoPathByLocale(page, locale),
+      label: getLocalizedGtaSeoLabel(page, locale),
+    }));
+
+    const landingTool: ToolDefinition = {
+      ...baseTool,
+      name: localizedContent.title,
+      h1: localizedContent.title,
+      intro: localizedContent.intro,
+      seoTitle: localizedContent.seoTitle,
+      seoDescription: localizedContent.seoDescription,
+      canonicalPath,
+      primaryKeyword: localizedContent.primaryKeyword,
+      secondaryKeywords: localizedContent.secondaryKeywords,
+      searchIntent: baseTool.searchIntent,
+      contentBlocks: localizedContent.contentBlocks,
+      faq: localizedContent.faq,
+    };
+
+    return (
+      <>
+        <JsonLd
+          data={buildToolWebPageJsonLd({
+            name: landingTool.name,
+            description: landingTool.seoDescription,
+            path: landingTool.canonicalPath,
+            locale,
+            keywords: [landingTool.primaryKeyword, ...landingTool.secondaryKeywords],
+          })}
+        />
+        <JsonLd
+          data={buildSoftwareApplicationJsonLd({
+            name: landingTool.name,
+            description: landingTool.seoDescription,
+            path: landingTool.canonicalPath,
+            category: 'UtilitiesApplication',
+          })}
+        />
+        <JsonLd
+          data={buildBreadcrumbJsonLd([
+            { name: dictionary.common.home, path: localizePath(locale, '/') },
+            { name: dictionary.common.tools, path: localizePath(locale, '/tools') },
+            { name: baseTool.name, path: baseTool.canonicalPath },
+            { name: landingTool.name, path: canonicalPath },
+          ])}
+        />
+        <JsonLd data={buildFaqJsonLd(landingTool.faq)} />
+
+        <ToolPageShell
+          locale={locale}
+          tool={landingTool}
+          relatedTools={relatedTools}
+          toolUi={
+            <GtaCheatCodesTool
+              locale={locale}
+              initialGame={landing.page.game}
+              initialCategory={landing.page.category}
+            />
+          }
+          afterToolSection={
+            <ToolAliasLinks
+              title={gtaRelatedCopy[locale].title}
+              description={gtaRelatedCopy[locale].description}
+              links={relatedGtaLinks}
+            />
+          }
+        />
+      </>
+    );
   }
 
   if (landing.kind === 'invisible-platform') {
@@ -670,7 +811,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
           { name: dictionary.common.tools, path: localizePath(locale, '/tools') },
           {
             name: baseTool.name,
-            path: localizePath(locale, `/tools/${baseTool.slug}`),
+            path: baseTool.canonicalPath,
           },
           {
             name: breadcrumbAliasLabel,

@@ -1,6 +1,7 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
+import type { AppLocale } from '@/lib/i18n/config';
 
-export type ToolCategory = 'crypto' | 'dev' | 'documents' | 'utility';
+export type ToolCategory = 'crypto' | 'dev' | 'documents' | 'utility' | 'gaming';
 
 export type ToolDefinition = {
   id: string;
@@ -16,6 +17,7 @@ export type ToolDefinition = {
   h1: string;
   intro: string;
   canonicalPath: string;
+  canonicalPathByLocale?: Partial<Record<AppLocale, string>>;
   faq: FaqItem[];
   contentBlocks: ContentBlock[];
   relatedToolIds: string[];
