@@ -1,6 +1,16 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  AlertTriangle,
+  CheckCircle,
+  Copy,
+  Download,
+  FileJson,
+  FileText,
+  QrCode,
+  ShieldCheck,
+} from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +37,7 @@ import {
 // ---------- TYPES ----------
 
 type Tab = 'generate' | 'validate' | 'decoder' | 'tree' | 'qrcode' | 'crc' | 'export';
+type PixGenerationMode = 'static' | 'dynamic';
 
 type PixDecoderToolProps = Readonly<{
   locale?: AppLocale;
@@ -43,8 +54,17 @@ const ui: Record<string, Record<AppLocale, string>> = {
   tabQr: { 'pt-br': 'QR Code', en: 'QR Code', es: 'QR Code' },
   tabCrc: { 'pt-br': 'CRC16', en: 'CRC16', es: 'CRC16' },
   tabExport: { 'pt-br': 'Exportar', en: 'Export', es: 'Exportar' },
+  pixMode: { 'pt-br': 'Tipo de Pix', en: 'Pix type', es: 'Tipo de Pix' },
+  staticMode: { 'pt-br': 'Estático', en: 'Static', es: 'Estático' },
+  dynamicMode: { 'pt-br': 'Dinâmico', en: 'Dynamic', es: 'Dinámico' },
   keyType: { 'pt-br': 'Tipo de chave', en: 'Key type', es: 'Tipo de clave' },
   key: { 'pt-br': 'Chave Pix', en: 'Pix Key', es: 'Clave Pix' },
+  dynamicUrl: { 'pt-br': 'URL/location do Pix dinâmico', en: 'Dynamic Pix URL/location', es: 'URL/location de Pix dinámico' },
+  dynamicUrlHelp: {
+    'pt-br': 'Use o domínio/caminho fornecido pelo PSP. Se colar com https://, a ferramenta remove o protocolo.',
+    en: 'Use the domain/path provided by the PSP. If you paste https://, the tool removes the protocol.',
+    es: 'Usa el dominio/ruta provisto por el PSP. Si pegas https://, la herramienta quita el protocolo.',
+  },
   name: { 'pt-br': 'Nome do recebedor', en: 'Recipient name', es: 'Nombre del receptor' },
   city: { 'pt-br': 'Cidade', en: 'City', es: 'Ciudad' },
   amount: { 'pt-br': 'Valor (R$)', en: 'Amount (BRL)', es: 'Valor (BRL)' },
@@ -81,8 +101,15 @@ const ui: Record<string, Record<AppLocale, string>> = {
   exportJson: { 'pt-br': 'Exportar JSON', en: 'Export JSON', es: 'Exportar JSON' },
   exportCsv: { 'pt-br': 'Exportar CSV', en: 'Export CSV', es: 'Exportar CSV' },
   exportTxt: { 'pt-br': 'Exportar TXT', en: 'Export TXT', es: 'Exportar TXT' },
-  privacy: { 'pt-br': '🔒 Processamento 100% local. Nenhum dado é enviado ao servidor.', en: '🔒 100% local processing. No data is sent to any server.', es: '🔒 Procesamiento 100% local. Ningún dato se envía al servidor.' },
-  securityWarning: { 'pt-br': '⚠️ CRC válido NÃO garante que o recebedor é confiável. Confira sempre no app do banco.', en: '⚠️ Valid CRC does NOT mean the recipient is trustworthy. Always verify in your banking app.', es: '⚠️ CRC válido NO garantiza que el receptor es confiable. Verifica siempre en tu app bancaria.' },
+  openValidation: { 'pt-br': 'Abrir validação', en: 'Open validation', es: 'Abrir validación' },
+  openQrCode: { 'pt-br': 'Abrir QR Code', en: 'Open QR Code', es: 'Abrir QR Code' },
+  syncedPayload: {
+    'pt-br': 'Payload sincronizado com validação, decoder, árvore, CRC, exportação e QR Code.',
+    en: 'Payload synced with validation, decoder, tree, CRC, export, and QR Code.',
+    es: 'Payload sincronizado con validación, decoder, árbol, CRC, exportación y QR Code.',
+  },
+  privacy: { 'pt-br': 'Processamento 100% local. Nenhum dado é enviado ao servidor.', en: '100% local processing. No data is sent to any server.', es: 'Procesamiento 100% local. Ningún dato se envía al servidor.' },
+  securityWarning: { 'pt-br': 'CRC válido não garante que o recebedor é confiável. Confira sempre no app do banco.', en: 'A valid CRC does not mean the recipient is trustworthy. Always verify in your banking app.', es: 'CRC válido no garantiza que el receptor es confiable. Verifica siempre en tu app bancaria.' },
   examples: { 'pt-br': 'Exemplos', en: 'Examples', es: 'Ejemplos' },
   legend: { 'pt-br': 'Legenda', en: 'Legend', es: 'Leyenda' },
   cpf: { 'pt-br': 'CPF', en: 'CPF', es: 'CPF' },
@@ -115,8 +142,10 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   // Generate state
+  const [genMode, setGenMode] = useState<PixGenerationMode>('static');
   const [genKeyType, setGenKeyType] = useState<PixKeyType>('cpf');
   const [genKey, setGenKey] = useState('');
+  const [genUrl, setGenUrl] = useState('');
   const [genName, setGenName] = useState('Fulano da Silva');
   const [genCity, setGenCity] = useState('SAO PAULO');
   const [genAmount, setGenAmount] = useState('');
@@ -163,24 +192,32 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
   // Generate handler
   const handleGenerate = useCallback(() => {
     const input: PixGeneratorInput = {
+      type: genMode,
       keyType: genKeyType,
-      key: formatKeyForPayload(genKeyType, genKey),
+      key: genMode === 'static' ? formatKeyForPayload(genKeyType, genKey) : '',
+      url: genMode === 'dynamic' ? genUrl : undefined,
       merchantName: genName,
       merchantCity: genCity,
       amount: genAmount || undefined,
-      txid: genTxid || undefined,
-      additionalInfo: genInfo || undefined,
+      txid: genMode === 'static' ? genTxid || undefined : undefined,
+      additionalInfo: genMode === 'static' ? genInfo || undefined : undefined,
     };
     const result = buildPixPayload(input);
+    const validation = validatePixPayload(result.payload);
     setGenResult(result);
-    // Also set as input for other tabs
     if (result.payload) {
       setInputPayload(result.payload);
+      setValidationResult(validation);
+      if (result.isValid && validation.isPix && result.issues.length === 0) {
+        setActiveTab('validate');
+      }
     }
-  }, [genKeyType, genKey, genName, genCity, genAmount, genTxid, genInfo]);
+  }, [genMode, genKeyType, genKey, genUrl, genName, genCity, genAmount, genTxid, genInfo]);
 
   const handleReset = useCallback(() => {
+    setGenMode('static');
     setGenKey('');
+    setGenUrl('');
     setGenName('');
     setGenCity('');
     setGenAmount('');
@@ -193,10 +230,11 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
 
   const loadExample = useCallback((payload: string) => {
     setInputPayload(payload);
+    setValidationResult(validatePixPayload(payload));
     setActiveTab('validate');
   }, []);
 
-  const activePayload = genResult?.payload ?? inputPayload;
+  const activePayload = inputPayload;
   const activeValidation = validationResult;
 
   const tabs: { key: Tab; label: string }[] = [
@@ -212,31 +250,37 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
   return (
     <Card className="space-y-6">
       {/* Tab bar */}
-      <div className="flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              activeTab === tab.key
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="-mx-1 overflow-x-auto px-1 pb-1">
+        <div className="inline-flex min-w-full gap-1 rounded-xl border border-slate-200 bg-slate-100/70 p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              className={`min-h-9 whitespace-nowrap rounded-lg px-3.5 py-2 text-xs font-semibold transition-colors ${
+                activeTab === tab.key
+                  ? 'bg-white text-slate-950 shadow-sm'
+                  : 'text-slate-600 hover:bg-white/70 hover:text-slate-900'
+              }`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* TAB: Generate */}
       {activeTab === 'generate' && (
         <GenerateTab
           locale={locale}
+          genMode={genMode}
+          setGenMode={setGenMode}
           genKeyType={genKeyType}
           setGenKeyType={setGenKeyType}
           genKey={genKey}
           setGenKey={setGenKey}
+          genUrl={genUrl}
+          setGenUrl={setGenUrl}
           genName={genName}
           setGenName={setGenName}
           genCity={genCity}
@@ -252,6 +296,8 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
           onReset={handleReset}
           copyToClipboard={copyToClipboard}
           copiedKey={copiedKey}
+          openValidation={() => setActiveTab('validate')}
+          openQrCode={() => setActiveTab('qrcode')}
         />
       )}
 
@@ -265,6 +311,7 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
           loadExample={loadExample}
           copyToClipboard={copyToClipboard}
           copiedKey={copiedKey}
+          openQrCode={() => setActiveTab('qrcode')}
         />
       )}
 
@@ -330,9 +377,15 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
       )}
 
       {/* Privacy & Security */}
-      <div className="space-y-1">
-        <p className="text-xs text-slate-500">{t('privacy', locale)}</p>
-        <p className="text-xs text-amber-600">{t('securityWarning', locale)}</p>
+      <div className="grid gap-2 border-t border-slate-200 pt-4">
+        <p className="flex items-start gap-2 text-xs text-slate-500">
+          <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-600" aria-hidden="true" />
+          <span>{t('privacy', locale)}</span>
+        </p>
+        <p className="flex items-start gap-2 text-xs text-amber-700">
+          <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{t('securityWarning', locale)}</span>
+        </p>
       </div>
     </Card>
   );
@@ -340,12 +393,43 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
 
 // ---------- GENERATE TAB ----------
 
-function GenerateTab({ locale, genKeyType, setGenKeyType, genKey, setGenKey, genName, setGenName, genCity, setGenCity, genAmount, setGenAmount, genTxid, setGenTxid, genInfo, setGenInfo, genResult, onGenerate, onReset, copyToClipboard, copiedKey }: Readonly<{
+function GenerateTab({
+  locale,
+  genMode,
+  setGenMode,
+  genKeyType,
+  setGenKeyType,
+  genKey,
+  setGenKey,
+  genUrl,
+  setGenUrl,
+  genName,
+  setGenName,
+  genCity,
+  setGenCity,
+  genAmount,
+  setGenAmount,
+  genTxid,
+  setGenTxid,
+  genInfo,
+  setGenInfo,
+  genResult,
+  onGenerate,
+  onReset,
+  copyToClipboard,
+  copiedKey,
+  openValidation,
+  openQrCode,
+}: Readonly<{
   locale: AppLocale;
+  genMode: PixGenerationMode;
+  setGenMode: (v: PixGenerationMode) => void;
   genKeyType: PixKeyType;
   setGenKeyType: (v: PixKeyType) => void;
   genKey: string;
   setGenKey: (v: string) => void;
+  genUrl: string;
+  setGenUrl: (v: string) => void;
   genName: string;
   setGenName: (v: string) => void;
   genCity: string;
@@ -361,6 +445,8 @@ function GenerateTab({ locale, genKeyType, setGenKeyType, genKey, setGenKey, gen
   onReset: () => void;
   copyToClipboard: (text: string, key: string) => void;
   copiedKey: string | null;
+  openValidation: () => void;
+  openQrCode: () => void;
 }>) {
   const keyTypes: { value: PixKeyType; label: string }[] = [
     { value: 'cpf', label: t('cpf', locale) },
@@ -370,39 +456,87 @@ function GenerateTab({ locale, genKeyType, setGenKeyType, genKey, setGenKey, gen
     { value: 'random', label: t('random', locale) },
     { value: 'manual', label: t('manual', locale) },
   ];
+  const modes: { value: PixGenerationMode; label: string; description: string }[] = [
+    {
+      value: 'static',
+      label: t('staticMode', locale),
+      description: locale === 'en' ? 'Reusable payload with Pix key.' : locale === 'es' ? 'Payload reutilizable con clave Pix.' : 'Payload reutilizável com chave Pix.',
+    },
+    {
+      value: 'dynamic',
+      label: t('dynamicMode', locale),
+      description: locale === 'en' ? 'Single-use payload with PSP location.' : locale === 'es' ? 'Payload de uso único con location del PSP.' : 'Payload de uso único com location do PSP.',
+    },
+  ];
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="space-y-4">
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('keyType', locale)}</label>
-          <div className="flex flex-wrap gap-1.5">
-            {keyTypes.map((kt) => (
+          <label className="mb-2 block text-sm font-semibold text-slate-800">{t('pixMode', locale)}</label>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {modes.map((mode) => (
               <button
-                key={kt.value}
+                key={mode.value}
                 type="button"
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  genKeyType === kt.value
-                    ? 'bg-brand-600 text-white'
-                    : 'border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
+                className={`rounded-lg border px-3 py-2 text-left transition-colors ${
+                  genMode === mode.value
+                    ? 'border-brand-500 bg-brand-50 text-brand-900 ring-2 ring-brand-100'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                 }`}
-                onClick={() => setGenKeyType(kt.value)}
+                onClick={() => setGenMode(mode.value)}
               >
-                {kt.label}
+                <span className="block text-sm font-semibold">{mode.label}</span>
+                <span className="mt-0.5 block text-xs text-slate-500">{mode.description}</span>
               </button>
             ))}
           </div>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('key', locale)}</label>
-          <Input
-            value={genKey}
-            onChange={(e) => setGenKey(e.target.value)}
-            placeholder={genKeyType === 'cpf' ? '000.000.000-00' : genKeyType === 'email' ? 'exemplo@email.com' : genKeyType === 'phone' ? '+5511999999999' : ''}
-            className="font-mono text-sm"
-          />
-        </div>
+        {genMode === 'static' ? (
+          <>
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('keyType', locale)}</label>
+              <div className="flex flex-wrap gap-1.5">
+                {keyTypes.map((kt) => (
+                  <button
+                    key={kt.value}
+                    type="button"
+                    className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                      genKeyType === kt.value
+                        ? 'bg-brand-600 text-white'
+                        : 'border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
+                    }`}
+                    onClick={() => setGenKeyType(kt.value)}
+                  >
+                    {kt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('key', locale)}</label>
+              <Input
+                value={genKey}
+                onChange={(e) => setGenKey(e.target.value)}
+                placeholder={genKeyType === 'cpf' ? '000.000.000-00' : genKeyType === 'email' ? 'exemplo@email.com' : genKeyType === 'phone' ? '+5511999999999' : ''}
+                className="font-mono text-sm"
+              />
+            </div>
+          </>
+        ) : (
+          <div className="space-y-1.5">
+            <label className="block text-sm font-semibold text-slate-800">{t('dynamicUrl', locale)}</label>
+            <Input
+              value={genUrl}
+              onChange={(e) => setGenUrl(e.target.value)}
+              placeholder="qrcodepix.example.com.br/v2/abc123"
+              className="font-mono text-sm"
+            />
+            <p className="text-xs leading-5 text-slate-500">{t('dynamicUrlHelp', locale)}</p>
+          </div>
+        )}
 
         <div>
           <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('name', locale)} <span className="text-slate-400 font-normal">(máx 25)</span></label>
@@ -421,14 +555,22 @@ function GenerateTab({ locale, genKeyType, setGenKeyType, genKey, setGenKey, gen
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('txid', locale)}</label>
-            <Input value={genTxid} onChange={(e) => setGenTxid(e.target.value)} maxLength={25} className="font-mono text-sm" />
+            <Input
+              value={genMode === 'dynamic' ? '***' : genTxid}
+              onChange={(e) => setGenTxid(e.target.value)}
+              maxLength={25}
+              disabled={genMode === 'dynamic'}
+              className="font-mono text-sm"
+            />
           </div>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('additionalInfo', locale)}</label>
-          <Input value={genInfo} onChange={(e) => setGenInfo(e.target.value)} className="text-sm" />
-        </div>
+        {genMode === 'static' ? (
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('additionalInfo', locale)}</label>
+            <Input value={genInfo} onChange={(e) => setGenInfo(e.target.value)} className="text-sm" />
+          </div>
+        ) : null}
 
         <div className="flex gap-2 pt-2">
           <Button onClick={onGenerate}>{t('generate', locale)}</Button>
@@ -438,8 +580,9 @@ function GenerateTab({ locale, genKeyType, setGenKeyType, genKey, setGenKey, gen
         {genResult && genResult.issues.length > 0 && (
           <div className="space-y-1">
             {genResult.issues.map((issue, idx) => (
-              <p key={idx} className={`text-xs ${issue.level === 'error' ? 'text-red-600' : 'text-amber-600'}`}>
-                {issue.level === 'error' ? '❌' : '⚠️'} {issue.message}
+              <p key={idx} className={`flex items-start gap-1.5 text-xs ${issue.level === 'error' ? 'text-red-600' : 'text-amber-600'}`}>
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span>{issue.message}</span>
               </p>
             ))}
           </div>
@@ -451,15 +594,24 @@ function GenerateTab({ locale, genKeyType, setGenKeyType, genKey, setGenKey, gen
         {genResult?.payload ? (
           <section className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-              <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <CheckCircle className="h-4 w-4 text-green-600" aria-hidden="true" />
               {t('payload', locale)}
             </h3>
             <div className="break-all rounded-lg border border-slate-200 bg-white p-3 font-mono text-xs text-slate-900">
               {genResult.payload}
             </div>
+            <p className="text-xs leading-5 text-slate-600">{t('syncedPayload', locale)}</p>
             <div className="flex flex-wrap gap-2">
-              <Button className="h-8 px-3 text-xs" onClick={() => copyToClipboard(genResult.payload, 'gen-payload')}>
-                {copiedKey === 'gen-payload' ? '✓ ' + t('copied', locale) : '📋 ' + t('copy', locale)}
+              <Button className="h-8 gap-1.5 px-3 text-xs" onClick={() => copyToClipboard(genResult.payload, 'gen-payload')}>
+                <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                {copiedKey === 'gen-payload' ? t('copied', locale) : t('copy', locale)}
+              </Button>
+              <Button className="h-8 px-3 text-xs" variant="secondary" onClick={openValidation}>
+                {t('openValidation', locale)}
+              </Button>
+              <Button className="h-8 gap-1.5 px-3 text-xs" variant="secondary" onClick={openQrCode}>
+                <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
+                {t('openQrCode', locale)}
               </Button>
             </div>
             <div className="border-t border-slate-200 pt-3">
@@ -478,7 +630,7 @@ function GenerateTab({ locale, genKeyType, setGenKeyType, genKey, setGenKey, gen
 
 // ---------- VALIDATE TAB ----------
 
-function ValidateTab({ locale, inputPayload, setInputPayload, validationResult, loadExample, copyToClipboard, copiedKey }: Readonly<{
+function ValidateTab({ locale, inputPayload, setInputPayload, validationResult, loadExample, copyToClipboard, copiedKey, openQrCode }: Readonly<{
   locale: AppLocale;
   inputPayload: string;
   setInputPayload: (v: string) => void;
@@ -486,6 +638,7 @@ function ValidateTab({ locale, inputPayload, setInputPayload, validationResult, 
   loadExample: (payload: string) => void;
   copyToClipboard: (text: string, key: string) => void;
   copiedKey: string | null;
+  openQrCode: () => void;
 }>) {
   const examples = useMemo(() => getPixExamples(), []);
 
@@ -552,11 +705,16 @@ function ValidateTab({ locale, inputPayload, setInputPayload, validationResult, 
           {validationResult.issues.length > 0 && (
             <section className="space-y-1 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
               {validationResult.issues.map((issue, idx) => (
-                <p key={idx} className={`text-xs ${
+                <p key={idx} className={`flex items-start gap-1.5 text-xs ${
                   issue.level === 'error' ? 'text-red-600' :
                   issue.level === 'warning' ? 'text-amber-600' : 'text-blue-600'
                 }`}>
-                  {issue.level === 'error' ? '❌' : issue.level === 'warning' ? '⚠️' : 'ℹ️'} {issue.message}
+                  {issue.level === 'error' || issue.level === 'warning' ? (
+                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  ) : (
+                    <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  )}
+                  <span>{issue.message}</span>
                 </p>
               ))}
             </section>
@@ -565,13 +723,18 @@ function ValidateTab({ locale, inputPayload, setInputPayload, validationResult, 
           {/* Extracted Data */}
           <section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-              <svg className="h-4 w-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+              <CheckCircle className="h-4 w-4 text-brand-600" aria-hidden="true" />
               {t('pixData', locale)}
             </h3>
             <PixDataSummary pixData={validationResult.pixData} locale={locale} />
-            <div>
-              <Button className="h-8 px-3 text-xs" onClick={() => copyToClipboard(inputPayload, 'validate-payload')}>
-                {copiedKey === 'validate-payload' ? '✓ ' + t('copied', locale) : '📋 ' + t('copy', locale)}
+            <div className="flex flex-wrap gap-2">
+              <Button className="h-8 gap-1.5 px-3 text-xs" onClick={() => copyToClipboard(inputPayload, 'validate-payload')}>
+                <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                {copiedKey === 'validate-payload' ? t('copied', locale) : t('copy', locale)}
+              </Button>
+              <Button className="h-8 gap-1.5 px-3 text-xs" variant="secondary" onClick={openQrCode}>
+                <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
+                {t('openQrCode', locale)}
               </Button>
             </div>
           </section>
@@ -834,9 +997,16 @@ function QrCodeTab({ locale, payload, qrSize, setQrSize, qrColor, setQrColor, qr
           </div>
         </div>
         <div className="flex flex-wrap gap-2 pt-2">
-          <Button className="h-8 px-3 text-xs" onClick={handleDownloadPng}>{t('downloadPng', locale)}</Button>
-          <Button className="h-8 px-3 text-xs" variant="secondary" onClick={handleDownloadSvg}>{t('downloadSvg', locale)}</Button>
-          <Button className="h-8 px-3 text-xs" variant="ghost" onClick={() => copyToClipboard(payload, 'qr-payload')}>
+          <Button className="h-8 gap-1.5 px-3 text-xs" onClick={handleDownloadPng}>
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            {t('downloadPng', locale)}
+          </Button>
+          <Button className="h-8 gap-1.5 px-3 text-xs" variant="secondary" onClick={handleDownloadSvg}>
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            {t('downloadSvg', locale)}
+          </Button>
+          <Button className="h-8 gap-1.5 px-3 text-xs" variant="ghost" onClick={() => copyToClipboard(payload, 'qr-payload')}>
+            <Copy className="h-3.5 w-3.5" aria-hidden="true" />
             {copiedKey === 'qr-payload' ? t('copied', locale) : `${t('copy', locale)} payload`}
           </Button>
         </div>
@@ -903,8 +1073,9 @@ function CrcTab({ locale, payload, setInputPayload, copyToClipboard, copiedKey }
             {fixedPayload}
           </div>
           <div className="flex gap-2">
-            <Button className="h-8 px-3 text-xs" onClick={() => copyToClipboard(fixedPayload, 'fixed-payload')}>
-              {copiedKey === 'fixed-payload' ? '✓ ' + t('copied', locale) : '📋 ' + t('copy', locale)}
+            <Button className="h-8 gap-1.5 px-3 text-xs" onClick={() => copyToClipboard(fixedPayload, 'fixed-payload')}>
+              <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+              {copiedKey === 'fixed-payload' ? t('copied', locale) : t('copy', locale)}
             </Button>
             <Button className="h-8 px-3 text-xs" variant="ghost" onClick={() => setInputPayload(fixedPayload)}>
               {locale === 'en' ? 'Use fixed' : locale === 'es' ? 'Usar corregido' : 'Usar corrigido'}
@@ -946,20 +1117,25 @@ function ExportTab({ locale, payload, validation, copyToClipboard, copiedKey, do
 
   return (
     <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
-      <Button className="h-9 text-xs" variant="secondary" onClick={() => copyToClipboard(payload, 'export-payload')}>
-        {copiedKey === 'export-payload' ? '✓' : '📋'} {t('copy', locale)} Payload
+      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => copyToClipboard(payload, 'export-payload')}>
+        <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+        {copiedKey === 'export-payload' ? t('copied', locale) : `${t('copy', locale)} Payload`}
       </Button>
-      <Button className="h-9 text-xs" variant="secondary" onClick={() => downloadFile(payload, 'pix-payload.txt', 'text/plain')}>
-        📄 {t('exportTxt', locale)}
+      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => downloadFile(payload, 'pix-payload.txt', 'text/plain')}>
+        <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+        {t('exportTxt', locale)}
       </Button>
-      <Button className="h-9 text-xs" variant="secondary" onClick={() => { copyToClipboard(jsonContent, 'export-json'); }}>
-        {copiedKey === 'export-json' ? '✓' : '📋'} {t('copy', locale)} JSON
+      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => { copyToClipboard(jsonContent, 'export-json'); }}>
+        <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+        {copiedKey === 'export-json' ? t('copied', locale) : `${t('copy', locale)} JSON`}
       </Button>
-      <Button className="h-9 text-xs" variant="secondary" onClick={() => downloadFile(jsonContent, 'pix-data.json', 'application/json')}>
-        📄 {t('exportJson', locale)}
+      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => downloadFile(jsonContent, 'pix-data.json', 'application/json')}>
+        <FileJson className="h-3.5 w-3.5" aria-hidden="true" />
+        {t('exportJson', locale)}
       </Button>
-      <Button className="h-9 text-xs" variant="secondary" onClick={() => downloadFile(csvContent, 'pix-data.csv', 'text/csv')}>
-        📄 {t('exportCsv', locale)}
+      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => downloadFile(csvContent, 'pix-data.csv', 'text/csv')}>
+        <Download className="h-3.5 w-3.5" aria-hidden="true" />
+        {t('exportCsv', locale)}
       </Button>
     </div>
   );
@@ -1000,5 +1176,3 @@ function PixDataSummary({ pixData, locale }: Readonly<{ pixData: PixData; locale
     </div>
   );
 }
-
-

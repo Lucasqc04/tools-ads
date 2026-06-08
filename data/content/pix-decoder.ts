@@ -2,7 +2,7 @@ import type { AppLocale } from '@/lib/i18n/config';
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const pixDecoderIntro =
-  'Gere Pix Copia e Cola estático, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador.';
+  'Gere Pix Copia e Cola estático ou dinâmico, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador.';
 
 export const pixDecoderContentBlocks: ContentBlock[] = [
   {

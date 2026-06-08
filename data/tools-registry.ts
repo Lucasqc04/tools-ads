@@ -1498,7 +1498,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'pix-decoder',
     name: 'Validador e Gerador de Pix',
     shortDescription:
-      'Gere Pix Copia e Cola estático, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador.',
+      'Gere Pix Copia e Cola estático ou dinâmico, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador.',
     category: 'utility',
     primaryKeyword: 'gerador pix copia e cola online',
     secondaryKeywords: [

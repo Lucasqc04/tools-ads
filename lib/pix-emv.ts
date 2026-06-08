@@ -57,6 +57,7 @@ export type PixValidationResult = {
 };
 
 export type PixGeneratorInput = {
+  type?: Exclude<PixType, 'unknown'>;
   keyType: PixKeyType;
   key: string;
   merchantName: string;
@@ -78,6 +79,12 @@ export type PixGeneratorResult = {
   qrData: string;
   isValid: boolean;
   issues: ValidationIssue[];
+};
+
+type ParseEmvResult = {
+  fields: EmvField[];
+  issues: ValidationIssue[];
+  consumedLength: number;
 };
 
 // ---------- FIELD NAMES ----------
@@ -126,12 +133,17 @@ const ADDITIONAL_FIELD_NAMES: Record<string, { name: string; description: string
 
 // ---------- CRC16 ----------
 
+function normalizePixPayload(payload: string): string {
+  return payload.trim().replace(/[\n\r\t]/g, '');
+}
+
 export function calculateCrc16(payload: string): string {
   const polynomial = 0x1021;
   let crc = 0xFFFF;
+  const bytes = new TextEncoder().encode(payload);
 
-  for (let i = 0; i < payload.length; i++) {
-    crc ^= payload.charCodeAt(i) << 8;
+  for (const byte of bytes) {
+    crc ^= byte << 8;
     for (let j = 0; j < 8; j++) {
       if ((crc & 0x8000) !== 0) {
         crc = ((crc << 1) ^ polynomial) & 0xFFFF;
@@ -146,20 +158,22 @@ export function calculateCrc16(payload: string): string {
 
 export function fixCrc(payload: string): string {
   // Remove existing CRC if present (last 4 chars after "6304")
-  const crcFieldIndex = payload.lastIndexOf('6304');
-  const base = crcFieldIndex >= 0 ? payload.slice(0, crcFieldIndex + 4) : `${payload}6304`;
+  const normalized = normalizePixPayload(payload);
+  const crcFieldIndex = normalized.lastIndexOf('6304');
+  const base = crcFieldIndex >= 0 ? normalized.slice(0, crcFieldIndex + 4) : `${normalized}6304`;
   const crc = calculateCrc16(base);
   return `${base}${crc}`;
 }
 
 export function verifyCrc(payload: string): { provided: string; calculated: string; valid: boolean } {
-  if (payload.length < 8) return { provided: '', calculated: '', valid: false };
+  const normalized = normalizePixPayload(payload);
+  if (normalized.length < 8) return { provided: '', calculated: '', valid: false };
 
-  const crcFieldIndex = payload.lastIndexOf('6304');
+  const crcFieldIndex = normalized.lastIndexOf('6304');
   if (crcFieldIndex < 0) return { provided: '', calculated: '', valid: false };
 
-  const provided = payload.slice(crcFieldIndex + 4, crcFieldIndex + 8).toUpperCase();
-  const base = payload.slice(0, crcFieldIndex + 4);
+  const provided = normalized.slice(crcFieldIndex + 4, crcFieldIndex + 8).toUpperCase();
+  const base = normalized.slice(0, crcFieldIndex + 4);
   const calculated = calculateCrc16(base);
 
   return { provided, calculated, valid: provided === calculated };
@@ -168,18 +182,58 @@ export function verifyCrc(payload: string): { provided: string; calculated: stri
 // ---------- EMV PARSER ----------
 
 export function parseEmvFields(payload: string, parentCategory?: EmvField['category']): EmvField[] {
+  return parseEmvFieldsDetailed(payload, parentCategory).fields;
+}
+
+function parseEmvFieldsDetailed(
+  payload: string,
+  parentCategory?: EmvField['category'],
+  baseOffset = 0,
+): ParseEmvResult {
   const fields: EmvField[] = [];
+  const issues: ValidationIssue[] = [];
   let pos = 0;
 
   while (pos < payload.length) {
-    if (pos + 4 > payload.length) break;
+    if (pos + 4 > payload.length) {
+      issues.push({
+        level: 'error',
+        field: '',
+        message: `Payload EMV termina com ${payload.length - pos} caractere(s) solto(s) no offset ${baseOffset + pos}.`,
+      });
+      break;
+    }
 
     const id = payload.slice(pos, pos + 2);
     const lengthStr = payload.slice(pos + 2, pos + 4);
+    if (!/^\d{4}$/.test(`${id}${lengthStr}`)) {
+      issues.push({
+        level: 'error',
+        field: id,
+        message: `ID ou tamanho inválido no offset ${baseOffset + pos}. Esperado formato numérico NNLL.`,
+      });
+      break;
+    }
+
     const length = Number.parseInt(lengthStr, 10);
 
-    if (Number.isNaN(length) || length < 0) break;
-    if (pos + 4 + length > payload.length) break;
+    if (Number.isNaN(length) || length < 0) {
+      issues.push({
+        level: 'error',
+        field: id,
+        message: `Tamanho inválido no campo ${id}.`,
+      });
+      break;
+    }
+
+    if (pos + 4 + length > payload.length) {
+      issues.push({
+        level: 'error',
+        field: id,
+        message: `Campo ${id} declara ${length} caractere(s), mas o payload termina antes do fim do campo.`,
+      });
+      break;
+    }
 
     const value = payload.slice(pos + 4, pos + 4 + length);
     const rawSlice = payload.slice(pos, pos + 4 + length);
@@ -202,29 +256,68 @@ export function parseEmvFields(payload: string, parentCategory?: EmvField['categ
     // Parse nested fields for MAI (26-51) and Additional Data (62)
     const idNum = Number.parseInt(id, 10);
     if ((idNum >= 26 && idNum <= 51) || id === '62' || id === '64') {
-      field.children = parseNestedFields(value, id);
+      const nested = parseNestedFieldsDetailed(value, id, baseOffset + pos + 4);
+      field.children = nested.fields;
+      issues.push(
+        ...nested.issues.map((issue) => ({
+          ...issue,
+          field: issue.field ? `${id}.${issue.field}` : id,
+        })),
+      );
     }
 
     fields.push(field);
     pos += 4 + length;
   }
 
-  return fields;
+  return { fields, issues, consumedLength: pos };
 }
 
-function parseNestedFields(value: string, parentId: string): EmvField[] {
+function parseNestedFieldsDetailed(value: string, parentId: string, baseOffset = 0): ParseEmvResult {
   const fields: EmvField[] = [];
+  const issues: ValidationIssue[] = [];
   let pos = 0;
 
   while (pos < value.length) {
-    if (pos + 4 > value.length) break;
+    if (pos + 4 > value.length) {
+      issues.push({
+        level: 'error',
+        field: '',
+        message: `Template ${parentId} termina com ${value.length - pos} caractere(s) solto(s) no offset ${baseOffset + pos}.`,
+      });
+      break;
+    }
 
     const id = value.slice(pos, pos + 2);
     const lengthStr = value.slice(pos + 2, pos + 4);
+    if (!/^\d{4}$/.test(`${id}${lengthStr}`)) {
+      issues.push({
+        level: 'error',
+        field: id,
+        message: `ID ou tamanho de subcampo inválido no template ${parentId}, offset ${baseOffset + pos}.`,
+      });
+      break;
+    }
+
     const length = Number.parseInt(lengthStr, 10);
 
-    if (Number.isNaN(length) || length < 0) break;
-    if (pos + 4 + length > value.length) break;
+    if (Number.isNaN(length) || length < 0) {
+      issues.push({
+        level: 'error',
+        field: id,
+        message: `Tamanho inválido no subcampo ${parentId}.${id}.`,
+      });
+      break;
+    }
+
+    if (pos + 4 + length > value.length) {
+      issues.push({
+        level: 'error',
+        field: id,
+        message: `Subcampo ${parentId}.${id} declara ${length} caractere(s), mas o template termina antes do fim do campo.`,
+      });
+      break;
+    }
 
     const fieldValue = value.slice(pos + 4, pos + 4 + length);
     const rawSlice = value.slice(pos, pos + 4 + length);
@@ -253,7 +346,7 @@ function parseNestedFields(value: string, parentId: string): EmvField[] {
     pos += 4 + length;
   }
 
-  return fields;
+  return { fields, issues, consumedLength: pos };
 }
 
 // ---------- PIX DATA EXTRACTOR ----------
@@ -339,7 +432,7 @@ export function detectKeyType(key: string): PixKeyType {
 // ---------- VALIDATION ----------
 
 export function validatePixPayload(payload: string): PixValidationResult {
-  const trimmed = payload.trim().replace(/[\n\r\s]/g, '');
+  const trimmed = normalizePixPayload(payload);
   const issues: ValidationIssue[] = [];
 
   if (!trimmed) {
@@ -355,7 +448,9 @@ export function validatePixPayload(payload: string): PixValidationResult {
     issues.push({ level: 'error', field: '00', message: 'Payload não começa com Payload Format Indicator (0002).' });
   }
 
-  const fields = parseEmvFields(trimmed);
+  const parseResult = parseEmvFieldsDetailed(trimmed);
+  const fields = parseResult.fields;
+  issues.push(...parseResult.issues);
 
   if (fields.length === 0) {
     return emptyResult('Não foi possível parsear campos EMV.', trimmed);
@@ -370,29 +465,59 @@ export function validatePixPayload(payload: string): PixValidationResult {
   }
 
   // Check Pix GUI
-  let hasPix = false;
+  const pixMaiFields: EmvField[] = [];
   for (const field of fields) {
     const idNum = Number.parseInt(field.id, 10);
     if (idNum >= 26 && idNum <= 51 && field.children) {
       const guiField = field.children.find((c) => c.id === '00');
       if (guiField?.value.toLowerCase() === 'br.gov.bcb.pix') {
-        hasPix = true;
-        break;
+        pixMaiFields.push(field);
       }
     }
   }
+  const hasPix = pixMaiFields.length > 0;
 
   if (!hasPix) {
     issues.push({ level: 'error', field: '26', message: 'GUI "br.gov.bcb.pix" não encontrada. Pode não ser um QR Code Pix.' });
   }
+  if (pixMaiFields.length > 1) {
+    issues.push({ level: 'error', field: '26', message: `Foram encontrados ${pixMaiFields.length} templates Pix. O payload deve ter apenas uma Merchant Account Information Pix.` });
+  }
+
+  const pixMai = pixMaiFields[0];
+  if (pixMai?.children) {
+    const hasKey = pixMai.children.some((c) => c.id === '01');
+    const hasUrl = pixMai.children.some((c) => c.id === '25');
+    const urlField = pixMai.children.find((c) => c.id === '25');
+
+    if (hasKey && hasUrl) {
+      issues.push({ level: 'error', field: `${pixMai.id}.01/25`, message: 'Merchant Account Pix contém chave e URL ao mesmo tempo. Use chave para Pix estático ou URL para Pix dinâmico.' });
+    } else if (!hasKey && !hasUrl) {
+      issues.push({ level: 'error', field: pixMai.id, message: 'Merchant Account Pix não contém chave (26.01) nem URL dinâmica (26.25).' });
+    }
+
+    if (urlField?.value.toLowerCase().startsWith('http')) {
+      issues.push({ level: 'error', field: `${pixMai.id}.25`, message: 'URL de Pix dinâmico não deve conter protocolo. Use apenas o domínio/caminho, sem https://.' });
+    }
+  }
 
   // Check required fields
-  const requiredIds = ['52', '53', '58', '59', '60'];
+  const requiredIds = ['52', '53', '58', '59', '60', '63'];
   for (const reqId of requiredIds) {
     if (!fields.find((f) => f.id === reqId)) {
       const meta = EMV_FIELD_NAMES[reqId];
-      issues.push({ level: 'warning', field: reqId, message: `Campo obrigatório ausente: ${meta?.name ?? reqId}.` });
+      issues.push({ level: 'error', field: reqId, message: `Campo obrigatório ausente: ${meta?.name ?? reqId}.` });
     }
+  }
+
+  const poiField = fields.find((f) => f.id === '01');
+  if (poiField && !/^1[12]$/.test(poiField.value)) {
+    issues.push({ level: 'warning', field: '01', message: `Point of Initiation Method deve ser "11" ou "12", encontrado "${poiField.value}".` });
+  }
+
+  const mccField = fields.find((f) => f.id === '52');
+  if (mccField && !/^\d{4}$/.test(mccField.value)) {
+    issues.push({ level: 'warning', field: '52', message: 'MCC deve conter exatamente 4 dígitos.' });
   }
 
   // Check currency
@@ -400,19 +525,44 @@ export function validatePixPayload(payload: string): PixValidationResult {
   if (currencyField && currencyField.value !== '986') {
     issues.push({ level: 'warning', field: '53', message: `Moeda "${currencyField.value}" não é BRL (986).` });
   }
+  if (currencyField && !/^\d{3}$/.test(currencyField.value)) {
+    issues.push({ level: 'warning', field: '53', message: 'Moeda deve conter exatamente 3 dígitos ISO 4217.' });
+  }
 
   // Check country
   const countryField = fields.find((f) => f.id === '58');
   if (countryField && countryField.value !== 'BR') {
     issues.push({ level: 'warning', field: '58', message: `País "${countryField.value}" não é BR.` });
   }
+  if (countryField && countryField.value.length !== 2) {
+    issues.push({ level: 'warning', field: '58', message: 'País deve conter exatamente 2 caracteres.' });
+  }
+
+  const amountField = fields.find((f) => f.id === '54');
+  if (amountField && (!/^\d+(\.\d{2})?$/.test(amountField.value) || amountField.value.length > 13)) {
+    issues.push({ level: 'warning', field: '54', message: 'Valor deve ser numérico, usar ponto decimal opcional com 2 casas e ter no máximo 13 caracteres.' });
+  }
+
+  const merchantNameField = fields.find((f) => f.id === '59');
+  if (merchantNameField && merchantNameField.value.length > 25) {
+    issues.push({ level: 'warning', field: '59', message: 'Nome do recebedor excede 25 caracteres.' });
+  }
+
+  const merchantCityField = fields.find((f) => f.id === '60');
+  if (merchantCityField && merchantCityField.value.length > 15) {
+    issues.push({ level: 'warning', field: '60', message: 'Cidade do recebedor excede 15 caracteres.' });
+  }
 
   // Check CRC
   const crcResult = verifyCrc(trimmed);
-  if (!crcResult.provided) {
+  const crcField = fields.find((f) => f.id === '63');
+  if (!crcResult.provided || !crcField) {
     issues.push({ level: 'error', field: '63', message: 'Campo CRC16 (63) ausente ou malformado.' });
   } else if (!crcResult.valid) {
     issues.push({ level: 'error', field: '63', message: `CRC inválido. Informado: ${crcResult.provided}, calculado: ${crcResult.calculated}.` });
+  }
+  if (crcField && !/^[A-Fa-f0-9]{4}$/.test(crcField.value)) {
+    issues.push({ level: 'error', field: '63', message: 'CRC deve conter exatamente 4 caracteres hexadecimais.' });
   }
 
   // Check for field length inconsistencies
@@ -423,9 +573,8 @@ export function validatePixPayload(payload: string): PixValidationResult {
   }
 
   // Check 63 is last field
-  const lastField = fields[fields.length - 1];
-  if (lastField && lastField.id !== '63') {
-    issues.push({ level: 'warning', field: '63', message: 'Campo CRC16 (63) não é o último campo do payload.' });
+  if (crcField && (crcField.offset !== trimmed.length - 8 || trimmed.slice(-8, -4) !== '6304')) {
+    issues.push({ level: 'error', field: '63', message: 'Campo CRC16 (63) deve ser o último campo do payload.' });
   }
 
   // Detect duplicates
@@ -494,10 +643,24 @@ function emvField(id: string, value: string): string {
 
 export function buildPixPayload(input: PixGeneratorInput): PixGeneratorResult {
   const issues: ValidationIssue[] = [];
+  const pixType: Exclude<PixType, 'unknown'> = input.type ?? (input.url ? 'dynamic' : 'static');
+  const cleanUrl = input.url?.trim().replace(/^https?:\/\//i, '') ?? '';
 
   // Validate key
-  const keyValidation = validatePixKey(input.keyType, input.key);
-  if (keyValidation) issues.push(keyValidation);
+  if (pixType === 'static') {
+    const keyValidation = validatePixKey(input.keyType, input.key);
+    if (keyValidation) issues.push(keyValidation);
+  } else {
+    if (!cleanUrl) {
+      issues.push({ level: 'error', field: '26.25', message: 'URL/location é obrigatória para Pix dinâmico.' });
+    }
+    if (input.url && /^https?:\/\//i.test(input.url.trim())) {
+      issues.push({ level: 'warning', field: '26.25', message: 'O protocolo da URL dinâmica será removido para ficar compatível com BR Code Pix.' });
+    }
+    if (cleanUrl.length > 77) {
+      issues.push({ level: 'error', field: '26.25', message: 'URL/location muito longa. Use até 77 caracteres para manter o template Pix dentro do limite EMV.' });
+    }
+  }
 
   // Validate name
   if (!input.merchantName.trim()) {
@@ -525,6 +688,9 @@ export function buildPixPayload(input: PixGeneratorInput): PixGeneratorResult {
   if (input.txid && !/^[a-zA-Z0-9]{1,25}$/.test(input.txid)) {
     issues.push({ level: 'warning', field: '62.05', message: 'TXID deve conter apenas letras e números (máx 25 caracteres).' });
   }
+  if (pixType === 'dynamic' && input.txid && input.txid !== '***') {
+    issues.push({ level: 'warning', field: '62.05', message: 'Pix dinâmico usa TXID "***" no payload EMV; o identificador real fica na cobrança do PSP.' });
+  }
 
   // Build payload
   const merchantName = input.merchantName.trim().slice(0, 25);
@@ -532,18 +698,16 @@ export function buildPixPayload(input: PixGeneratorInput): PixGeneratorResult {
   const mcc = input.merchantCategoryCode || '0000';
   const currency = input.currency || '986';
   const country = input.countryCode || 'BR';
-  const poi = input.pointOfInitiation || (input.url ? '12' : '11');
+  const poi = input.pointOfInitiation || (pixType === 'dynamic' ? '12' : '11');
 
   // Build MAI (Merchant Account Information)
   let maiContent = emvField('00', 'br.gov.bcb.pix');
-  if (input.url) {
-    // Dynamic Pix - URL without https://
-    const cleanUrl = input.url.replace(/^https?:\/\//, '');
+  if (pixType === 'dynamic') {
     maiContent += emvField('25', cleanUrl);
   } else {
     maiContent += emvField('01', input.key);
   }
-  if (input.additionalInfo) {
+  if (pixType === 'static' && input.additionalInfo) {
     maiContent += emvField('02', input.additionalInfo.slice(0, 72));
   }
 
@@ -566,7 +730,7 @@ export function buildPixPayload(input: PixGeneratorInput): PixGeneratorResult {
   payload += emvField('60', merchantCity);
 
   // Additional Data
-  const txid = input.txid || '***';
+  const txid = pixType === 'dynamic' ? '***' : input.txid || '***';
   const additionalContent = emvField('05', txid.slice(0, 25));
   payload += emvField('62', additionalContent);
 

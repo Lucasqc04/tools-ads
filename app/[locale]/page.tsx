@@ -1,16 +1,12 @@
 import Link from 'next/link';
 import { Container } from '@/components/layout/container';
-import { ToolCatalogSections } from '@/components/tools/tool-catalog-sections';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
+import { ToolCatalogExplorer } from '@/components/tools/tool-catalog-explorer';
 import { getLocalizedToolsRegistry } from '@/data/tools-registry';
 import { buildLocalePathMap, localizePath } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
 import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import {
-  filterToolsCatalog,
   isToolCategoryFilter,
   isToolGameFilter,
   type ToolCategoryFilter,
@@ -141,16 +137,10 @@ export default async function HomePage({
   const game: ToolGameFilter = isToolGameFilter(rawGame) ? rawGame : 'all';
 
   const tools = getLocalizedToolsRegistry(locale);
-  const filteredTools = filterToolsCatalog(tools, {
-    query,
-    category,
-    game,
-  });
 
   const labelsCategory = categoryLabels[locale];
   const labelsGame = gameLabels[locale];
   const labelsSection = sectionLabels[locale];
-  const shouldCompactGaming = !query && category === 'all' && game === 'all';
 
   return (
     <Container className="py-10 md:py-14">
@@ -174,68 +164,22 @@ export default async function HomePage({
           </Link>
         </div>
 
-        <form method="get" className="mb-6 flex flex-col gap-2 md:max-w-3xl">
-          <Input
-            name="search"
-            defaultValue={query}
-            placeholder={dictionary.toolsIndex.searchPlaceholder}
-          />
-          <div className="flex flex-col gap-2 md:flex-row">
-            <Select name="category" defaultValue={category}>
-              <option value="all">{labelsCategory.all}</option>
-              <option value="technical">{labelsCategory.technical}</option>
-              <option value="gaming">{labelsCategory.gaming}</option>
-              <option value="utility">{labelsCategory.utility}</option>
-              <option value="crypto">{labelsCategory.crypto}</option>
-              <option value="dev">{labelsCategory.dev}</option>
-              <option value="documents">{labelsCategory.documents}</option>
-            </Select>
-            <Select name="game" defaultValue={game}>
-              <option value="all">{labelsGame.all}</option>
-              <option value="cs2">{labelsGame.cs2}</option>
-              <option value="gta">{labelsGame.gta}</option>
-              <option value="other">{labelsGame.other}</option>
-            </Select>
-            <Button type="submit" variant="secondary">
-              {dictionary.toolsIndex.searchButton}
-            </Button>
-          </div>
-        </form>
-
-        <p className="mb-6 text-sm text-slate-600">
-          <strong className="text-slate-900">{filteredTools.length}</strong>{' '}
-          {dictionary.toolsIndex.resultsLabel}
-        </p>
-
-        <ToolCatalogSections
-          tools={filteredTools}
+        <ToolCatalogExplorer
+          tools={tools}
           locale={locale}
-          compactGaming={shouldCompactGaming}
-          labelsCategory={{
-            crypto: labelsCategory.crypto,
-            dev: labelsCategory.dev,
-            documents: labelsCategory.documents,
-          }}
-          labelsGame={{
-            cs2: labelsGame.cs2,
-            gta: labelsGame.gta,
-            other: labelsGame.other,
-          }}
+          initialQuery={query}
+          initialCategory={category}
+          initialGame={game}
+          labelsCategory={labelsCategory}
+          labelsGame={labelsGame}
           labelsSection={labelsSection}
+          searchLabel={dictionary.toolsIndex.searchLabel}
+          searchPlaceholder={dictionary.toolsIndex.searchPlaceholder}
+          resultsLabel={dictionary.toolsIndex.resultsLabel}
+          emptyMessage={dictionary.toolsIndex.emptyMessage}
+          emptyHints={dictionary.toolsIndex.emptyHints}
+          compactGamingWhenIdle
         />
-
-        {filteredTools.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-700">
-            {dictionary.toolsIndex.emptyMessage}{' '}
-            {dictionary.toolsIndex.emptyHints.map((hint, index) => (
-              <span key={hint} className="font-semibold">
-                {index > 0 ? ', ' : ''}
-                {hint}
-              </span>
-            ))}
-            .
-          </p>
-        ) : null}
       </section>
 
       {/* Ads temporariamente desativados
