@@ -1231,6 +1231,41 @@ const baseKeywordsByTool: ToolKeywordMap = {
       'qr code pix dinamico',
     ],
   },
+  'lightning-decoder': {
+    'pt-br': [
+      'lightning decoder',
+      'decodificar bolt11',
+      'decoder bolt12',
+      'decodificar lnurl',
+      'decoder lightning address',
+      'lightning invoice decoder',
+      'parser invoice lightning',
+      'gerar qr code lightning',
+      'decode lightning network',
+    ],
+    en: [
+      'lightning decoder',
+      'decode bolt11 invoice',
+      'decode bolt12 offer',
+      'decode lnurl',
+      'lightning address decoder',
+      'lightning invoice parser',
+      'bitcoin lightning decoder',
+      'lightning qr code generator',
+      'bolt11 parser online',
+    ],
+    es: [
+      'lightning decoder',
+      'decodificar bolt11',
+      'decodificar bolt12',
+      'decodificar lnurl',
+      'decoder lightning address',
+      'decodificador invoice lightning',
+      'parser bolt11',
+      'generador qr lightning',
+      'decode lightning network',
+    ],
+  },
 };
 
 const buildKeywordMap = (): ToolKeywordMap => {

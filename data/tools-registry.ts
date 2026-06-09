@@ -210,6 +210,12 @@ import {
   pixDecoderIntro,
 } from '@/data/content/pix-decoder';
 import {
+  getLightningDecoderContent,
+  lightningDecoderContentBlocks,
+  lightningDecoderFaq,
+  lightningDecoderIntro,
+} from '@/data/content/lightning-decoder';
+import {
   codeConverterContentBlocks,
   codeConverterFaq,
   codeConverterIntro,
@@ -1494,6 +1500,38 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['color-converter', 'css-generator', 'image-converter'],
   },
   {
+    id: 'lightning-decoder',
+    slug: 'lightning-decoder',
+    name: 'Lightning Decoder',
+    shortDescription:
+      'Decodifique Lightning Address, LNURL, BOLT11 e BOLT12 com visual colorido por campos, exporte JSON/TXT e gere QR Code customizado em PNG e SVG — tudo localmente no navegador.',
+    category: 'crypto',
+    primaryKeyword: 'lightning decoder bolt11 lnurl online',
+    secondaryKeywords: [
+      'decoder lightning network',
+      'decode bolt11 invoice',
+      'decode bolt12 offer',
+      'decoder lnurl',
+      'lightning address decoder',
+      'lightning invoice parser',
+      'bitcoin lightning tools',
+      'lightning qr code generator',
+      'bolt11 parser online',
+      'lnurl decoder online',
+    ],
+    searchIntent:
+      'Usuários e desenvolvedores que precisam decodificar payloads Lightning (BOLT11, BOLT12, LNURL e Lightning Address) com visual técnico e exportação.',
+    seoTitle: 'Lightning Decoder Online | BOLT11, BOLT12, LNURL e Lightning Address',
+    seoDescription:
+      'Decodifique BOLT11, BOLT12, LNURL e Lightning Address com visual colorido por campos, exporte JSON/TXT e gere QR Code. 100% local no navegador.',
+    h1: 'Lightning Decoder Online com QR Code e Exportação',
+    intro: lightningDecoderIntro,
+    canonicalPath: '/tools/lightning-decoder',
+    faq: lightningDecoderFaq,
+    contentBlocks: lightningDecoderContentBlocks,
+    relatedToolIds: ['pix-decoder', 'qr-code-generator', 'crypto-unit-converter'],
+  },
+  {
     id: 'pix-decoder',
     slug: 'pix-decoder',
     name: 'Validador e Gerador de Pix',
@@ -1800,6 +1838,16 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'pix-decoder') {
     const localized = getPixDecoderContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'lightning-decoder') {
+    const localized = getLightningDecoderContent(locale);
 
     return {
       ...tool,
