@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { CountdownOverlay } from "@/components/tools/countdown-overlay";
 import {
   buildRangeItems,
   drawPickerResults,
   parsePickerItems,
-  separatorLabelOrder,
   simulatePickerDistribution,
   type ParsedPickerItem,
   type PickerDrawMode,
@@ -51,6 +51,10 @@ type Ui = {
   dedupe: string;
   orderResults: string;
   countdownToggle: string;
+  countdownTimeLabel: string;
+  countdownStageLabel: string;
+  countdownDisabled: string;
+  countdownSeconds: (s: number) => string;
   rouletteToggle: string;
   weightedToggle: string;
   shuffleBeforeDraw: string;
@@ -119,6 +123,10 @@ const uiByLocale: Record<AppLocale, Ui> = {
     dedupe: "Nao sortear nomes ja sorteados",
     orderResults: "Ordenar resultados em ordem crescente",
     countdownToggle: "Adicionar contagem regressiva (mais emocao)",
+    countdownTimeLabel: "Tempo de contagem regressiva:",
+    countdownStageLabel: "Contagem regressiva",
+    countdownDisabled: "Sem contagem",
+    countdownSeconds: (s: number) => `${s} segundo${s !== 1 ? "s" : ""}`,
     rouletteToggle: "Ativar modo roleta visual",
     weightedToggle: "Aplicar pesos no sorteio",
     shuffleBeforeDraw: "Embaralhar antes de sortear",
@@ -186,6 +194,10 @@ const uiByLocale: Record<AppLocale, Ui> = {
     dedupe: "Exclude previously drawn names",
     orderResults: "Sort results ascending",
     countdownToggle: "Add countdown (more excitement)",
+    countdownTimeLabel: "Countdown time:",
+    countdownStageLabel: "Countdown",
+    countdownDisabled: "No countdown",
+    countdownSeconds: (s: number) => `${s} second${s !== 1 ? "s" : ""}`,
     rouletteToggle: "Enable wheel mode",
     weightedToggle: "Apply weights to draw",
     shuffleBeforeDraw: "Shuffle before draw",
@@ -252,6 +264,10 @@ const uiByLocale: Record<AppLocale, Ui> = {
     dedupe: "No repetir nombres ya sorteados",
     orderResults: "Ordenar resultados ascendente",
     countdownToggle: "Agregar cuenta regresiva (mas emocion)",
+    countdownTimeLabel: "Tiempo de cuenta regresiva:",
+    countdownStageLabel: "Cuenta regresiva",
+    countdownDisabled: "Sin cuenta regresiva",
+    countdownSeconds: (s: number) => `${s} segundo${s !== 1 ? "s" : ""}`,
     rouletteToggle: "Activar ruleta visual",
     weightedToggle: "Usar pesos en el sorteo",
     shuffleBeforeDraw: "Mezclar antes de sortear",
@@ -300,6 +316,8 @@ const rouletteColors = [
   "#7e22ce",
   "#dc2626",
 ];
+
+const countdownPresetOptions = [3, 5, 10, 15, 30, 60];
 
 const defaultSourceInput =
   "Joao\nMaria\nPedro\nAna\nCarlos\nBeatriz\nRafael\nJulia";
@@ -372,6 +390,101 @@ const fairnessAlgorithmByLocale: Record<AppLocale, string> = {
   es: "crypto.getRandomValues + rejection sampling + pesos opcionales",
 };
 
+const wheelSize = 320;
+const wheelCenter = wheelSize / 2;
+const wheelOuterRadius = 148;
+const wheelHubRadius = 46;
+const wheelLabelRadius = 100;
+
+const polarToCartesian = (
+  centerX: number,
+  centerY: number,
+  radius: number,
+  angleInDegrees: number,
+) => {
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
+  return {
+    x: centerX + radius * Math.cos(angleInRadians),
+    y: centerY + radius * Math.sin(angleInRadians),
+  };
+};
+
+const describeWheelSlice = (
+  startAngle: number,
+  endAngle: number,
+): string => {
+  const start = polarToCartesian(
+    wheelCenter,
+    wheelCenter,
+    wheelOuterRadius,
+    startAngle,
+  );
+  const end = polarToCartesian(
+    wheelCenter,
+    wheelCenter,
+    wheelOuterRadius,
+    endAngle,
+  );
+  const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1;
+
+  return [
+    `M ${wheelCenter} ${wheelCenter}`,
+    `L ${start.x} ${start.y}`,
+    `A ${wheelOuterRadius} ${wheelOuterRadius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`,
+    "Z",
+  ].join(" ");
+};
+
+const formatWheelLabelLines = (
+  label: string,
+  maxCharsPerLine: number,
+): string[] => {
+  const normalized = label.trim().replace(/\s+/g, " ");
+  if (!normalized) return ["-"];
+  if (normalized.length <= maxCharsPerLine) return [normalized];
+
+  const words = normalized.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    const nextLine = currentLine ? `${currentLine} ${word}` : word;
+    if (nextLine.length <= maxCharsPerLine || !currentLine) {
+      currentLine = nextLine;
+      continue;
+    }
+
+    lines.push(currentLine);
+    currentLine = word;
+    if (lines.length === 1) continue;
+    break;
+  }
+
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  if (lines.length === 1) {
+    return [
+      normalized.slice(0, maxCharsPerLine),
+      `${normalized
+        .slice(maxCharsPerLine)
+        .trim()
+        .slice(0, Math.max(6, maxCharsPerLine - 3))}...`,
+    ];
+  }
+
+  const [firstLine, ...rest] = lines;
+  const secondLine = rest.join(" ").trim();
+
+  return [
+    firstLine.trim(),
+    secondLine.length > maxCharsPerLine
+      ? `${secondLine.slice(0, Math.max(6, maxCharsPerLine - 3)).trim()}...`
+      : secondLine,
+  ].filter(Boolean);
+};
+
 export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
   const ui = uiByLocale[locale];
 
@@ -382,10 +495,10 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
   const [removeDuplicates, setRemoveDuplicates] = useState(true);
   const [trimSpaces] = useState(true);
   const [ignoreEmpty] = useState(true);
-  const [parseWeights, setParseWeights] = useState(false);
+  const [parseWeights] = useState(false);
   const [drawMode] = useState<PickerDrawMode>("without-repetition");
   const [resultCountInput, setResultCountInput] = useState("1");
-  const [useCountdown, setUseCountdown] = useState(true);
+  const [countdownSeconds, setCountdownSeconds] = useState(3);
   const [useRoulette, setUseRoulette] = useState(false);
   const [useWeights, setUseWeights] = useState(false);
   const [shuffleBeforeDraw, setShuffleBeforeDraw] = useState(false);
@@ -399,6 +512,8 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
     "teams" | "groups"
   >("teams");
   const [isDrawing, setIsDrawing] = useState(false);
+  const [showCountdownOverlay, setShowCountdownOverlay] = useState(false);
+  const [countdownResultLabel, setCountdownResultLabel] = useState("");
   const [rollingLabel, setRollingLabel] = useState("");
   const [rouletteRotation, setRouletteRotation] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
@@ -411,6 +526,9 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
     Array<{ label: string; hits: number; share: number }>
   >([]);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const rollingIntervalRef = useRef<
+    ReturnType<typeof globalThis.setInterval> | null
+  >(null);
 
   const sourceForParsing =
     activeTab === "numbers"
@@ -457,6 +575,59 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
     [poolItems],
   );
 
+  const countdownEnabled = countdownSeconds > 0;
+
+  const rouletteSlices = useMemo(() => {
+    if (!rouletteSegments.length) return [];
+
+    const segmentAngle = 360 / rouletteSegments.length;
+    const maxCharsPerLine =
+      rouletteSegments.length >= 10
+        ? 9
+        : rouletteSegments.length >= 8
+          ? 11
+          : 13;
+
+    return rouletteSegments.map((segment, index) => {
+      const startAngle = index * segmentAngle;
+      const endAngle = startAngle + segmentAngle;
+      const midAngle = startAngle + segmentAngle / 2;
+      const labelLines = formatWheelLabelLines(
+        segment.label,
+        maxCharsPerLine,
+      );
+
+      return {
+        color: rouletteColors[index % rouletteColors.length] as string,
+        flipLabel: midAngle > 90 && midAngle < 270,
+        id: segment.id,
+        labelLines,
+        path: describeWheelSlice(startAngle, endAngle),
+        rotation: midAngle,
+      };
+    });
+  }, [rouletteSegments]);
+
+  const stopRollingPreview = (finalLabel = "") => {
+    if (rollingIntervalRef.current !== null) {
+      globalThis.clearInterval(rollingIntervalRef.current);
+      rollingIntervalRef.current = null;
+    }
+
+    setRollingLabel(finalLabel);
+  };
+
+  const startRollingPreview = () => {
+    stopRollingPreview();
+    const pickRandomLabel = () =>
+      poolItems[Math.floor(Math.random() * poolItems.length)]?.label ?? "";
+
+    setRollingLabel(pickRandomLabel());
+    rollingIntervalRef.current = globalThis.setInterval(() => {
+      setRollingLabel(pickRandomLabel());
+    }, 90);
+  };
+
   // Load from localStorage
   useEffect(() => {
     const fromUrl = new URLSearchParams(globalThis.location.search);
@@ -469,6 +640,13 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       if (nextCount) setResultCountInput(nextCount);
       setUseRoulette(fromUrl.get("wheel") === "1");
       setUseWeights(fromUrl.get("weights") === "1");
+      const nextCountdown = fromUrl.get("countdown");
+      if (nextCountdown !== null) {
+        const parsedCountdown = Number(nextCountdown);
+        if (Number.isFinite(parsedCountdown) && parsedCountdown >= 0) {
+          setCountdownSeconds(Math.floor(parsedCountdown));
+        }
+      }
       const nextTab = fromUrl.get("tab") as DrawTab | null;
       if (nextTab) setActiveTab(nextTab);
       return;
@@ -495,10 +673,21 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
         setRangeEndInput(p.rangeEndInput);
       if (p.teamCount && typeof p.teamCount === "string")
         setTeamCount(p.teamCount);
+      if (typeof p.countdownSeconds === "number")
+        setCountdownSeconds(p.countdownSeconds);
     } catch {
       globalThis.localStorage.removeItem(storageKey);
     }
   }, []);
+
+  useEffect(
+    () => () => {
+      if (rollingIntervalRef.current !== null) {
+        globalThis.clearInterval(rollingIntervalRef.current);
+      }
+    },
+    [],
+  );
 
   // Save to localStorage
   useEffect(() => {
@@ -513,6 +702,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       rangeStartInput,
       rangeEndInput,
       teamCount,
+      countdownSeconds,
     };
     globalThis.localStorage.setItem(storageKey, JSON.stringify(payload));
   }, [
@@ -526,6 +716,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
     rangeStartInput,
     rangeEndInput,
     teamCount,
+    countdownSeconds,
   ]);
 
   const safeRequestedCount =
@@ -539,30 +730,29 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       return;
     }
 
+    stopRollingPreview();
     setErrorMessage("");
     setFeedbackMessage("");
     setSimulationRows([]);
     setTeamResults([]);
+    setShowCountdownOverlay(false);
+    setCountdownResultLabel("");
+    setIsDrawing(true);
 
-    const delayMs = useCountdown ? 3000 : 0;
+    const suspenseMs = countdownEnabled
+      ? countdownSeconds * 1000
+      : useRoulette
+        ? 2400
+        : 0;
 
-    if (delayMs > 0) {
-      setIsDrawing(true);
-      const ticker = globalThis.setInterval(() => {
-        const next =
-          poolItems[Math.floor(Math.random() * poolItems.length)];
-        setRollingLabel(next?.label ?? "...");
-      }, 90);
+    if (suspenseMs > 0) {
+      startRollingPreview();
+    }
 
-      if (useRoulette) {
-        setRouletteRotation(
-          (current) =>
-            current + 1440 + Math.floor(Math.random() * 480),
-        );
-      }
-
-      await wait(delayMs);
-      globalThis.clearInterval(ticker);
+    if (useRoulette) {
+      setRouletteRotation(
+        (current) => current + 1800 + Math.floor(Math.random() * 540),
+      );
     }
 
     if (activeTab === "teams") {
@@ -590,8 +780,19 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       setResultAlgorithm(
         fairnessAlgorithmByLocale[locale] || draw.algorithm,
       );
+
+      if (countdownEnabled) {
+        setCountdownResultLabel(ui.resultTitle);
+        setShowCountdownOverlay(true);
+        return;
+      }
+
+      if (suspenseMs > 0) {
+        await wait(suspenseMs);
+      }
+
+      stopRollingPreview(draw.results[0]?.label ?? ui.resultTitle);
       setIsDrawing(false);
-      setRollingLabel("");
       return;
     }
 
@@ -611,13 +812,23 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       );
     }
 
-    setIsDrawing(false);
     setResultItems(results);
     setResultSeed(draw.seed);
     setResultAlgorithm(
       fairnessAlgorithmByLocale[locale] || draw.algorithm,
     );
-    setRollingLabel(results[0]?.label ?? "");
+    const winnerLabel = results[0]?.label ?? "";
+
+    if (countdownEnabled && winnerLabel) {
+      setCountdownResultLabel(winnerLabel);
+      setShowCountdownOverlay(true);
+    } else {
+      if (suspenseMs > 0) {
+        await wait(suspenseMs);
+      }
+      stopRollingPreview(winnerLabel);
+      setIsDrawing(false);
+    }
 
     if (avoidPreviousWinners && results.length) {
       setHistoryNormalized((current) =>
@@ -651,6 +862,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       query.set("count", String(safeRequestedCount));
       query.set("wheel", useRoulette ? "1" : "0");
       query.set("weights", useWeights ? "1" : "0");
+      query.set("countdown", String(countdownSeconds));
       const shareUrl = `${globalThis.location.origin}${globalThis.location.pathname}?${query.toString()}`;
       await navigator.clipboard.writeText(shareUrl);
       setFeedbackMessage(ui.copied);
@@ -670,19 +882,6 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
     setSimulationRows(output.slice(0, 12));
   };
 
-  const wheelBackground = useMemo(() => {
-    if (!rouletteSegments.length)
-      return "radial-gradient(circle at center, #f8fafc, #e2e8f0)";
-    const angle = 360 / rouletteSegments.length;
-    const segments = rouletteSegments.map((_, index) => {
-      const color = rouletteColors[index % rouletteColors.length] as string;
-      const start = Math.round(index * angle * 100) / 100;
-      const end = Math.round((index + 1) * angle * 100) / 100;
-      return `${color} ${start}deg ${end}deg`;
-    });
-    return `conic-gradient(${segments.join(", ")})`;
-  }, [rouletteSegments]);
-
   const tabs: { id: DrawTab; label: string }[] = [
     { id: "names", label: ui.tabNames },
     { id: "numbers", label: ui.tabNumbers },
@@ -690,31 +889,32 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
   ];
 
   return (
-    <Card className="space-y-0 overflow-hidden">
-      {/* Tab navigation */}
-      <nav className="flex border-b border-slate-200 bg-slate-50">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => {
-              setActiveTab(tab.id);
-              setResultItems([]);
-              setTeamResults([]);
-              setSimulationRows([]);
-              setErrorMessage("");
-            }}
-            className={cn(
-              "flex-1 px-4 py-3 text-sm font-semibold transition border-b-2",
-              activeTab === tab.id
-                ? "border-brand-600 text-brand-700 bg-white"
-                : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100",
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+    <>
+      <Card className="space-y-0 overflow-hidden">
+        {/* Tab navigation */}
+        <nav className="flex border-b border-slate-200 bg-slate-50">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => {
+                setActiveTab(tab.id);
+                setResultItems([]);
+                setTeamResults([]);
+                setSimulationRows([]);
+                setErrorMessage("");
+              }}
+              className={cn(
+                "flex-1 border-b-2 px-4 py-3 text-sm font-semibold transition",
+                activeTab === tab.id
+                  ? "border-brand-600 bg-white text-brand-700"
+                  : "border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
 
       <div className="p-4 sm:p-6 space-y-6">
         {/* Mode: Names */}
@@ -897,15 +1097,46 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
                   />
                   {ui.orderResults}
                 </label>
-                <label className="flex items-center gap-3 text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    className={checkboxClassName}
-                    checked={useCountdown}
-                    onChange={(e) => setUseCountdown(e.target.checked)}
-                  />
-                  {ui.countdownToggle}
-                </label>
+                <fieldset className="space-y-3 border-t border-slate-100 pt-3">
+                  <label className="flex items-center gap-3 text-sm text-slate-700">
+                    <input
+                      type="checkbox"
+                      className={checkboxClassName}
+                      checked={countdownEnabled}
+                      onChange={(e) =>
+                        setCountdownSeconds(e.target.checked ? 5 : 0)
+                      }
+                    />
+                    {ui.countdownToggle}
+                  </label>
+
+                  {countdownEnabled && (
+                    <div className="rounded-2xl border border-brand-100 bg-brand-50/50 p-3">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="text-sm font-medium text-slate-700">
+                          {ui.countdownTimeLabel}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {countdownPresetOptions.map((seconds) => (
+                            <button
+                              key={seconds}
+                              type="button"
+                              onClick={() => setCountdownSeconds(seconds)}
+                              className={cn(
+                                "rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+                                countdownSeconds === seconds
+                                  ? "border-brand-600 bg-brand-600 text-white shadow-sm"
+                                  : "border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-700",
+                              )}
+                            >
+                              {ui.countdownSeconds(seconds)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </fieldset>
                 <label className="flex items-center gap-3 text-sm text-slate-700">
                   <input
                     type="checkbox"
@@ -1025,21 +1256,141 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
 
         {/* Roulette wheel */}
         {useRoulette && poolItems.length > 1 && (
-          <section className="flex justify-center py-4">
-            <div className="relative h-56 w-56 sm:h-64 sm:w-64">
-              <div className="absolute left-1/2 top-0 z-20 h-0 w-0 -translate-x-1/2 border-l-8 border-r-8 border-t-[14px] border-l-transparent border-r-transparent border-t-slate-900" />
-              <div
-                className="absolute inset-0 rounded-full border-4 border-white shadow-lg"
-                style={{
-                  background: wheelBackground,
-                  transform: `rotate(${rouletteRotation}deg)`,
-                  transition: isDrawing
-                    ? "transform 3s cubic-bezier(0.12, 0.92, 0.15, 1)"
-                    : "none",
-                }}
-              />
-              <div className="absolute inset-[28%] z-10 flex items-center justify-center rounded-full border border-slate-200 bg-white/95 p-3 text-center text-sm font-bold text-slate-800">
-                {rollingLabel || resultItems[0]?.label || "---"}
+          <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),_rgba(226,232,240,0.9)_58%,_rgba(203,213,225,0.8))] px-4 py-6 sm:px-6">
+            <div className="mx-auto flex max-w-xl flex-col items-center gap-5">
+              <div className="relative h-[17rem] w-[17rem] sm:h-[23rem] sm:w-[23rem]">
+                <div className="absolute inset-5 rounded-full bg-slate-900/10 blur-2xl" />
+                <div className="absolute inset-x-8 top-5 h-8 rounded-full bg-white/55 blur-xl" />
+                <div className="absolute left-1/2 top-1 z-30 h-0 w-0 -translate-x-1/2 border-l-[14px] border-r-[14px] border-t-[24px] border-l-transparent border-r-transparent border-t-slate-900 drop-shadow-lg" />
+
+                <svg
+                  className="absolute inset-0 h-full w-full"
+                  viewBox={`0 0 ${wheelSize} ${wheelSize}`}
+                  style={{
+                    transform: `rotate(${rouletteRotation}deg)`,
+                    transition: isDrawing
+                      ? `transform ${Math.max(
+                          countdownEnabled ? countdownSeconds : 2.4,
+                          1.8,
+                        )}s cubic-bezier(0.12, 0.92, 0.15, 1)`
+                      : "none",
+                  }}
+                >
+                  <defs>
+                    <radialGradient id="wheelHubFill" cx="50%" cy="35%" r="70%">
+                      <stop offset="0%" stopColor="#ffffff" />
+                      <stop offset="55%" stopColor="#f8fafc" />
+                      <stop offset="100%" stopColor="#cbd5e1" />
+                    </radialGradient>
+                    <radialGradient id="wheelGloss" cx="35%" cy="20%" r="75%">
+                      <stop offset="0%" stopColor="#ffffff" stopOpacity="0.5" />
+                      <stop offset="55%" stopColor="#ffffff" stopOpacity="0.08" />
+                      <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                    </radialGradient>
+                  </defs>
+
+                  {rouletteSlices.map((slice) => (
+                    <g key={slice.id}>
+                      <path
+                        d={slice.path}
+                        fill={slice.color}
+                        stroke="rgba(255,255,255,0.95)"
+                        strokeWidth="4"
+                      />
+                      <g
+                        transform={`rotate(${slice.rotation} ${wheelCenter} ${wheelCenter})`}
+                      >
+                        <text
+                          x={wheelCenter}
+                          y={wheelCenter - wheelLabelRadius}
+                          textAnchor="middle"
+                          className="select-none fill-white text-[11px] font-black tracking-[0.18em] pointer-events-none sm:text-[13px]"
+                          transform={
+                            slice.flipLabel
+                              ? `rotate(180 ${wheelCenter} ${wheelCenter - wheelLabelRadius})`
+                              : undefined
+                          }
+                          style={{
+                            filter:
+                              "drop-shadow(0 2px 4px rgba(15,23,42,0.45))",
+                          }}
+                        >
+                          {slice.labelLines.map((line, lineIndex) => (
+                            <tspan
+                              key={`${slice.id}-${lineIndex}`}
+                              x={wheelCenter}
+                              dy={lineIndex === 0 ? 0 : 14}
+                            >
+                              {line.toUpperCase()}
+                            </tspan>
+                          ))}
+                        </text>
+                      </g>
+                    </g>
+                  ))}
+
+                  <circle
+                    cx={wheelCenter}
+                    cy={wheelCenter}
+                    r={wheelOuterRadius}
+                    fill="url(#wheelGloss)"
+                  />
+                  <circle
+                    cx={wheelCenter}
+                    cy={wheelCenter}
+                    r={wheelOuterRadius}
+                    fill="none"
+                    stroke="rgba(255,255,255,0.9)"
+                    strokeWidth="12"
+                  />
+                  <circle
+                    cx={wheelCenter}
+                    cy={wheelCenter}
+                    r={wheelOuterRadius - 10}
+                    fill="none"
+                    stroke="rgba(15,23,42,0.14)"
+                    strokeWidth="2"
+                  />
+                  <circle
+                    cx={wheelCenter}
+                    cy={wheelCenter}
+                    r={wheelHubRadius}
+                    fill="url(#wheelHubFill)"
+                    stroke="rgba(148,163,184,0.6)"
+                    strokeWidth="3"
+                  />
+                  <circle
+                    cx={wheelCenter}
+                    cy={wheelCenter}
+                    r={wheelHubRadius - 10}
+                    fill="rgba(255,255,255,0.55)"
+                  />
+                  <text
+                    x={wheelCenter}
+                    y={wheelCenter - 6}
+                    textAnchor="middle"
+                    className="fill-slate-500 text-[10px] font-semibold tracking-[0.28em] pointer-events-none"
+                  >
+                    {ui.winnerLabel}
+                  </text>
+                  <text
+                    x={wheelCenter}
+                    y={wheelCenter + 14}
+                    textAnchor="middle"
+                    className="fill-slate-900 text-[11px] font-black pointer-events-none"
+                  >
+                    {rollingLabel || resultItems[0]?.label || "---"}
+                  </text>
+                </svg>
+              </div>
+
+              <div className="w-full rounded-[1.5rem] border border-white/80 bg-white/70 px-4 py-3 text-center shadow-sm backdrop-blur">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-500">
+                  {isDrawing ? ui.drawingButton : ui.resultTitle}
+                </p>
+                <p className="mt-1 break-words text-lg font-black text-slate-900 sm:text-xl">
+                  {rollingLabel || resultItems[0]?.label || "---"}
+                </p>
               </div>
             </div>
           </section>
@@ -1226,6 +1577,28 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
           {ui.localNote}
         </p>
       </div>
-    </Card>
+      </Card>
+
+      {/* Countdown overlay */}
+      {showCountdownOverlay && countdownResultLabel && (
+        <CountdownOverlay
+          selectedName={countdownResultLabel}
+          rollingLabel={rollingLabel}
+          drawingLabel={ui.drawingButton}
+          countdownLabel={ui.countdownStageLabel}
+          resultLabel={
+            activeTab === "teams" ? ui.resultTitle : ui.winnerLabel
+          }
+          secondsRemaining={countdownSeconds}
+          onComplete={() => {
+            stopRollingPreview(
+              resultItems[0]?.label ?? countdownResultLabel,
+            );
+            setShowCountdownOverlay(false);
+            setIsDrawing(false);
+          }}
+        />
+      )}
+    </>
   );
 }
