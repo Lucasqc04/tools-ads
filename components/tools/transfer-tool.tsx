@@ -100,6 +100,7 @@ type IncomingTransferState = {
 const SIMPLE_CHUNK_LENGTH = 1000;
 const DATA_CHANNEL_CHUNK_SIZE = 16 * 1024;
 const QR_PREVIEW_SIZE = 320;
+const SIGNAL_RAW_TAG_REGEX = /\n?\[ADTOOLS_PART:\d+\/\d+\]$/;
 
 const uiByLocale = {
   'pt-br': {
@@ -952,12 +953,14 @@ function QrPreview({
   value,
   zxing,
   onExpand,
+  expanded = false,
 }: Readonly<{
   emptyLabel: string;
   size?: number;
   value?: string;
   zxing: ZxingModule | null;
   onExpand?: () => void;
+  expanded?: boolean;
 }>) {
   const svgMountRef = useRef<HTMLDivElement | null>(null);
 
@@ -988,22 +991,25 @@ function QrPreview({
   const showPlaceholder = !value || !zxing;
 
   return (
-    <div className={cn('rounded-2xl border border-dashed border-slate-300 bg-white p-3', onExpand && !showPlaceholder && 'cursor-pointer transition hover:border-slate-400 hover:bg-slate-50')} onClick={onExpand}>
-      <div className="relative mx-auto min-h-[280px] max-w-[320px]">
+    <div
+      className={cn(
+        'rounded-2xl border border-dashed border-slate-300 bg-white p-3',
+        expanded && 'border-slate-200 p-2',
+        onExpand && !showPlaceholder && 'cursor-pointer transition hover:border-slate-400 hover:bg-slate-50',
+      )}
+      onClick={onExpand}
+    >
+      <div className={cn('relative mx-auto', expanded ? 'aspect-square w-full' : 'min-h-[280px] max-w-[320px]')}>
         <div
           ref={svgMountRef}
-          className="flex h-full min-h-[280px] w-full items-center justify-center"
+          className={cn(
+            'flex w-full items-center justify-center',
+            expanded ? 'aspect-square h-full' : 'h-full min-h-[280px]',
+          )}
         />
         {showPlaceholder ? (
           <div className="absolute inset-0 flex items-center justify-center px-4">
             <p className="text-center text-sm text-slate-500">{emptyLabel}</p>
-          </div>
-        ) : null}
-        {onExpand && !showPlaceholder ? (
-          <div className="absolute right-2 top-2 rounded-lg bg-white/90 p-2 shadow-sm">
-            <svg className="h-5 w-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6v4m12-4h4v4M6 18h4v-4m12 4h-4v-4" />
-            </svg>
           </div>
         ) : null}
       </div>
@@ -1722,6 +1728,9 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     };
   };
 
+  const stripSignalRawTag = (rawValue: string): string =>
+    rawValue.trim().replace(SIGNAL_RAW_TAG_REGEX, '').trim();
+
   const createOffer = async () => {
     try {
       setBusyAction('offer');
@@ -1777,7 +1786,8 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const importOffer = async (rawValue: string, fromHash = false) => {
     try {
       setBusyAction('import-offer');
-      const description = parseSignalDescription(rawValue);
+      const sanitizedRawValue = stripSignalRawTag(rawValue);
+      const description = parseSignalDescription(sanitizedRawValue);
 
       if (description.type !== 'offer') {
         throw new Error(ui.invalidOffer);
@@ -1786,7 +1796,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       stopScanner();
       clearPeer();
       setP2pRole('send');
-      setOfferImportText(rawValue);
+      setOfferImportText(sanitizedRawValue);
       setSignalGenerated(null);
       setSignalPartIndex(0);
       setReceivedTransfer(null);
@@ -1842,7 +1852,8 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const importAnswer = async (rawValue: string, fromHash = false) => {
     try {
       setBusyAction('import-answer');
-      const description = parseSignalDescription(rawValue);
+      const sanitizedRawValue = stripSignalRawTag(rawValue);
+      const description = parseSignalDescription(sanitizedRawValue);
 
       if (description.type !== 'answer') {
         throw new Error(ui.invalidAnswer);
@@ -1852,7 +1863,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         throw new Error(ui.connectionFailed);
       }
 
-      setAnswerImportText(rawValue);
+      setAnswerImportText(sanitizedRawValue);
       await peerRef.current.setRemoteDescription(description);
       closeScanner();
       setConnectionNotice({
@@ -2229,6 +2240,49 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     });
   }, [p2pReceiveVersion]);
 
+  useEffect(() => {
+    if (!signalRawJson || connectivityMode !== 'qr') {
+      return;
+    }
+
+    const sanitizedSignal = signalRawJson.trim().replace(SIGNAL_RAW_TAG_REGEX, '').trim();
+
+    let signalKind: TransferSignalKind;
+    try {
+      const description = parseSignalDescription(sanitizedSignal);
+      signalKind = description.type === 'answer' ? 'answer' : 'offer';
+    } catch {
+      return;
+    }
+
+    const divisionsMap: Record<1 | 2 | 4, number> = {
+      1: 1800,
+      2: 900,
+      4: 450,
+    };
+    const baseUrl =
+      typeof window === 'undefined'
+        ? ''
+        : `${window.location.origin}${window.location.pathname}`;
+
+    const generated = createTransferPackets({
+      kind: 'signal',
+      signalKind,
+      rawContent: sanitizedSignal,
+      baseUrl,
+      maxChunkLength: divisionsMap[signalQrDivisions],
+    });
+
+    setSignalGenerated({
+      packets: generated.packets,
+      urls: generated.urls,
+      compressedLength: generated.compressedPayload.length,
+      rawLength: sanitizedSignal.length,
+      sessionId: generated.sessionId,
+    });
+    setSignalPartIndex((current) => Math.min(current, generated.packets.length - 1));
+  }, [connectivityMode, signalQrDivisions, signalRawJson]);
+
   useEffect(
     () => () => {
       stopScanner();
@@ -2515,26 +2569,30 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     }
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setExpandedQrUrl(null)}>
-        <div className="relative max-h-[90vh] max-w-[90vw] rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 sm:p-4"
+        onClick={() => setExpandedQrUrl(null)}
+      >
+        <div
+          className="relative w-[min(96vw,96vh)] rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl sm:p-3"
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
             onClick={() => setExpandedQrUrl(null)}
-            className="absolute right-4 top-4 rounded-lg p-2 hover:bg-slate-100"
+            className="absolute right-2 top-2 z-10 rounded-lg bg-white/90 p-2 hover:bg-slate-100"
           >
             <svg className="h-6 w-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <div className="flex flex-col items-center gap-4">
+          <div className="mx-auto w-full">
             <QrPreview
               emptyLabel={ui.simpleGeneratedEmpty}
-              size={600}
+              size={1200}
               value={expandedQrUrl}
               zxing={zxing}
+              expanded
             />
-            <Button variant="secondary" onClick={() => setExpandedQrUrl(null)}>
-              {ui.closeExpanded}
-            </Button>
           </div>
         </div>
       </div>
