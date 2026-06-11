@@ -97,7 +97,7 @@ type IncomingTransferState = {
 };
 
 const SIMPLE_CHUNK_LENGTH = 1000;
-const SIGNAL_CHUNK_LENGTH = 240;
+const SIGNAL_CHUNK_LENGTH = 1800; // Offer/Answer WebRTC em 1 QR code
 const DATA_CHANNEL_CHUNK_SIZE = 16 * 1024;
 const QR_PREVIEW_SIZE = 320;
 
