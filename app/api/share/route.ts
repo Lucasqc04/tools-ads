@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const text = formData.get('text') as string | null;
-    const title = formData.get('title') as string | null;
 
     if (!text) {
       return NextResponse.redirect(new URL('/pt-br/tools/transfer', request.url), {
@@ -25,21 +24,13 @@ export async function POST(request: NextRequest) {
       // Ignora se não for JSON válido
     }
 
-    // Codifica o JSON para passar na URL
-    const encoded = encodeURIComponent(text);
-    const isOfferParam = isOffer ? 'true' : 'false';
-
     // Redireciona para transfer com os dados
-    // Usa locale padrão (pt-br) ou detecta pelo header Accept-Language
-    const locale = 'pt-br'; // Pode ser melhorado com Accept-Language
+    // Nota: URLSearchParams faz o encoding automaticamente
+    const target = new URL('/pt-br/tools/transfer', request.url);
+    target.searchParams.set('share_text', text);
+    target.searchParams.set('share_type', isOffer ? 'offer' : 'answer');
 
-    return NextResponse.redirect(
-      new URL(
-        `/pt-br/tools/transfer?share_text=${encoded}&share_type=${isOfferParam ? 'offer' : 'answer'}`,
-        request.url,
-      ),
-      { status: 303 },
-    );
+    return NextResponse.redirect(target, { status: 303 });
   } catch (error) {
     console.error('Share API error:', error);
     return NextResponse.redirect(new URL('/pt-br/tools/transfer', request.url), {

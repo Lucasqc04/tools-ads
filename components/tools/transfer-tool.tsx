@@ -209,6 +209,11 @@ const uiByLocale = {
     btShareNotSupported: 'Compartilhamento indisponivel. Texto copiado para a area de transferencia.',
     btPasteOfferDesc: 'Receba a offer pelo outro dispositivo e cole aqui:',
     btPasteAnswerDesc: 'Receba a answer pelo outro dispositivo e cole aqui:',
+    pasteClipboard: 'Colar da area de transferencia',
+    pasteAndImport: 'Colar e importar agora',
+    clipboardEmpty: 'Area de transferencia vazia.',
+    clipboardReadError: 'Nao foi possivel ler a area de transferencia.',
+    clipboardPasted: 'Texto colado. Revise e importe quando quiser.',
     importOfferTitle: 'Ler offer do dispositivo receptor',
     importAnswerTitle: 'Ler answer do dispositivo que vai enviar',
     importPlaceholder:
@@ -409,6 +414,11 @@ const uiByLocale = {
     btShareNotSupported: 'Share unavailable. Text copied to clipboard.',
     btPasteOfferDesc: 'Receive the offer on the other device and paste it here:',
     btPasteAnswerDesc: 'Receive the answer on the other device and paste it here:',
+    pasteClipboard: 'Paste from clipboard',
+    pasteAndImport: 'Paste and import now',
+    clipboardEmpty: 'Clipboard is empty.',
+    clipboardReadError: 'Could not read clipboard right now.',
+    clipboardPasted: 'Text pasted. Review and import when ready.',
     importOfferTitle: 'Read the receiver offer',
     importAnswerTitle: 'Read the sender answer',
     importPlaceholder:
@@ -606,6 +616,11 @@ const uiByLocale = {
     btShareNotSupported: 'Compartir no disponible. Texto copiado al portapapeles.',
     btPasteOfferDesc: 'Recibe la offer en el otro dispositivo y pegala aqui:',
     btPasteAnswerDesc: 'Recibe la answer en el otro dispositivo y pegala aqui:',
+    pasteClipboard: 'Pegar desde portapapeles',
+    pasteAndImport: 'Pegar e importar ahora',
+    clipboardEmpty: 'El portapapeles esta vacio.',
+    clipboardReadError: 'No fue posible leer el portapapeles ahora.',
+    clipboardPasted: 'Texto pegado. Revisalo e importa cuando quieras.',
     importOfferTitle: 'Leer la offer del receptor',
     importAnswerTitle: 'Leer la answer del emisor',
     importPlaceholder:
@@ -863,6 +878,11 @@ const uiByLocale = {
     btShareNotSupported: string;
     btPasteOfferDesc: string;
     btPasteAnswerDesc: string;
+    pasteClipboard: string;
+    pasteAndImport: string;
+    clipboardEmpty: string;
+    clipboardReadError: string;
+    clipboardPasted: string;
   }
 >;
 
@@ -1082,8 +1102,8 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     if (!shareText) return;
 
     try {
-      // Decodifica o texto compartilhado
-      const decodedText = decodeURIComponent(shareText);
+      // searchParams ja retorna valor decodificado
+      const decodedText = shareText;
 
       // Valida se é JSON válido
       JSON.parse(decodedText);
@@ -1433,6 +1453,53 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     } catch {
       setter({ tone: 'error', text: ui.copyError });
     }
+  };
+
+  const readSignalFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      const normalized = text.trim();
+
+      if (!normalized) {
+        setConnectionNotice({ tone: 'error', text: ui.clipboardEmpty });
+        return null;
+      }
+
+      return normalized;
+    } catch {
+      setConnectionNotice({ tone: 'error', text: ui.clipboardReadError });
+      return null;
+    }
+  };
+
+  const pasteSignalText = async (target: 'offer' | 'answer') => {
+    const clipboardText = await readSignalFromClipboard();
+    if (!clipboardText) {
+      return null;
+    }
+
+    if (target === 'offer') {
+      setOfferImportText(clipboardText);
+    } else {
+      setAnswerImportText(clipboardText);
+    }
+
+    setConnectionNotice({ tone: 'success', text: ui.clipboardPasted });
+    return clipboardText;
+  };
+
+  const pasteAndImportSignal = async (target: 'offer' | 'answer') => {
+    const clipboardText = await pasteSignalText(target);
+    if (!clipboardText) {
+      return;
+    }
+
+    if (target === 'offer') {
+      await importOffer(clipboardText);
+      return;
+    }
+
+    await importAnswer(clipboardText);
   };
 
   const revealSimpleReceived = (
@@ -2878,6 +2945,23 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
                         placeholder={ui.importPlaceholder}
                       />
                       <div className="flex flex-wrap gap-2">
+                        {connectivityMode === 'bluetooth' ? (
+                          <>
+                            <Button
+                              variant="secondary"
+                              onClick={() => void pasteSignalText('answer')}
+                              disabled={isSignalBusy}
+                            >
+                              {ui.pasteClipboard}
+                            </Button>
+                            <Button
+                              onClick={() => void pasteAndImportSignal('answer')}
+                              disabled={isSignalBusy}
+                            >
+                              {ui.pasteAndImport}
+                            </Button>
+                          </>
+                        ) : null}
                         <Button
                           variant="secondary"
                           onClick={() => void importAnswer(answerImportText)}
@@ -2950,6 +3034,23 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
                         placeholder={ui.importPlaceholder}
                       />
                       <div className="flex flex-wrap gap-2">
+                        {connectivityMode === 'bluetooth' ? (
+                          <>
+                            <Button
+                              variant="secondary"
+                              onClick={() => void pasteSignalText('offer')}
+                              disabled={isSignalBusy}
+                            >
+                              {ui.pasteClipboard}
+                            </Button>
+                            <Button
+                              onClick={() => void pasteAndImportSignal('offer')}
+                              disabled={isSignalBusy}
+                            >
+                              {ui.pasteAndImport}
+                            </Button>
+                          </>
+                        ) : null}
                         <Button
                           variant="secondary"
                           onClick={() => void importOffer(offerImportText)}
