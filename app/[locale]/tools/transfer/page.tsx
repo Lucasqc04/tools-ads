@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
-import { TransferTool } from '@/components/tools/transfer-tool';
+import { TransferToolWrapper } from '@/components/tools/transfer-tool-wrapper';
 import { getLocalizedRelatedTools, getLocalizedToolBySlug } from '@/data/tools-registry';
 import {
   buildBreadcrumbJsonLd,
@@ -80,7 +80,7 @@ export default async function TransferPage({ params }: TransferPageProps) {
         locale={locale}
         tool={tool}
         relatedTools={related}
-        toolUi={<TransferTool locale={locale} />}
+        toolUi={<TransferToolWrapper locale={locale} />}
       />
     </>
   );

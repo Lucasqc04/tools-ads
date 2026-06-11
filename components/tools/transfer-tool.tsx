@@ -11,6 +11,7 @@ import {
   type ReactNode,
   type SetStateAction,
 } from 'react';
+import { useSearchParams } from 'next/navigation';
 import type { IScannerControls } from '@zxing/browser';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -1030,6 +1031,7 @@ const isMetaMessage = (value: unknown): value is IncomingTransferMetaMessage =>
   );
 
 export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
+  const searchParams = useSearchParams();
   const ui = useMemo(() => uiByLocale[locale] ?? uiByLocale['pt-br'], [locale]);
 
   const [zxing, setZxing] = useState<ZxingModule | null>(null);
@@ -1071,6 +1073,44 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const [signalRawJson, setSignalRawJson] = useState<string | null>(null);
   const [nfcNotice, setNfcNotice] = useState<Notice | null>(null);
   const [nfcActive, setNfcActive] = useState(false);
+
+  // Detecta dados compartilhados via Web Share Target API
+  useEffect(() => {
+    const shareText = searchParams.get('share_text');
+    const shareType = searchParams.get('share_type');
+
+    if (!shareText) return;
+
+    try {
+      // Decodifica o texto compartilhado
+      const decodedText = decodeURIComponent(shareText);
+
+      // Valida se é JSON válido
+      JSON.parse(decodedText);
+
+      // Muda para modo P2P receive
+      setToolMode('p2p');
+      setP2pRole('receive');
+
+      // Preenche o campo apropriado baseado no tipo
+      if (shareType === 'offer') {
+        setOfferImportText(decodedText);
+      } else {
+        setAnswerImportText(decodedText);
+      }
+
+      // Mostra mensagem de sucesso
+      setConnectionNotice({
+        tone: 'success',
+        text: '✓ Dados compartilhados recebidos via Bluetooth! Cole a offer acima para conectar.',
+      });
+
+      // Limpa URL para não repetir o preenchimento ao recarregar
+      window.history.replaceState({}, '', window.location.pathname);
+    } catch (error) {
+      console.error('Erro ao processar dados compartilhados:', error);
+    }
+  }, [searchParams]);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const scannerControlsRef = useRef<IScannerControls | null>(null);
@@ -1187,6 +1227,56 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         setConnectionNotice({ tone: 'success', text: ui.btShareNotSupported });
       } catch {
         setConnectionNotice({ tone: 'error', text: ui.copyError });
+      }
+    }
+  };
+
+  const requestBluetoothDevice = async (rawJson: string) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const bluetooth = (navigator as any).bluetooth;
+      if (!bluetooth) {
+        setConnectionNotice({ 
+          tone: 'error', 
+          text: 'Web Bluetooth API não suportada neste navegador. Use Copy & Paste.' 
+        });
+        return;
+      }
+
+      setConnectionNotice({ tone: 'info', text: 'Abrindo seletor de dispositivos Bluetooth...' });
+
+      // Abre o diálogo de seleção de dispositivos
+      const device = await bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: ['generic_access', 'generic_attribute', '00001801-0000-1000-8000-00805f9b34fb']
+      });
+
+      // Copia o JSON para clipboard
+      await navigator.clipboard.writeText(rawJson);
+
+      setConnectionNotice({ 
+        tone: 'success', 
+        text: `✓ Dispositivo Bluetooth selecionado: ${device.name || 'Sem nome'}. Texto copiado para compartilhar.` 
+      });
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = error as any;
+      if (err.name === 'NotFoundError') {
+        setConnectionNotice({ 
+          tone: 'info', 
+          text: 'Nenhum dispositivo Bluetooth encontrado. Verifique se o Bluetooth está ativado.' 
+        });
+      } else if (err.name === 'NotSupportedError') {
+        setConnectionNotice({ 
+          tone: 'error', 
+          text: 'Bluetooth não disponível. Requer HTTPS e navegador compatível (Chrome, Edge).' 
+        });
+      } else if (err.name !== 'NotAllowedError') {
+        // NotAllowedError = usuário cancelou, não mostrar erro
+        setConnectionNotice({ 
+          tone: 'error', 
+          text: 'Erro ao acessar Bluetooth. Use Copy & Paste.' 
+        });
       }
     }
   };
@@ -2264,6 +2354,12 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
   const renderBtSignalBlock = (isOffer: boolean) => {
     if (!signalRawJson) return null;
+    
+    const shareSupported = typeof navigator !== 'undefined' && Boolean(navigator.share);
+    const isMobile = typeof navigator !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const bluetoothSupported = typeof navigator !== 'undefined' && Boolean((navigator as any).bluetooth);
+    
     return (
       <div className="space-y-3">
         <div className="rounded-xl border border-slate-200 bg-white p-3">
@@ -2271,15 +2367,30 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
             {signalRawJson.slice(0, 120)}…
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button onClick={() => void shareSignal(signalRawJson, isOffer)}>
-            {isOffer ? ui.btShareOffer : ui.btShareAnswer}
-          </Button>
+        <div className="flex flex-col gap-2">
+          {shareSupported && isMobile ? (
+            <Button onClick={() => void shareSignal(signalRawJson, isOffer)}>
+              📱 {isOffer ? ui.btShareOffer : ui.btShareAnswer}
+            </Button>
+          ) : bluetoothSupported ? (
+            <Button onClick={() => void requestBluetoothDevice(signalRawJson)}>
+              🔵 Selecionar dispositivo Bluetooth
+            </Button>
+          ) : (
+            <div className="w-full rounded-lg bg-amber-50 p-3">
+              <p className="text-sm font-medium text-amber-900">
+                💻 Bluetooth indisponível neste navegador
+              </p>
+              <p className="text-xs text-amber-800 mt-1">
+                Requer Chrome/Edge + HTTPS. Use Copy & Paste como alternativa.
+              </p>
+            </div>
+          )}
           <Button
             variant="secondary"
             onClick={() => void copyText(signalRawJson, setConnectionNotice)}
           >
-            {ui.simpleCopyLink}
+            📋 Copiar texto para compartilhar manualmente
           </Button>
         </div>
         <StatusNotice notice={connectionNotice} />
