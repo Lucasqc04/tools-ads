@@ -70,6 +70,7 @@ type Ui = {
   copyOrdered: string;
   downloadCsv: string;
   shareLink: string;
+  exitResult: string;
   copied: string;
   fairnessTitle: string;
   fairnessSeed: string;
@@ -142,6 +143,7 @@ const uiByLocale: Record<AppLocale, Ui> = {
     copyOrdered: "Copiar lista",
     downloadCsv: "Baixar CSV",
     shareLink: "Compartilhar link",
+    exitResult: "Sair",
     copied: "Copiado",
     fairnessTitle: "Transparencia e Justica",
     fairnessSeed: "Seed",
@@ -213,6 +215,7 @@ const uiByLocale: Record<AppLocale, Ui> = {
     copyOrdered: "Copy list",
     downloadCsv: "Download CSV",
     shareLink: "Share link",
+    exitResult: "Close",
     copied: "Copied",
     fairnessTitle: "Transparency and Fairness",
     fairnessSeed: "Seed",
@@ -283,6 +286,7 @@ const uiByLocale: Record<AppLocale, Ui> = {
     copyOrdered: "Copiar lista",
     downloadCsv: "Descargar CSV",
     shareLink: "Compartir enlace",
+    exitResult: "Salir",
     copied: "Copiado",
     fairnessTitle: "Transparencia y Justicia",
     fairnessSeed: "Seed",
@@ -1256,11 +1260,11 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
 
         {/* Roulette wheel */}
         {useRoulette && poolItems.length > 1 && (
-          <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),_rgba(226,232,240,0.9)_58%,_rgba(203,213,225,0.8))] px-4 py-6 sm:px-6">
+          <section className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-gradient-to-b from-white to-slate-50 px-4 py-5 shadow-sm sm:px-6 sm:py-6">
             <div className="mx-auto flex max-w-xl flex-col items-center gap-5">
               <div className="relative h-[17rem] w-[17rem] sm:h-[23rem] sm:w-[23rem]">
-                <div className="absolute inset-5 rounded-full bg-slate-900/10 blur-2xl" />
-                <div className="absolute inset-x-8 top-5 h-8 rounded-full bg-white/55 blur-xl" />
+                <div className="absolute inset-6 rounded-full bg-slate-900/8 blur-xl" />
+                <div className="absolute inset-x-10 top-6 h-6 rounded-full bg-brand-100/70 blur-lg" />
                 <div className="absolute left-1/2 top-1 z-30 h-0 w-0 -translate-x-1/2 border-l-[14px] border-r-[14px] border-t-[24px] border-l-transparent border-r-transparent border-t-slate-900 drop-shadow-lg" />
 
                 <svg
@@ -1384,8 +1388,8 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
                 </svg>
               </div>
 
-              <div className="w-full rounded-[1.5rem] border border-white/80 bg-white/70 px-4 py-3 text-center shadow-sm backdrop-blur">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-500">
+              <div className="w-full rounded-[1.25rem] border border-slate-200 bg-white px-4 py-3 text-center shadow-sm">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brand-700">
                   {isDrawing ? ui.drawingButton : ui.resultTitle}
                 </p>
                 <p className="mt-1 break-words text-lg font-black text-slate-900 sm:text-xl">
@@ -1586,6 +1590,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
           rollingLabel={rollingLabel}
           drawingLabel={ui.drawingButton}
           countdownLabel={ui.countdownStageLabel}
+          closeLabel={ui.exitResult}
           resultLabel={
             activeTab === "teams" ? ui.resultTitle : ui.winnerLabel
           }
