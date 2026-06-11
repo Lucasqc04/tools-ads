@@ -97,7 +97,6 @@ type IncomingTransferState = {
 };
 
 const SIMPLE_CHUNK_LENGTH = 1000;
-const SIGNAL_CHUNK_LENGTH = 1800; // Offer/Answer WebRTC em 1 QR code
 const DATA_CHANNEL_CHUNK_SIZE = 16 * 1024;
 const QR_PREVIEW_SIZE = 320;
 
@@ -179,6 +178,36 @@ const uiByLocale = {
     answerReadyOne: 'Answer pronta. Agora o dispositivo receptor precisa ler este QR.',
     answerReadyMany: (parts: number) =>
       `Answer dividida em ${parts} partes. Leia todas no dispositivo receptor.`,
+    qrDifficultToRead: 'Dificuldade para ler? Divida em mais QR codes:',
+    qrDivide1: '1 QR code',
+    qrDivide2: '2 QR codes',
+    qrDivide4: '4 QR codes',
+    cameraFront: 'Câmera frontal',
+    cameraBack: 'Câmera traseira',
+    connectivityMode: 'Modo de conexão',
+    connectivityQR: 'QR Code',
+    connectivityBluetooth: 'Bluetooth',
+    connectivityNFC: 'NFC',
+    connectivityQRDesc: 'Rápido e funciona em qualquer navegador',
+    connectivityBluetoothDesc: 'Mais rápido, requer suporte Bluetooth',
+    connectivityNFCDesc: 'Toque para conectar (NFC)',
+    expandQR: 'Expandir QR',
+    closeExpanded: 'Fechar',
+    nfcNotSupported: 'NFC indisponivel. Requer Chrome no Android com NFC ativo.',
+    nfcWriteOffer: 'Gravar offer no NFC',
+    nfcWriteAnswer: 'Gravar answer no NFC',
+    nfcReadOffer: 'Ler offer via NFC',
+    nfcReadAnswer: 'Ler answer via NFC',
+    nfcWriting: 'Gravando... Aproxime o dispositivo ao leitor NFC.',
+    nfcReading: 'Aguardando... Aproxime o outro dispositivo com NFC.',
+    nfcWriteSuccess: 'Gravado! O outro dispositivo pode tocar para ler.',
+    nfcReadSuccess: 'Lido com sucesso via NFC!',
+    nfcError: 'Erro no NFC. Verifique se esta ativo nas configuracoes.',
+    btShareOffer: 'Compartilhar offer via Bluetooth / AirDrop',
+    btShareAnswer: 'Compartilhar answer via Bluetooth / AirDrop',
+    btShareNotSupported: 'Compartilhamento indisponivel. Texto copiado para a area de transferencia.',
+    btPasteOfferDesc: 'Receba a offer pelo outro dispositivo e cole aqui:',
+    btPasteAnswerDesc: 'Receba a answer pelo outro dispositivo e cole aqui:',
     importOfferTitle: 'Ler offer do dispositivo receptor',
     importAnswerTitle: 'Ler answer do dispositivo que vai enviar',
     importPlaceholder:
@@ -349,6 +378,36 @@ const uiByLocale = {
     answerReadyOne: 'Answer ready. The receiving device now needs to read this QR.',
     answerReadyMany: (parts: number) =>
       `Answer split into ${parts} parts. Scan all parts on the receiving device.`,
+    qrDifficultToRead: 'Difficulty reading? Split into more QR codes:',
+    qrDivide1: '1 QR code',
+    qrDivide2: '2 QR codes',
+    qrDivide4: '4 QR codes',
+    cameraFront: 'Front camera',
+    cameraBack: 'Back camera',
+    connectivityMode: 'Connection mode',
+    connectivityQR: 'QR Code',
+    connectivityBluetooth: 'Bluetooth',
+    connectivityNFC: 'NFC',
+    connectivityQRDesc: 'Fast and works in any browser',
+    connectivityBluetoothDesc: 'Faster, requires Bluetooth support',
+    connectivityNFCDesc: 'Tap to connect (NFC)',
+    expandQR: 'Expand QR',
+    closeExpanded: 'Close',
+    nfcNotSupported: 'NFC unavailable. Requires Chrome on Android with NFC enabled.',
+    nfcWriteOffer: 'Write offer to NFC',
+    nfcWriteAnswer: 'Write answer to NFC',
+    nfcReadOffer: 'Read offer via NFC',
+    nfcReadAnswer: 'Read answer via NFC',
+    nfcWriting: 'Writing... Hold the device near the NFC reader.',
+    nfcReading: 'Waiting... Hold the other device near.',
+    nfcWriteSuccess: 'Written! The other device can now tap to read.',
+    nfcReadSuccess: 'Successfully read via NFC!',
+    nfcError: 'NFC error. Check that NFC is enabled.',
+    btShareOffer: 'Share offer via Bluetooth / AirDrop',
+    btShareAnswer: 'Share answer via Bluetooth / AirDrop',
+    btShareNotSupported: 'Share unavailable. Text copied to clipboard.',
+    btPasteOfferDesc: 'Receive the offer on the other device and paste it here:',
+    btPasteAnswerDesc: 'Receive the answer on the other device and paste it here:',
     importOfferTitle: 'Read the receiver offer',
     importAnswerTitle: 'Read the sender answer',
     importPlaceholder:
@@ -516,6 +575,36 @@ const uiByLocale = {
     answerReadyOne: 'Answer lista. El dispositivo receptor ahora debe leer este QR.',
     answerReadyMany: (parts: number) =>
       `Answer dividida en ${parts} partes. Lee todas en el dispositivo receptor.`,
+    qrDifficultToRead: '¿Dificultad para leer? Divide en mas codigos QR:',
+    qrDivide1: '1 codigo QR',
+    qrDivide2: '2 codigos QR',
+    qrDivide4: '4 codigos QR',
+    cameraFront: 'Cámara frontal',
+    cameraBack: 'Cámara trasera',
+    connectivityMode: 'Modo de conexión',
+    connectivityQR: 'Código QR',
+    connectivityBluetooth: 'Bluetooth',
+    connectivityNFC: 'NFC',
+    connectivityQRDesc: 'Rápido y funciona en cualquier navegador',
+    connectivityBluetoothDesc: 'Más rápido, requiere soporte Bluetooth',
+    connectivityNFCDesc: 'Toque para conectar (NFC)',
+    expandQR: 'Expandir QR',
+    closeExpanded: 'Cerrar',
+    nfcNotSupported: 'NFC no disponible. Requiere Chrome en Android con NFC activo.',
+    nfcWriteOffer: 'Grabar offer en NFC',
+    nfcWriteAnswer: 'Grabar answer en NFC',
+    nfcReadOffer: 'Leer offer via NFC',
+    nfcReadAnswer: 'Leer answer via NFC',
+    nfcWriting: 'Grabando... Acerca el dispositivo al lector NFC.',
+    nfcReading: 'Esperando... Acerca el otro dispositivo con NFC.',
+    nfcWriteSuccess: 'Grabado! El otro dispositivo puede tocar para leer.',
+    nfcReadSuccess: 'Leido correctamente por NFC!',
+    nfcError: 'Error NFC. Verifica que este activado en ajustes.',
+    btShareOffer: 'Compartir offer via Bluetooth / AirDrop',
+    btShareAnswer: 'Compartir answer via Bluetooth / AirDrop',
+    btShareNotSupported: 'Compartir no disponible. Texto copiado al portapapeles.',
+    btPasteOfferDesc: 'Recibe la offer en el otro dispositivo y pegala aqui:',
+    btPasteAnswerDesc: 'Recibe la answer en el otro dispositivo y pegala aqui:',
     importOfferTitle: 'Leer la offer del receptor',
     importAnswerTitle: 'Leer la answer del emisor',
     importPlaceholder:
@@ -743,6 +832,36 @@ const uiByLocale = {
     next: string;
     copied: string;
     copyError: string;
+    qrDifficultToRead: string;
+    qrDivide1: string;
+    qrDivide2: string;
+    qrDivide4: string;
+    cameraFront: string;
+    cameraBack: string;
+    connectivityMode: string;
+    connectivityQR: string;
+    connectivityBluetooth: string;
+    connectivityNFC: string;
+    connectivityQRDesc: string;
+    connectivityBluetoothDesc: string;
+    connectivityNFCDesc: string;
+    expandQR: string;
+    closeExpanded: string;
+    nfcNotSupported: string;
+    nfcWriteOffer: string;
+    nfcWriteAnswer: string;
+    nfcReadOffer: string;
+    nfcReadAnswer: string;
+    nfcWriting: string;
+    nfcReading: string;
+    nfcWriteSuccess: string;
+    nfcReadSuccess: string;
+    nfcError: string;
+    btShareOffer: string;
+    btShareAnswer: string;
+    btShareNotSupported: string;
+    btPasteOfferDesc: string;
+    btPasteAnswerDesc: string;
   }
 >;
 
@@ -811,11 +930,13 @@ function QrPreview({
   size = QR_PREVIEW_SIZE,
   value,
   zxing,
+  onExpand,
 }: Readonly<{
   emptyLabel: string;
   size?: number;
   value?: string;
   zxing: ZxingModule | null;
+  onExpand?: () => void;
 }>) {
   const svgMountRef = useRef<HTMLDivElement | null>(null);
 
@@ -846,7 +967,7 @@ function QrPreview({
   const showPlaceholder = !value || !zxing;
 
   return (
-    <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-3">
+    <div className={cn('rounded-2xl border border-dashed border-slate-300 bg-white p-3', onExpand && !showPlaceholder && 'cursor-pointer transition hover:border-slate-400 hover:bg-slate-50')} onClick={onExpand}>
       <div className="relative mx-auto min-h-[280px] max-w-[320px]">
         <div
           ref={svgMountRef}
@@ -855,6 +976,13 @@ function QrPreview({
         {showPlaceholder ? (
           <div className="absolute inset-0 flex items-center justify-center px-4">
             <p className="text-center text-sm text-slate-500">{emptyLabel}</p>
+          </div>
+        ) : null}
+        {onExpand && !showPlaceholder ? (
+          <div className="absolute right-2 top-2 rounded-lg bg-white/90 p-2 shadow-sm">
+            <svg className="h-5 w-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6v4m12-4h4v4M6 18h4v-4m12 4h-4v-4" />
+            </svg>
           </div>
         ) : null}
       </div>
@@ -937,6 +1065,12 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const [cameraDevices, setCameraDevices] = useState<CameraOption[]>([]);
   const [selectedCameraId, setSelectedCameraId] = useState('');
   const [cameraActive, setCameraActive] = useState(false);
+  const [signalQrDivisions, setSignalQrDivisions] = useState<1 | 2 | 4>(1);
+  const [expandedQrUrl, setExpandedQrUrl] = useState<string | null>(null);
+  const [connectivityMode, setConnectivityMode] = useState<'qr' | 'bluetooth' | 'nfc'>('qr');
+  const [signalRawJson, setSignalRawJson] = useState<string | null>(null);
+  const [nfcNotice, setNfcNotice] = useState<Notice | null>(null);
+  const [nfcActive, setNfcActive] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const scannerControlsRef = useRef<IScannerControls | null>(null);
@@ -946,6 +1080,8 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
   const incomingTransferRef = useRef<IncomingTransferState | null>(null);
   const uiRef = useRef(ui);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const nfcReaderRef = useRef<any>(null);
   const importOfferRef = useRef<(rawValue: string, fromHash?: boolean) => Promise<void>>(
     async () => undefined,
   );
@@ -976,6 +1112,29 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     }
 
     return `${window.location.origin}${window.location.pathname}`;
+  };
+
+  const getCameraLabel = (label: string, index: number): string => {
+    const lower = label.toLowerCase();
+    const isBack = lower.includes('back') || lower.includes('rear') || lower.includes('traseira') || lower.includes('trasera');
+    const isFront = lower.includes('front') || lower.includes('frontal');
+    
+    if (isFront) return ui.cameraFront;
+    if (isBack) return ui.cameraBack;
+    
+    return `${ui.scannerDevice} ${index + 1}`;
+  };
+
+  const getPreferredCameraId = (devices: CameraOption[]): string => {
+    const backCamera = devices.find((device) =>
+      device.label.toLowerCase().includes('back') ||
+      device.label.toLowerCase().includes('rear') ||
+      device.label.toLowerCase().includes('traseira') ||
+      device.label.toLowerCase().includes('trasera')
+    );
+    
+    if (backCamera) return backCamera.deviceId;
+    return devices[0]?.deviceId || '';
   };
 
   const nextPeerSession = (): number => {
@@ -1012,6 +1171,96 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     scannerControlsRef.current = null;
     setCameraActive(false);
   }, []);
+
+  const shareSignal = async (rawJson: string, isOffer: boolean) => {
+    const title = isOffer ? 'WebRTC Offer' : 'WebRTC Answer';
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, text: rawJson });
+      } else {
+        await navigator.clipboard.writeText(rawJson);
+        setConnectionNotice({ tone: 'success', text: ui.btShareNotSupported });
+      }
+    } catch {
+      try {
+        await navigator.clipboard.writeText(rawJson);
+        setConnectionNotice({ tone: 'success', text: ui.btShareNotSupported });
+      } catch {
+        setConnectionNotice({ tone: 'error', text: ui.copyError });
+      }
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getNfcReader = (): any => {
+    if (!('NDEFReader' in globalThis)) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (globalThis as any).NDEFReader;
+  };
+
+  const writeNfcSignal = async (rawJson: string) => {
+    const NDEFReader = getNfcReader();
+    if (!NDEFReader) {
+      setNfcNotice({ tone: 'error', text: ui.nfcNotSupported });
+      return;
+    }
+    try {
+      setNfcNotice({ tone: 'info', text: ui.nfcWriting });
+      setNfcActive(true);
+      const ndef = new NDEFReader();
+      nfcReaderRef.current = ndef;
+      await ndef.write({
+        records: [{ recordType: 'text', data: rawJson, lang: 'en' }],
+      });
+      setNfcNotice({ tone: 'success', text: ui.nfcWriteSuccess });
+    } catch {
+      setNfcNotice({ tone: 'error', text: ui.nfcError });
+    } finally {
+      setNfcActive(false);
+    }
+  };
+
+  const startNfcRead = async (target: 'offer' | 'answer') => {
+    const NDEFReader = getNfcReader();
+    if (!NDEFReader) {
+      setNfcNotice({ tone: 'error', text: ui.nfcNotSupported });
+      return;
+    }
+    try {
+      setNfcNotice({ tone: 'info', text: ui.nfcReading });
+      setNfcActive(true);
+      const ndef = new NDEFReader();
+      nfcReaderRef.current = ndef;
+      await ndef.scan();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ndef.addEventListener('reading', async ({ message }: any) => {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          for (const record of message.records as any[]) {
+            if (record.recordType === 'text') {
+              const encoding: string = record.encoding ?? 'utf-8';
+              const text = new TextDecoder(encoding).decode(record.data as ArrayBuffer);
+              if (target === 'offer') {
+                await importOfferRef.current(text);
+              } else {
+                await importAnswerRef.current(text);
+              }
+              setNfcNotice({ tone: 'success', text: ui.nfcReadSuccess });
+              setNfcActive(false);
+              nfcReaderRef.current = null;
+              break;
+            }
+          }
+        } catch {
+          setNfcNotice({ tone: 'error', text: ui.nfcError });
+          setNfcActive(false);
+        }
+      });
+    } catch {
+      setNfcNotice({ tone: 'error', text: ui.nfcError });
+      setNfcActive(false);
+    }
+  };
 
   const closeScanner = () => {
     stopScanner();
@@ -1065,6 +1314,12 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     clearPeer();
     setSignalGenerated(null);
     setSignalPartIndex(0);
+    setSignalRawJson(null);
+    setNfcNotice(null);
+    setNfcActive(false);
+    if (nfcReaderRef.current) {
+      nfcReaderRef.current = null;
+    }
     setOfferImportText('');
     setAnswerImportText('');
     setSelectedFile(null);
@@ -1280,6 +1535,15 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     };
   };
 
+  const getSignalChunkLength = (): number => {
+    const divisionsMap: Record<1 | 2 | 4, number> = {
+      1: 1800,
+      2: 900,
+      4: 450,
+    };
+    return divisionsMap[signalQrDivisions];
+  };
+
   const buildSignalTransfer = (
     signalKind: TransferSignalKind,
     rawContent: string,
@@ -1289,7 +1553,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       signalKind,
       rawContent,
       baseUrl: getCurrentBaseUrl(),
-      maxChunkLength: SIGNAL_CHUNK_LENGTH,
+      maxChunkLength: getSignalChunkLength(),
     });
 
     return {
@@ -1329,9 +1593,11 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         throw new Error(ui.connectionFailed);
       }
 
+      const offerRawJson = serializeSignalDescription(peerConnection.localDescription);
+      setSignalRawJson(offerRawJson);
       const generated = buildSignalTransfer(
         'offer',
-        serializeSignalDescription(peerConnection.localDescription),
+        offerRawJson,
       );
 
       setSignalGenerated(generated);
@@ -1387,9 +1653,11 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         throw new Error(ui.connectionFailed);
       }
 
+      const answerRawJson = serializeSignalDescription(peerConnection.localDescription);
+      setSignalRawJson(answerRawJson);
       const generated = buildSignalTransfer(
         'answer',
-        serializeSignalDescription(peerConnection.localDescription),
+        answerRawJson,
       );
 
       setSignalGenerated(generated);
@@ -1530,13 +1798,14 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       const devices = await zxing.BrowserCodeReader.listVideoInputDevices();
       const normalizedDevices = devices.map((device, index) => ({
         deviceId: device.deviceId,
-        label: device.label || `${ui.scannerDevice} ${index + 1}`,
+        label: getCameraLabel(device.label || '', index),
       }));
 
       setCameraDevices(normalizedDevices);
 
-      if (!selectedCameraId && normalizedDevices[0]?.deviceId) {
-        setSelectedCameraId(normalizedDevices[0].deviceId);
+      const preferredCameraId = getPreferredCameraId(normalizedDevices) || selectedCameraId;
+      if (preferredCameraId) {
+        setSelectedCameraId(preferredCameraId);
       }
 
       const reader = new zxing.BrowserQRCodeReader(undefined, {
@@ -1545,7 +1814,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       });
 
       const controls = await reader.decodeFromVideoDevice(
-        selectedCameraId || normalizedDevices[0]?.deviceId || undefined,
+        preferredCameraId || undefined,
         videoRef.current,
         (result) => {
           if (!result || !scannerTarget) {
@@ -1891,6 +2160,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
           emptyLabel={isReceiveFlow ? ui.connectionIdle : ui.importOfferTitle}
           value={currentSignalUrl}
           zxing={zxing}
+          onExpand={() => setExpandedQrUrl(currentSignalUrl || null)}
         />
         {signalGenerated.packets.length > 1 ? (
           <div className="flex items-center justify-between gap-3">
@@ -1927,12 +2197,175 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
             {ui.simpleCopyLink}
           </Button>
         ) : null}
+        <div className="rounded-lg bg-amber-50 p-3">
+          <p className="text-sm text-amber-900">{ui.qrDifficultToRead}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {[1, 2, 4].map((divisions) => (
+              <Button
+                key={divisions}
+                variant={signalQrDivisions === (divisions as 1 | 2 | 4) ? 'primary' : 'secondary'}
+                onClick={() => {
+                  setSignalQrDivisions(divisions as 1 | 2 | 4);
+                  setSignalPartIndex(0);
+                }}
+              >
+                {divisions === 1 && ui.qrDivide1}
+                {divisions === 2 && ui.qrDivide2}
+                {divisions === 4 && ui.qrDivide4}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderConnectivitySelector = () => {
+    const nfcSupported = 'NDEFReader' in globalThis;
+    const shareSupported = typeof navigator !== 'undefined' && Boolean(navigator.share);
+
+    return (
+      <div className="rounded-lg bg-slate-50 p-4">
+        <label className="mb-3 block text-sm font-medium text-slate-800">
+          {ui.connectivityMode}
+        </label>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { mode: 'qr' as const, label: ui.connectivityQR, desc: ui.connectivityQRDesc, available: true },
+            { mode: 'bluetooth' as const, label: ui.connectivityBluetooth, desc: ui.connectivityBluetoothDesc, available: shareSupported },
+            { mode: 'nfc' as const, label: ui.connectivityNFC, desc: ui.connectivityNFCDesc, available: nfcSupported },
+          ].map((option) => (
+            <button
+              key={option.mode}
+              onClick={() => { setConnectivityMode(option.mode); setSignalRawJson(null); setNfcNotice(null); }}
+              className={cn(
+                'rounded-lg border-2 p-3 text-left transition',
+                connectivityMode === option.mode
+                  ? 'border-brand-600 bg-brand-50'
+                  : 'border-slate-200 bg-white hover:border-slate-300',
+                !option.available && 'opacity-40',
+              )}
+            >
+              <div className="flex items-center gap-1.5">
+                <p className="font-semibold text-slate-900">{option.label}</p>
+                {!option.available && (
+                  <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+                    {option.mode === 'nfc' ? 'Android' : 'Mobile'}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-600">{option.desc}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderBtSignalBlock = (isOffer: boolean) => {
+    if (!signalRawJson) return null;
+    return (
+      <div className="space-y-3">
+        <div className="rounded-xl border border-slate-200 bg-white p-3">
+          <p className="break-all font-mono text-xs text-slate-500 line-clamp-2 select-none">
+            {signalRawJson.slice(0, 120)}…
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => void shareSignal(signalRawJson, isOffer)}>
+            {isOffer ? ui.btShareOffer : ui.btShareAnswer}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => void copyText(signalRawJson, setConnectionNotice)}
+          >
+            {ui.simpleCopyLink}
+          </Button>
+        </div>
+        <StatusNotice notice={connectionNotice} />
+      </div>
+    );
+  };
+
+  const renderNfcWriteBlock = (isOffer: boolean) => {
+    const nfcSupported = 'NDEFReader' in globalThis;
+    if (!nfcSupported) {
+      return (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <p className="text-sm text-amber-900">{ui.nfcNotSupported}</p>
+        </div>
+      );
+    }
+    return (
+      <div className="space-y-3">
+        <Button
+          onClick={() => void writeNfcSignal(signalRawJson ?? '')}
+          disabled={!signalRawJson || nfcActive}
+        >
+          {isOffer ? ui.nfcWriteOffer : ui.nfcWriteAnswer}
+        </Button>
+        <StatusNotice notice={nfcNotice} />
+      </div>
+    );
+  };
+
+  const renderNfcReadBlock = (target: 'offer' | 'answer') => {
+    const nfcSupported = 'NDEFReader' in globalThis;
+    if (!nfcSupported) {
+      return (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <p className="text-sm text-amber-900">{ui.nfcNotSupported}</p>
+        </div>
+      );
+    }
+    return (
+      <div className="space-y-3">
+        <Button
+          onClick={() => void startNfcRead(target)}
+          disabled={nfcActive}
+        >
+          {target === 'offer' ? ui.nfcReadOffer : ui.nfcReadAnswer}
+        </Button>
+        <StatusNotice notice={nfcNotice} />
+      </div>
+    );
+  };
+
+  const renderExpandedQrModal = () => {
+    if (!expandedQrUrl || !zxing) {
+      return null;
+    }
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setExpandedQrUrl(null)}>
+        <div className="relative max-h-[90vh] max-w-[90vw] rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => setExpandedQrUrl(null)}
+            className="absolute right-4 top-4 rounded-lg p-2 hover:bg-slate-100"
+          >
+            <svg className="h-6 w-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div className="flex flex-col items-center gap-4">
+            <QrPreview
+              emptyLabel={ui.simpleGeneratedEmpty}
+              size={600}
+              value={expandedQrUrl}
+              zxing={zxing}
+            />
+            <Button variant="secondary" onClick={() => setExpandedQrUrl(null)}>
+              {ui.closeExpanded}
+            </Button>
+          </div>
+        </div>
       </div>
     );
   };
 
   return (
     <Card className="space-y-6 overflow-hidden p-4 md:p-6">
+      {renderExpandedQrModal()}
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
@@ -2083,6 +2516,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
                   emptyLabel={ui.simpleGeneratedEmpty}
                   value={currentSimpleUrl}
                   zxing={zxing}
+                  onExpand={() => setExpandedQrUrl(currentSimpleUrl || null)}
                 />
                 {simpleGenerated && simpleGenerated.packets.length > 1 ? (
                   <div className="flex items-center justify-between gap-3">
@@ -2227,6 +2661,8 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
           <p className="text-sm leading-6 text-slate-600">{ui.p2pIntro}</p>
 
+          {renderConnectivitySelector()}
+
           <SectionCard title={ui.p2pRoleTitle}>
             <div className="grid gap-3 md:grid-cols-2">
               <button
@@ -2297,13 +2733,18 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
                       {signalGenerated ? ui.regenerateOffer : ui.generateOffer}
                     </Button>
                   </div>
-                  {signalGenerated ? (
-                    renderSignalQrBlock()
-                  ) : (
-                    <p className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">
-                      {ui.receiveStep1Description}
-                    </p>
-                  )}
+                  {(() => {
+                    if (!signalGenerated) {
+                      return (
+                        <p className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">
+                          {ui.receiveStep1Description}
+                        </p>
+                      );
+                    }
+                    if (connectivityMode === 'bluetooth') return renderBtSignalBlock(true);
+                    if (connectivityMode === 'nfc') return renderNfcWriteBlock(true);
+                    return renderSignalQrBlock();
+                  })()}
                 </div>
               </SectionCard>
 
@@ -2312,40 +2753,53 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
                   {busyAction === 'import-answer' ? (
                     <Spinner label={ui.loadingAnswerImport} />
                   ) : null}
-                  <Textarea
-                    rows={5}
-                    value={answerImportText}
-                    onChange={(event) => setAnswerImportText(event.target.value)}
-                    placeholder={ui.importPlaceholder}
-                  />
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="secondary"
-                      onClick={() => void importAnswer(answerImportText)}
-                      disabled={!answerImportText.trim() || isSignalBusy}
-                    >
-                      {ui.importAnswerButton}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={() => openScanner('answer')}
-                      disabled={busyAction === 'camera'}
-                    >
-                      {ui.openAnswerScanner}
-                    </Button>
-                    <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
-                      {ui.scannerImageLabel}
-                      <input
-                        className="sr-only"
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        onClick={() => openScanner('answer')}
-                        onChange={handleScannerImage}
+                  {connectivityMode === 'nfc' ? (
+                    renderNfcReadBlock('answer')
+                  ) : (
+                    <>
+                      {connectivityMode === 'bluetooth' ? (
+                        <p className="text-sm font-medium text-slate-800">{ui.btPasteAnswerDesc}</p>
+                      ) : null}
+                      <Textarea
+                        rows={5}
+                        value={answerImportText}
+                        onChange={(event) => setAnswerImportText(event.target.value)}
+                        placeholder={ui.importPlaceholder}
                       />
-                    </label>
-                  </div>
-                  {renderScannerPanel('answer')}
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="secondary"
+                          onClick={() => void importAnswer(answerImportText)}
+                          disabled={!answerImportText.trim() || isSignalBusy}
+                        >
+                          {ui.importAnswerButton}
+                        </Button>
+                        {connectivityMode === 'qr' ? (
+                          <>
+                            <Button
+                              variant="secondary"
+                              onClick={() => openScanner('answer')}
+                              disabled={busyAction === 'camera'}
+                            >
+                              {ui.openAnswerScanner}
+                            </Button>
+                            <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                              {ui.scannerImageLabel}
+                              <input
+                                className="sr-only"
+                                type="file"
+                                accept="image/*"
+                                capture="environment"
+                                onClick={() => openScanner('answer')}
+                                onChange={handleScannerImage}
+                              />
+                            </label>
+                          </>
+                        ) : null}
+                      </div>
+                      {connectivityMode === 'qr' ? renderScannerPanel('answer') : null}
+                    </>
+                  )}
                 </div>
               </SectionCard>
 
@@ -2371,52 +2825,70 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
                   {busyAction === 'import-offer' ? (
                     <Spinner label={ui.loadingOfferImport} />
                   ) : null}
-                  <Textarea
-                    rows={5}
-                    value={offerImportText}
-                    onChange={(event) => setOfferImportText(event.target.value)}
-                    placeholder={ui.importPlaceholder}
-                  />
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="secondary"
-                      onClick={() => void importOffer(offerImportText)}
-                      disabled={!offerImportText.trim() || isSignalBusy}
-                    >
-                      {ui.importOfferButton}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={() => openScanner('offer')}
-                      disabled={busyAction === 'camera'}
-                    >
-                      {ui.openOfferScanner}
-                    </Button>
-                    <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
-                      {ui.scannerImageLabel}
-                      <input
-                        className="sr-only"
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        onClick={() => openScanner('offer')}
-                        onChange={handleScannerImage}
+                  {connectivityMode === 'nfc' ? (
+                    renderNfcReadBlock('offer')
+                  ) : (
+                    <>
+                      {connectivityMode === 'bluetooth' ? (
+                        <p className="text-sm font-medium text-slate-800">{ui.btPasteOfferDesc}</p>
+                      ) : null}
+                      <Textarea
+                        rows={5}
+                        value={offerImportText}
+                        onChange={(event) => setOfferImportText(event.target.value)}
+                        placeholder={ui.importPlaceholder}
                       />
-                    </label>
-                  </div>
-                  {renderScannerPanel('offer')}
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="secondary"
+                          onClick={() => void importOffer(offerImportText)}
+                          disabled={!offerImportText.trim() || isSignalBusy}
+                        >
+                          {ui.importOfferButton}
+                        </Button>
+                        {connectivityMode === 'qr' ? (
+                          <>
+                            <Button
+                              variant="secondary"
+                              onClick={() => openScanner('offer')}
+                              disabled={busyAction === 'camera'}
+                            >
+                              {ui.openOfferScanner}
+                            </Button>
+                            <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                              {ui.scannerImageLabel}
+                              <input
+                                className="sr-only"
+                                type="file"
+                                accept="image/*"
+                                capture="environment"
+                                onClick={() => openScanner('offer')}
+                                onChange={handleScannerImage}
+                              />
+                            </label>
+                          </>
+                        ) : null}
+                      </div>
+                      {connectivityMode === 'qr' ? renderScannerPanel('offer') : null}
+                    </>
+                  )}
                 </div>
               </SectionCard>
 
               <SectionCard title={ui.sendStep2Title} description={ui.sendStep2Description}>
                 <div className="space-y-4">
-                  {signalGenerated ? (
-                    renderSignalQrBlock()
-                  ) : (
-                    <p className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">
-                      {ui.sendStep2Description}
-                    </p>
-                  )}
+                  {(() => {
+                    if (!signalGenerated) {
+                      return (
+                        <p className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">
+                          {ui.sendStep2Description}
+                        </p>
+                      );
+                    }
+                    if (connectivityMode === 'bluetooth') return renderBtSignalBlock(false);
+                    if (connectivityMode === 'nfc') return renderNfcWriteBlock(false);
+                    return renderSignalQrBlock();
+                  })()}
                 </div>
               </SectionCard>
 
