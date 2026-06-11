@@ -124,6 +124,12 @@ import {
   qrCodeGeneratorIntro,
 } from '@/data/content/qr-code-generator';
 import {
+  getTransferContent,
+  transferContentBlocks,
+  transferFaq,
+  transferIntro,
+} from '@/data/content/transfer';
+import {
   sorteadorContentBlocks,
   sorteadorFaq,
   sorteadorIntro,
@@ -895,6 +901,39 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: qrCodeGeneratorFaq,
     contentBlocks: qrCodeGeneratorContentBlocks,
     relatedToolIds: ['image-converter', 'json-formatter'],
+  },
+  {
+    id: 'transfer',
+    slug: 'transfer',
+    name: 'Transferencia Entre Dispositivos',
+    shortDescription:
+      'Transfira texto, links, Pix, JSON, comandos e arquivos entre celular e PC com QR Code e canal P2P WebRTC, sem login e com processamento local.',
+    category: 'utility',
+    primaryKeyword: 'transferir arquivo entre celular e pc por qr code',
+    secondaryKeywords: [
+      'transferir texto por qr code',
+      'transferencia entre dispositivos no navegador',
+      'enviar arquivo de celular para pc sem cabo',
+      'webrtc datachannel transferencia',
+      'copiar link do celular para pc',
+      'pix por qr code entre dispositivos',
+      'transferir json entre dispositivos',
+      'transferir comando de terminal por qr code',
+      'p2p browser file transfer',
+      'device to device transfer online',
+    ],
+    searchIntent:
+      'Usuarios que precisam passar texto pequeno por QR ou conectar celular e PC para enviar arquivos e textos maiores sem login e com o minimo de intermediarios.',
+    seoTitle:
+      'Transferir Entre Celular e PC por QR Code e P2P | Texto, Links e Arquivos',
+    seoDescription:
+      'Transfira texto rapido por QR Code e arquivos por WebRTC P2P entre celular e PC. Sem cadastro, sem login e com processamento local no navegador.',
+    h1: 'Transferir Texto e Arquivos Entre Celular e PC por QR Code e P2P',
+    intro: transferIntro,
+    canonicalPath: '/tools/transfer',
+    faq: transferFaq,
+    contentBlocks: transferContentBlocks,
+    relatedToolIds: ['qr-code-generator', 'pix-decoder', 'gerador-link-whatsapp-telegram'],
   },
   {
     id: 'gerador-link-whatsapp-telegram',
@@ -1858,6 +1897,16 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'code-converter') {
     const localized = getCodeConverterContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'transfer') {
+    const localized = getTransferContent(locale);
 
     return {
       ...tool,
