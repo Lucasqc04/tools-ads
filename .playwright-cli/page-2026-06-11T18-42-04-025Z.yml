@@ -1,0 +1,152 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Ir para Tools Lucasqc" [ref=e7] [cursor=pointer]:
+          - /url: /pt-br
+          - generic [ref=e8]:
+            - img "Tools Lucasqc" [ref=e9]
+            - generic [ref=e10]: Tools Lucasqc
+          - generic [ref=e11]: Tools Lucasqc
+        - navigation "Navegação principal" [ref=e12]:
+          - generic [ref=e13]:
+            - link "Ferramentas" [ref=e14] [cursor=pointer]:
+              - /url: /pt-br/tools
+            - link "Sobre" [ref=e15] [cursor=pointer]:
+              - /url: /pt-br/about
+            - link "Contato" [ref=e16] [cursor=pointer]:
+              - /url: /pt-br/contact
+        - button "Idioma" [ref=e19] [cursor=pointer]:
+          - img [ref=e20]
+          - generic [ref=e23]: PT
+          - img [ref=e24]
+    - generic [ref=e27]:
+      - navigation "Breadcrumb" [ref=e28]:
+        - list [ref=e29]:
+          - listitem [ref=e30]:
+            - link "Home" [ref=e31] [cursor=pointer]:
+              - /url: /pt-br
+            - generic [ref=e32]: /
+          - listitem [ref=e33]:
+            - link "Ferramentas" [ref=e34] [cursor=pointer]:
+              - /url: /pt-br/tools
+            - generic [ref=e35]: /
+          - listitem [ref=e36]:
+            - generic [ref=e37]: Transferencia Entre Dispositivos
+      - banner [ref=e38]:
+        - heading "Transferir Texto e Arquivos Entre Celular e PC por QR Code e P2P" [level=1] [ref=e39]
+        - paragraph [ref=e40]: Use um modo rapido para links, Pix, senhas e textos curtos via QR Code ou conecte dois navegadores com WebRTC para enviar arquivos e textos maiores diretamente entre os dispositivos.
+      - main [ref=e42]:
+        - region "Use a ferramenta" [ref=e43]:
+          - heading "Use a ferramenta" [level=2] [ref=e44]
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - button "QR rapido" [ref=e47] [cursor=pointer]
+              - button "Arquivo ou texto grande P2P" [ref=e48] [cursor=pointer]
+            - generic [ref=e49]:
+              - paragraph [ref=e50]: Use QR para links, Pix, senhas temporarias, JSON curto e comandos pequenos. O destino pode ler pela camera, pela propria pagina ou por imagem.
+              - generic [ref=e51]:
+                - generic [ref=e52]:
+                  - heading "Gerar QR para este dispositivo" [level=3] [ref=e54]
+                  - generic [ref=e55]:
+                    - text: Texto, link, Pix, JSON ou comando curto
+                    - textbox "Cole aqui um link, chave Pix, payload curto, JSON pequeno ou comando de terminal" [ref=e56]
+                    - generic [ref=e57]:
+                      - button "Gerar QR" [ref=e58] [cursor=pointer]
+                      - button "Limpar" [ref=e59] [cursor=pointer]
+                - generic [ref=e60]:
+                  - heading "QR atual" [level=3] [ref=e62]
+                  - generic [ref=e63]:
+                    - paragraph [ref=e68]: Digite algo e gere o QR para mostrar aqui.
+                    - button "Abrir leitor QR" [ref=e70] [cursor=pointer]
+              - generic [ref=e71]:
+                - heading "Ler no outro dispositivo" [level=3] [ref=e73]
+                - generic [ref=e74]:
+                  - text: Conteudo lido
+                  - textbox "O texto recebido aparece aqui para copiar." [ref=e75]
+                  - generic [ref=e76]:
+                    - button "Copiar texto" [disabled] [ref=e77]
+                    - generic [ref=e78] [cursor=pointer]:
+                      - text: Ler por imagem / camera do sistema
+                      - button "Ler por imagem / camera do sistema" [ref=e79]
+        - region "Guia rápido e contexto de uso" [ref=e80]:
+          - heading "Guia rápido e contexto de uso" [level=2] [ref=e81]
+          - article [ref=e82]:
+            - heading "Dois modos para problemas diferentes" [level=3] [ref=e83]
+            - paragraph [ref=e84]: Esta ferramenta foi pensada para dois cenarios comuns. O primeiro e copiar conteudo pequeno, como links, chaves Pix, comandos de terminal, tokens temporarios e JSON curto. Nesse caso, o proprio QR Code ja carrega o conteudo ou um fragmento de URL processado no navegador.
+            - paragraph [ref=e85]: O segundo cenario e enviar dados maiores, como arquivos, PDFs, imagens, ZIPs leves ou blocos longos de texto. A pagina cria um pareamento manual entre os dois dispositivos usando QR Code e depois envia o conteudo por WebRTC DataChannel.
+          - article [ref=e86]:
+            - heading "Quando usar o modo QR simples" [level=3] [ref=e87]
+            - paragraph [ref=e88]: O modo QR simples e o melhor caminho quando voce quer sair do celular e chegar no PC em poucos segundos sem depender de conta, login ou backend. Ele funciona bem para compartilhar um link aberto no navegador, um payload Pix Copia e Cola, um endereco cripto ou um snippet tecnico curto.
+            - paragraph [ref=e89]: Se o texto crescer demais, a ferramenta pode dividir o payload em varias partes. Isso ajuda em alguns fluxos tecnicos, mas para dados mais pesados a melhor escolha continua sendo o modo P2P.
+            - list [ref=e90]:
+              - listitem [ref=e91]: Links, URLs, rotas internas e deep links.
+              - listitem [ref=e92]: Senhas temporarias, tokens de uso curto e codigos de verificacao.
+              - listitem [ref=e93]: Chaves Pix, enderecos cripto, JSON pequeno e comandos de terminal.
+              - listitem [ref=e94]: Trechos curtos de texto que precisam ser copiados rapido entre dispositivos.
+          - article [ref=e95]:
+            - heading "Como funciona o envio grande por WebRTC P2P" [level=3] [ref=e96]
+            - paragraph [ref=e97]: No modo avancado, um dispositivo gera uma offer WebRTC, o outro responde com uma answer e os dois lados abrem um canal de dados. Esse canal e criptografado pelo proprio stack WebRTC e, quando a conectividade permite, o conteudo segue direto entre os navegadores.
+            - paragraph [ref=e98]: A conexao pode usar STUN apenas para descobrir a melhor rota entre os peers. Nao existe relay TURN nesta implementacao. Isso preserva a ideia de conexao direta, mas tambem significa que algumas redes mais restritas podem nao fechar a conexao.
+          - article [ref=e99]:
+            - heading "Privacidade, limites e o que nao prometer" [level=3] [ref=e100]
+            - paragraph [ref=e101]: O texto do modo simples e tratado no navegador. No modo P2P, o payload principal vai pelo DataChannel apos o pareamento manual. Ainda assim, a conectividade real depende da rede, NAT e firewall de cada lado. Sem TURN, alguns cenarios entre redes fechadas podem falhar.
+            - paragraph [ref=e102]: Tambem e importante lembrar que QR Code tem limite pratico de tamanho. Se voce estiver tentando empacotar muito conteudo no modo simples, a ferramenta vai dividir em partes ou sugerir migracao para o P2P.
+        - region "Perguntas frequentes" [ref=e103]:
+          - heading "Perguntas frequentes" [level=2] [ref=e104]
+          - generic [ref=e105]:
+            - group [ref=e106]:
+              - generic "Essa ferramenta envia meus dados para servidor?" [ref=e107] [cursor=pointer]
+            - group [ref=e108]:
+              - generic "Funciona para arquivos grandes?" [ref=e109] [cursor=pointer]
+            - group [ref=e110]:
+              - generic "Preciso instalar app ou criar conta?" [ref=e111] [cursor=pointer]
+            - group [ref=e112]:
+              - generic "Posso escanear o QR pela propria pagina?" [ref=e113] [cursor=pointer]
+            - group [ref=e114]:
+              - generic "Por que a conexao P2P pode falhar em algumas redes?" [ref=e115] [cursor=pointer]
+        - region "Outras ferramentas úteis" [ref=e116]:
+          - heading "Outras ferramentas úteis" [level=2] [ref=e117]
+          - paragraph [ref=e118]: Links úteis para continuar tarefas parecidas sem voltar para a busca.
+          - generic [ref=e119]:
+            - link "Gerador de QR Code com Logo Crie QR Code grátis a partir de texto ou URL, sem cadastro, com logo e download em vários formatos." [ref=e120] [cursor=pointer]:
+              - /url: /pt-br/tools/qr-code-generator
+              - paragraph [ref=e121]: Gerador de QR Code com Logo
+              - paragraph [ref=e122]: Crie QR Code grátis a partir de texto ou URL, sem cadastro, com logo e download em vários formatos.
+            - link "Validador e Gerador de Pix Gere Pix Copia e Cola estático ou dinâmico, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador." [ref=e123] [cursor=pointer]:
+              - /url: /pt-br/tools/pix-decoder
+              - paragraph [ref=e124]: Validador e Gerador de Pix
+              - paragraph [ref=e125]: Gere Pix Copia e Cola estático ou dinâmico, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador.
+            - link "Gerador de Link com Mensagem para WhatsApp e Telegram Gere link de WhatsApp e Telegram com mensagem pronta usando numero ou @nick, sem cadastro e com copia rapida." [ref=e126] [cursor=pointer]:
+              - /url: /pt-br/tools/gerador-link-whatsapp-telegram
+              - paragraph [ref=e127]: Gerador de Link com Mensagem para WhatsApp e Telegram
+              - paragraph [ref=e128]: Gere link de WhatsApp e Telegram com mensagem pronta usando numero ou @nick, sem cadastro e com copia rapida.
+        - generic [ref=e129]:
+          - heading "Privacidade e processamento local" [level=2] [ref=e130]
+          - paragraph [ref=e131]: As ferramentas desta página rodam no navegador e não enviam o conteúdo digitado para backend. Isso melhora privacidade, reduz latência e ajuda na experiência mobile.
+    - contentinfo [ref=e132]:
+      - generic [ref=e133]:
+        - generic [ref=e134]:
+          - generic [ref=e135]:
+            - link "Ir para Tools Lucasqc" [ref=e136] [cursor=pointer]:
+              - /url: /pt-br
+              - generic [ref=e137]:
+                - img "Tools Lucasqc" [ref=e138]
+                - generic [ref=e139]: Tools Lucasqc
+            - paragraph [ref=e140]: Ferramentas online rápidas, úteis e sem complicação
+          - navigation "Links institucionais" [ref=e141]:
+            - link "Sobre" [ref=e142] [cursor=pointer]:
+              - /url: /pt-br/about
+            - link "Contato" [ref=e143] [cursor=pointer]:
+              - /url: /pt-br/contact
+            - link "Política de Privacidade" [ref=e144] [cursor=pointer]:
+              - /url: /pt-br/privacy-policy
+            - link "Termos de Uso" [ref=e145] [cursor=pointer]:
+              - /url: /pt-br/terms
+            - link "Sugestoes e melhorias" [ref=e146] [cursor=pointer]:
+              - /url: https://t.me/Lucasqc04
+        - paragraph [ref=e147]: © 2026 Tools Lucasqc. Todos os direitos reservados.
+  - link "Sugerir ferramenta ou melhoria no Telegram" [ref=e148] [cursor=pointer]:
+    - /url: https://t.me/Lucasqc04
+    - img [ref=e149]
+    - generic [ref=e151]: Sugerir ferramenta

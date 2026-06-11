@@ -7,7 +7,9 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type Dispatch,
   type ReactNode,
+  type SetStateAction,
 } from 'react';
 import type { IScannerControls } from '@zxing/browser';
 import { Button } from '@/components/ui/button';
@@ -44,6 +46,13 @@ type NoticeTone = 'info' | 'success' | 'error';
 type SendPayloadMode = 'file' | 'text';
 type TransferPayloadType = 'file' | 'text';
 type ZxingModule = typeof import('@zxing/browser');
+type BusyAction =
+  | 'offer'
+  | 'import-offer'
+  | 'import-answer'
+  | 'camera'
+  | 'send'
+  | null;
 
 type Notice = {
   tone: NoticeTone;
@@ -88,9 +97,9 @@ type IncomingTransferState = {
 };
 
 const SIMPLE_CHUNK_LENGTH = 1000;
-const SIGNAL_CHUNK_LENGTH = 820;
+const SIGNAL_CHUNK_LENGTH = 240;
 const DATA_CHANNEL_CHUNK_SIZE = 16 * 1024;
-const QR_PREVIEW_SIZE = 280;
+const QR_PREVIEW_SIZE = 320;
 
 const uiByLocale = {
   'pt-br': {
@@ -100,8 +109,8 @@ const uiByLocale = {
       'Use QR para links, Pix, senhas temporarias, JSON curto e comandos pequenos. O destino pode ler pela camera, pela propria pagina ou por imagem.',
     p2pIntro:
       'Use WebRTC DataChannel para arquivos e textos maiores. O pareamento acontece por QR manual e depois o envio segue direto entre os navegadores.',
-    simpleWriteTitle: 'Gerar QR para este dispositivo',
-    simpleReadTitle: 'Ler no outro dispositivo',
+    simpleWriteTitle: '1. Gerar QR neste dispositivo',
+    simpleReadTitle: '2. Ler QR do outro dispositivo aqui',
     simpleInputLabel: 'Texto, link, Pix, JSON ou comando curto',
     simpleInputPlaceholder:
       'Cole aqui um link, chave Pix, payload curto, JSON pequeno ou comando de terminal',
@@ -109,6 +118,7 @@ const uiByLocale = {
     simpleClear: 'Limpar',
     simpleGeneratedTitle: 'QR atual',
     simpleGeneratedEmpty: 'Digite algo e gere o QR para mostrar aqui.',
+    simpleReceivedTitle: 'Conteudo lido neste dispositivo',
     simpleReceivedLabel: 'Conteudo lido',
     simpleReceivedPlaceholder: 'O texto recebido aparece aqui para copiar.',
     simpleCopyReceived: 'Copiar texto',
@@ -134,6 +144,27 @@ const uiByLocale = {
       'Use este modo no PC ou no aparelho que vai baixar o arquivo. Ele gera a offer e espera a answer do outro lado.',
     p2pSendIntro:
       'Use este modo no celular ou no aparelho que vai mandar o conteudo. Ele le a offer, responde com uma answer e envia o arquivo ou o texto.',
+    receiveStep1Title: 'Passo 1 — Gerar o QR de conexao neste dispositivo',
+    receiveStep1Description:
+      'No PC ou no aparelho que vai receber, gere a offer e deixe este QR visivel para o dispositivo que vai enviar.',
+    receiveStep2Title: 'Passo 2 — Ler a answer do dispositivo que vai enviar',
+    receiveStep2Description:
+      'Depois que o outro dispositivo ler a offer, volte aqui e leia a answer dele pela camera, por imagem ou colando o texto.',
+    receiveStep3Title: 'Passo 3 — Aguardar a conexao e o recebimento',
+    receiveStep3Description:
+      'Quando o canal abrir, este dispositivo fica pronto para receber o arquivo ou o texto.',
+    sendStep1Title: 'Passo 1 — Ler a offer do dispositivo receptor',
+    sendStep1Description:
+      'No celular ou no aparelho que vai enviar, leia a offer mostrada no dispositivo receptor.',
+    sendStep2Title: 'Passo 2 — Mostrar a answer para o dispositivo receptor',
+    sendStep2Description:
+      'Depois de ler a offer, esta pagina gera uma answer. Deixe este QR aberto para o receptor ler.',
+    sendStep3Title: 'Passo 3 — Aguardar o canal abrir',
+    sendStep3Description:
+      'Quando o receptor ler a answer, aguarde alguns segundos ate o canal P2P ficar pronto.',
+    sendStep4Title: 'Passo 4 — Enviar arquivo ou texto',
+    sendStep4Description:
+      'Escolha um arquivo ou cole um texto grande somente depois que o canal estiver aberto.',
     privacyTitle: 'Conectividade e privacidade',
     privacyHint:
       'Sem TURN relay nesta versao. Com STUN ligado, a conexao continua direta, mas um STUN publico pode ajudar a descobrir a rota.',
@@ -155,6 +186,8 @@ const uiByLocale = {
     importOfferButton: 'Importar offer',
     importAnswerButton: 'Importar answer',
     importByCamera: 'Ler offer/answer por QR',
+    openOfferScanner: 'Abrir leitor da offer',
+    openAnswerScanner: 'Abrir leitor da answer',
     connectionIdle: 'Nenhuma conexao ativa ainda.',
     connectionWaitingAnswer:
       'Offer gerada. Falta o outro dispositivo responder com a answer.',
@@ -190,16 +223,28 @@ const uiByLocale = {
     receiveDoneFile: (fileName: string) =>
       `${fileName} recebido. O download foi disparado neste dispositivo.`,
     receiveDoneText: 'Texto recebido. Voce pode copiar ou baixar agora.',
+    receiveResultTitle: 'Conteudo recebido neste dispositivo',
     receiveDownload: 'Baixar novamente',
     receiveCopy: 'Copiar texto recebido',
     receiveEmpty:
       'Depois que a conexao abrir e o envio terminar, o arquivo ou o texto recebido aparece aqui.',
     resetSession: 'Resetar sessao',
+    loadingOffer: 'Gerando offer e preparando os QR Codes...',
+    loadingOfferImport: 'Lendo a offer e gerando a answer...',
+    loadingAnswerImport: 'Aplicando a answer e aguardando o canal...',
+    loadingCamera: 'Abrindo camera para ler o QR...',
     scannerTitle: 'Leitor QR da pagina',
     scannerIntro:
       'Use a camera do navegador ou envie uma imagem do QR. Em muitos celulares, o seletor de imagem tambem abre a camera do sistema.',
+    scannerForSimpleTitle: 'Ler QR de texto',
+    scannerForOfferTitle: 'Ler QR da offer',
+    scannerForAnswerTitle: 'Ler QR da answer',
+    scannerSimpleHint: 'Aponte a camera para o QR de texto do outro dispositivo.',
+    scannerOfferHint: 'Aponte a camera para o QR da offer mostrado no dispositivo receptor.',
+    scannerAnswerHint: 'Aponte a camera para o QR da answer mostrado no dispositivo que vai enviar.',
     scannerStart: 'Iniciar camera',
     scannerStop: 'Parar camera',
+    scannerClose: 'Fechar leitor',
     scannerDevice: 'Camera',
     scannerImageLabel: 'Escolher imagem do QR',
     scannerReady: 'Leitor QR pronto.',
@@ -234,8 +279,8 @@ const uiByLocale = {
       'Use QR for links, Pix payloads, temporary passwords, compact JSON, and short commands. The other device can scan with the camera, inside this page, or from an image.',
     p2pIntro:
       'Use WebRTC DataChannel for larger files and text. QR is only used for the manual handshake and the payload then moves directly between browsers.',
-    simpleWriteTitle: 'Generate QR on this device',
-    simpleReadTitle: 'Read on the other device',
+    simpleWriteTitle: '1. Generate QR on this device',
+    simpleReadTitle: '2. Read the other device QR here',
     simpleInputLabel: 'Short text, link, Pix payload, JSON, or command',
     simpleInputPlaceholder:
       'Paste a link, Pix key, compact payload, short JSON, or terminal command here',
@@ -243,6 +288,7 @@ const uiByLocale = {
     simpleClear: 'Clear',
     simpleGeneratedTitle: 'Current QR',
     simpleGeneratedEmpty: 'Type something and generate the QR to preview it here.',
+    simpleReceivedTitle: 'Content read on this device',
     simpleReceivedLabel: 'Scanned content',
     simpleReceivedPlaceholder: 'Scanned text appears here for copying.',
     simpleCopyReceived: 'Copy text',
@@ -268,6 +314,27 @@ const uiByLocale = {
       'Use this on the desktop or the device that will download the file. It creates the offer and waits for the answer.',
     p2pSendIntro:
       'Use this on the phone or the device that will send the payload. It reads the offer, creates an answer, and sends the file or large text.',
+    receiveStep1Title: 'Step 1 — Generate the connection QR on this device',
+    receiveStep1Description:
+      'On the desktop or receiving device, create the offer and keep this QR visible for the sending device.',
+    receiveStep2Title: 'Step 2 — Read the answer from the sending device',
+    receiveStep2Description:
+      'After the other device reads the offer, come back here and read its answer with the camera, from an image, or by pasting the raw text.',
+    receiveStep3Title: 'Step 3 — Wait for connection and receive the payload',
+    receiveStep3Description:
+      'Once the channel opens, this device is ready to receive file or text.',
+    sendStep1Title: 'Step 1 — Read the receiver offer',
+    sendStep1Description:
+      'On the phone or sending device, read the offer shown on the receiver device.',
+    sendStep2Title: 'Step 2 — Show the answer to the receiver device',
+    sendStep2Description:
+      'After reading the offer, this page generates an answer. Keep this QR open so the receiver can read it.',
+    sendStep3Title: 'Step 3 — Wait for the channel to open',
+    sendStep3Description:
+      'After the receiver reads the answer, wait a few seconds for the P2P channel to become ready.',
+    sendStep4Title: 'Step 4 — Send file or text',
+    sendStep4Description:
+      'Choose a file or paste large text only after the channel is open.',
     privacyTitle: 'Connectivity and privacy',
     privacyHint:
       'There is no TURN relay in this build. With STUN enabled the transfer stays direct, but a public STUN server can help discover the route.',
@@ -289,6 +356,8 @@ const uiByLocale = {
     importOfferButton: 'Import offer',
     importAnswerButton: 'Import answer',
     importByCamera: 'Read offer/answer via QR',
+    openOfferScanner: 'Open offer scanner',
+    openAnswerScanner: 'Open answer scanner',
     connectionIdle: 'No active connection yet.',
     connectionWaitingAnswer: 'Offer created. The other device still needs to reply with an answer.',
     connectionConnecting: 'Handshake done. Wait for WebRTC to open the channel.',
@@ -321,16 +390,28 @@ const uiByLocale = {
     receiveDoneFile: (fileName: string) =>
       `${fileName} received. Download was triggered on this device.`,
     receiveDoneText: 'Text received. You can copy or download it now.',
+    receiveResultTitle: 'Content received on this device',
     receiveDownload: 'Download again',
     receiveCopy: 'Copy received text',
     receiveEmpty:
       'Once the channel is open and the transfer finishes, the received file or text will appear here.',
     resetSession: 'Reset session',
+    loadingOffer: 'Generating the offer and preparing the QR codes...',
+    loadingOfferImport: 'Reading the offer and generating the answer...',
+    loadingAnswerImport: 'Applying the answer and waiting for the channel...',
+    loadingCamera: 'Opening the camera to read the QR...',
     scannerTitle: 'Built-in QR scanner',
     scannerIntro:
       'Use the browser camera or upload a QR image. On many phones the image picker can also open the system camera.',
+    scannerForSimpleTitle: 'Read text QR',
+    scannerForOfferTitle: 'Read offer QR',
+    scannerForAnswerTitle: 'Read answer QR',
+    scannerSimpleHint: 'Point the camera at the text QR from the other device.',
+    scannerOfferHint: 'Point the camera at the offer QR shown on the receiving device.',
+    scannerAnswerHint: 'Point the camera at the answer QR shown on the sending device.',
     scannerStart: 'Start camera',
     scannerStop: 'Stop camera',
+    scannerClose: 'Close scanner',
     scannerDevice: 'Camera',
     scannerImageLabel: 'Choose QR image',
     scannerReady: 'QR scanner ready.',
@@ -365,8 +446,8 @@ const uiByLocale = {
       'Usa QR para enlaces, payloads Pix, contrasenas temporales, JSON pequeno y comandos cortos. El otro dispositivo puede leerlo con la camara, en esta pagina o desde una imagen.',
     p2pIntro:
       'Usa WebRTC DataChannel para archivos y textos grandes. El QR solo sirve para el emparejamiento y luego el payload va directo entre navegadores.',
-    simpleWriteTitle: 'Generar QR en este dispositivo',
-    simpleReadTitle: 'Leer en el otro dispositivo',
+    simpleWriteTitle: '1. Generar QR en este dispositivo',
+    simpleReadTitle: '2. Leer aqui el QR del otro dispositivo',
     simpleInputLabel: 'Texto corto, enlace, Pix, JSON o comando',
     simpleInputPlaceholder:
       'Pega aqui un enlace, clave Pix, payload corto, JSON pequeno o comando de terminal',
@@ -374,6 +455,7 @@ const uiByLocale = {
     simpleClear: 'Limpiar',
     simpleGeneratedTitle: 'QR actual',
     simpleGeneratedEmpty: 'Escribe algo y genera el QR para verlo aqui.',
+    simpleReceivedTitle: 'Contenido leido en este dispositivo',
     simpleReceivedLabel: 'Contenido leido',
     simpleReceivedPlaceholder: 'El texto leido aparece aqui para copiar.',
     simpleCopyReceived: 'Copiar texto',
@@ -399,6 +481,27 @@ const uiByLocale = {
       'Usa este modo en el PC o en el dispositivo que va a descargar el archivo. Genera la offer y espera la answer.',
     p2pSendIntro:
       'Usa este modo en el movil o en el dispositivo que va a enviar el contenido. Lee la offer, genera la answer y envia el archivo o texto.',
+    receiveStep1Title: 'Paso 1 — Generar el QR de conexion en este dispositivo',
+    receiveStep1Description:
+      'En el PC o en el dispositivo que va a recibir, genera la offer y deja este QR visible para el dispositivo que enviara.',
+    receiveStep2Title: 'Paso 2 — Leer la answer del dispositivo que envia',
+    receiveStep2Description:
+      'Despues de que el otro dispositivo lea la offer, vuelve aqui y lee su answer por camara, imagen o pegando el texto.',
+    receiveStep3Title: 'Paso 3 — Esperar la conexion y la recepcion',
+    receiveStep3Description:
+      'Cuando el canal se abra, este dispositivo quedara listo para recibir archivo o texto.',
+    sendStep1Title: 'Paso 1 — Leer la offer del dispositivo receptor',
+    sendStep1Description:
+      'En el movil o dispositivo que va a enviar, lee la offer mostrada en el dispositivo receptor.',
+    sendStep2Title: 'Paso 2 — Mostrar la answer al dispositivo receptor',
+    sendStep2Description:
+      'Despues de leer la offer, esta pagina genera una answer. Deja este QR abierto para que el receptor lo lea.',
+    sendStep3Title: 'Paso 3 — Esperar a que el canal se abra',
+    sendStep3Description:
+      'Cuando el receptor lea la answer, espera unos segundos hasta que el canal P2P quede listo.',
+    sendStep4Title: 'Paso 4 — Enviar archivo o texto',
+    sendStep4Description:
+      'Elige un archivo o pega texto grande solo cuando el canal este abierto.',
     privacyTitle: 'Conectividad y privacidad',
     privacyHint:
       'No hay TURN relay en esta version. Con STUN activo la transferencia sigue siendo directa, pero un STUN publico puede ayudar a descubrir la ruta.',
@@ -420,6 +523,8 @@ const uiByLocale = {
     importOfferButton: 'Importar offer',
     importAnswerButton: 'Importar answer',
     importByCamera: 'Leer offer/answer por QR',
+    openOfferScanner: 'Abrir lector de offer',
+    openAnswerScanner: 'Abrir lector de answer',
     connectionIdle: 'Todavia no hay una conexion activa.',
     connectionWaitingAnswer:
       'Offer creada. El otro dispositivo todavia debe responder con una answer.',
@@ -454,16 +559,28 @@ const uiByLocale = {
     receiveDoneFile: (fileName: string) =>
       `${fileName} recibido. Se inicio la descarga en este dispositivo.`,
     receiveDoneText: 'Texto recibido. Ya puedes copiarlo o descargarlo.',
+    receiveResultTitle: 'Contenido recibido en este dispositivo',
     receiveDownload: 'Descargar otra vez',
     receiveCopy: 'Copiar texto recibido',
     receiveEmpty:
       'Cuando el canal se abra y el envio termine, el archivo o texto recibido aparecera aqui.',
     resetSession: 'Reiniciar sesion',
+    loadingOffer: 'Generando la offer y preparando los codigos QR...',
+    loadingOfferImport: 'Leyendo la offer y generando la answer...',
+    loadingAnswerImport: 'Aplicando la answer y esperando el canal...',
+    loadingCamera: 'Abriendo la camara para leer el QR...',
     scannerTitle: 'Lector QR integrado',
     scannerIntro:
       'Usa la camara del navegador o sube una imagen del QR. En muchos moviles el selector de imagen tambien puede abrir la camara del sistema.',
+    scannerForSimpleTitle: 'Leer QR de texto',
+    scannerForOfferTitle: 'Leer QR de la offer',
+    scannerForAnswerTitle: 'Leer QR de la answer',
+    scannerSimpleHint: 'Apunta la camara al QR de texto del otro dispositivo.',
+    scannerOfferHint: 'Apunta la camara al QR de la offer mostrado en el dispositivo receptor.',
+    scannerAnswerHint: 'Apunta la camara al QR de la answer mostrado en el dispositivo que va a enviar.',
     scannerStart: 'Iniciar camara',
     scannerStop: 'Parar camara',
+    scannerClose: 'Cerrar lector',
     scannerDevice: 'Camara',
     scannerImageLabel: 'Elegir imagen del QR',
     scannerReady: 'Lector QR listo.',
@@ -506,6 +623,7 @@ const uiByLocale = {
     simpleClear: string;
     simpleGeneratedTitle: string;
     simpleGeneratedEmpty: string;
+    simpleReceivedTitle: string;
     simpleReceivedLabel: string;
     simpleReceivedPlaceholder: string;
     simpleCopyReceived: string;
@@ -526,6 +644,20 @@ const uiByLocale = {
     p2pSendRole: string;
     p2pReceiveIntro: string;
     p2pSendIntro: string;
+    receiveStep1Title: string;
+    receiveStep1Description: string;
+    receiveStep2Title: string;
+    receiveStep2Description: string;
+    receiveStep3Title: string;
+    receiveStep3Description: string;
+    sendStep1Title: string;
+    sendStep1Description: string;
+    sendStep2Title: string;
+    sendStep2Description: string;
+    sendStep3Title: string;
+    sendStep3Description: string;
+    sendStep4Title: string;
+    sendStep4Description: string;
     privacyTitle: string;
     privacyHint: string;
     privacyStrict: string;
@@ -542,6 +674,8 @@ const uiByLocale = {
     importOfferButton: string;
     importAnswerButton: string;
     importByCamera: string;
+    openOfferScanner: string;
+    openAnswerScanner: string;
     connectionIdle: string;
     connectionWaitingAnswer: string;
     connectionConnecting: string;
@@ -570,14 +704,26 @@ const uiByLocale = {
     receiving: (fileName: string) => string;
     receiveDoneFile: (fileName: string) => string;
     receiveDoneText: string;
+    receiveResultTitle: string;
     receiveDownload: string;
     receiveCopy: string;
     receiveEmpty: string;
     resetSession: string;
+    loadingOffer: string;
+    loadingOfferImport: string;
+    loadingAnswerImport: string;
+    loadingCamera: string;
     scannerTitle: string;
     scannerIntro: string;
+    scannerForSimpleTitle: string;
+    scannerForOfferTitle: string;
+    scannerForAnswerTitle: string;
+    scannerSimpleHint: string;
+    scannerOfferHint: string;
+    scannerAnswerHint: string;
     scannerStart: string;
     scannerStop: string;
+    scannerClose: string;
     scannerDevice: string;
     scannerImageLabel: string;
     scannerReady: string;
@@ -651,6 +797,15 @@ function ProgressBar({ value }: Readonly<{ value: number }>) {
   );
 }
 
+function Spinner({ label }: Readonly<{ label: string }>) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
+      <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-brand-600" />
+      <span>{label}</span>
+    </div>
+  );
+}
+
 function QrPreview({
   emptyLabel,
   size = QR_PREVIEW_SIZE,
@@ -692,14 +847,14 @@ function QrPreview({
 
   return (
     <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-3">
-      <div className="relative mx-auto min-h-[240px] max-w-[280px]">
+      <div className="relative mx-auto min-h-[280px] max-w-[320px]">
         <div
           ref={svgMountRef}
-          className="flex h-full min-h-[240px] w-full items-center justify-center"
+          className="flex h-full min-h-[280px] w-full items-center justify-center"
         />
         {showPlaceholder ? (
           <div className="absolute inset-0 flex items-center justify-center px-4">
-          <p className="text-center text-sm text-slate-500">{emptyLabel}</p>
+            <p className="text-center text-sm text-slate-500">{emptyLabel}</p>
           </div>
         ) : null}
       </div>
@@ -755,6 +910,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const [simpleGenerated, setSimpleGenerated] = useState<GeneratedTransfer | null>(null);
   const [simplePartIndex, setSimplePartIndex] = useState(0);
   const [simpleReceivedText, setSimpleReceivedText] = useState('');
+  const [simpleReceiveVersion, setSimpleReceiveVersion] = useState(0);
   const [simpleNotice, setSimpleNotice] = useState<Notice | null>(null);
   const [p2pRole, setP2pRole] = useState<P2PRole>('receive');
   const [useStun, setUseStun] = useState(true);
@@ -774,6 +930,8 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const [sendBusy, setSendBusy] = useState(false);
   const [receiveProgress, setReceiveProgress] = useState(0);
   const [receivedTransfer, setReceivedTransfer] = useState<ReceivedTransfer | null>(null);
+  const [p2pReceiveVersion, setP2pReceiveVersion] = useState(0);
+  const [busyAction, setBusyAction] = useState<BusyAction>(null);
   const [scannerTarget, setScannerTarget] = useState<ScannerTarget>(null);
   const [scannerNotice, setScannerNotice] = useState<Notice | null>(null);
   const [cameraDevices, setCameraDevices] = useState<CameraOption[]>([]);
@@ -794,11 +952,23 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const importAnswerRef = useRef<(rawValue: string, fromHash?: boolean) => Promise<void>>(
     async () => undefined,
   );
+  const simpleReceivedSectionRef = useRef<HTMLDivElement | null>(null);
+  const p2pReceivedSectionRef = useRef<HTMLDivElement | null>(null);
+  const peerSessionRef = useRef(0);
 
   const currentSimpleUrl =
     simpleGenerated?.urls[simplePartIndex] ?? simpleGenerated?.urls[0] ?? undefined;
   const currentSignalUrl =
     signalGenerated?.urls[signalPartIndex] ?? signalGenerated?.urls[0] ?? undefined;
+  const hasSimpleReceived = simpleReceivedText.trim().length > 0;
+  const hasP2PReceived = Boolean(receivedTransfer);
+  const showTopNotice =
+    toolMode === 'simple' ? !hasSimpleReceived : !hasP2PReceived;
+  const isReceiveFlow = p2pRole === 'receive';
+  const isSignalBusy =
+    busyAction === 'offer' ||
+    busyAction === 'import-offer' ||
+    busyAction === 'import-answer';
 
   const getCurrentBaseUrl = () => {
     if (typeof window === 'undefined') {
@@ -808,27 +978,90 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     return `${window.location.origin}${window.location.pathname}`;
   };
 
-  const stopScanner = () => {
+  const nextPeerSession = (): number => {
+    peerSessionRef.current += 1;
+    return peerSessionRef.current;
+  };
+
+  const isCurrentPeerSession = (sessionId: number): boolean =>
+    peerSessionRef.current === sessionId;
+
+  const getScannerPresentation = (target: ScannerTarget) => {
+    if (target === 'offer') {
+      return {
+        title: ui.scannerForOfferTitle,
+        hint: ui.scannerOfferHint,
+      };
+    }
+
+    if (target === 'answer') {
+      return {
+        title: ui.scannerForAnswerTitle,
+        hint: ui.scannerAnswerHint,
+      };
+    }
+
+    return {
+      title: ui.scannerForSimpleTitle,
+      hint: ui.scannerSimpleHint,
+    };
+  };
+
+  const stopScanner = useCallback(() => {
     scannerControlsRef.current?.stop();
     scannerControlsRef.current = null;
     setCameraActive(false);
+  }, []);
+
+  const closeScanner = () => {
+    stopScanner();
+    setScannerTarget(null);
   };
 
-  const clearPeer = () => {
-    dataChannelRef.current?.close();
-    dataChannelRef.current = null;
+  const openScanner = (target: ScannerTarget) => {
+    if (!target) {
+      closeScanner();
+      return;
+    }
 
-    peerRef.current?.close();
+    stopScanner();
+    scanAssemblyRef.current = null;
+    lastScanRef.current = { value: '', at: 0 };
+    setScannerTarget(target);
+    setScannerNotice({
+      tone: 'info',
+      text: getScannerPresentation(target).hint,
+    });
+  };
+
+  const clearPeer = useCallback(() => {
+    peerSessionRef.current += 1;
+
+    if (dataChannelRef.current) {
+      dataChannelRef.current.onopen = null;
+      dataChannelRef.current.onclose = null;
+      dataChannelRef.current.onerror = null;
+      dataChannelRef.current.onmessage = null;
+      dataChannelRef.current.close();
+    }
+
+    if (peerRef.current) {
+      peerRef.current.onconnectionstatechange = null;
+      peerRef.current.ondatachannel = null;
+      peerRef.current.close();
+    }
+
+    dataChannelRef.current = null;
     peerRef.current = null;
 
     incomingTransferRef.current = null;
     setPeerConnected(false);
     setSendProgress(0);
     setReceiveProgress(0);
-  };
+  }, []);
 
   const resetP2PSession = () => {
-    stopScanner();
+    closeScanner();
     clearPeer();
     setSignalGenerated(null);
     setSignalPartIndex(0);
@@ -841,12 +1074,13 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     setReceiveProgress(0);
     setReceivedTransfer(null);
     setConnectionNotice({ tone: 'info', text: ui.connectionIdle });
+    setBusyAction(null);
     scanAssemblyRef.current = null;
   };
 
   const copyText = async (
     value: string,
-    setter: React.Dispatch<React.SetStateAction<Notice | null>>,
+    setter: Dispatch<SetStateAction<Notice | null>>,
   ) => {
     try {
       await navigator.clipboard.writeText(value);
@@ -854,6 +1088,16 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     } catch {
       setter({ tone: 'error', text: ui.copyError });
     }
+  };
+
+  const revealSimpleReceived = (
+    text: string,
+    noticeText: string,
+  ) => {
+    setSimpleReceivedText(text);
+    setSimpleNotice({ tone: 'success', text: noticeText });
+    setToolMode('simple');
+    setSimpleReceiveVersion((current) => current + 1);
   };
 
   const finalizeReceivedTransfer = () => {
@@ -896,6 +1140,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     }
 
     setReceiveProgress(100);
+    setP2pReceiveVersion((current) => current + 1);
     incomingTransferRef.current = null;
   };
 
@@ -955,11 +1200,19 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     );
   };
 
-  const attachDataChannel = (channel: RTCDataChannel, role: P2PRole) => {
+  const attachDataChannel = (
+    channel: RTCDataChannel,
+    role: P2PRole,
+    peerSessionId: number,
+  ) => {
     channel.binaryType = 'arraybuffer';
     channel.bufferedAmountLowThreshold = 256 * 1024;
 
     channel.onopen = () => {
+      if (!isCurrentPeerSession(peerSessionId)) {
+        return;
+      }
+
       setPeerConnected(true);
       setConnectionNotice({
         tone: 'success',
@@ -968,23 +1221,43 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     };
 
     channel.onclose = () => {
+      if (!isCurrentPeerSession(peerSessionId)) {
+        return;
+      }
+
       setPeerConnected(false);
       setConnectionNotice({ tone: 'info', text: ui.connectionClosed });
     };
 
     channel.onerror = () => {
+      if (!isCurrentPeerSession(peerSessionId)) {
+        return;
+      }
+
       setConnectionNotice({ tone: 'error', text: ui.connectionFailed });
     };
 
     channel.onmessage = (event) => {
+      if (!isCurrentPeerSession(peerSessionId)) {
+        return;
+      }
+
       void handleIncomingData(event.data as string | Blob | ArrayBuffer);
     };
 
     dataChannelRef.current = channel;
   };
 
-  const attachPeerEvents = (peerConnection: RTCPeerConnection, role: P2PRole) => {
+  const attachPeerEvents = (
+    peerConnection: RTCPeerConnection,
+    role: P2PRole,
+    peerSessionId: number,
+  ) => {
     peerConnection.onconnectionstatechange = () => {
+      if (!isCurrentPeerSession(peerSessionId)) {
+        return;
+      }
+
       if (peerConnection.connectionState === 'connected') {
         setPeerConnected(true);
         setConnectionNotice({
@@ -1030,21 +1303,23 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
   const createOffer = async () => {
     try {
-      stopScanner();
+      setBusyAction('offer');
+      closeScanner();
       clearPeer();
       setSignalGenerated(null);
       setSignalPartIndex(0);
       setReceivedTransfer(null);
       setReceiveProgress(0);
 
+      const peerSessionId = nextPeerSession();
       const peerConnection = new RTCPeerConnection(buildRtcConfiguration(useStun));
       peerRef.current = peerConnection;
-      attachPeerEvents(peerConnection, 'receive');
+      attachPeerEvents(peerConnection, 'receive', peerSessionId);
 
       const channel = peerConnection.createDataChannel('adtools-transfer', {
         ordered: true,
       });
-      attachDataChannel(channel, 'receive');
+      attachDataChannel(channel, 'receive', peerSessionId);
 
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
@@ -1071,11 +1346,14 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       setPeerConnected(false);
     } catch {
       setConnectionNotice({ tone: 'error', text: ui.connectionFailed });
+    } finally {
+      setBusyAction(null);
     }
   };
 
   const importOffer = async (rawValue: string, fromHash = false) => {
     try {
+      setBusyAction('import-offer');
       const description = parseSignalDescription(rawValue);
 
       if (description.type !== 'offer') {
@@ -1091,12 +1369,13 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       setReceivedTransfer(null);
       setReceiveProgress(0);
 
+      const peerSessionId = nextPeerSession();
       const peerConnection = new RTCPeerConnection(buildRtcConfiguration(useStun));
       peerRef.current = peerConnection;
-      attachPeerEvents(peerConnection, 'send');
+      attachPeerEvents(peerConnection, 'send', peerSessionId);
 
       peerConnection.ondatachannel = (event) => {
-        attachDataChannel(event.channel, 'send');
+        attachDataChannel(event.channel, 'send', peerSessionId);
       };
 
       await peerConnection.setRemoteDescription(description);
@@ -1115,6 +1394,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
       setSignalGenerated(generated);
       setSignalPartIndex(0);
+      closeScanner();
       setConnectionNotice({
         tone: 'success',
         text: fromHash
@@ -1129,11 +1409,14 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         tone: 'error',
         text: error instanceof Error ? error.message : ui.invalidOffer,
       });
+    } finally {
+      setBusyAction(null);
     }
   };
 
   const importAnswer = async (rawValue: string, fromHash = false) => {
     try {
+      setBusyAction('import-answer');
       const description = parseSignalDescription(rawValue);
 
       if (description.type !== 'answer') {
@@ -1146,6 +1429,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
       setAnswerImportText(rawValue);
       await peerRef.current.setRemoteDescription(description);
+      closeScanner();
       setConnectionNotice({
         tone: 'success',
         text: fromHash ? ui.scannerHashAnswerDone : ui.importAnswerOk,
@@ -1156,6 +1440,8 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         tone: 'error',
         text: error instanceof Error ? error.message : ui.invalidAnswer,
       });
+    } finally {
+      setBusyAction(null);
     }
   };
 
@@ -1180,9 +1466,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         return false;
       }
 
-      setSimpleReceivedText(parsed.text);
-      setSimpleNotice({ tone: 'success', text: ui.simpleCameraPlainOk });
-      setToolMode('simple');
+      revealSimpleReceived(parsed.text, ui.simpleCameraPlainOk);
       return true;
     }
 
@@ -1205,9 +1489,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         return false;
       }
 
-      setSimpleReceivedText(assembled.decoded);
-      setSimpleNotice({ tone: 'success', text: ui.simpleReceivedOk });
-      setToolMode('simple');
+      revealSimpleReceived(assembled.decoded, ui.simpleReceivedOk);
       return true;
     }
 
@@ -1242,6 +1524,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     }
 
     try {
+      setBusyAction('camera');
       stopScanner();
 
       const devices = await zxing.BrowserCodeReader.listVideoInputDevices();
@@ -1271,7 +1554,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
           void handleDecodedValue(result.getText(), scannerTarget).then((done) => {
             if (done) {
-              stopScanner();
+              closeScanner();
             }
           });
         },
@@ -1282,6 +1565,8 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       setScannerNotice({ tone: 'info', text: ui.scannerReading });
     } catch {
       setScannerNotice({ tone: 'error', text: ui.scannerCameraError });
+    } finally {
+      setBusyAction(null);
     }
   };
 
@@ -1300,7 +1585,11 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         const result = await reader.decodeFromImageUrl(objectUrl);
 
         if (scannerTarget) {
-          await handleDecodedValue(result.getText(), scannerTarget);
+          const done = await handleDecodedValue(result.getText(), scannerTarget);
+
+          if (done) {
+            closeScanner();
+          }
         }
       } finally {
         URL.revokeObjectURL(objectUrl);
@@ -1382,6 +1671,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     const chunks = buildUint8Chunks(bytes, DATA_CHANNEL_CHUNK_SIZE);
 
     try {
+      setBusyAction('send');
       setSendBusy(true);
       setSendProgress(0);
       setConnectionNotice({ tone: 'info', text: ui.sendPreparing });
@@ -1408,6 +1698,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     } catch {
       setConnectionNotice({ tone: 'error', text: ui.connectionFailed });
     } finally {
+      setBusyAction(null);
       setSendBusy(false);
     }
   };
@@ -1449,9 +1740,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     }
 
     if (assembled.state.kind === 'text') {
-      setSimpleReceivedText(assembled.decoded);
-      setSimpleNotice({ tone: 'success', text: currentUi.scannerHashTextDone });
-      setToolMode('simple');
+      revealSimpleReceived(assembled.decoded, currentUi.scannerHashTextDone);
       return;
     }
 
@@ -1492,13 +1781,155 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     void consumeHashPayload();
   }, [consumeHashPayload]);
 
+  useEffect(() => {
+    if (simpleReceiveVersion === 0) {
+      return;
+    }
+
+    simpleReceivedSectionRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, [simpleReceiveVersion]);
+
+  useEffect(() => {
+    if (p2pReceiveVersion === 0) {
+      return;
+    }
+
+    p2pReceivedSectionRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, [p2pReceiveVersion]);
+
   useEffect(
     () => () => {
       stopScanner();
       clearPeer();
     },
-    [],
+    [clearPeer, stopScanner],
   );
+
+  const renderScannerPanel = (target: ScannerTarget) => {
+    if (scannerTarget !== target || !target) {
+      return null;
+    }
+
+    const presentation = getScannerPresentation(target);
+
+    return (
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="space-y-1">
+          <h4 className="text-base font-semibold text-slate-900">{presentation.title}</h4>
+          <p className="text-sm text-slate-600">{presentation.hint}</p>
+        </div>
+
+        {busyAction === 'camera' ? <Spinner label={ui.loadingCamera} /> : null}
+        <StatusNotice notice={scannerNotice} />
+
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black">
+            <video ref={videoRef} className="aspect-video h-full w-full object-cover" />
+          </div>
+          <div className="space-y-3">
+            {cameraDevices.length > 1 ? (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-800">
+                  {ui.scannerDevice}
+                </label>
+                <Select
+                  value={selectedCameraId}
+                  onChange={(event) => setSelectedCameraId(event.target.value)}
+                >
+                  {cameraDevices.map((device) => (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            ) : null}
+
+            <Button onClick={() => void startCameraScan()} disabled={busyAction === 'camera'}>
+              {busyAction === 'camera'
+                ? ui.loadingCamera
+                : cameraActive
+                  ? ui.scannerReading
+                  : ui.scannerStart}
+            </Button>
+            <Button variant="secondary" onClick={stopScanner}>
+              {ui.scannerStop}
+            </Button>
+            <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+              {ui.scannerImageLabel}
+              <input
+                className="sr-only"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleScannerImage}
+              />
+            </label>
+            <Button variant="ghost" onClick={closeScanner}>
+              {ui.scannerClose}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderSignalQrBlock = () => {
+    if (!signalGenerated) {
+      return null;
+    }
+
+    return (
+      <div className="space-y-4">
+        <QrPreview
+          emptyLabel={isReceiveFlow ? ui.connectionIdle : ui.importOfferTitle}
+          value={currentSignalUrl}
+          zxing={zxing}
+        />
+        {signalGenerated.packets.length > 1 ? (
+          <div className="flex items-center justify-between gap-3">
+            <Button
+              variant="secondary"
+              onClick={() =>
+                setSignalPartIndex((current) =>
+                  current === 0 ? signalGenerated.packets.length - 1 : current - 1,
+                )
+              }
+            >
+              {ui.previous}
+            </Button>
+            <span className="text-sm text-slate-600">
+              {ui.partLabel(signalPartIndex + 1, signalGenerated.packets.length)}
+            </span>
+            <Button
+              variant="secondary"
+              onClick={() =>
+                setSignalPartIndex((current) =>
+                  current === signalGenerated.packets.length - 1 ? 0 : current + 1,
+                )
+              }
+            >
+              {ui.next}
+            </Button>
+          </div>
+        ) : null}
+        {currentSignalUrl ? (
+          <Button
+            variant="ghost"
+            onClick={() => void copyText(currentSignalUrl, setConnectionNotice)}
+          >
+            {ui.simpleCopyLink}
+          </Button>
+        ) : null}
+      </div>
+    );
+  };
 
   return (
     <Card className="space-y-6 overflow-hidden p-4 md:p-6">
@@ -1529,10 +1960,55 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         </button>
       </div>
 
-      <StatusNotice notice={toolMode === 'simple' ? simpleNotice : connectionNotice} />
+      {showTopNotice ? (
+        <StatusNotice notice={toolMode === 'simple' ? simpleNotice : connectionNotice} />
+      ) : null}
 
       {toolMode === 'simple' ? (
         <div className="space-y-6">
+          {hasSimpleReceived ? (
+            <div ref={simpleReceivedSectionRef}>
+              <SectionCard title={ui.simpleReceivedTitle}>
+                <div className="space-y-4">
+                  <StatusNotice notice={simpleNotice} />
+                  <label className="text-sm font-medium text-slate-800">
+                    {ui.simpleReceivedLabel}
+                  </label>
+                  <Textarea
+                    rows={7}
+                    value={simpleReceivedText}
+                    onChange={(event) => setSimpleReceivedText(event.target.value)}
+                    placeholder={ui.simpleReceivedPlaceholder}
+                  />
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="secondary"
+                      onClick={() => void copyText(simpleReceivedText, setSimpleNotice)}
+                      disabled={!simpleReceivedText.trim()}
+                    >
+                      {ui.simpleCopyReceived}
+                    </Button>
+                    <Button variant="secondary" onClick={() => openScanner('simple')}>
+                      {ui.simpleOpenScanner}
+                    </Button>
+                    <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                      {ui.simpleCaptureImage}
+                      <input
+                        className="sr-only"
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onClick={() => openScanner('simple')}
+                        onChange={handleScannerImage}
+                      />
+                    </label>
+                  </div>
+                  {renderScannerPanel('simple')}
+                </div>
+              </SectionCard>
+            </div>
+          ) : null}
+
           <p className="text-sm leading-6 text-slate-600">{ui.simpleIntro}</p>
 
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
@@ -1596,7 +2072,11 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
             <SectionCard
               title={ui.simpleGeneratedTitle}
-              description={simpleGenerated ? ui.partLabel(simplePartIndex + 1, simpleGenerated.packets.length) : undefined}
+              description={
+                simpleGenerated
+                  ? ui.partLabel(simplePartIndex + 1, simpleGenerated.packets.length)
+                  : undefined
+              }
             >
               <div className="space-y-3">
                 <QrPreview
@@ -1631,64 +2111,120 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
                     </Button>
                   </div>
                 ) : null}
-                <div className="flex flex-wrap gap-2">
+                {currentSimpleUrl ? (
                   <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setScannerTarget('simple');
-                      setToolMode('simple');
-                    }}
+                    variant="ghost"
+                    onClick={() => void copyText(currentSimpleUrl, setSimpleNotice)}
                   >
-                    {ui.simpleOpenScanner}
+                    {ui.simpleCopyLink}
                   </Button>
-                  {currentSimpleUrl ? (
-                    <Button
-                      variant="ghost"
-                      onClick={() => void copyText(currentSimpleUrl, setSimpleNotice)}
-                    >
-                      {ui.simpleCopyLink}
-                    </Button>
-                  ) : null}
-                </div>
+                ) : null}
               </div>
             </SectionCard>
           </div>
 
-          <SectionCard title={ui.simpleReadTitle}>
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-slate-800">
-                {ui.simpleReceivedLabel}
-              </label>
-              <Textarea
-                rows={7}
-                value={simpleReceivedText}
-                onChange={(event) => setSimpleReceivedText(event.target.value)}
-                placeholder={ui.simpleReceivedPlaceholder}
-              />
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="secondary"
-                  onClick={() => void copyText(simpleReceivedText, setSimpleNotice)}
-                  disabled={!simpleReceivedText.trim()}
-                >
-                  {ui.simpleCopyReceived}
-                </Button>
-                <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
-                  {ui.simpleCaptureImage}
-                  <input
-                    className="sr-only"
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={handleScannerImage}
-                  />
+          {!hasSimpleReceived ? (
+            <SectionCard title={ui.simpleReadTitle}>
+              <div className="space-y-4">
+                <label className="text-sm font-medium text-slate-800">
+                  {ui.simpleReceivedLabel}
                 </label>
+                <Textarea
+                  rows={7}
+                  value={simpleReceivedText}
+                  onChange={(event) => setSimpleReceivedText(event.target.value)}
+                  placeholder={ui.simpleReceivedPlaceholder}
+                />
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="secondary"
+                    onClick={() => void copyText(simpleReceivedText, setSimpleNotice)}
+                    disabled={!simpleReceivedText.trim()}
+                  >
+                    {ui.simpleCopyReceived}
+                  </Button>
+                  <Button variant="secondary" onClick={() => openScanner('simple')}>
+                    {ui.simpleOpenScanner}
+                  </Button>
+                  <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                    {ui.simpleCaptureImage}
+                    <input
+                      className="sr-only"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onClick={() => openScanner('simple')}
+                      onChange={handleScannerImage}
+                    />
+                  </label>
+                </div>
+                {renderScannerPanel('simple')}
               </div>
-            </div>
-          </SectionCard>
+            </SectionCard>
+          ) : null}
         </div>
       ) : (
         <div className="space-y-6">
+          {receivedTransfer ? (
+            <div ref={p2pReceivedSectionRef}>
+              <SectionCard title={ui.receiveResultTitle}>
+                <div className="space-y-4">
+                  <StatusNotice notice={connectionNotice} />
+                  <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
+                    <div>
+                      <div className="font-semibold text-slate-900">
+                        {receivedTransfer.fileName}
+                      </div>
+                      <p className="text-sm text-slate-600">
+                        {formatBytes(receivedTransfer.size)}
+                      </p>
+                    </div>
+
+                    {receivedTransfer.payloadType === 'text' ? (
+                      <>
+                        <Textarea
+                          rows={8}
+                          value={receivedTransfer.text ?? ''}
+                          onChange={() => undefined}
+                        />
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            variant="secondary"
+                            onClick={() =>
+                              void copyText(receivedTransfer.text ?? '', setConnectionNotice)
+                            }
+                          >
+                            {ui.receiveCopy}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            onClick={() =>
+                              downloadBlob(
+                                receivedTransfer.blob,
+                                receivedTransfer.fileName,
+                              )
+                            }
+                          >
+                            {ui.receiveDownload}
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        onClick={() =>
+                          downloadBlob(receivedTransfer.blob, receivedTransfer.fileName)
+                        }
+                      >
+                        {ui.receiveDownload}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </SectionCard>
+            </div>
+          ) : null}
+
           <p className="text-sm leading-6 text-slate-600">{ui.p2pIntro}</p>
 
           <SectionCard title={ui.p2pRoleTitle}>
@@ -1728,145 +2264,170 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
             </div>
           </SectionCard>
 
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">
-            <SectionCard title={ui.privacyTitle} description={ui.privacyHint}>
-              <div className="space-y-4">
-                <label className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={useStun}
-                    onChange={(event) => setUseStun(event.target.checked)}
-                    className="mt-1 h-4 w-4 rounded border-slate-300"
-                  />
-                  <span>{ui.stunToggle}</span>
-                </label>
-                <p className="text-sm text-slate-600">{ui.privacyStrict}</p>
-                <p className="rounded-xl bg-white p-3 text-sm text-slate-600 ring-1 ring-slate-200">
-                  {ui.localOnlyNote}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {p2pRole === 'receive' ? (
-                    <Button onClick={() => void createOffer()}>
+          <SectionCard title={ui.privacyTitle} description={ui.privacyHint}>
+            <div className="space-y-4">
+              <label className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={useStun}
+                  onChange={(event) => setUseStun(event.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-slate-300"
+                />
+                <span>{ui.stunToggle}</span>
+              </label>
+              <p className="text-sm text-slate-600">{ui.privacyStrict}</p>
+              <p className="rounded-xl bg-white p-3 text-sm text-slate-600 ring-1 ring-slate-200">
+                {ui.localOnlyNote}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="ghost" onClick={resetP2PSession}>
+                  {ui.resetSession}
+                </Button>
+              </div>
+            </div>
+          </SectionCard>
+
+          {isReceiveFlow ? (
+            <div className="space-y-4">
+              <SectionCard title={ui.receiveStep1Title} description={ui.receiveStep1Description}>
+                <div className="space-y-4">
+                  {busyAction === 'offer' ? <Spinner label={ui.loadingOffer} /> : null}
+                  <div className="flex flex-wrap gap-2">
+                    <Button onClick={() => void createOffer()} disabled={isSignalBusy}>
                       {signalGenerated ? ui.regenerateOffer : ui.generateOffer}
                     </Button>
-                  ) : null}
-                  <Button variant="ghost" onClick={resetP2PSession}>
-                    {ui.resetSession}
-                  </Button>
-                </div>
-              </div>
-            </SectionCard>
-
-            <SectionCard
-              title={p2pRole === 'receive' ? ui.importAnswerTitle : ui.importOfferTitle}
-              description={
-                signalGenerated
-                  ? ui.partLabel(signalPartIndex + 1, signalGenerated.packets.length)
-                  : undefined
-              }
-            >
-              <div className="space-y-4">
-                <QrPreview
-                  emptyLabel={
-                    p2pRole === 'receive' ? ui.connectionIdle : ui.importOfferTitle
-                  }
-                  value={currentSignalUrl}
-                  zxing={zxing}
-                />
-                {signalGenerated && signalGenerated.packets.length > 1 ? (
-                  <div className="flex items-center justify-between gap-3">
-                    <Button
-                      variant="secondary"
-                      onClick={() =>
-                        setSignalPartIndex((current) =>
-                          current === 0 ? signalGenerated.packets.length - 1 : current - 1,
-                        )
-                      }
-                    >
-                      {ui.previous}
-                    </Button>
-                    <span className="text-sm text-slate-600">
-                      {ui.partLabel(signalPartIndex + 1, signalGenerated.packets.length)}
-                    </span>
-                    <Button
-                      variant="secondary"
-                      onClick={() =>
-                        setSignalPartIndex((current) =>
-                          current === signalGenerated.packets.length - 1 ? 0 : current + 1,
-                        )
-                      }
-                    >
-                      {ui.next}
-                    </Button>
                   </div>
-                ) : null}
-                {currentSignalUrl ? (
-                  <Button
-                    variant="ghost"
-                    onClick={() => void copyText(currentSignalUrl, setConnectionNotice)}
-                  >
-                    {ui.simpleCopyLink}
-                  </Button>
-                ) : null}
-                <Textarea
-                  rows={5}
-                  value={p2pRole === 'receive' ? answerImportText : offerImportText}
-                  onChange={(event) =>
-                    p2pRole === 'receive'
-                      ? setAnswerImportText(event.target.value)
-                      : setOfferImportText(event.target.value)
-                  }
-                  placeholder={ui.importPlaceholder}
-                />
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant="secondary"
-                    onClick={() =>
-                      p2pRole === 'receive'
-                        ? void importAnswer(answerImportText)
-                        : void importOffer(offerImportText)
-                    }
-                  >
-                    {p2pRole === 'receive'
-                      ? ui.importAnswerButton
-                      : ui.importOfferButton}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={() => setScannerTarget(p2pRole === 'receive' ? 'answer' : 'offer')}
-                  >
-                    {ui.importByCamera}
-                  </Button>
-                  <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
-                    {ui.scannerImageLabel}
-                    <input
-                      className="sr-only"
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      onChange={handleScannerImage}
-                    />
-                  </label>
+                  {signalGenerated ? (
+                    renderSignalQrBlock()
+                  ) : (
+                    <p className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">
+                      {ui.receiveStep1Description}
+                    </p>
+                  )}
                 </div>
-              </div>
-            </SectionCard>
-          </div>
+              </SectionCard>
 
-          <SectionCard
-            title={ui.payloadTitle}
-            description={
-              peerConnected
-                ? p2pRole === 'receive'
-                  ? ui.connectionReadyReceive
-                  : ui.connectionReadySend
-                : ui.connectionWaitingAnswer
-            }
-          >
+              <SectionCard title={ui.receiveStep2Title} description={ui.receiveStep2Description}>
+                <div className="space-y-4">
+                  {busyAction === 'import-answer' ? (
+                    <Spinner label={ui.loadingAnswerImport} />
+                  ) : null}
+                  <Textarea
+                    rows={5}
+                    value={answerImportText}
+                    onChange={(event) => setAnswerImportText(event.target.value)}
+                    placeholder={ui.importPlaceholder}
+                  />
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="secondary"
+                      onClick={() => void importAnswer(answerImportText)}
+                      disabled={!answerImportText.trim() || isSignalBusy}
+                    >
+                      {ui.importAnswerButton}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => openScanner('answer')}
+                      disabled={busyAction === 'camera'}
+                    >
+                      {ui.openAnswerScanner}
+                    </Button>
+                    <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                      {ui.scannerImageLabel}
+                      <input
+                        className="sr-only"
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onClick={() => openScanner('answer')}
+                        onChange={handleScannerImage}
+                      />
+                    </label>
+                  </div>
+                  {renderScannerPanel('answer')}
+                </div>
+              </SectionCard>
+
+              <SectionCard title={ui.receiveStep3Title} description={ui.receiveStep3Description}>
+                <div className="space-y-4">
+                  {!hasP2PReceived ? <StatusNotice notice={connectionNotice} /> : null}
+                  {!receivedTransfer ? (
+                    <p className="text-sm text-slate-600">{ui.receiveEmpty}</p>
+                  ) : null}
+                  {receiveProgress > 0 && receiveProgress < 100 ? (
+                    <div className="space-y-2">
+                      <ProgressBar value={receiveProgress} />
+                      <p className="text-sm text-slate-600">{Math.round(receiveProgress)}%</p>
+                    </div>
+                  ) : null}
+                </div>
+              </SectionCard>
+            </div>
+          ) : (
             <div className="space-y-4">
-              <StatusNotice notice={connectionNotice} />
+              <SectionCard title={ui.sendStep1Title} description={ui.sendStep1Description}>
+                <div className="space-y-4">
+                  {busyAction === 'import-offer' ? (
+                    <Spinner label={ui.loadingOfferImport} />
+                  ) : null}
+                  <Textarea
+                    rows={5}
+                    value={offerImportText}
+                    onChange={(event) => setOfferImportText(event.target.value)}
+                    placeholder={ui.importPlaceholder}
+                  />
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="secondary"
+                      onClick={() => void importOffer(offerImportText)}
+                      disabled={!offerImportText.trim() || isSignalBusy}
+                    >
+                      {ui.importOfferButton}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => openScanner('offer')}
+                      disabled={busyAction === 'camera'}
+                    >
+                      {ui.openOfferScanner}
+                    </Button>
+                    <label className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                      {ui.scannerImageLabel}
+                      <input
+                        className="sr-only"
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onClick={() => openScanner('offer')}
+                        onChange={handleScannerImage}
+                      />
+                    </label>
+                  </div>
+                  {renderScannerPanel('offer')}
+                </div>
+              </SectionCard>
 
-              {p2pRole === 'send' ? (
-                <>
+              <SectionCard title={ui.sendStep2Title} description={ui.sendStep2Description}>
+                <div className="space-y-4">
+                  {signalGenerated ? (
+                    renderSignalQrBlock()
+                  ) : (
+                    <p className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-600">
+                      {ui.sendStep2Description}
+                    </p>
+                  )}
+                </div>
+              </SectionCard>
+
+              <SectionCard title={ui.sendStep3Title} description={ui.sendStep3Description}>
+                <div className="space-y-4">
+                  {!hasP2PReceived ? <StatusNotice notice={connectionNotice} /> : null}
+                </div>
+              </SectionCard>
+
+              <SectionCard title={ui.sendStep4Title} description={ui.sendStep4Description}>
+                <div className="space-y-4">
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
@@ -1924,120 +2485,28 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
                     </div>
                   )}
 
-                  {(sendBusy || sendProgress > 0) && (
+                  {sendBusy || sendProgress > 0 ? (
                     <div className="space-y-2">
                       <ProgressBar value={sendProgress} />
                       <p className="text-sm text-slate-600">
                         {sendBusy ? ui.sending : ui.sendDone} {Math.round(sendProgress)}%
                       </p>
                     </div>
-                  )}
+                  ) : null}
 
-                  <Button onClick={() => void sendPayload()} disabled={sendBusy}>
+                  {!peerConnected ? (
+                    <p className="text-sm text-slate-600">{ui.sendNeedsChannel}</p>
+                  ) : null}
+
+                  <Button onClick={() => void sendPayload()} disabled={!peerConnected || sendBusy}>
                     {sendBusy ? ui.sending : ui.sendNow}
                   </Button>
-                </>
-              ) : null}
-
-              {receivedTransfer ? (
-                <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
-                  <div>
-                    <div className="font-semibold text-slate-900">{receivedTransfer.fileName}</div>
-                    <p className="text-sm text-slate-600">
-                      {formatBytes(receivedTransfer.size)}
-                    </p>
-                  </div>
-
-                  {receivedTransfer.payloadType === 'text' ? (
-                    <>
-                      <Textarea
-                        rows={8}
-                        value={receivedTransfer.text ?? ''}
-                        onChange={() => undefined}
-                      />
-                      <div className="flex flex-wrap gap-2">
-                        <Button
-                          variant="secondary"
-                          onClick={() =>
-                            void copyText(receivedTransfer.text ?? '', setConnectionNotice)
-                          }
-                        >
-                          {ui.receiveCopy}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() => downloadBlob(receivedTransfer.blob, receivedTransfer.fileName)}
-                        >
-                          {ui.receiveDownload}
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <Button
-                      variant="secondary"
-                      onClick={() => downloadBlob(receivedTransfer.blob, receivedTransfer.fileName)}
-                    >
-                      {ui.receiveDownload}
-                    </Button>
-                  )}
                 </div>
-              ) : (
-                <p className="text-sm text-slate-600">{ui.receiveEmpty}</p>
-              )}
-
-              {(receiveProgress > 0 && receiveProgress < 100) && (
-                <div className="space-y-2">
-                  <ProgressBar value={receiveProgress} />
-                  <p className="text-sm text-slate-600">{Math.round(receiveProgress)}%</p>
-                </div>
-              )}
+              </SectionCard>
             </div>
-          </SectionCard>
+          )}
         </div>
       )}
-
-      {scannerTarget ? (
-        <SectionCard title={ui.scannerTitle} description={ui.scannerIntro}>
-          <div className="space-y-4">
-            <StatusNotice notice={scannerNotice} />
-
-            <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black">
-                <video ref={videoRef} className="aspect-video h-full w-full object-cover" />
-              </div>
-              <div className="space-y-3">
-                {cameraDevices.length > 1 ? (
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-800">
-                      {ui.scannerDevice}
-                    </label>
-                    <Select
-                      value={selectedCameraId}
-                      onChange={(event) => setSelectedCameraId(event.target.value)}
-                    >
-                      {cameraDevices.map((device) => (
-                        <option key={device.deviceId} value={device.deviceId}>
-                          {device.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                ) : null}
-
-                <Button onClick={() => void startCameraScan()}>
-                  {cameraActive ? ui.scannerReading : ui.scannerStart}
-                </Button>
-                <Button variant="secondary" onClick={stopScanner}>
-                  {ui.scannerStop}
-                </Button>
-                <Button variant="ghost" onClick={() => setScannerTarget(null)}>
-                  {ui.simpleClear}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </SectionCard>
-      ) : null}
     </Card>
   );
 }
