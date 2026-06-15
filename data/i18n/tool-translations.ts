@@ -34,6 +34,7 @@ type ToolId =
   | 'image-to-base64'
   | 'image-converter'
   | 'image-compression'
+  | 'remover-fundo-imagem'
   | 'video-compression'
   | 'qr-code-generator'
   | 'sorteador'
@@ -1612,6 +1613,95 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Does this work on mobile?',
         answer:
           'Yes. The layout is responsive and works on mobile screens as well.',
+      },
+    ],
+  },
+  'remover-fundo-imagem': {
+    name: 'Chroma Key Image Background Remover',
+    shortDescription:
+      'Remove green, magenta, white, or custom-color image backgrounds and download a transparent PNG at original size.',
+    primaryKeyword: 'chroma key image background remover',
+    secondaryKeywords: [
+      'remove green screen from image',
+      'remove magenta background',
+      'remove white background from image',
+      'chroma key online',
+      'transparent png maker',
+      'remove image background without quality loss',
+      'background remover no sign up',
+      'transparent background image',
+      'png background remover',
+      'despill chroma key image',
+    ],
+    searchIntent:
+      'Users who need to remove a chroma background from an image and export a transparent PNG without reducing resolution.',
+    seoTitle: 'Chroma Key Image Background Remover | Transparent PNG',
+    seoDescription:
+      'Remove green, magenta, white, or custom-color backgrounds from images, compare 3 cut strengths, and download transparent PNG.',
+    h1: 'Chroma Key Image Background Remover for Transparent PNG Export',
+    intro:
+      'Remove solid chroma backgrounds from images, tune threshold and softness, compare 3 results, and export a transparent PNG at original size.',
+    contentBlocks: [
+      {
+        title: 'How chroma key image background removal works',
+        paragraphs: [
+          'This tool removes solid or near-solid color backgrounds directly in your browser. Upload an image, choose the chroma color, and compare light, balanced, and strong cuts.',
+          'The algorithm measures how close each pixel is to the selected background color. Matching pixels become transparent, edge pixels receive a softer alpha transition, and distant pixels stay opaque.',
+        ],
+      },
+      {
+        title: 'Threshold, softness, and despill control',
+        paragraphs: [
+          'Threshold controls how aggressively the selected color is removed. Increase it when background leftovers remain; reduce it when details such as hair, fabric, or thin edges are being cut away.',
+          'Softness controls the transition around the edge. Despill helps reduce green, magenta, or white color spill on semi-transparent borders.',
+        ],
+        list: [
+          'Light cut for fine details and delicate edges.',
+          'Balanced cut as the best first option.',
+          'Strong cut for visible halos and leftover background.',
+          'Auto corner color when the background is clean in the image corners.',
+        ],
+      },
+      {
+        title: 'Transparent PNG at original dimensions',
+        paragraphs: [
+          'Preview images are scaled down only to keep comparison fast. When you download, the removal runs again on the original image dimensions.',
+          'Output is a transparent PNG, which preserves alpha and avoids JPEG recompression on export.',
+        ],
+      },
+      {
+        title: 'Practical limits',
+        paragraphs: [
+          'Chroma key works best with an evenly lit background and clear color separation from the subject.',
+          'Complex scenes, strong shadows, reflections, or subject colors that match the background may still need manual editing.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Does this remove any image background automatically?',
+        answer:
+          'It is focused on chroma key backgrounds such as green, magenta, white, or a custom solid color. Complex real-world backgrounds may need manual editing.',
+      },
+      {
+        question: 'Does download reduce image resolution?',
+        answer:
+          'No. Preview is scaled for speed, but download processes the original image and keeps original width and height.',
+      },
+      {
+        question: 'Are images uploaded to a server?',
+        answer:
+          'No by default. Upload, preview, background removal, and PNG generation run locally in your browser.',
+      },
+      {
+        question: 'What output format is generated?',
+        answer:
+          'The tool exports PNG with transparency because PNG preserves the alpha channel.',
+      },
+      {
+        question: 'Does it work on mobile?',
+        answer:
+          'Yes. The layout is responsive, though very large images can be slower on low-memory phones.',
       },
     ],
   },
@@ -3439,6 +3529,95 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿Funciona en movil?',
         answer:
           'Si. El layout es responsive y se adapta a pantallas pequenas.',
+      },
+    ],
+  },
+  'remover-fundo-imagem': {
+    name: 'Removedor de Fondo de Imagen por Chroma Key',
+    shortDescription:
+      'Quita fondos verdes, magenta, blancos o de color manual y descarga un PNG transparente en tamano original.',
+    primaryKeyword: 'removedor de fondo chroma key',
+    secondaryKeywords: [
+      'quitar fondo verde de imagen',
+      'quitar fondo magenta',
+      'quitar fondo blanco de imagen',
+      'chroma key online',
+      'crear png transparente',
+      'quitar fondo sin perder calidad',
+      'removedor de fondo sin registro',
+      'imagen fondo transparente',
+      'png transparente online',
+      'despill chroma key imagen',
+    ],
+    searchIntent:
+      'Usuarios que necesitan quitar un fondo chroma de una imagen y exportar PNG transparente sin reducir resolucion.',
+    seoTitle: 'Removedor de Fondo Chroma Key | PNG Transparente',
+    seoDescription:
+      'Quita fondos verdes, magenta, blancos o manuales de imagenes, compara 3 recortes y descarga PNG transparente.',
+    h1: 'Removedor de Fondo de Imagen por Chroma Key para PNG Transparente',
+    intro:
+      'Quita fondos chroma de color solido, ajusta threshold y softness, compara 3 resultados y exporta PNG transparente en tamano original.',
+    contentBlocks: [
+      {
+        title: 'Como funciona el recorte por chroma key',
+        paragraphs: [
+          'Esta herramienta elimina fondos de color solido o casi solido directamente en el navegador. Sube una imagen, elige el color chroma y compara recortes ligero, equilibrado y fuerte.',
+          'El algoritmo mide la distancia de cada pixel al color elegido. Los pixels parecidos se vuelven transparentes, los bordes reciben una transicion suave y los pixels lejanos quedan opacos.',
+        ],
+      },
+      {
+        title: 'Control de threshold, softness y despill',
+        paragraphs: [
+          'Threshold define que tan agresiva sera la remocion del color elegido. Aumentalo si quedan restos de fondo; reducelo si el corte esta comiendo cabello, tela o detalles finos.',
+          'Softness controla la transicion del borde. Despill ayuda a reducir manchas verdes, magenta o blancas en bordes semi-transparentes.',
+        ],
+        list: [
+          'Recorte ligero para detalles finos y bordes delicados.',
+          'Recorte equilibrado como primer intento.',
+          'Recorte fuerte cuando quedan halos o restos de fondo.',
+          'Color automatico por esquinas cuando el fondo esta limpio en los bordes.',
+        ],
+      },
+      {
+        title: 'PNG transparente en dimensiones originales',
+        paragraphs: [
+          'Los previews se reducen solo para comparar rapido. Al descargar, el recorte se aplica nuevamente sobre las dimensiones originales.',
+          'La salida es PNG transparente, formato que conserva el canal alpha y evita recompresion JPEG en la exportacion.',
+        ],
+      },
+      {
+        title: 'Limites practicos',
+        paragraphs: [
+          'Chroma key funciona mejor con fondo bien iluminado y separacion clara entre sujeto y color de fondo.',
+          'Escenas complejas, sombras fuertes, reflejos o colores del sujeto parecidos al fondo pueden requerir edicion manual.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Quita cualquier fondo automaticamente?',
+        answer:
+          'Esta enfocada en fondos chroma como verde, magenta, blanco o un color solido manual. Fondos reales complejos pueden requerir edicion manual.',
+      },
+      {
+        question: '¿La descarga reduce la resolucion?',
+        answer:
+          'No. El preview se reduce para ir rapido, pero la descarga procesa la imagen original y mantiene ancho y alto originales.',
+      },
+      {
+        question: '¿Las imagenes se suben al servidor?',
+        answer:
+          'No por defecto. Upload, preview, recorte y generacion del PNG ocurren localmente en tu navegador.',
+      },
+      {
+        question: '¿Que formato de salida genera?',
+        answer:
+          'La herramienta exporta PNG con transparencia porque PNG conserva el canal alpha.',
+      },
+      {
+        question: '¿Funciona en celular?',
+        answer:
+          'Si. El layout es responsive, aunque imagenes muy grandes pueden tardar en celulares con poca memoria.',
       },
     ],
   },

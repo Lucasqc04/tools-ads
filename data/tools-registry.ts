@@ -89,6 +89,11 @@ import {
   imageCompressionIntro,
 } from '@/data/content/image-compression';
 import {
+  backgroundRemoverContentBlocks,
+  backgroundRemoverFaq,
+  backgroundRemoverIntro,
+} from '@/data/content/remover-fundo-imagem';
+import {
   invisibleCharacterContentBlocks,
   invisibleCharacterFaq,
   invisibleCharacterIntro,
@@ -837,6 +842,39 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: imageCompressionFaq,
     contentBlocks: imageCompressionContentBlocks,
     relatedToolIds: ['image-converter', 'image-to-base64', 'video-compression'],
+  },
+  {
+    id: 'remover-fundo-imagem',
+    slug: 'remover-fundo-imagem',
+    name: 'Removedor de Fundo de Imagem por Chroma Key',
+    shortDescription:
+      'Remova fundo verde, magenta, branco ou cor manual de imagens e baixe PNG transparente no tamanho original.',
+    category: 'documents',
+    primaryKeyword: 'remover fundo de imagem chroma key',
+    secondaryKeywords: [
+      'remover fundo verde de imagem',
+      'remover fundo magenta de imagem',
+      'remover fundo branco de imagem',
+      'chroma key online',
+      'imagem png transparente',
+      'remover background de foto',
+      'recorte chroma key gratis',
+      'remover fundo sem perder qualidade',
+      'transparent background png',
+      'removedor de fundo online sem cadastro',
+    ],
+    searchIntent:
+      'Usuarios que precisam remover fundo chroma de uma imagem e baixar PNG transparente sem reduzir a resolucao.',
+    seoTitle:
+      'Remover Fundo de Imagem Chroma Key Online | PNG Transparente',
+    seoDescription:
+      'Remova fundo verde, magenta, branco ou manual de imagens, compare 3 recortes e baixe PNG transparente no tamanho original.',
+    h1: 'Remover Fundo de Imagem por Chroma Key e Baixar PNG Transparente',
+    intro: backgroundRemoverIntro,
+    canonicalPath: '/tools/remover-fundo-imagem',
+    faq: backgroundRemoverFaq,
+    contentBlocks: backgroundRemoverContentBlocks,
+    relatedToolIds: ['image-converter', 'image-compression', 'image-to-base64', 'image-color-extractor'],
   },
   {
     id: 'video-compression',
@@ -1687,6 +1725,7 @@ type LocalizableToolId =
   | 'image-to-base64'
   | 'image-converter'
   | 'image-compression'
+  | 'remover-fundo-imagem'
   | 'video-compression'
   | 'qr-code-generator'
   | 'sorteador'
@@ -1712,6 +1751,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'image-to-base64',
   'image-converter',
   'image-compression',
+  'remover-fundo-imagem',
   'video-compression',
   'qr-code-generator',
   'sorteador',
