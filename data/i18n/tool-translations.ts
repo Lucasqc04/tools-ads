@@ -282,12 +282,14 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
     ],
   },
   'html-viewer': {
-    name: 'HTML Viewer with CSS and JS',
+    name: 'HTML Editor with Preview and Console',
     shortDescription:
-      'Preview HTML with CSS/JS support, fullscreen mode, and multi-file upload for free, with no sign-up and no login.',
+      'Edit HTML, CSS, and JavaScript with CodeMirror, sandbox preview, captured console, templates, file upload, and .html export.',
     primaryKeyword: 'free html viewer online',
     secondaryKeywords: [
       'html css js preview',
+      'html editor with console',
+      'online html editor',
       'sandbox html viewer',
       'test html online',
       'html viewer no sign up',
@@ -295,38 +297,45 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       'fullscreen html preview',
     ],
     searchIntent:
-      'Developers and creators who need a fast HTML preview tool with script/style support, no sign-up, and local rendering.',
-    seoTitle: 'Free HTML Viewer Online | CSS, JS, Fullscreen, No Sign-Up',
+      'Developers and creators who need a fast HTML editor with script/style preview, console debugging, no sign-up, and local rendering.',
+    seoTitle: 'Free HTML Editor Online | CSS, JS, Console, Preview',
     seoDescription:
-      'Paste HTML, CSS, and JavaScript or upload multiple files to render in sandbox for free, with no sign-up, no login, and fullscreen mode.',
-    h1: 'Free HTML Viewer with CSS, JS, Fullscreen, and No Sign-Up',
+      'Edit HTML, CSS, and JavaScript online with CodeMirror, sandbox preview, captured console logs, templates, file upload, and .html export.',
+    h1: 'Free HTML Editor with CSS, JS, Preview, and Console',
     intro:
-      'Dedicated HTML Viewer to render and test markup with styles and scripts using local browser processing.',
+      'Dedicated HTML editor to write, preview, debug, and export markup with styles and scripts using local browser processing.',
     contentBlocks: [
       {
-        title: 'Focused HTML preview workflow',
+        title: 'CodeMirror editor with real preview',
         paragraphs: [
-          'This page is dedicated to HTML rendering only, without PDF or JSON panels in the same interface. The result is a cleaner workflow focused on web snippet testing and page behavior checks.',
-          'You can run CSS and JavaScript inside a sandboxed preview to validate interactions before shipping changes.',
+          'This page is no longer a basic viewer only. It is an HTML playground with CodeMirror tabs for HTML, CSS, and JavaScript, syntax highlighting, line numbers, lint gutter, and a sandboxed iframe preview.',
+          'The workflow is designed for developers, creators, and students who need to test snippets, components, landing sections, forms, tables, or HTML email layouts without opening a full IDE.',
         ],
       },
       {
-        title: 'Single editor and multi-file modes',
+        title: 'Captured console, simple checks, and templates',
         paragraphs: [
-          'Use editor mode to paste HTML/CSS/JS directly, or switch to file mode to upload multiple source files at once.',
-          'When multiple HTML files are uploaded, you can choose the main entry file while keeping shared CSS and JS bundled for preview.',
+          'The console captures console.log, console.warn, console.error, runtime errors, and rejected promises from inside the preview. That makes it easier to see whether a snippet is actually running.',
+          'The tool also includes simple checks for possibly unclosed HTML tags, CSS braces, and JavaScript syntax. Quick templates cover starter components, landing sections, HTML email, forms, and tables.',
         ],
         list: [
-          'Paste HTML, CSS, and JS directly.',
-          'Upload many .html, .css, and .js files in one batch.',
-          'Choose the main HTML file for rendering.',
-          'Open output in fullscreen or new tab.',
+          'Edit HTML, CSS, and JS in dedicated tabs.',
+          'Run preview manually or with auto-run.',
+          'Capture iframe logs and errors in the tool console.',
+          'Use templates and export the final HTML file.',
+        ],
+      },
+      {
+        title: 'Files, responsive preview, and export',
+        paragraphs: [
+          'If your code is split across files, upload .html, .css, and .js files to populate the editor. The selected HTML entry is rendered with the combined CSS and JavaScript bundle.',
+          'Desktop, tablet, and mobile preview widths help you check responsive behavior. You can copy the final document, download a complete .html file, open the preview in a new tab, or switch to fullscreen.',
         ],
       },
       {
         title: 'Safety and practical limits',
         paragraphs: [
-          'Scripts are executed inside a sandboxed iframe preview. Run trusted code only when testing external snippets.',
+          'Scripts execute inside a sandboxed iframe preview. Run trusted code only when testing external snippets.',
           'For larger test setups, opening preview in a new tab can improve screen usage and debugging comfort.',
         ],
       },
@@ -335,22 +344,27 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       {
         question: 'Can this HTML Viewer execute JavaScript?',
         answer:
-          'Yes. JavaScript execution is supported inside the sandbox preview for practical front-end testing.',
+          'Yes. JavaScript runs inside the sandbox preview, and logs, warnings, runtime errors, and rejected promises are captured in the tool console.',
+      },
+      {
+        question: 'Does the editor have syntax highlighting and line numbers?',
+        answer:
+          'Yes. It uses CodeMirror for HTML, CSS, and JavaScript editing with line numbers, highlighting, and lint gutter support.',
       },
       {
         question: 'Can I upload separate HTML, CSS, and JS files?',
         answer:
-          'Yes. Multi-file mode supports .html, .css, and .js uploads, including multiple HTML entry options.',
+          'Yes. You can import multiple .html, .css, and .js files, choose the main HTML file, and keep editing in the playground.',
       },
       {
-        question: 'Is fullscreen mode available?',
+        question: 'Can I export the final HTML?',
         answer:
-          'Yes. You can switch preview to fullscreen and also open it in a dedicated browser tab.',
+          'Yes. You can copy the generated document or download a complete .html file with the CSS and JavaScript injected.',
       },
       {
         question: 'Is my code uploaded to a server?',
         answer:
-          'No by default. Rendering runs locally in your browser for privacy and low latency.',
+          'No by default. Editing and rendering run locally in your browser for privacy and low latency.',
       },
     ],
   },
@@ -903,11 +917,13 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
     ],
   },
   'invisible-character': {
-    name: 'Invisible Character for Games',
+    name: 'Invisible Character for Fortnite and Games',
     shortDescription:
-      'Copy and generate invisible characters for games and social networks with 2, 3, and 4-character options plus Unicode detection.',
-    primaryKeyword: 'invisible character free fire',
+      'Copy invisible characters for Fortnite, Free Fire, COD Mobile, Discord, and more with nickname variants, Unicode detection, and remover.',
+    primaryKeyword: 'invisible character fortnite',
     secondaryKeywords: [
+      'fortnite invisible name',
+      'blank name fortnite',
       'free fire invisible name',
       'invisible name cod mobile',
       'invisible text discord',
@@ -916,56 +932,57 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       'invisible character for games',
     ],
     searchIntent:
-      'Players and social users who want to copy and test hidden Unicode patterns for display names and nicknames.',
-    seoTitle: 'Invisible Character for Free Fire, COD, and Discord | Copy and Paste',
+      'Players and social users who want to copy and test hidden Unicode patterns for Fortnite display names, game nicknames, and profiles.',
+    seoTitle: 'Invisible Character for Fortnite and Games | Copy and Paste',
     seoDescription:
-      'Copy invisible characters and generate 2-4 character invisible names for Free Fire, COD Mobile, Discord, and more platforms.',
-    h1: 'Invisible Character for Games (Free Fire, COD, Discord, and more)',
+      'Copy invisible character for Fortnite, generate 20 nickname variants, inspect Unicode codes, and remove hidden characters from pasted text.',
+    h1: 'Invisible Character for Fortnite, Free Fire, COD, and Discord',
     intro:
-      'Generate and copy invisible names with multiple Unicode patterns, platform-focused recommendations, and hidden character detection.',
+      'Generate and copy invisible names with platform recommendations, 20 ready-to-test variants, Unicode matrix, detector, and remover.',
     contentBlocks: [
       {
-        title: 'How this invisible character tool improves success rate',
+        title: 'Fortnite-focused invisible name workflow',
         paragraphs: [
-          'Instead of giving only one blank character, this tool offers multiple patterns and platform-focused testing flows. This helps when one validator blocks single characters but accepts short combinations.',
-          'You can quickly try 2, 3, and 4-character outputs to match nickname length rules in games and social apps.',
+          'This tool is built for searches like invisible character Fortnite, blank Fortnite name, invisible username, and hidden Unicode copy paste. Choose Fortnite or another platform, copy the recommended sequence, then test alternate positions around a base nickname.',
+          'Because validators change over time, the tool avoids promising one permanent character. Instead, it provides combinations with Hangul Filler, Braille Blank, and zero-width characters so you can test multiple options quickly.',
         ],
       },
       {
-        title: 'Built for gaming and social profile workflows',
+        title: '20 nickname variants and Unicode matrix',
         paragraphs: [
-          'The page covers Free Fire, COD Mobile, Discord, and many other platforms with different validation behavior.',
-          'Each dedicated platform page includes keyword-focused content, recommended starting pattern, and compatibility guidance.',
+          'Type a base nickname and generate variants with the invisible sequence before the name, after the name, between letters or words, around the name, or as an invisible-only output.',
+          'The Unicode matrix lists individual characters such as U+3164, U+2800, U+200B, U+200C, U+200D, U+2060, and U+FEFF so you can copy a single code point or load it into the generator.',
         ],
         list: [
-          'Copy a single invisible character for quick tests.',
-          'Generate invisible names with 2, 3, or 4 characters.',
-          'Switch to alternate Unicode combinations when blocked.',
-          'Use the detector to inspect hidden characters in pasted text.',
+          'Copy one invisible character for quick tests.',
+          'Generate 20 ready-to-copy nickname variants.',
+          'Switch Unicode combinations when one option is blocked.',
+          'Inspect and remove hidden characters from pasted text.',
         ],
       },
       {
-        title: 'Privacy and practical limitations',
+        title: 'Detector, remover, and practical limits',
         paragraphs: [
-          'Generation and detection run locally in your browser by default, without mandatory backend upload.',
-          'No pattern guarantees 100% approval because platforms can change validation rules at any time.',
+          'Paste any nickname into the detector to count visible and invisible characters, inspect code points, and generate a clean version without hidden Unicode.',
+          'Generation and detection run locally in your browser by default. No pattern guarantees 100% approval because platforms can change validation rules at any time.',
         ],
       },
     ],
     faq: [
       {
-        question: 'Does invisible nickname always work?',
+        question: 'Which invisible character works best for Fortnite?',
         answer:
-          'Not always. It depends on each platform current validator. That is why testing multiple combinations is essential.',
+          'There is no fixed guarantee, but zero-width combinations, Hangul Filler (U+3164), and Braille Blank (U+2800) are good first options. Test the 2 to 4-character variants.',
       },
       {
-        question: 'Can I generate 2, 3, and 4-character invisible names?',
+        question: 'Can I generate many invisible nickname variants?',
         answer:
-          'Yes. The tool includes dedicated actions to generate short invisible variants quickly.',
+          'Yes. Enter a base nickname and copy variants with the invisible sequence before, after, between letters or words, around the name, or by itself.',
       },
       {
-        question: 'Is this tool free?',
-        answer: 'Yes. You can copy and generate invisible text for free, with no mandatory sign-up.',
+        question: 'Can I detect and remove hidden characters?',
+        answer:
+          'Yes. The detector lists hidden Unicode code points and creates a cleaned version of the pasted text.',
       },
       {
         question: 'Are my inputs sent to a server?',
@@ -2437,12 +2454,14 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
     ],
   },
   'html-viewer': {
-    name: 'Visor HTML con CSS y JS',
+    name: 'Editor HTML con Vista Previa y Consola',
     shortDescription:
-      'Previsualiza HTML con soporte para CSS/JS, pantalla completa y multiarchivo, gratis, sin registro y sin login.',
+      'Edita HTML, CSS y JavaScript con CodeMirror, preview sandbox, consola capturada, templates, importacion de archivos y exportacion .html.',
     primaryKeyword: 'html viewer online gratis',
     secondaryKeywords: [
       'preview html css js',
+      'editor html con consola',
+      'editor html online',
       'visor html sandbox',
       'probar html online',
       'visor html sin registro',
@@ -2450,39 +2469,46 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       'html preview pantalla completa',
     ],
     searchIntent:
-      'Desarrolladores y creadores que necesitan una herramienta de previsualización HTML rápida, gratis y sin registro.',
-    seoTitle: 'Visor HTML Online Gratis | CSS, JS y Pantalla Completa',
+      'Desarrolladores y creadores que necesitan un editor HTML rapido con preview, consola, CSS/JS, gratis y sin registro.',
+    seoTitle: 'Editor HTML Online Gratis | CSS, JS, Consola y Preview',
     seoDescription:
-      'Pega HTML, CSS y JavaScript o sube múltiples archivos para renderizar en sandbox, gratis, sin registro y sin login.',
-    h1: 'Visor HTML Gratis con CSS, JS y Sin Registro',
+      'Edita HTML, CSS y JavaScript online con CodeMirror, preview sandbox, logs de consola, templates, archivos y exportacion .html.',
+    h1: 'Editor HTML Gratis con CSS, JS, Preview y Consola',
     intro:
-      'Herramienta dedicada para renderizar y probar HTML con estilos y scripts usando procesamiento local en el navegador.',
+      'Herramienta dedicada para escribir, previsualizar, depurar y exportar HTML con estilos y scripts usando procesamiento local.',
     contentBlocks: [
       {
-        title: 'Flujo enfocado solo en HTML',
+        title: 'Editor CodeMirror con preview real',
         paragraphs: [
-          'Esta página está dedicada exclusivamente al visor HTML, sin mezclar paneles de PDF o JSON en la misma interfaz.',
-          'Puedes ejecutar CSS y JavaScript dentro de un preview con sandbox para validar interacciones y comportamiento visual.',
+          'Esta pagina ya no es solo un visor basico. Es un playground HTML con abas CodeMirror para HTML, CSS y JavaScript, resaltado de sintaxis, numeros de linea, gutter de lint y preview en iframe sandbox.',
+          'El flujo sirve para desarrolladores, creadores y estudiantes que necesitan probar snippets, componentes, landing sections, formularios, tablas o emails HTML sin abrir una IDE completa.',
         ],
       },
       {
-        title: 'Modo editor y modo archivos',
+        title: 'Consola capturada, chequeos simples y templates',
         paragraphs: [
-          'En modo editor puedes pegar HTML, CSS y JS directamente. En modo archivos puedes subir varios archivos en un solo lote.',
-          'Si subes varios HTML, eliges el archivo principal para renderizar mientras compartes CSS y JS comunes.',
+          'La consola captura console.log, console.warn, console.error, errores runtime y promises rechazadas desde el preview. Esto ayuda a ver si el snippet realmente se ejecuto.',
+          'La herramienta tambien incluye chequeos simples para tags HTML posiblemente abiertos, llaves CSS y sintaxis JavaScript. Los templates rapidos cubren componente inicial, landing, email HTML, formulario y tabla.',
         ],
         list: [
-          'Pegar código HTML/CSS/JS.',
-          'Subir múltiples archivos .html, .css y .js.',
-          'Elegir el HTML principal.',
-          'Abrir preview en pantalla completa o nueva pestaña.',
+          'Editar HTML, CSS y JS en abas dedicadas.',
+          'Ejecutar preview manualmente o con auto-run.',
+          'Capturar logs y errores del iframe.',
+          'Usar templates y exportar el HTML final.',
         ],
       },
       {
-        title: 'Seguridad y límites prácticos',
+        title: 'Archivos, preview responsivo y exportacion',
         paragraphs: [
-          'Los scripts se ejecutan dentro del iframe con sandbox. Usa código confiable cuando pruebes snippets externos.',
-          'Para escenarios grandes, abrir en nueva pestaña mejora espacio de trabajo y lectura.',
+          'Si tu codigo esta dividido en archivos, importa .html, .css y .js para poblar el editor. El HTML seleccionado se renderiza con CSS y JavaScript combinados.',
+          'Los anchos desktop, tablet y mobile ayudan a revisar responsividad. Puedes copiar el documento final, descargar un .html completo, abrir en nueva pestana o usar pantalla completa.',
+        ],
+      },
+      {
+        title: 'Seguridad y limites practicos',
+        paragraphs: [
+          'Los scripts se ejecutan dentro del iframe con sandbox. Usa codigo confiable cuando pruebes snippets externos.',
+          'Para escenarios grandes, abrir en nueva pestana mejora espacio de trabajo y lectura.',
         ],
       },
     ],
@@ -2490,22 +2516,27 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       {
         question: '¿Este visor HTML ejecuta JavaScript?',
         answer:
-          'Sí. El preview permite ejecutar scripts dentro del sandbox para pruebas reales de front-end.',
+          'Si. El preview ejecuta scripts dentro del sandbox y envia logs, warnings, errores runtime y promises rechazadas a la consola.',
+      },
+      {
+        question: '¿El editor tiene resaltado y numeros de linea?',
+        answer:
+          'Si. Usa CodeMirror para editar HTML, CSS y JavaScript con numeros de linea, resaltado y gutter de chequeo.',
       },
       {
         question: '¿Puedo subir archivos separados de HTML, CSS y JS?',
         answer:
-          'Sí. El modo multiarchivo soporta .html, .css y .js, incluyendo múltiples HTML de entrada.',
+          'Si. Puedes importar multiples .html, .css y .js, elegir el HTML principal y seguir editando en el playground.',
       },
       {
-        question: '¿Tiene modo pantalla completa?',
+        question: '¿Puedo exportar el HTML final?',
         answer:
-          'Sí. Puedes activar pantalla completa y también abrir el resultado en nueva pestaña.',
+          'Si. Puedes copiar el documento generado o descargar un .html completo con CSS y JavaScript inyectados.',
       },
       {
-        question: '¿Se sube mi código a un servidor?',
+        question: '¿Se sube mi codigo a un servidor?',
         answer:
-          'No por defecto. El renderizado ocurre localmente en tu navegador.',
+          'No por defecto. La edicion y el renderizado ocurren localmente en tu navegador.',
       },
     ],
   },
@@ -3058,11 +3089,13 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
     ],
   },
   'invisible-character': {
-    name: 'Caracter Invisible para Juegos',
+    name: 'Caracter Invisible para Fortnite y Juegos',
     shortDescription:
-      'Copia y genera caracteres invisibles para juegos y redes sociales con opciones de 2, 3 y 4 caracteres y detector Unicode.',
-    primaryKeyword: 'caracter invisible free fire',
+      'Copia caracteres invisibles para Fortnite, Free Fire, COD Mobile, Discord y mas con variantes de nickname, detector Unicode y removedor.',
+    primaryKeyword: 'caracter invisible fortnite',
     secondaryKeywords: [
+      'nombre invisible fortnite',
+      'blank name fortnite',
       'nombre invisible free fire',
       'nombre invisible cod mobile',
       'texto invisible discord',
@@ -3071,57 +3104,57 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       'invisible username generator',
     ],
     searchIntent:
-      'Jugadores y usuarios de redes sociales que buscan patrones Unicode invisibles para nombre visible o nickname.',
-    seoTitle: 'Caracter Invisible para Free Fire, COD y Discord | Copiar y Pegar',
+      'Jugadores y usuarios de redes sociales que buscan patrones Unicode invisibles para nombre de Fortnite, nickname gamer y perfiles.',
+    seoTitle: 'Caracter Invisible para Fortnite y Juegos | Copiar y Pegar',
     seoDescription:
-      'Copia caracter invisible y genera nombres invisibles de 2 a 4 caracteres para Free Fire, COD Mobile, Discord y otras plataformas.',
-    h1: 'Caracter Invisible para Juegos (Free Fire, COD, Discord y mas)',
+      'Copia caracter invisible para Fortnite, genera 20 variantes de nickname, inspecciona Unicode y elimina caracteres ocultos.',
+    h1: 'Caracter Invisible para Fortnite, Free Fire, COD y Discord',
     intro:
-      'Genera y copia nombres invisibles con multiples patrones Unicode, recomendaciones por plataforma y detector de caracteres ocultos.',
+      'Genera y copia nombres invisibles con recomendaciones por plataforma, 20 variantes listas, matriz Unicode, detector y removedor.',
     contentBlocks: [
       {
-        title: 'Por que esta herramienta funciona mejor que listas simples',
+        title: 'Flujo enfocado en nombre invisible para Fortnite',
         paragraphs: [
-          'En lugar de un solo caracter vacio, aqui tienes varios patrones y acciones de prueba por plataforma. Esto mejora el resultado cuando el validador bloquea caracteres individuales.',
-          'Puedes probar rapido variantes de 2, 3 y 4 caracteres para adaptarte a reglas de longitud minima.',
+          'Esta herramienta cubre busquedas como caracter invisible Fortnite, blank name Fortnite, nombre invisible y Unicode oculto copiar. Elige Fortnite u otra plataforma, copia la secuencia recomendada y prueba posiciones alrededor del nickname.',
+          'Como los validadores cambian con el tiempo, la herramienta no promete un caracter permanente. En su lugar ofrece combinaciones con Hangul Filler, Braille Blank y zero-width para probar opciones rapidamente.',
         ],
       },
       {
-        title: 'Flujo pensado para juegos y redes sociales',
+        title: '20 variantes de nickname y matriz Unicode',
         paragraphs: [
-          'La herramienta cubre Free Fire, COD Mobile, Discord y decenas de plataformas con comportamientos de validacion diferentes.',
-          'Cada pagina dedicada incluye contenido SEO especifico, recomendacion inicial y nota de compatibilidad.',
+          'Escribe un nickname base y genera variantes con la secuencia invisible antes del nombre, despues, entre letras o palabras, alrededor del nombre o como salida invisible.',
+          'La matriz Unicode lista caracteres individuales como U+3164, U+2800, U+200B, U+200C, U+200D, U+2060 y U+FEFF para copiar un codigo o cargarlo en el generador.',
         ],
         list: [
-          'Copiar un caracter invisible unico.',
-          'Generar nombre invisible con 2, 3 o 4 caracteres.',
-          'Cambiar combinacion Unicode cuando falle.',
-          'Usar detector para auditar texto pegado.',
+          'Copiar un caracter invisible para pruebas rapidas.',
+          'Generar 20 variantes de nickname listas para copiar.',
+          'Cambiar combinacion Unicode cuando una opcion falle.',
+          'Inspeccionar y eliminar caracteres ocultos de texto pegado.',
         ],
       },
       {
-        title: 'Privacidad y limites reales',
+        title: 'Detector, removedor y limites reales',
         paragraphs: [
-          'La generacion y deteccion se ejecutan localmente en el navegador por defecto, sin envio obligatorio al servidor.',
-          'Ningun patron garantiza 100% de aprobacion, porque los filtros pueden cambiar con actualizaciones.',
+          'Pega cualquier nickname en el detector para contar caracteres visibles e invisibles, revisar puntos Unicode y crear una version limpia sin caracteres ocultos.',
+          'La generacion y deteccion se ejecutan localmente en el navegador por defecto. Ningun patron garantiza 100% de aprobacion, porque los filtros pueden cambiar con actualizaciones.',
         ],
       },
     ],
     faq: [
       {
-        question: '¿El nombre invisible siempre funciona?',
+        question: '¿Que caracter invisible funciona mejor para Fortnite?',
         answer:
-          'No siempre. Depende del validador actual de cada plataforma. Por eso conviene probar varias combinaciones.',
+          'No hay garantia fija, pero combinaciones zero-width, Hangul Filler (U+3164) y Braille Blank (U+2800) son buenas primeras opciones. Prueba variantes de 2 a 4 caracteres.',
       },
       {
-        question: '¿Puedo generar nombres invisibles con 2, 3 y 4 caracteres?',
+        question: '¿Puedo generar muchas variantes de nickname invisible?',
         answer:
-          'Si. La herramienta trae botones directos para generar variantes cortas en un clic.',
+          'Si. Escribe un nickname base y copia variantes con la secuencia invisible antes, despues, entre letras o palabras, alrededor del nombre o sola.',
       },
       {
-        question: '¿La herramienta es gratis?',
+        question: '¿Puedo detectar y eliminar caracteres ocultos?',
         answer:
-          'Si. Puedes copiar y generar texto invisible gratis y sin registro obligatorio.',
+          'Si. El detector lista los puntos Unicode ocultos y crea una version limpia del texto pegado.',
       },
       {
         question: '¿Los datos se envian al servidor?',

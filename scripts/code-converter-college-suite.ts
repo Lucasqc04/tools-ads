@@ -100,10 +100,13 @@ function runCmd(command: string, cwd: string): CompileResult {
   try {
     execSync(command, { cwd, stdio: 'pipe', maxBuffer: 1024 * 1024 * 8, timeout: 15_000 });
     return { ok: true };
-  } catch (error: any) {
-    const stderr = (error?.stderr ? String(error.stderr) : '').trim();
-    const stdout = (error?.stdout ? String(error.stdout) : '').trim();
-    return { ok: false, message: (stderr || stdout || String(error?.message || 'unknown error')).slice(0, 700) };
+  } catch (error: unknown) {
+    const commandError = error as { stderr?: unknown; stdout?: unknown; message?: unknown };
+    const stderr = (commandError.stderr ? String(commandError.stderr) : '').trim();
+    const stdout = (commandError.stdout ? String(commandError.stdout) : '').trim();
+    const message = commandError.message ? String(commandError.message) : 'unknown error';
+
+    return { ok: false, message: (stderr || stdout || message).slice(0, 700) };
   }
 }
 

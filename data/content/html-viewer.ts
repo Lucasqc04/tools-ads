@@ -1,27 +1,34 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const htmlViewerIntro =
-  'Visualizador de HTML com suporte a CSS e JavaScript, modo editor e upload de múltiplos arquivos, com preview em tela cheia ou nova aba.';
+  'Editor HTML online com CodeMirror, preview sandbox, CSS, JavaScript, console capturado, templates rápidos, upload de arquivos e exportação .html.';
 
 export const htmlViewerContentBlocks: ContentBlock[] = [
   {
-    title: 'Editor completo para HTML, CSS e JS',
+    title: 'Editor HTML com highlight, abas e preview real',
     paragraphs: [
-      'Esta página é dedicada exclusivamente ao HTML Viewer. Você pode testar marcação, estilos e scripts no mesmo fluxo, com renderização rápida para validar componentes e páginas antes de publicar.',
-      'O preview roda em iframe com sandbox e permite execução de JavaScript para cenários de prototipação e debugging visual, sem misturar com funções de PDF ou JSON na mesma interface.',
+      'Esta página deixou de ser apenas um visualizador simples e virou um playground de HTML. Você edita HTML, CSS e JavaScript em abas com highlight de sintaxe, números de linha, gutter de lint e um preview renderizado em iframe sandbox.',
+      'O fluxo é pensado para desenvolvedores, criadores e estudantes que precisam testar snippets, componentes, landing sections, tabelas, formulários ou emails HTML sem abrir uma IDE completa.',
     ],
   },
   {
-    title: 'Suporte a múltiplos arquivos (.html, .css, .js)',
+    title: 'Console, checagens simples e templates prontos',
     paragraphs: [
-      'Se você separa estrutura, estilo e script em arquivos diferentes, pode subir todos de uma vez. O viewer permite escolher o HTML principal e combina os CSS/JS no preview para simular um ambiente real.',
-      'Esse fluxo também ajuda quando você trabalha com mais de um HTML na mesma tarefa, como variações de páginas, templates de e-mail ou protótipos de telas.',
+      'O console captura console.log, console.warn, console.error, erros de runtime e promises rejeitadas emitidas dentro do preview. Isso ajuda a descobrir rapidamente se o JavaScript do snippet quebrou ou se um evento não está disparando.',
+      'A ferramenta também inclui checagens simples para tags HTML possivelmente abertas, chaves CSS e sintaxe JavaScript. Para acelerar o início, use templates de componente, landing section, email HTML, formulário e tabela.',
     ],
     list: [
-      'Cole código direto no modo editor.',
-      'Carregue vários arquivos no modo arquivos.',
-      'Selecione o HTML de entrada principal.',
-      'Teste em tela cheia ou abra em nova aba.',
+      'Editar HTML, CSS e JS em abas dedicadas.',
+      'Executar preview manualmente ou com auto-run.',
+      'Capturar logs e erros do iframe sandbox.',
+      'Usar templates rápidos e exportar o HTML final.',
+    ],
+  },
+  {
+    title: 'Arquivos, viewport e exportação',
+    paragraphs: [
+      'Se você separa estrutura, estilo e script em arquivos diferentes, pode subir .html, .css e .js de uma vez. O HTML principal popula o editor e os arquivos CSS/JS são combinados para o preview.',
+      'O preview tem modos desktop, tablet e mobile para validar responsividade sem sair da página. Depois do teste, você pode copiar o documento final, baixar um .html completo, abrir em nova aba ou usar tela cheia.',
     ],
   },
   {
@@ -37,26 +44,26 @@ export const htmlViewerFaq: FaqItem[] = [
   {
     question: 'Posso executar JavaScript no HTML Viewer?',
     answer:
-      'Sim. O preview suporta scripts dentro do iframe com sandbox para você testar comportamento visual e interações.',
+      'Sim. O preview executa scripts dentro do iframe sandbox e envia logs, warnings e erros para o console da própria ferramenta.',
+  },
+  {
+    question: 'O editor tem highlight e números de linha?',
+    answer:
+      'Sim. A interface usa CodeMirror com highlight para HTML, CSS e JavaScript, números de linha e gutter de checagem.',
   },
   {
     question: 'Consigo usar arquivos separados de HTML, CSS e JS?',
     answer:
-      'Sim. Você pode enviar múltiplos arquivos e escolher qual HTML será usado como entrada principal.',
+      'Sim. Você pode importar múltiplos arquivos .html, .css e .js, escolher o HTML principal e continuar editando no playground.',
   },
   {
-    question: 'Há opção de tela cheia?',
+    question: 'Posso baixar ou copiar o HTML final?',
     answer:
-      'Sim. O visualizador possui botão de tela cheia e também opção para abrir o resultado em nova aba.',
+      'Sim. A ferramenta permite copiar o documento final com CSS/JS injetados ou baixar um arquivo .html completo.',
   },
   {
     question: 'Essa ferramenta envia meu código para servidor?',
     answer:
-      'Não por padrão. O processamento e a renderização acontecem localmente no navegador.',
-  },
-  {
-    question: 'Funciona no celular?',
-    answer:
-      'Sim. O layout é responsivo e mantém as ações principais acessíveis em telas pequenas.',
+      'Não por padrão. O processamento, a edição e a renderização acontecem localmente no navegador.',
   },
 ];

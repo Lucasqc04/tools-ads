@@ -13,7 +13,7 @@ import { Cs2ToolSuite } from '@/components/tools/cs2-tool-suite';
 import { FakePersonGeneratorTool } from '@/components/tools/fake-person-generator-tool';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
-import { HtmlViewerTool } from '@/components/tools/html-viewer-tool';
+import { LazyHtmlViewerTool } from '@/components/tools/lazy-html-viewer-tool';
 import { MarkdownEditorTool } from '@/components/tools/markdown-editor-tool';
 import { ImageConversionLinks } from '@/components/tools/image-conversion-links';
 import { ImageConverterTool } from '@/components/tools/image-converter-tool';
@@ -419,7 +419,7 @@ const getContextualLandingContent = (
 
 const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'bitcoin-wallet': ({ locale }) => <BitcoinWalletTool locale={locale} />,
-  'html-viewer': ({ locale }) => <HtmlViewerTool locale={locale} />,
+  'html-viewer': ({ locale }) => <LazyHtmlViewerTool locale={locale} />,
   'markdown-editor': ({ locale }) => <MarkdownEditorTool locale={locale} />,
   'json-formatter': ({ locale }) => <JsonFormatterTool locale={locale} />,
   'csv-viewer': ({ locale }) => <CsvViewerTool locale={locale} />,

@@ -243,12 +243,12 @@ const buildContentBlocks = (
       {
         title: 'How to test safely before finalizing your nickname',
         paragraphs: [
-          `This page is optimized for ${categoryLabel} workflows. Always test 1 pattern, then 2, 3, and 4-character variants if validation fails.`,
+          `This page is optimized for ${categoryLabel} workflows. Start with the recommended pattern, then use the 20 ready-to-copy variants if validation fails.`,
           platformHint,
         ],
         list: [
           'Copy a predefined invisible sequence.',
-          'Try a 2, 3, or 4-character generated nickname.',
+          'Generate variants before, after, between, around, or without a visible nickname.',
           'Paste into the target profile field and validate.',
           'If blocked, switch to another sequence and retry.',
         ],
@@ -256,8 +256,8 @@ const buildContentBlocks = (
       {
         title: 'Why this page is different from generic lists',
         paragraphs: [
-          'Instead of showing only one blank character, this page combines game-specific recommendations, pattern generation, and invisible character detection.',
-          'Use the detector to inspect incoming text and confirm whether hidden Unicode characters are present before you save your profile name.',
+          'Instead of showing only one blank character, this page combines game-specific recommendations, nickname generation, a Unicode matrix, and invisible character detection.',
+          'Use the detector to inspect incoming text, confirm whether hidden Unicode characters are present, and copy a cleaned version before you save your profile name.',
         ],
       },
     ];
@@ -275,12 +275,12 @@ const buildContentBlocks = (
       {
         title: 'Como probar sin perder tiempo',
         paragraphs: [
-          `Esta pagina esta orientada a ${categoryLabel}. Si falla, prueba variantes de 2, 3 y 4 caracteres invisibles.`,
+          `Esta pagina esta orientada a ${categoryLabel}. Empieza con el patron recomendado y usa las 20 variantes listas si la validacion falla.`,
           platformHint,
         ],
         list: [
           'Copia una secuencia invisible de la lista.',
-          'Genera un nombre con 2, 3 o 4 caracteres.',
+          'Genera variantes antes, despues, entre letras, alrededor o sin nickname visible.',
           'Pega en el campo del juego o red social y valida.',
           'Si bloquea, cambia de secuencia y vuelve a intentar.',
         ],
@@ -288,8 +288,8 @@ const buildContentBlocks = (
       {
         title: 'Ventaja SEO y uso real',
         paragraphs: [
-          'Esta pagina evita contenido generico: trae contexto por plataforma, recomendaciones dinamicas y detector de caracteres invisibles.',
-          'Asi mejoras tasa de acierto y reduces intentos fallidos al editar tu perfil.',
+          'Esta pagina evita contenido generico: trae contexto por plataforma, recomendaciones dinamicas, matriz Unicode, generador de variantes y detector de caracteres invisibles.',
+          'Asi mejoras tasa de acierto, puedes limpiar texto oculto y reduces intentos fallidos al editar tu perfil.',
         ],
       },
     ];
@@ -306,12 +306,12 @@ const buildContentBlocks = (
     {
       title: 'Como usar sem perder tempo com tentativa e erro',
       paragraphs: [
-        `Esta pagina foi otimizada para ${categoryLabel}. Se 1 padrao falhar, teste variacoes com 2, 3 e 4 caracteres invisiveis em sequencia.`,
+        `Esta pagina foi otimizada para ${categoryLabel}. Comece pelo padrao recomendado e use as 20 variantes prontas se a validacao falhar.`,
         platformHint,
       ],
       list: [
         'Copie um caractere ou combinacao invisivel pronta.',
-        'Gere automaticamente um nome invisivel com 2, 3 ou 4 caracteres.',
+        'Gere variantes antes, depois, entre letras, em volta ou sem nickname visivel.',
         'Cole no campo do perfil e valide.',
         'Se bloquear, troque o padrao e teste novamente.',
       ],
@@ -319,8 +319,8 @@ const buildContentBlocks = (
     {
       title: 'Por que esta pagina rankeia melhor que listas genericas',
       paragraphs: [
-        'Aqui voce nao recebe apenas uma lista estatica: ha recomendacao por plataforma, gerador de padroes e detector de caracteres invisiveis para auditoria.',
-        'Esse contexto reduz erro operacional, melhora UX e aumenta chance de sucesso em jogos e redes sociais com filtros variaveis.',
+        'Aqui voce nao recebe apenas uma lista estatica: ha recomendacao por plataforma, gerador de variantes, matriz Unicode e detector de caracteres invisiveis para auditoria.',
+        'Esse contexto reduz erro operacional, permite limpar texto oculto, melhora UX e aumenta chance de sucesso em jogos e redes sociais com filtros variaveis.',
       ],
     },
   ];
@@ -336,7 +336,7 @@ const buildFaq = (locale: AppLocale, platform: InvisiblePlatform): FaqItem[] => 
       {
         question: 'Why does one invisible character fail but multiple can pass?',
         answer:
-          'Many validators enforce minimum length or block specific Unicode points. Using 2-4 characters can bypass strict single-char checks.',
+          'Many validators enforce minimum length or block specific Unicode points. Testing multiple ready variants can bypass strict single-char checks.',
       },
       {
         question: 'Is this tool free?',
@@ -359,7 +359,7 @@ const buildFaq = (locale: AppLocale, platform: InvisiblePlatform): FaqItem[] => 
       {
         question: '¿Por que 1 caracter falla y 2 o 3 pueden pasar?',
         answer:
-          'Muchos validadores exigen longitud minima o bloquean puntos Unicode especificos. Secuencias de 2-4 caracteres suelen mejorar el resultado.',
+          'Muchos validadores exigen longitud minima o bloquean puntos Unicode especificos. Probar varias variantes listas suele mejorar el resultado.',
       },
       {
         question: '¿La herramienta es gratis?',
@@ -380,7 +380,7 @@ const buildFaq = (locale: AppLocale, platform: InvisiblePlatform): FaqItem[] => 
     {
       question: 'Por que 1 caractere invisivel falha e 2 ou 3 podem passar?',
       answer:
-        'Muitos validadores exigem tamanho minimo de nickname ou bloqueiam pontos Unicode isolados. Usar sequencias de 2 a 4 caracteres pode aumentar a taxa de aprovacao.',
+        'Muitos validadores exigem tamanho minimo de nickname ou bloqueiam pontos Unicode isolados. Testar varias variantes prontas pode aumentar a taxa de aprovacao.',
     },
     {
       question: 'Essa ferramenta de caractere invisivel e gratis?',
@@ -445,9 +445,9 @@ const buildLocalizedContentForPlatform = (
   if (locale === 'en') {
     return {
       title: `Invisible Character for ${platform.name} (Copy and Paste)`,
-      intro: `Copy and generate invisible nicknames for ${platform.name} with multiple Unicode options and compatibility testing flows.`,
+      intro: `Copy and generate invisible nicknames for ${platform.name} with 20 ready variants, Unicode options, detector, and compatibility testing flows.`,
       seoTitle: `Invisible Character for ${platform.name} | Copy and Paste`,
-      seoDescription: `Copy invisible character for ${platform.name}, generate 2-4 character variants, and test Unicode patterns that may pass nickname validation. Current compatibility: ${compatibilityLabel}.`,
+      seoDescription: `Copy invisible character for ${platform.name}, generate 20 nickname variants, inspect Unicode, and test patterns that may pass validation. Current compatibility: ${compatibilityLabel}.`,
       keywords,
       contentBlocks: buildContentBlocks('en', platform),
       faq: buildFaq('en', platform),
@@ -457,9 +457,9 @@ const buildLocalizedContentForPlatform = (
   if (locale === 'es') {
     return {
       title: `Caracter Invisible para ${platform.name} (Copiar y Pegar)`,
-      intro: `Copia y genera nombres invisibles para ${platform.name} con multiples patrones Unicode y pruebas por validacion.`,
+      intro: `Copia y genera nombres invisibles para ${platform.name} con 20 variantes listas, patrones Unicode, detector y pruebas por validacion.`,
       seoTitle: `Caracter Invisible para ${platform.name} | Copiar y Pegar`,
-      seoDescription: `Copia caracter invisible para ${platform.name}, genera variantes con 2 a 4 caracteres y prueba secuencias Unicode que pueden pasar validacion. Compatibilidad actual: ${compatibilityLabel}.`,
+      seoDescription: `Copia caracter invisible para ${platform.name}, genera 20 variantes de nickname, inspecciona Unicode y prueba patrones que pueden pasar validacion. Compatibilidad actual: ${compatibilityLabel}.`,
       keywords,
       contentBlocks: buildContentBlocks('es', platform),
       faq: buildFaq('es', platform),
@@ -468,9 +468,9 @@ const buildLocalizedContentForPlatform = (
 
   return {
     title: `Caractere Invisivel para ${platform.name} (Copiar e Colar)`,
-    intro: `Copie e gere nome invisivel para ${platform.name} com multiplos padroes Unicode e fluxo de teste por validacao.`,
+    intro: `Copie e gere nome invisivel para ${platform.name} com 20 variantes prontas, padroes Unicode, detector e fluxo de teste por validacao.`,
     seoTitle: `Caractere Invisivel para ${platform.name} | Copiar e Colar`,
-    seoDescription: `Copie caractere invisivel para ${platform.name}, gere variacoes com 2, 3 e 4 caracteres e teste combinacoes Unicode que podem passar na validacao. Compatibilidade atual: ${compatibilityLabel}.`,
+    seoDescription: `Copie caractere invisivel para ${platform.name}, gere 20 variantes de nickname, inspecione Unicode e teste combinacoes que podem passar na validacao. Compatibilidade atual: ${compatibilityLabel}.`,
     keywords,
     contentBlocks: buildContentBlocks('pt-br', platform),
     faq: buildFaq('pt-br', platform),

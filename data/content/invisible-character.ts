@@ -1,34 +1,34 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const invisibleCharacterIntro =
-  'Copie e gere caractere invisivel para Free Fire, COD Mobile, Discord e dezenas de outras plataformas, com teste de combinacoes Unicode e detector de texto oculto.';
+  'Copie caractere invisivel para Fortnite, Free Fire, COD Mobile, Discord e outras plataformas, com gerador de nickname, 20 variantes prontas e detector Unicode.';
 
 export const invisibleCharacterContentBlocks: ContentBlock[] = [
   {
-    title: 'Como usar caractere invisivel em jogos e redes sociais',
+    title: 'Como usar caractere invisivel no Fortnite e em outros jogos',
     paragraphs: [
-      'Esta ferramenta foi feita para quem busca nome invisivel, espaco invisivel e letra invisivel para jogos online e redes sociais sem depender de geradores limitados. Voce escolhe a plataforma, copia padroes prontos e testa variacoes com 2, 3 e 4 caracteres.',
-      'O objetivo e reduzir tentativa e erro, porque cada validador possui regras diferentes. Um jogo pode bloquear 1 caractere e aceitar sequencias maiores com combinacoes de Hangul Filler e zero-width.',
+      'Esta ferramenta foi reforçada para quem procura caractere invisivel para Fortnite, nome invisivel e espaco invisivel sem depender de listas estáticas. Você escolhe a plataforma, copia o padrão recomendado e pode inserir o invisível antes, depois, entre letras ou em volta do nickname.',
+      'O objetivo é reduzir tentativa e erro, porque cada validador possui regras diferentes. No Fortnite e em outros jogos, um único caractere pode ser bloqueado, enquanto combinações de 2, 3 ou 4 caracteres Unicode podem passar em alguns cenários.',
     ],
   },
   {
-    title: 'Lista real de caracteres invisiveis e combinacoes praticas',
+    title: 'Gerador de nickname e 20 variantes prontas',
     paragraphs: [
-      'A base inclui caracteres invisiveis de uso comum em comunidades gamer: U+3164 (Hangul Filler), U+2800 (Braille Blank), U+200B, U+200C, U+200D, U+2060 e U+FEFF, alem de espacos especiais que podem funcionar em alguns contextos.',
-      'Tambem oferecemos combinacoes prontas para melhorar compatibilidade em validadores mais rigidos, incluindo padroes hibridos e variacoes semi-invisiveis.',
+      'Além do botão de copiar invisível, o gerador permite digitar um nickname base e criar variações com posições diferentes. A lista de 20 variantes prontas combina tamanhos e padrões para você testar rapidamente no campo de nome do jogo.',
+      'Esse formato é melhor que entregar apenas um caractere vazio, porque dá alternativas imediatas quando a plataforma normaliza espaços, remove zero-width ou exige tamanho mínimo.',
     ],
     list: [
-      'Copiar invisivel unico para testes rapidos.',
-      'Gerar nome invisivel com 2, 3 e 4 caracteres.',
-      'Trocar combinacao com um clique para bypass de filtros.',
-      'Analisar texto colado com detector de Unicode invisivel.',
+      'Copiar invisível único para testes rápidos.',
+      'Gerar nickname com invisível antes, depois, entre letras ou em volta.',
+      'Copiar 20 variantes prontas para Fortnite e outros jogos.',
+      'Trocar combinação Unicode com um clique quando uma opção falhar.',
     ],
   },
   {
-    title: 'SEO por plataforma e pagina dedicada por jogo',
+    title: 'Matriz Unicode, detector e removedor de invisíveis',
     paragraphs: [
-      'A ferramenta possui pagina principal e paginas dedicadas por plataforma para buscas como caractere invisivel free fire, nome invisivel cod mobile, nick invisivel discord e variacoes internacionais.',
-      'Cada pagina especifica adiciona contexto, recomendacao inicial e aviso de compatibilidade, evitando conteudo raso e melhorando cobertura long-tail para Google.',
+      'A base inclui caracteres invisíveis usados em comunidades gamer: U+3164 (Hangul Filler), U+2800 (Braille Blank), U+200B, U+200C, U+200D, U+2060 e U+FEFF, além de espaços especiais que podem funcionar em alguns contextos.',
+      'O detector permite colar qualquer nickname para ver quantos caracteres invisíveis existem, quais pontos Unicode foram encontrados e qual seria a versão limpa sem caracteres ocultos.',
     ],
   },
   {
@@ -42,19 +42,19 @@ export const invisibleCharacterContentBlocks: ContentBlock[] = [
 
 export const invisibleCharacterFaq: FaqItem[] = [
   {
-    question: 'Qual caractere invisivel funciona melhor em jogos?',
+    question: 'Qual caractere invisivel funciona melhor no Fortnite?',
     answer:
-      'Os mais usados sao Hangul Filler (U+3164) e combinacoes com zero-width. Em muitos casos, 2 ou mais caracteres funcionam melhor que apenas 1.',
+      'Não existe garantia fixa, mas combinações com zero-width, Hangul Filler (U+3164) e Braille Blank (U+2800) são boas primeiras opções. Teste as variantes de 2 a 4 caracteres.',
   },
   {
-    question: 'Essa ferramenta e gratis?',
+    question: 'Posso gerar várias variações de nickname invisível?',
     answer:
-      'Sim. Voce pode copiar e gerar nome invisivel gratuitamente, sem cadastro obrigatorio.',
+      'Sim. Digite um nickname base e use a lista de 20 variantes prontas para copiar opções com invisível antes, depois, entre letras ou em volta do nome.',
   },
   {
-    question: 'Free Fire, COD Mobile e Discord aceitam nome invisivel?',
+    question: 'Free Fire, COD Mobile, Fortnite e Discord aceitam nome invisivel?',
     answer:
-      'Podem aceitar, mas depende da validacao atual de cada plataforma. Por isso a ferramenta oferece multiplos padroes para teste rapido.',
+      'Podem aceitar em alguns casos, mas depende da validação atual de cada plataforma. Por isso a ferramenta oferece múltiplos padrões para teste rápido.',
   },
   {
     question: 'Como saber se meu texto tem caractere invisivel?',
