@@ -11,6 +11,10 @@ import { TextDiffTool } from '@/components/tools/text-diff-tool';
 import { OpenGraphPreviewTool } from '@/components/tools/open-graph-preview-tool';
 import { Cs2ToolSuite } from '@/components/tools/cs2-tool-suite';
 import { FakePersonGeneratorTool } from '@/components/tools/fake-person-generator-tool';
+import {
+  frontOnlyToolSoftwareCategory,
+  renderFrontOnlyToolUi,
+} from '@/components/tools/front-only-tool-router';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
 import { LazyHtmlViewerTool } from '@/components/tools/lazy-html-viewer-tool';
@@ -204,6 +208,7 @@ const invisibleSectionByLocale: Record<AppLocale, { title: string; description: 
 };
 
 const softwareCategoryByToolSlug: Record<string, string> = {
+  ...frontOnlyToolSoftwareCategory,
   'crypto-unit-converter': 'FinanceApplication',
   'bitcoin-wallet': 'FinanceApplication',
   'html-viewer': 'DeveloperApplication',
@@ -568,6 +573,14 @@ const resolveSpecialAliasUi = (
           defaultInput={universalPreset?.exampleInput}
         />
       ),
+      focusedSection: null,
+    };
+  }
+
+  const frontOnlyToolUi = renderFrontOnlyToolUi(aliasPage.toolSlug, context.locale);
+  if (frontOnlyToolUi) {
+    return {
+      toolUi: frontOnlyToolUi,
       focusedSection: null,
     };
   }

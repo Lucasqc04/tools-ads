@@ -232,6 +232,11 @@ import {
   codeConverterIntro,
   getCodeConverterContent,
 } from '@/data/content/code-converter';
+import {
+  frontOnlyToolSeeds,
+  getFrontOnlyToolContent,
+  isFrontOnlyToolId,
+} from '@/data/content/front-only-tool-suite';
 import { getToolTranslation } from '@/data/i18n/tool-translations';
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ToolDefinition } from '@/types/tool';
@@ -370,6 +375,29 @@ const buildCs2ToolDefinition = (id: Cs2ToolId): ToolDefinition => {
 };
 
 const cs2ToolDefinitions: ToolDefinition[] = cs2ToolIds.map((id) => buildCs2ToolDefinition(id));
+
+const frontOnlyToolDefinitions: ToolDefinition[] = frontOnlyToolSeeds.map((tool) => {
+  const ptBrContent = tool.content['pt-br'];
+
+  return {
+    id: tool.id,
+    slug: tool.slug,
+    name: ptBrContent.name,
+    shortDescription: ptBrContent.shortDescription,
+    category: tool.category,
+    primaryKeyword: ptBrContent.primaryKeyword,
+    secondaryKeywords: ptBrContent.secondaryKeywords,
+    searchIntent: ptBrContent.searchIntent,
+    seoTitle: ptBrContent.seoTitle,
+    seoDescription: ptBrContent.seoDescription,
+    h1: ptBrContent.h1,
+    intro: ptBrContent.intro,
+    canonicalPath: `/tools/${tool.slug}`,
+    faq: ptBrContent.faq,
+    contentBlocks: ptBrContent.contentBlocks,
+    relatedToolIds: tool.relatedToolIds,
+  };
+});
 
 export const toolsRegistry: ToolDefinition[] = [
   {
@@ -940,6 +968,7 @@ export const toolsRegistry: ToolDefinition[] = [
     contentBlocks: qrCodeGeneratorContentBlocks,
     relatedToolIds: ['image-converter', 'json-formatter'],
   },
+  ...frontOnlyToolDefinitions,
   {
     id: 'transfer',
     slug: 'transfer',
@@ -1947,6 +1976,16 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'transfer') {
     const localized = getTransferContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (isFrontOnlyToolId(tool.id)) {
+    const localized = getFrontOnlyToolContent(tool.id, locale);
 
     return {
       ...tool,
