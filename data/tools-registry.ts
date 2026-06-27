@@ -114,6 +114,12 @@ import {
   csvViewerIntro,
 } from '@/data/content/csv-viewer';
 import {
+  dataConverterContentBlocks,
+  dataConverterFaq,
+  dataConverterIntro,
+  getDataConverterContent,
+} from '@/data/content/data-converter';
+import {
   textDiffContentBlocks,
   textDiffFaq,
   textDiffIntro,
@@ -587,6 +593,34 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: csvViewerFaq,
     contentBlocks: csvViewerContentBlocks,
     relatedToolIds: ['json-formatter', 'conversor-universal', 'contador-de-caracteres'],
+  },
+  {
+    id: 'data-converter',
+    slug: 'data-converter',
+    name: 'Conversor de JSON, SQL, XLSX, CSV e TSV',
+    shortDescription:
+      'Converta dados tabulares entre JSON, SQL INSERT, XLSX, CSV e TSV com colar, upload, deteccao automatica e processamento local.',
+    category: 'dev',
+    primaryKeyword: 'conversor json csv xlsx online',
+    secondaryKeywords: [
+      'converter json para csv',
+      'converter csv para json',
+      'xlsx para json online',
+      'sql insert para csv',
+      'csv para sql insert',
+      'tsv para xlsx',
+    ],
+    searchIntent:
+      'Usuarios, analistas e devs que precisam transformar dados tabulares entre formatos comuns de planilha, API e banco de dados sem instalar software.',
+    seoTitle: 'Conversor JSON, CSV, XLSX, TSV e SQL Online | Sem Cadastro',
+    seoDescription:
+      'Cole ou envie arquivo para converter JSON, SQL INSERT, XLSX, CSV e TSV no navegador. Detecta formato automaticamente e exporta para planilha ou texto.',
+    h1: 'Conversor de JSON, SQL, XLSX, CSV e TSV Online',
+    intro: dataConverterIntro,
+    canonicalPath: '/tools/data-converter',
+    faq: dataConverterFaq,
+    contentBlocks: dataConverterContentBlocks,
+    relatedToolIds: ['csv-viewer', 'json-formatter', 'conversor-universal', 'html-viewer'],
   },
   {
     id: 'text-diff',
@@ -1976,6 +2010,16 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'transfer') {
     const localized = getTransferContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'data-converter') {
+    const localized = getDataConverterContent(locale);
 
     return {
       ...tool,
