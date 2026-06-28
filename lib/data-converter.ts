@@ -36,6 +36,12 @@ const EMPTY_TABLE: ParsedDataTable = {
 };
 
 const sqlIdentifierPattern = /^[a-z_][a-z0-9_]*$/i;
+const sqlIdentifierTokenPattern =
+  String.raw`(?:"(?:""|[^"])+"|` +
+  String.raw`'(?:''|[^'])+'|` +
+  String.raw`\[(?:[^\]])+\]|` +
+  String.raw`[a-z0-9_-]+)`;
+const sqlQualifiedIdentifierPattern = String.raw`${sqlIdentifierTokenPattern}(?:\s*\.\s*${sqlIdentifierTokenPattern})*`;
 
 const normalizeTextInput = (input: string): string =>
   input
@@ -239,7 +245,19 @@ const splitSqlList = (input: string): string[] => {
 };
 
 const normalizeSqlIdentifier = (value: string): string =>
-  value.trim().replace(/^["'`\[]|["'`\]]$/g, '').trim();
+  value
+    .trim()
+    .split('.')
+    .map((part) =>
+      part
+        .trim()
+        .replace(/^["'`\[]|["'`\]]$/g, '')
+        .replaceAll('""', '"')
+        .replaceAll("''", "'")
+        .trim(),
+    )
+    .filter(Boolean)
+    .join('.');
 
 const parseSqlValue = (value: string): DataCell => {
   const trimmed = value.trim();
@@ -334,8 +352,10 @@ const extractSqlTuples = (valuesInput: string): string[][] => {
 };
 
 const parseSqlToTable = (input: string): ParsedDataTable => {
-  const insertPattern =
-    /insert\s+into\s+([`"\[]?[a-z0-9_.-]+[`"\]]?)\s*(?:\(([\s\S]*?)\))?\s+values\s+([\s\S]*?)(?=;\s*insert\s+into|;\s*$|$)/gi;
+  const insertPattern = new RegExp(
+    String.raw`insert\s+into\s+(${sqlQualifiedIdentifierPattern})\s*(?:\(([\s\S]*?)\))?\s+values\s+([\s\S]*?)(?=;\s*insert\s+into|;\s*$|$)`,
+    'gi',
+  );
   const rows: DataCell[][] = [];
   let headers: string[] | null = null;
   let tableName = '';
