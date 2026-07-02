@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
+import { AudioEditorTool } from '@/components/tools/audio-editor-tool';
 import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-tool';
 import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
 import { CompoundInterestTool } from '@/components/tools/compound-interest-tool';
@@ -228,6 +229,7 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'image-compression': 'UtilitiesApplication',
   'remover-fundo-imagem': 'UtilitiesApplication',
   'video-compression': 'UtilitiesApplication',
+  'extrair-audio-de-video': 'MultimediaApplication',
   'qr-code-generator': 'UtilitiesApplication',
   'gerador-link-whatsapp-telegram': 'UtilitiesApplication',
   sorteador: 'UtilitiesApplication',
@@ -441,6 +443,7 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'image-compression': ({ locale }) => <ImageCompressionTool locale={locale} />,
   'remover-fundo-imagem': ({ locale }) => <ChromaBackgroundRemoverTool locale={locale} />,
   'video-compression': ({ locale }) => <VideoCompressionTool locale={locale} />,
+  'extrair-audio-de-video': ({ locale }) => <AudioEditorTool locale={locale} />,
   'qr-code-generator': ({ locale }) => <QrCodeGeneratorTool locale={locale} />,
   'gerador-link-whatsapp-telegram': ({ locale }) => (
     <WhatsAppTelegramLinkGeneratorTool locale={locale} />

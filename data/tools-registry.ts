@@ -104,6 +104,11 @@ import {
   videoCompressionIntro,
 } from '@/data/content/video-compression';
 import {
+  audioEditorContentBlocks,
+  audioEditorFaq,
+  audioEditorIntro,
+} from '@/data/content/audio-editor';
+import {
   jsonFormatterContentBlocks,
   jsonFormatterFaq,
   jsonFormatterIntro,
@@ -969,7 +974,41 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/video-compression',
     faq: videoCompressionFaq,
     contentBlocks: videoCompressionContentBlocks,
-    relatedToolIds: ['image-compression', 'image-converter'],
+    relatedToolIds: ['extrair-audio-de-video', 'image-compression', 'image-converter'],
+  },
+  {
+    id: 'extrair-audio-de-video',
+    slug: 'extrair-audio-de-video',
+    name: 'Editor de Audio e Extrator de Audio de Video',
+    shortDescription:
+      'Extraia audio de videos, importe audios ou URLs diretas de midia, corte pela waveform, renomeie trechos e baixe clips separados em MP3, WAV, M4A, OGG ou WEBM.',
+    category: 'documents',
+    primaryKeyword: 'extrair audio de video online gratis',
+    secondaryKeywords: [
+      'editor de audio online',
+      'cortar audio online',
+      'extrair mp3 de video',
+      'separar audio de video',
+      'waveform editor online',
+      'baixar audio de video em mp3',
+      'recortar mp3 online',
+      'editor de audio sem cadastro',
+      'extrair som de video para jogo',
+      'importar audio por url',
+      'audio cutter online',
+    ],
+    searchIntent:
+      'Usuarios que precisam extrair sons especificos de videos ou audios, recortar pela onda sonora e baixar trechos separados sem instalar editor pesado.',
+    seoTitle:
+      'Extrair Audio de Video Online Gratis | Editor com Waveform e MP3',
+    seoDescription:
+      'Extraia audio de video, importe MP3/WAV/M4A ou URLs diretas, corte pela waveform, ouca trechos, renomeie clips e baixe audios separados. Gratis e sem cadastro.',
+    h1: 'Extrair Audio de Video Online com Editor de Waveform e Cortes em MP3',
+    intro: audioEditorIntro,
+    canonicalPath: '/tools/extrair-audio-de-video',
+    faq: audioEditorFaq,
+    contentBlocks: audioEditorContentBlocks,
+    relatedToolIds: ['video-compression', 'image-converter', 'image-compression', 'markdown-editor'],
   },
   {
     id: 'qr-code-generator',
@@ -1790,6 +1829,7 @@ type LocalizableToolId =
   | 'image-compression'
   | 'remover-fundo-imagem'
   | 'video-compression'
+  | 'extrair-audio-de-video'
   | 'qr-code-generator'
   | 'sorteador'
   | 'calculadora-juros-compostos'
@@ -1816,6 +1856,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'image-compression',
   'remover-fundo-imagem',
   'video-compression',
+  'extrair-audio-de-video',
   'qr-code-generator',
   'sorteador',
   'calculadora-juros-compostos',

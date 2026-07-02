@@ -36,6 +36,7 @@ type ToolId =
   | 'image-compression'
   | 'remover-fundo-imagem'
   | 'video-compression'
+  | 'extrair-audio-de-video'
   | 'qr-code-generator'
   | 'sorteador'
   | 'calculadora-juros-compostos'
@@ -1801,6 +1802,98 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Does it work on mobile devices?',
         answer:
           'Yes, but large files may take longer on lower-power devices.',
+      },
+    ],
+  },
+  'extrair-audio-de-video': {
+    name: 'Audio Editor and Video Audio Extractor',
+    shortDescription:
+      'Extract audio from videos, import audio files or direct media URLs, cut by waveform, rename clips, and download separate MP3, WAV, M4A, OGG, or WEBM files.',
+    primaryKeyword: 'extract audio from video online free',
+    secondaryKeywords: [
+      'online audio editor',
+      'cut audio online',
+      'extract mp3 from video',
+      'separate audio from video',
+      'waveform audio editor',
+      'download audio from video as mp3',
+      'trim mp3 online',
+      'audio editor no sign up',
+      'extract sound from video for game',
+      'audio cutter online',
+    ],
+    searchIntent:
+      'Users who need to extract specific sounds from video or audio files, cut them on a waveform, preview clips, and download separated assets.',
+    seoTitle: 'Extract Audio from Video Online Free | Waveform Editor and MP3',
+    seoDescription:
+      'Extract audio from video, import MP3/WAV/M4A or direct media URLs, cut on a waveform, preview clips, rename files, and download separated audio. Free, no sign-up.',
+    h1: 'Extract Audio from Video Online with Waveform Editor and MP3 Cuts',
+    intro:
+      'Extract audio from videos, import audio files or direct media URLs, cut by waveform, rename clips, and download each part separately as MP3 or other formats.',
+    contentBlocks: [
+      {
+        title: 'Extract audio from video and edit in the same workflow',
+        paragraphs: [
+          'This tool is built for people who need to capture specific sounds from a video and turn them into usable audio files. Upload a video, import a direct media file URL, extract the audio track, and open the waveform editor to select the exact moment you need.',
+          'You can also import audio directly. That is useful when you already have an MP3, WAV, M4A, OGG, or FLAC file and only need to trim, rename, and export smaller clips.',
+        ],
+      },
+      {
+        title: 'Waveform cuts, preview, and per-clip export',
+        paragraphs: [
+          'After a track is loaded, the page renders the sound wave so you can find peaks, pauses, speech, and effects faster. Click to place the cursor, drag on the waveform to create selections, and use clip handles to move or resize cuts precisely.',
+          'Every cut can have its own filename before download. This keeps game effects, voice lines, ambient sounds, samples, short music beds, and reference clips organized.',
+        ],
+        list: [
+          'Extract audio from video as MP3, WAV, M4A, OGG, or WEBM.',
+          'Import direct audio or video URLs when the origin server allows browser access.',
+          'Try to split internal audio streams when a file contains multiple tracks.',
+          'Preview the selected range before exporting.',
+          'Create several cuts and download them as separate files.',
+          'Rename each clip before download.',
+        ],
+      },
+      {
+        title: 'Real use cases',
+        paragraphs: [
+          'A game developer can upload a phone video, find the clean part of a water, door, footstep, or impact sound, and download a separated MP3 for testing in a project.',
+          'Content creators can remove dead space at the start and end of a recording, split an interview into smaller sections, or extract audio from a short video for future edits.',
+        ],
+      },
+      {
+        title: 'Privacy, formats, and limits',
+        paragraphs: [
+          'The editor is designed for local browser processing. Waveform generation, preview, and FFmpeg export run on the user device, with no automatic file upload by this tool.',
+          'Direct URLs depend on CORS and origin-server permission. Links from platforms such as YouTube, X/Twitter, and Facebook are not downloaded directly by the tool; use a local file that you have permission to edit.',
+          'Long or heavy files can require significant memory and CPU. On low-power phones, work with smaller videos or export fewer cuts at a time. Some old or niche formats depend on browser FFmpeg support.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I extract audio from a video and download MP3?',
+        answer:
+          'Yes. Upload the video or import a direct file URL, extract the audio, and choose MP3 as the output format before exporting clips.',
+      },
+      {
+        question: 'Can I import an existing audio file and only trim it?',
+        answer:
+          'Yes. The tool accepts audio files such as MP3, WAV, M4A, OGG, and FLAC for cutting, previewing, and exporting separate clips.',
+      },
+      {
+        question: 'Can it separate internal audio tracks from a video?',
+        answer:
+          'The tool tries to split audio streams when the file contains more than one internal audio track. If everything is mixed into a single track, it cannot perfectly isolate voice, music, or effects without AI separation.',
+      },
+      {
+        question: 'Are my files uploaded to a server?',
+        answer:
+          'No by default. Tool processing runs in the browser with local APIs and client-side FFmpeg.',
+      },
+      {
+        question: 'Can I paste a YouTube, X/Twitter, or Facebook link?',
+        answer:
+          'Not for direct downloads from those platforms. The tool accepts local uploads and direct media-file URLs when the server allows browser access.',
       },
     ],
   },
@@ -3733,6 +3826,98 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿Funciona en celular?',
         answer:
           'Si, pero archivos grandes pueden tardar mas en dispositivos con menor potencia.',
+      },
+    ],
+  },
+  'extrair-audio-de-video': {
+    name: 'Editor de Audio y Extractor de Audio de Video',
+    shortDescription:
+      'Extrae audio de videos, importa audios o URLs directas de media, corta por waveform, renombra clips y descarga archivos separados en MP3, WAV, M4A, OGG o WEBM.',
+    primaryKeyword: 'extraer audio de video online gratis',
+    secondaryKeywords: [
+      'editor de audio online',
+      'cortar audio online',
+      'extraer mp3 de video',
+      'separar audio de video',
+      'editor waveform audio',
+      'descargar audio de video en mp3',
+      'recortar mp3 online',
+      'editor de audio sin registro',
+      'extraer sonido de video para juego',
+      'audio cutter online',
+    ],
+    searchIntent:
+      'Usuarios que necesitan extraer sonidos especificos de videos o audios, cortar por onda sonora, escuchar clips y descargar archivos separados.',
+    seoTitle: 'Extraer Audio de Video Online Gratis | Editor Waveform y MP3',
+    seoDescription:
+      'Extrae audio de video, importa MP3/WAV/M4A o URLs directas de media, corta en la waveform, escucha clips, renombra archivos y descarga audios separados. Gratis y sin registro.',
+    h1: 'Extraer Audio de Video Online con Editor Waveform y Cortes en MP3',
+    intro:
+      'Extrae audio de videos, importa archivos de audio o URLs directas de media, corta por waveform, renombra clips y descarga cada parte por separado en MP3 u otros formatos.',
+    contentBlocks: [
+      {
+        title: 'Extraer audio de video y editar en el mismo flujo',
+        paragraphs: [
+          'Esta herramienta sirve para quien necesita capturar sonidos especificos de un video y convertirlos en archivos de audio utilizables. Sube un video, importa una URL directa de archivo de media, extrae la pista de audio y abre el editor con waveform para seleccionar el momento exacto.',
+          'Tambien puedes importar audio directamente. Es util cuando ya tienes un MP3, WAV, M4A, OGG o FLAC y solo quieres recortar, renombrar y exportar clips menores.',
+        ],
+      },
+      {
+        title: 'Cortes por waveform, preview y exportacion por clip',
+        paragraphs: [
+          'Despues de cargar una pista, la pagina muestra la onda sonora para encontrar picos, silencios, voces y efectos con mas rapidez. Haz clic para ubicar el cursor, arrastra en la waveform para crear selecciones y usa las asas del clip para mover o redimensionar cortes con precision.',
+          'Cada corte puede tener su propio nombre antes de descargar. Esto ayuda a organizar efectos de juego, frases, sonidos ambiente, samples, musica corta y clips de referencia.',
+        ],
+        list: [
+          'Extraer audio de video en MP3, WAV, M4A, OGG o WEBM.',
+          'Importar URLs directas de audio o video cuando el servidor de origen permite acceso desde el navegador.',
+          'Intentar separar streams internas cuando el archivo contiene multiples pistas.',
+          'Escuchar el rango seleccionado antes de exportar.',
+          'Crear varios cortes y descargarlos como archivos separados.',
+          'Renombrar cada clip antes de descargar.',
+        ],
+      },
+      {
+        title: 'Usos practicos',
+        paragraphs: [
+          'Un desarrollador de juego puede subir un video del celular, encontrar un sonido limpio de agua, puerta, pasos o impacto, y descargar un MP3 separado para probarlo en el proyecto.',
+          'Creadores de contenido pueden quitar espacios muertos al inicio y final de una grabacion, dividir una entrevista en partes menores o extraer audio de un video corto para ediciones futuras.',
+        ],
+      },
+      {
+        title: 'Privacidad, formatos y limites',
+        paragraphs: [
+          'El editor esta pensado para procesamiento local en el navegador. La waveform, el preview y la exportacion con FFmpeg corren en el dispositivo del usuario, sin subida automatica de archivos por esta herramienta.',
+          'Las URLs directas dependen de CORS y del permiso del servidor de origen. Los enlaces de plataformas como YouTube, X/Twitter y Facebook no se descargan directamente con la herramienta; usa un archivo local que tengas permiso para editar.',
+          'Archivos largos o pesados pueden requerir bastante memoria y CPU. En celulares simples, trabaja con videos menores o exporta pocos cortes por vez. Algunos formatos antiguos o muy especificos dependen del soporte de FFmpeg en el navegador.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Puedo extraer audio de un video y descargar MP3?',
+        answer:
+          'Si. Sube el video o importa una URL directa de archivo, extrae el audio y elige MP3 como formato de salida antes de exportar los clips.',
+      },
+      {
+        question: '¿Puedo importar un audio listo y solo recortarlo?',
+        answer:
+          'Si. La herramienta acepta audios como MP3, WAV, M4A, OGG y FLAC para cortar, escuchar y exportar clips separados.',
+      },
+      {
+        question: '¿Puede separar pistas internas de audio de un video?',
+        answer:
+          'La herramienta intenta separar streams de audio cuando el archivo tiene mas de una pista interna. Si el video tiene todo mezclado en una unica pista, no puede aislar voz, musica o efectos perfectamente sin separacion por inteligencia artificial.',
+      },
+      {
+        question: '¿Los archivos se suben a servidor?',
+        answer:
+          'No por defecto. El procesamiento ocurre en el navegador con APIs locales y FFmpeg del cliente.',
+      },
+      {
+        question: '¿Puedo pegar un enlace de YouTube, X/Twitter o Facebook?',
+        answer:
+          'No para descarga directa de esas plataformas. La herramienta acepta archivos locales y URLs directas de media cuando el servidor permite acceso desde el navegador.',
       },
     ],
   },

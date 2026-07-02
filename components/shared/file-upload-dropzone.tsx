@@ -1,8 +1,8 @@
 'use client';
 
 import { type AppLocale } from '@/lib/i18n/config';
-import { FileText, Image as ImageIcon, Upload, Video, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { FileAudio, FileText, Image as ImageIcon, Upload, Video, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDropzone, type Accept, type FileRejection } from 'react-dropzone';
 
 type FileUploadDropzoneProps = Readonly<{
@@ -36,6 +36,9 @@ type DropzoneUi = {
   compactOpenLabel: string;
   compactCloseLabel: string;
   compactHint: string;
+  addMoreHint: string;
+  dropMoreHere: string;
+  removeFile: (name: string) => string;
 };
 
 const uiByLocale: Record<AppLocale, DropzoneUi> = {
@@ -56,6 +59,9 @@ const uiByLocale: Record<AppLocale, DropzoneUi> = {
     compactOpenLabel: 'Mostrar upload completo',
     compactCloseLabel: 'Ocultar upload completo',
     compactHint: 'Clique para abrir a area de arrastar e soltar',
+    addMoreHint: 'Clique ou arraste para adicionar mais',
+    dropMoreHere: 'Solte para adicionar',
+    removeFile: (name) => `Remover ${name}`,
   },
   en: {
     dropFilesHere: (target) => `Drop ${target} here...`,
@@ -74,6 +80,9 @@ const uiByLocale: Record<AppLocale, DropzoneUi> = {
     compactOpenLabel: 'Show full upload area',
     compactCloseLabel: 'Hide full upload area',
     compactHint: 'Click to expand drag-and-drop upload',
+    addMoreHint: 'Click or drag to add more',
+    dropMoreHere: 'Drop to add',
+    removeFile: (name) => `Remove ${name}`,
   },
   es: {
     dropFilesHere: (target) => `Suelta ${target} aqui...`,
@@ -92,6 +101,9 @@ const uiByLocale: Record<AppLocale, DropzoneUi> = {
     compactOpenLabel: 'Mostrar carga completa',
     compactCloseLabel: 'Ocultar carga completa',
     compactHint: 'Haz clic para abrir el area de arrastrar y soltar',
+    addMoreHint: 'Haz clic o arrastra para agregar mas',
+    dropMoreHere: 'Suelta para agregar',
+    removeFile: (name) => `Quitar ${name}`,
   },
 };
 
@@ -230,7 +242,35 @@ const getFileIcon = (file: File) => {
     return Video;
   }
 
+  if (file.type.startsWith('audio/')) {
+    return FileAudio;
+  }
+
   return FileText;
+};
+
+const getPreviewFileKey = (file: File, index: number): string =>
+  `${file.name}-${file.size}-${file.lastModified}-${index}`;
+
+const getPreviewKind = (file: File): 'image' | 'video' | 'audio' | 'file' => {
+  if (file.type.startsWith('image/')) {
+    return 'image';
+  }
+
+  if (file.type.startsWith('video/')) {
+    return 'video';
+  }
+
+  if (file.type.startsWith('audio/')) {
+    return 'audio';
+  }
+
+  return 'file';
+};
+
+const needsObjectUrlPreview = (file: File): boolean => {
+  const kind = getPreviewKind(file);
+  return kind === 'image' || kind === 'video' || kind === 'audio';
 };
 
 const getRejectionReason = (rejection: FileRejection): string =>
@@ -242,7 +282,7 @@ export function FileUploadDropzone({
   accept,
   multiple = false,
   maxSize = DEFAULT_MAX_SIZE,
-  selectedFiles = [],
+  selectedFiles,
   onRemoveFile,
   helperText,
   acceptedDescription,
@@ -251,6 +291,8 @@ export function FileUploadDropzone({
 }: FileUploadDropzoneProps) {
   const ui = uiByLocale[locale];
   const [isExpanded, setIsExpanded] = useState(!compact);
+  const [recentFiles, setRecentFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
 
   const acceptConfig = useMemo(() => buildDropzoneAccept(accept), [accept]);
   const acceptedText = useMemo(
@@ -258,18 +300,46 @@ export function FileUploadDropzone({
       acceptedDescription ?? getAcceptedDescription(accept, ui.anyFiles, ui),
     [accept, acceptedDescription, ui],
   );
+  const previewFiles = selectedFiles ?? recentFiles;
+  const previewGridClass =
+    'grid w-full grid-cols-[repeat(auto-fill,minmax(7.25rem,8.5rem))] justify-center gap-2 sm:justify-start';
+
+  useEffect(() => {
+    const nextPreviewUrls: Record<string, string> = {};
+
+    previewFiles.forEach((file, index) => {
+      if (needsObjectUrlPreview(file)) {
+        nextPreviewUrls[getPreviewFileKey(file, index)] = URL.createObjectURL(file);
+      }
+    });
+
+    setPreviewUrls(nextPreviewUrls);
+
+    return () => {
+      Object.values(nextPreviewUrls).forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previewFiles]);
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     accept: acceptConfig,
     multiple,
     maxSize,
     onDrop: (acceptedFiles) => {
+      setRecentFiles(acceptedFiles);
       onFilesSelected(acceptedFiles);
     },
   });
 
-  const keepExpandedBecauseOfFiles = selectedFiles.length > 0 || fileRejections.length > 0;
+  const keepExpandedBecauseOfFiles = previewFiles.length > 0 || fileRejections.length > 0;
   const showExpanded = !compact || isExpanded || keepExpandedBecauseOfFiles;
+  const handleRemovePreviewFile = (index: number) => {
+    if (onRemoveFile) {
+      onRemoveFile(index);
+      return;
+    }
+
+    setRecentFiles((current) => current.filter((_, itemIndex) => itemIndex !== index));
+  };
 
   return (
     <div className="space-y-3">
@@ -311,35 +381,109 @@ export function FileUploadDropzone({
 
           <div
             {...getRootProps()}
-            className={`cursor-pointer rounded-xl border-2 border-dashed p-6 text-center transition-all duration-200 ${
+            className={`cursor-pointer rounded-xl border-2 border-dashed transition-all duration-200 ${
               isDragActive
                 ? 'border-brand-500 bg-brand-50 scale-[1.01]'
                 : 'border-slate-300 hover:border-brand-400 hover:bg-slate-50'
-            }`}
+            } ${previewFiles.length ? 'p-4' : 'p-6 text-center'}`}
           >
             <input {...getInputProps()} />
-            <div className="flex flex-col items-center gap-3">
-              <div className="rounded-full bg-gradient-to-r from-brand-600 to-cyan-600 p-3">
-                <Upload className="h-6 w-6 text-white" />
-              </div>
+            {previewFiles.length ? (
+              <div className="w-full max-w-full">
+                <div className="mb-3 flex flex-col gap-1 text-left sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm font-semibold text-slate-800">
+                    {ui.selectedFilesTitle(previewFiles.length)}
+                  </p>
+                  <p className="text-xs font-medium text-slate-500">
+                    {isDragActive ? ui.dropMoreHere : ui.addMoreHint}
+                  </p>
+                </div>
+                <div className={previewGridClass}>
+                  {previewFiles.map((file, index) => {
+                    const FileIcon = getFileIcon(file);
+                    const previewKey = getPreviewFileKey(file, index);
+                    const previewUrl = previewUrls[previewKey];
+                    const previewKind = getPreviewKind(file);
 
-              <div>
-                <p className="text-base font-medium text-slate-700">
-                  {isDragActive
-                    ? ui.dropFilesHere(acceptedText)
-                    : ui.dragFilesHere(acceptedText)}
+                    return (
+                      <div
+                        key={previewKey}
+                        className="group relative aspect-square min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-900 text-left shadow-sm"
+                      >
+                        {previewKind === 'image' && previewUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={previewUrl}
+                            alt={file.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : previewKind === 'video' && previewUrl ? (
+                          <video
+                            src={previewUrl}
+                            muted
+                            playsInline
+                            preload="metadata"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-500">
+                            <FileIcon className="h-8 w-8" />
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleRemovePreviewFile(index);
+                          }}
+                          className="absolute right-1.5 top-1.5 rounded-full bg-slate-950/75 p-1 text-white opacity-100 shadow-sm transition hover:bg-red-600 sm:opacity-0 sm:group-hover:opacity-100"
+                          aria-label={ui.removeFile(file.name)}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/95 via-slate-950/75 to-transparent p-2 pt-8 text-white">
+                          <div className="flex min-w-0 items-center gap-1.5">
+                            <FileIcon className="h-3.5 w-3.5 shrink-0 opacity-90" />
+                            <p className="truncate text-xs font-semibold leading-4">
+                              {file.name}
+                            </p>
+                          </div>
+                          <p className="mt-0.5 text-[11px] leading-4 text-slate-300">
+                            {formatFileSize(file.size)}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-3">
+                <div className="rounded-full bg-gradient-to-r from-brand-600 to-cyan-600 p-3">
+                  <Upload className="h-6 w-6 text-white" />
+                </div>
+
+                <div>
+                  <p className="text-base font-medium text-slate-700">
+                    {isDragActive
+                      ? ui.dropFilesHere(acceptedText)
+                      : ui.dragFilesHere(acceptedText)}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">{ui.tapToSelect}</p>
+                </div>
+
+                <div className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500">
+                  {multiple ? ui.multipleFiles : ui.singleFile} • {ui.maxPrefix}{' '}
+                  {formatMaxSize(maxSize)}
+                </div>
+
+                <p className="text-xs text-slate-500">
+                  {ui.acceptedPrefix} {acceptedText}
                 </p>
-                <p className="mt-1 text-sm text-slate-500">{ui.tapToSelect}</p>
               </div>
-
-              <div className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500">
-                {multiple ? ui.multipleFiles : ui.singleFile} • {ui.maxPrefix} {formatMaxSize(maxSize)}
-              </div>
-
-              <p className="text-xs text-slate-500">
-                {ui.acceptedPrefix} {acceptedText}
-              </p>
-            </div>
+            )}
           </div>
         </>
       ) : null}
@@ -357,47 +501,6 @@ export function FileUploadDropzone({
         </div>
       ) : null}
 
-      {selectedFiles.length ? (
-        <div className="space-y-2">
-          <p className="text-sm font-semibold text-slate-700">{ui.selectedFilesTitle(selectedFiles.length)}</p>
-          <div className="grid gap-2">
-            {selectedFiles.map((file, index) => {
-              const FileIcon = getFileIcon(file);
-
-              return (
-                <div
-                  key={`${file.name}-${file.size}-${index}`}
-                  className="flex items-center justify-between rounded-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-3">
-                      <FileIcon className="h-4 w-4 shrink-0 text-slate-500" />
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-slate-700">{file.name}</p>
-                        <p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {onRemoveFile ? (
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onRemoveFile(index);
-                      }}
-                      className="ml-2 rounded-full p-1 text-red-500 transition-colors hover:bg-red-50 hover:text-red-700"
-                      aria-label={`Remove ${file.name}`}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
