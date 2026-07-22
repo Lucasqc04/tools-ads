@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { AudioEditorTool } from '@/components/tools/audio-editor-tool';
 import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-tool';
@@ -28,6 +28,8 @@ import { ChromaBackgroundRemoverTool } from '@/components/tools/chroma-backgroun
 import { ImageToBase64Tool } from '@/components/tools/image-to-base64-tool';
 import { InvisibleCharacterTool } from '@/components/tools/invisible-character-tool';
 import { InvisiblePlatformLinks } from '@/components/tools/invisible-platform-links';
+import { NicknameSymbolGeneratorTool } from '@/components/tools/nickname-symbol-generator-tool';
+import { NicknameSymbolPlatformLinks } from '@/components/tools/nickname-symbol-platform-links';
 import { JsonFormatterTool } from '@/components/tools/json-formatter-tool';
 import { GtaCheatCodesTool } from '@/components/tools/gta-cheat-codes-tool';
 import { PasswordGeneratorTool } from '@/components/tools/password-generator-tool';
@@ -54,7 +56,10 @@ import {
   toLocalizedImageConversionLink,
 } from '@/data/image-conversion-pages';
 import {
+  getInvisiblePlatformLocalePathMap,
+  getInvisiblePlatformPathByLocale,
   getInvisiblePlatformResolutionBySlug,
+  getInvisiblePlatformSlugByLocale,
   getInvisiblePlatformStaticParamsByLocale,
   getLocalizedInvisiblePlatformContent,
   getRelatedInvisiblePlatformPages,
@@ -62,6 +67,16 @@ import {
   invisiblePlatformPages,
   toLocalizedInvisiblePlatformLink,
 } from '@/data/invisible-platform-pages';
+import {
+  getLocalizedNicknameSymbolPlatformContent,
+  getNicknameSymbolPlatformLocalePathMap,
+  getNicknameSymbolPlatformPathByLocale,
+  getNicknameSymbolPlatformResolutionBySlug,
+  getNicknameSymbolPlatformSlugByLocale,
+  getNicknameSymbolPlatformStaticParamsByLocale,
+  getRelatedNicknameSymbolPlatformPages,
+  toLocalizedNicknameSymbolPlatformLink,
+} from '@/data/nickname-symbol-platform-pages';
 import {
   getLocalizedRelatedTools,
   getLocalizedToolBySlug,
@@ -77,6 +92,8 @@ import {
   type GtaSeoPage,
 } from '@/data/gta/gta-seo-pages';
 import {
+  getLegacyToolAliasPageBySlug,
+  getLegacyToolAliasToolSlugBySlug,
   getLocalizedToolAliasContent,
   getRelatedToolAliasPages,
   getToolAliasCryptoPreset,
@@ -107,9 +124,10 @@ import { buildLocalizedMetadata } from '@/lib/seo';
 import { isCs2ToolId } from '@/data/cs2/tools';
 import type { ToolDefinition } from '@/types/tool';
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 const baseInvisibleToolSlug = 'invisible-character';
+const baseNicknameSymbolToolSlug = 'nickname-symbol-generator';
 const credentialGeneratorToolSlug = ['pas', 'sword-generator'].join('');
 
 const localizedSearchIntent: Record<AppLocale, string> = {
@@ -117,6 +135,13 @@ const localizedSearchIntent: Record<AppLocale, string> = {
     'Pessoas que buscam caractere invisivel por jogo ou rede social para copiar e colar, com mais chance de aprovacao em validadores de nickname.',
   en: 'People looking for platform-specific invisible character patterns to copy and paste into nickname fields.',
   es: 'Personas que buscan patrones de caracter invisible por plataforma para copiar y pegar en campos de nickname.',
+};
+
+const nicknameSymbolSearchIntent: Record<AppLocale, string> = {
+  'pt-br':
+    'Jogadores que querem criar um nickname com simbolos e estilos Unicode adaptados ao contexto do jogo.',
+  en: 'Players who want to create a gaming name with symbols and Unicode styles for a specific game.',
+  es: 'Jugadores que quieren crear un nickname con simbolos y estilos Unicode para un juego concreto.',
 };
 
 const relatedSectionCopy: Record<AppLocale, { title: string; description: string }> = {
@@ -137,21 +162,36 @@ const relatedSectionCopy: Record<AppLocale, { title: string; description: string
   },
 };
 
-const toolAliasCopy: Record<AppLocale, { title: string; description: string }> = {
+const nicknameSymbolRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
   'pt-br': {
-    title: 'Outras buscas desta ferramenta',
-    description:
-      'Variacoes de busca que levam para a mesma ferramenta com foco em intencoes diferentes.',
+    title: 'Simbolos para outros jogos',
+    description: 'Abra outros presets com molduras e orientacoes proprias de cada jogo.',
   },
   en: {
-    title: 'Related search variations',
-    description:
-      'Different search intents mapped to the same tool to cover alternative query patterns.',
+    title: 'Name symbols for other games',
+    description: 'Open other presets with frames and guidance tailored to each game.',
   },
   es: {
-    title: 'Variaciones de busqueda relacionadas',
+    title: 'Simbolos para otros juegos',
+    description: 'Abre otros presets con marcos y recomendaciones para cada juego.',
+  },
+};
+
+const toolAliasCopy: Record<AppLocale, { title: string; description: string }> = {
+  'pt-br': {
+    title: 'Outras formas de usar esta ferramenta',
     description:
-      'Intenciones de busqueda distintas mapeadas a la misma herramienta para cubrir consultas alternativas.',
+      'Abra versoes focadas em tarefas especificas sem perder os recursos da ferramenta principal.',
+  },
+  en: {
+    title: 'More ways to use this tool',
+    description:
+      'Open task-focused versions while keeping the complete workflow from the main tool.',
+  },
+  es: {
+    title: 'Mas formas de usar esta herramienta',
+    description:
+      'Abre versiones enfocadas en tareas concretas sin perder el flujo de la herramienta principal.',
   },
 };
 
@@ -159,17 +199,17 @@ const gtaRelatedCopy: Record<AppLocale, { title: string; description: string }> 
   'pt-br': {
     title: 'Outras paginas de codigos GTA',
     description:
-      'Acesse variacoes por jogo e intencao de busca para copiar cheats mais rapido.',
+      'Acesse listas por jogo e categoria para copiar o cheat certo mais rapido.',
   },
   en: {
     title: 'Related GTA cheat pages',
     description:
-      'Browse game-specific and intent-driven variations to find the exact cheat faster.',
+      'Browse lists by game and category to find the exact cheat faster.',
   },
   es: {
     title: 'Otras paginas de codigos GTA',
     description:
-      'Navega variaciones por juego e intencion para encontrar el cheat correcto mas rapido.',
+      'Navega listas por juego y categoria para encontrar el cheat correcto mas rapido.',
   },
 };
 
@@ -235,6 +275,7 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   sorteador: 'UtilitiesApplication',
   'calculadora-juros-compostos': 'FinanceApplication',
   'invisible-character': 'UtilitiesApplication',
+  'nickname-symbol-generator': 'UtilitiesApplication',
   'conversor-universal': 'DeveloperApplication',
 };
 
@@ -246,6 +287,10 @@ type LandingResolution =
   | {
       kind: 'invisible-platform';
       resolution: NonNullable<ReturnType<typeof getInvisiblePlatformResolutionBySlug>>;
+    }
+  | {
+      kind: 'nickname-symbol-platform';
+      resolution: NonNullable<ReturnType<typeof getNicknameSymbolPlatformResolutionBySlug>>;
     }
   | {
       kind: 'tool-alias';
@@ -291,6 +336,14 @@ const resolveLanding = (slug: string): LandingResolution | undefined => {
     return {
       kind: 'invisible-platform',
       resolution: invisibleResolution,
+    };
+  }
+
+  const nicknameSymbolResolution = getNicknameSymbolPlatformResolutionBySlug(slug);
+  if (nicknameSymbolResolution) {
+    return {
+      kind: 'nickname-symbol-platform',
+      resolution: nicknameSymbolResolution,
     };
   }
 
@@ -528,8 +581,8 @@ const resolveInvisibleAliasUi = (
     : undefined;
 
   const platformLinks = (currentInvisiblePage
-    ? getRelatedInvisiblePlatformPages(currentInvisiblePage.slug, 8)
-    : getFeaturedInvisiblePlatformPages(8)
+    ? getRelatedInvisiblePlatformPages(currentInvisiblePage.slug, 4)
+    : getFeaturedInvisiblePlatformPages(4)
   ).map((page) => toLocalizedInvisiblePlatformLink(page, context.locale));
 
   const sectionCopy = invisibleSectionByLocale[context.locale];
@@ -728,7 +781,6 @@ const renderGtaLandingPage = (
 };
 
 const renderInvisibleLandingPage = (
-  platformSlug: string,
   resolution: NonNullable<ReturnType<typeof getInvisiblePlatformResolutionBySlug>>,
   context: RenderContext,
 ): ReactNode => {
@@ -740,11 +792,11 @@ const renderInvisibleLandingPage = (
 
   const localizedContent = getLocalizedInvisiblePlatformContent(resolution.page, context.locale);
   const relatedTools = getLocalizedRelatedTools(context.locale, baseTool.id);
-  const relatedPlatformPages = getRelatedInvisiblePlatformPages(resolution.page.slug, 6).map((page) =>
+  const relatedPlatformPages = getRelatedInvisiblePlatformPages(resolution.page.slug, 4).map((page) =>
     toLocalizedInvisiblePlatformLink(page, context.locale),
   );
 
-  const canonicalPath = localizePath(context.locale, `/${platformSlug}`);
+  const canonicalPath = getInvisiblePlatformPathByLocale(resolution.page, context.locale);
 
   const landingTool: ToolDefinition = {
     ...baseTool,
@@ -821,6 +873,102 @@ const renderInvisibleLandingPage = (
   );
 };
 
+const renderNicknameSymbolLandingPage = (
+  resolution: NonNullable<ReturnType<typeof getNicknameSymbolPlatformResolutionBySlug>>,
+  context: RenderContext,
+): ReactNode => {
+  const baseTool = getLocalizedToolBySlug(context.locale, baseNicknameSymbolToolSlug);
+
+  if (!baseTool) {
+    notFound();
+  }
+
+  const localizedContent = getLocalizedNicknameSymbolPlatformContent(
+    resolution.page,
+    context.locale,
+  );
+  const relatedTools = getLocalizedRelatedTools(context.locale, baseTool.id);
+  const relatedPlatformPages = getRelatedNicknameSymbolPlatformPages(
+    resolution.page.platformId,
+    4,
+  ).map((page) => toLocalizedNicknameSymbolPlatformLink(page, context.locale));
+  const canonicalPath = getNicknameSymbolPlatformPathByLocale(
+    resolution.page,
+    context.locale,
+  );
+
+  const landingTool: ToolDefinition = {
+    ...baseTool,
+    name: localizedContent.title,
+    h1: localizedContent.title,
+    intro: localizedContent.intro,
+    seoTitle: localizedContent.seoTitle,
+    seoDescription: localizedContent.seoDescription,
+    canonicalPath,
+    primaryKeyword: localizedContent.keywords[0] ?? baseTool.primaryKeyword,
+    secondaryKeywords: localizedContent.keywords.slice(1),
+    searchIntent: nicknameSymbolSearchIntent[context.locale],
+    contentBlocks: localizedContent.contentBlocks,
+    faq: localizedContent.faq,
+  };
+
+  return (
+    <>
+      <JsonLd
+        data={buildToolWebPageJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          locale: context.locale,
+          keywords: [landingTool.primaryKeyword, ...landingTool.secondaryKeywords],
+        })}
+      />
+
+      <JsonLd
+        data={buildSoftwareApplicationJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          category: 'UtilitiesApplication',
+        })}
+      />
+
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: context.dictionary.common.home, path: localizePath(context.locale, '/') },
+          { name: context.dictionary.common.tools, path: localizePath(context.locale, '/tools') },
+          {
+            name: baseTool.name,
+            path: localizePath(context.locale, '/tools/nickname-symbol-generator'),
+          },
+          { name: resolution.page.platformName, path: canonicalPath },
+        ])}
+      />
+
+      <JsonLd data={buildFaqJsonLd(landingTool.faq)} />
+
+      <ToolPageShell
+        locale={context.locale}
+        tool={landingTool}
+        relatedTools={relatedTools}
+        toolUi={
+          <NicknameSymbolGeneratorTool
+            locale={context.locale}
+            initialPlatformId={resolution.page.platformId}
+          />
+        }
+        afterToolSection={
+          <NicknameSymbolPlatformLinks
+            title={nicknameSymbolRelatedCopy[context.locale].title}
+            description={nicknameSymbolRelatedCopy[context.locale].description}
+            links={relatedPlatformPages}
+          />
+        }
+      />
+    </>
+  );
+};
+
 const renderToolAliasLandingPage = (
   aliasPage: ToolAliasPage,
   context: RenderContext,
@@ -865,9 +1013,12 @@ const renderToolAliasLandingPage = (
     notFound();
   }
 
-  const aliasLinks = getRelatedToolAliasPages(aliasPage.toolSlug, aliasPage.slug, 10).map((page) =>
-    toLocalizedToolAliasLink(page, context.locale),
-  );
+  const aliasLinks = getRelatedToolAliasPages(
+    aliasPage.toolSlug,
+    aliasPage.slug,
+    context.locale,
+    4,
+  ).map((page) => toLocalizedToolAliasLink(page, context.locale));
 
   const afterToolSection = buildAfterToolSection(
     context.locale,
@@ -944,6 +1095,10 @@ export function generateStaticParams() {
       params.add(`${locale}:${platformPageSlug}`);
     });
 
+    getNicknameSymbolPlatformStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      params.add(`${locale}:${platformPageSlug}`);
+    });
+
     getToolAliasStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
       params.add(`${locale}:${platformPageSlug}`);
     });
@@ -993,7 +1148,22 @@ export async function generateMetadata({ params }: LandingPageProps): Promise<Me
       locale,
       title: localizedContent.seoTitle,
       description: localizedContent.seoDescription,
-      localePaths: buildLocalePathMap(`/${platformPageSlug}`),
+      localePaths: getInvisiblePlatformLocalePathMap(landing.resolution.page),
+      keywords: localizedContent.keywords,
+    });
+  }
+
+  if (landing.kind === 'nickname-symbol-platform') {
+    const localizedContent = getLocalizedNicknameSymbolPlatformContent(
+      landing.resolution.page,
+      locale,
+    );
+
+    return buildLocalizedMetadata({
+      locale,
+      title: localizedContent.seoTitle,
+      description: localizedContent.seoDescription,
+      localePaths: getNicknameSymbolPlatformLocalePathMap(landing.resolution.page),
       keywords: localizedContent.keywords,
     });
   }
@@ -1045,15 +1215,64 @@ export default async function LandingPage({ params }: LandingPageProps) {
   const context: RenderContext = { locale, dictionary };
 
   if (!landing) {
+    const legacyAliasPage = getLegacyToolAliasPageBySlug(platformPageSlug);
+    if (legacyAliasPage) {
+      const baseTool = getLocalizedToolBySlug(locale, legacyAliasPage.toolSlug);
+      if (baseTool) {
+        const targetPath = legacyAliasPage.sourceLocales.includes(locale)
+          ? getToolAliasPathByLocale(legacyAliasPage, locale)
+          : baseTool.canonicalPath;
+        permanentRedirect(targetPath);
+      }
+    }
+
+    const legacyToolSlug = getLegacyToolAliasToolSlugBySlug(platformPageSlug);
+    if (legacyToolSlug) {
+      const baseTool = getLocalizedToolBySlug(locale, legacyToolSlug);
+      if (baseTool) {
+        permanentRedirect(baseTool.canonicalPath);
+      }
+    }
+
     notFound();
   }
 
   if (landing.kind === 'gta-seo-page') {
+    if (platformPageSlug !== landing.page.slugs[locale]) {
+      permanentRedirect(getGtaSeoPathByLocale(landing.page, locale));
+    }
+
     return renderGtaLandingPage(landing.page, context);
   }
 
   if (landing.kind === 'invisible-platform') {
-    return renderInvisibleLandingPage(platformPageSlug, landing.resolution, context);
+    const canonicalSlug = getInvisiblePlatformSlugByLocale(landing.resolution.page, locale);
+    if (platformPageSlug !== canonicalSlug) {
+      permanentRedirect(getInvisiblePlatformPathByLocale(landing.resolution.page, locale));
+    }
+
+    return renderInvisibleLandingPage(landing.resolution, context);
+  }
+
+  if (landing.kind === 'nickname-symbol-platform') {
+    const canonicalSlug = getNicknameSymbolPlatformSlugByLocale(
+      landing.resolution.page,
+      locale,
+    );
+    if (platformPageSlug !== canonicalSlug) {
+      permanentRedirect(
+        getNicknameSymbolPlatformPathByLocale(landing.resolution.page, locale),
+      );
+    }
+
+    return renderNicknameSymbolLandingPage(landing.resolution, context);
+  }
+
+  if (!landing.page.sourceLocales.includes(locale)) {
+    const baseTool = getLocalizedToolBySlug(locale, landing.page.toolSlug);
+    if (baseTool) {
+      permanentRedirect(baseTool.canonicalPath);
+    }
   }
 
   return renderToolAliasLandingPage(landing.page, context);

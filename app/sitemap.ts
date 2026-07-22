@@ -1,8 +1,15 @@
 import type { MetadataRoute } from 'next';
 import { getCryptoConversionStaticParams } from '@/data/crypto-conversion-pages';
 import { getImageConversionStaticParams } from '@/data/image-conversion-pages';
-import { getInvisiblePlatformStaticParamsByLocale } from '@/data/invisible-platform-pages';
-import { getGtaSeoStaticParamsByLocale } from '@/data/gta/gta-seo-pages';
+import {
+  getInvisiblePlatformLocalePathMap,
+  invisiblePlatformPages,
+} from '@/data/invisible-platform-pages';
+import {
+  getNicknameSymbolPlatformLocalePathMap,
+  nicknameSymbolPlatformPages,
+} from '@/data/nickname-symbol-platform-pages';
+import { getGtaSeoLocalePathMap, gtaSeoPages } from '@/data/gta/gta-seo-pages';
 import { getToolAliasStaticParamsByLocale } from '@/data/tool-alias-pages';
 import { getToolLocalePathMap, toolsRegistry } from '@/data/tools-registry';
 import {
@@ -61,45 +68,9 @@ const dedupeByUrl = (entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap => {
   return Array.from(byUrl.values());
 };
 
-const collectInvisibleLandingSlugs = (): string[] => {
-  const slugs = new Set<string>();
-
-  locales.forEach((locale) => {
-    getInvisiblePlatformStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
-      slugs.add(platformPageSlug);
-    });
-  });
-
-  return Array.from(slugs);
-};
-
-const collectToolAliasSlugs = (): string[] => {
-  const slugs = new Set<string>();
-
-  locales.forEach((locale) => {
-    getToolAliasStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
-      slugs.add(platformPageSlug);
-    });
-  });
-
-  return Array.from(slugs);
-};
-
-const collectGtaSeoSlugs = (): string[] => {
-  const slugs = new Set<string>();
-
-  locales.forEach((locale) => {
-    getGtaSeoStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
-      slugs.add(platformPageSlug);
-    });
-  });
-
-  return Array.from(slugs);
-};
+const contentLastModified = new Date('2026-07-22T00:00:00.000Z');
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
   const staticRouteConfigs: Array<{
     path: string;
     changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
@@ -115,7 +86,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticRoutes = staticRouteConfigs.flatMap((route) =>
     createLocalizedEntries(route.path, {
-      lastModified: now,
+      lastModified: contentLastModified,
       changeFrequency: route.changeFrequency,
       priority: route.priority,
     }),
@@ -126,7 +97,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return locales.map((locale) => ({
       url: makeAbsoluteUrl(pathMap[locale]),
-      lastModified: now,
+      lastModified: contentLastModified,
       changeFrequency: 'weekly',
       priority: 0.8,
       alternates: buildAlternates(pathMap),
@@ -136,7 +107,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const cryptoConversionRoutes: MetadataRoute.Sitemap = getCryptoConversionStaticParams().flatMap(
     ({ conversionSlug }) =>
       createLocalizedEntries(`/tools/crypto-unit-converter/${conversionSlug}`, {
-        lastModified: now,
+        lastModified: contentLastModified,
         changeFrequency: 'weekly',
         priority: 0.72,
       }),
@@ -145,36 +116,57 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const imageConversionRoutes: MetadataRoute.Sitemap = getImageConversionStaticParams().flatMap(
     ({ conversionSlug }) =>
       createLocalizedEntries(`/tools/image-converter/${conversionSlug}`, {
-        lastModified: now,
+        lastModified: contentLastModified,
         changeFrequency: 'weekly',
         priority: 0.72,
       }),
   );
 
-  const invisibleLandingRoutes: MetadataRoute.Sitemap = collectInvisibleLandingSlugs().flatMap(
-    (slug) =>
-      createLocalizedEntries(`/${slug}`, {
-        lastModified: now,
-        changeFrequency: 'weekly',
-        priority: 0.74,
-      }),
-  );
+  const invisibleLandingRoutes: MetadataRoute.Sitemap = invisiblePlatformPages.flatMap((page) => {
+    const pathMap = getInvisiblePlatformLocalePathMap(page);
 
-  const toolAliasRoutes: MetadataRoute.Sitemap = collectToolAliasSlugs().flatMap((slug) =>
-    createLocalizedEntries(`/${slug}`, {
-      lastModified: now,
-      changeFrequency: 'weekly',
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.74,
+      alternates: buildAlternates(pathMap),
+    }));
+  });
+
+  const nicknameSymbolLandingRoutes: MetadataRoute.Sitemap =
+    nicknameSymbolPlatformPages.flatMap((page) => {
+      const pathMap = getNicknameSymbolPlatformLocalePathMap(page);
+
+      return locales.map((locale) => ({
+        url: makeAbsoluteUrl(pathMap[locale]),
+        lastModified: contentLastModified,
+        changeFrequency: 'weekly' as const,
+        priority: 0.76,
+        alternates: buildAlternates(pathMap),
+      }));
+    });
+
+  const toolAliasRoutes: MetadataRoute.Sitemap = locales.flatMap((locale) =>
+    getToolAliasStaticParamsByLocale(locale).map(({ platformPageSlug }) => ({
+      url: makeAbsoluteUrl(localizePath(locale, `/${platformPageSlug}`)),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
       priority: 0.7,
-    }),
+    })),
   );
 
-  const gtaSeoRoutes: MetadataRoute.Sitemap = collectGtaSeoSlugs().flatMap((slug) =>
-    createLocalizedEntries(`/${slug}`, {
-      lastModified: now,
-      changeFrequency: 'weekly',
+  const gtaSeoRoutes: MetadataRoute.Sitemap = gtaSeoPages.flatMap((page) => {
+    const pathMap = getGtaSeoLocalePathMap(page);
+
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
       priority: 0.76,
-    }),
-  );
+      alternates: buildAlternates(pathMap),
+    }));
+  });
 
   return dedupeByUrl([
     ...staticRoutes,
@@ -182,6 +174,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...cryptoConversionRoutes,
     ...imageConversionRoutes,
     ...invisibleLandingRoutes,
+    ...nicknameSymbolLandingRoutes,
     ...toolAliasRoutes,
     ...gtaSeoRoutes,
   ]);

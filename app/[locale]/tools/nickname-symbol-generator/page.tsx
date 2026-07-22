@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
-import { CsvViewerTool } from '@/components/tools/csv-viewer-tool';
-import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
+import { NicknameSymbolGeneratorTool } from '@/components/tools/nickname-symbol-generator-tool';
+import { NicknameSymbolPlatformLinks } from '@/components/tools/nickname-symbol-platform-links';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import {
-  getRelatedToolAliasPages,
-  toLocalizedToolAliasLink,
-} from '@/data/tool-alias-pages';
+  getFeaturedNicknameSymbolPlatformPages,
+  toLocalizedNicknameSymbolPlatformLink,
+} from '@/data/nickname-symbol-platform-pages';
 import {
   getLocalizedRelatedTools,
   getLocalizedToolBySlug,
@@ -23,35 +23,35 @@ import { getDictionary } from '@/lib/i18n/dictionary';
 import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { buildLocalizedMetadata } from '@/lib/seo';
 
-const toolSlug = 'csv-viewer';
+const toolSlug = 'nickname-symbol-generator';
 
-type CsvViewerPageProps = {
+type NicknameSymbolGeneratorPageProps = {
   params: Promise<{
     locale: string;
   }>;
 };
 
-const aliasSectionByLocale: Record<AppLocale, { title: string; description: string }> = {
+const platformSectionCopy: Record<AppLocale, { title: string; description: string }> = {
   'pt-br': {
-    title: 'Recomendacoes de buscas relacionadas',
+    title: 'Simbolos e presets por jogo',
     description:
-      'Atalhos leves para variacoes de busca sobre CSV sem poluir a interface principal.',
+      'Abra a versao dedicada para iniciar com o jogo, as molduras e as orientacoes mais relevantes.',
   },
   en: {
-    title: 'Related CSV search recommendations',
+    title: 'Game-specific symbols and presets',
     description:
-      'Light shortcuts for CSV search variations, kept at the bottom to preserve focus on the tool.',
+      'Open a dedicated version with the game, recommended frames, and practical guidance ready.',
   },
   es: {
-    title: 'Recomendaciones de busqueda relacionadas',
+    title: 'Simbolos y presets por juego',
     description:
-      'Atajos ligeros para variaciones de busqueda sobre CSV, ubicados al final para mantener enfoque.',
+      'Abre una version dedicada con el juego, los marcos y las recomendaciones preparados.',
   },
 };
 
 export async function generateMetadata({
   params,
-}: CsvViewerPageProps): Promise<Metadata> {
+}: NicknameSymbolGeneratorPageProps): Promise<Metadata> {
   const { locale: localeParam } = await params;
   const locale = resolveLocale(localeParam);
   const dictionary = getDictionary(locale);
@@ -61,14 +61,16 @@ export async function generateMetadata({
     locale,
     title: tool?.seoTitle ?? `${dictionary.common.tools} | ${dictionary.seo.siteDefaultTitle}`,
     description: tool?.seoDescription ?? dictionary.seo.tools.description,
-    localePaths: buildLocalePathMap('/tools/csv-viewer'),
+    localePaths: buildLocalePathMap(`/tools/${toolSlug}`),
     keywords: tool
       ? [tool.primaryKeyword, ...tool.secondaryKeywords]
       : dictionary.seo.tools.keywords,
   });
 }
 
-export default async function CsvViewerPage({ params }: CsvViewerPageProps) {
+export default async function NicknameSymbolGeneratorPage({
+  params,
+}: Readonly<NicknameSymbolGeneratorPageProps>) {
   const { locale: localeParam } = await params;
   const locale = resolveLocale(localeParam);
   const dictionary = getDictionary(locale);
@@ -79,8 +81,8 @@ export default async function CsvViewerPage({ params }: CsvViewerPageProps) {
   }
 
   const related = getLocalizedRelatedTools(locale, tool.id);
-  const aliasLinks = getRelatedToolAliasPages(toolSlug, '', locale, 4).map((page) =>
-    toLocalizedToolAliasLink(page, locale),
+  const platformLinks = getFeaturedNicknameSymbolPlatformPages(8).map((page) =>
+    toLocalizedNicknameSymbolPlatformLink(page, locale),
   );
 
   return (
@@ -94,14 +96,16 @@ export default async function CsvViewerPage({ params }: CsvViewerPageProps) {
           keywords: [tool.primaryKeyword, ...tool.secondaryKeywords],
         })}
       />
+
       <JsonLd
         data={buildSoftwareApplicationJsonLd({
           name: tool.name,
           description: tool.seoDescription,
           path: tool.canonicalPath,
-          category: 'DeveloperApplication',
+          category: 'UtilitiesApplication',
         })}
       />
+
       <JsonLd
         data={buildBreadcrumbJsonLd([
           { name: dictionary.common.home, path: localizePath(locale, '/') },
@@ -109,18 +113,19 @@ export default async function CsvViewerPage({ params }: CsvViewerPageProps) {
           { name: tool.name, path: tool.canonicalPath },
         ])}
       />
+
       <JsonLd data={buildFaqJsonLd(tool.faq)} />
 
       <ToolPageShell
         locale={locale}
         tool={tool}
         relatedTools={related}
-        toolUi={<CsvViewerTool locale={locale} />}
-        afterContentSection={
-          <ToolAliasLinks
-            title={aliasSectionByLocale[locale].title}
-            description={aliasSectionByLocale[locale].description}
-            links={aliasLinks}
+        toolUi={<NicknameSymbolGeneratorTool locale={locale} />}
+        afterToolSection={
+          <NicknameSymbolPlatformLinks
+            title={platformSectionCopy[locale].title}
+            description={platformSectionCopy[locale].description}
+            links={platformLinks}
           />
         }
       />

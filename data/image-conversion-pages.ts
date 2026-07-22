@@ -98,6 +98,35 @@ const featuredConversions = new Set<string>([
   'psd->png',
 ]);
 
+// Only publish pairs that the current browser/server pipeline can actually read
+// and encode. Other format tokens remain resolvable so old URLs can redirect to
+// the main converter instead of exposing a landing page for an unsupported flow.
+const INDEXABLE_INPUT_FORMATS = new Set<ImageFormatId>([
+  'png',
+  'jpeg',
+  'webp',
+  'avif',
+  'bmp',
+  'ico',
+  'gif',
+  'svg',
+  'heic',
+  'heif',
+  'pdf',
+]);
+
+const INDEXABLE_OUTPUT_FORMATS = new Set<ImageFormatId>([
+  'png',
+  'jpeg',
+  'webp',
+  'avif',
+  'bmp',
+  'ico',
+  'svg',
+  'tga',
+  'pdf',
+]);
+
 const conversionSeeds: ImageConversionSeed[] = imageFormatIds.flatMap((from) =>
   imageFormatIds
     .filter((to) => to !== from)
@@ -315,6 +344,12 @@ const buildConversionPage = (seed: ImageConversionSeed): ImageConversionPage => 
 const pages = conversionSeeds.map((seed) => buildConversionPage(seed));
 
 export const imageConversionPages: ImageConversionPage[] = pages;
+
+export const isIndexableImageConversionPage = (page: ImageConversionPage): boolean =>
+  INDEXABLE_INPUT_FORMATS.has(page.fromFormatId) &&
+  INDEXABLE_OUTPUT_FORMATS.has(page.toFormatId);
+
+const indexableImageConversionPages = imageConversionPages.filter(isIndexableImageConversionPage);
 
 const technicalSlugMap = new Map(
   imageConversionPages.map((page) => [page.slugTechnical, page]),
@@ -659,7 +694,7 @@ export const toLocalizedImageConversionLink = (
 export const getImageConversionStaticParams = (): Array<{ conversionSlug: string }> => {
   const slugSet = new Set<string>();
 
-  imageConversionPages.forEach((page) => {
+  indexableImageConversionPages.forEach((page) => {
     buildTechnicalAliasSlugs(page).forEach((slug) => slugSet.add(slug));
     buildPtBrAliasSlugs(page).forEach((slug) => slugSet.add(slug));
   });
@@ -668,7 +703,7 @@ export const getImageConversionStaticParams = (): Array<{ conversionSlug: string
 };
 
 export const getFeaturedImageConversionPages = (limit = 4): ImageConversionPage[] =>
-  imageConversionPages.filter((page) => page.featured).slice(0, limit);
+  indexableImageConversionPages.filter((page) => page.featured).slice(0, limit);
 
 export const getRelatedImageConversionPages = (
   slug: string,
@@ -680,7 +715,7 @@ export const getRelatedImageConversionPages = (
     return getFeaturedImageConversionPages(limit);
   }
 
-  const sameFlow = imageConversionPages.filter(
+  const sameFlow = indexableImageConversionPages.filter(
     (page) =>
       page.slug !== slug &&
       isPdfFlow(page.fromFormatId, page.toFormatId) ===
@@ -691,7 +726,7 @@ export const getRelatedImageConversionPages = (
     return sameFlow.slice(0, limit);
   }
 
-  const fallbacks = imageConversionPages.filter(
+  const fallbacks = indexableImageConversionPages.filter(
     (page) =>
       page.slug !== slug &&
       page.fromFormatId !== current.fromFormatId &&

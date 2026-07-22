@@ -35,17 +35,17 @@ const platformSectionCopy: Record<AppLocale, { title: string; description: strin
   'pt-br': {
     title: 'Paginas por jogo e rede social',
     description:
-      'Acesse paginas especificas com SEO dedicado para Free Fire, COD, Discord e outras plataformas com regras proprias de validacao.',
+      'Acesse versoes especificas para Free Fire, COD, Discord e outras plataformas com regras proprias de validacao.',
   },
   en: {
     title: 'Pages by game and social platform',
     description:
-      'Open dedicated SEO pages for Free Fire, COD, Discord, and other platforms with different nickname validation rules.',
+      'Open dedicated versions for Free Fire, COD, Discord, and other platforms with different nickname validation rules.',
   },
   es: {
     title: 'Paginas por juego y red social',
     description:
-      'Abre paginas SEO dedicadas para Free Fire, COD, Discord y otras plataformas con reglas de validacion distintas.',
+      'Abre versiones especificas para Free Fire, COD, Discord y otras plataformas con reglas de validacion distintas.',
   },
 };
 

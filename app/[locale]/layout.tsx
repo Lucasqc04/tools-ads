@@ -11,7 +11,7 @@ import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 /* Ads temporariamente desativados
 const ADSENSE_CLIENT_ID = 'ca-pub-7845590634125025';

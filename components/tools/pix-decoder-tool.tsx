@@ -67,6 +67,7 @@ const ui: Record<string, Record<AppLocale, string>> = {
   },
   name: { 'pt-br': 'Nome do recebedor', en: 'Recipient name', es: 'Nombre del receptor' },
   city: { 'pt-br': 'Cidade', en: 'City', es: 'Ciudad' },
+  maxAbbr: { 'pt-br': 'máx.', en: 'max.', es: 'máx.' },
   amount: { 'pt-br': 'Valor (R$)', en: 'Amount (BRL)', es: 'Valor (BRL)' },
   txid: { 'pt-br': 'TXID (opcional)', en: 'TXID (optional)', es: 'TXID (opcional)' },
   additionalInfo: { 'pt-br': 'Info adicional', en: 'Additional info', es: 'Info adicional' },
@@ -539,12 +540,12 @@ function GenerateTab({
         )}
 
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('name', locale)} <span className="text-slate-400 font-normal">(máx 25)</span></label>
+          <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('name', locale)} <span className="text-slate-400 font-normal">({t('maxAbbr', locale)} 25)</span></label>
           <Input value={genName} onChange={(e) => setGenName(e.target.value)} maxLength={25} className="text-sm" />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('city', locale)} <span className="text-slate-400 font-normal">(máx 15)</span></label>
+          <label className="mb-1.5 block text-sm font-semibold text-slate-800">{t('city', locale)} <span className="text-slate-400 font-normal">({t('maxAbbr', locale)} 15)</span></label>
           <Input value={genCity} onChange={(e) => setGenCity(e.target.value)} maxLength={15} className="text-sm" />
         </div>
 

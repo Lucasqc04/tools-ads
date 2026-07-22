@@ -450,10 +450,15 @@ export function InvisibleCharacterTool({
     initialPlatformId && invisiblePlatforms.some((platform) => platform.id === initialPlatformId)
       ? initialPlatformId
       : invisiblePlatforms[0]?.id;
+  const defaultPlatform = invisiblePlatforms.find((platform) => platform.id === defaultPlatformId);
+  const defaultPatternId =
+    getInvisibleCombinationById(defaultPlatform?.recommendedCombinationId ?? '')?.id ??
+    invisibleCombinationDefinitions[0]?.id ??
+    '';
 
   const [platformId, setPlatformId] = useState(defaultPlatformId ?? 'free-fire');
   const [generationMode, setGenerationMode] = useState<GenerationMode>('combination');
-  const [patternId, setPatternId] = useState(invisibleCombinationDefinitions[0]?.id ?? '');
+  const [patternId, setPatternId] = useState(defaultPatternId);
   const [characterId, setCharacterId] = useState(invisibleCharacterDefinitions[0]?.id ?? '');
   const [repeatCount, setRepeatCount] = useState(2);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -765,7 +770,9 @@ export function InvisibleCharacterTool({
                 {ui.recommendationLabel}
               </p>
               <p className="text-sm font-semibold text-slate-900">{selectedPattern?.label}</p>
-              <p className="text-xs text-slate-600">{selectedPattern?.description}</p>
+              <p className="text-xs text-slate-600">
+                {selectedPattern?.descriptionByLocale[locale]}
+              </p>
             </div>
           </div>
 
@@ -1040,7 +1047,9 @@ export function InvisibleCharacterTool({
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">{combination.label}</p>
-                    <p className="text-xs text-slate-600">{combination.description}</p>
+                    <p className="text-xs text-slate-600">
+                      {combination.descriptionByLocale[locale]}
+                    </p>
                   </div>
                   {isSelected ? (
                     <span className="rounded-full bg-brand-50 px-2 py-1 text-[10px] font-semibold text-brand-700">

@@ -94,8 +94,8 @@ const buildBlocks = (
     {
       title: 'Quando usar esta rota especifica',
       paragraphs: [
-        `Use esta landing quando a intencao de busca for exatamente ${fromLabel} para ${toLabel}, com suporte a lote e multiplas saidas quando disponivel.`,
-        'O motor e o mesmo da ferramenta universal principal, mas aqui o fluxo ja chega pre-configurado para acelerar uso e SEO sem query string.',
+        `Use esta conversao para transformar ${fromLabel} em ${toLabel}, com suporte a lote e multiplas saidas quando disponivel.`,
+        'O motor e o mesmo da ferramenta universal principal, mas aqui o fluxo ja chega pre-configurado para voce comecar mais rapido.',
       ],
     },
     {

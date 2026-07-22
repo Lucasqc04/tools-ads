@@ -3,45 +3,6 @@ import type { AppLocale } from '@/lib/i18n/config';
 type LocaleKeywordMap = Partial<Record<AppLocale, string[]>>;
 type ToolKeywordMap = Record<string, LocaleKeywordMap>;
 
-const locales: AppLocale[] = ['pt-br', 'en', 'es'];
-
-const suffixesByLocale: Record<AppLocale, string[]> = {
-  'pt-br': ['online', 'gratis', 'sem cadastro', 'sem login', 'rapido'],
-  en: ['online', 'free', 'no sign up', 'no login', 'fast'],
-  es: ['online', 'gratis', 'sin registro', 'sin login', 'rapido'],
-};
-
-const sanitizeKeyword = (value: string): string =>
-  value
-    .replaceAll(/\s+/g, ' ')
-    .replaceAll('\u00a0', ' ')
-    .trim();
-
-const expandKeywords = (locale: AppLocale, keywords: string[]): string[] => {
-  const output = new Set<string>();
-  const suffixes = suffixesByLocale[locale];
-
-  keywords.forEach((keyword) => {
-    const base = sanitizeKeyword(keyword);
-    if (!base) {
-      return;
-    }
-
-    output.add(base);
-
-    suffixes.forEach((suffix) => {
-      const lowerBase = base.toLowerCase();
-      if (lowerBase.includes(suffix)) {
-        return;
-      }
-
-      output.add(`${base} ${suffix}`);
-    });
-  });
-
-  return Array.from(output);
-};
-
 const baseKeywordsByTool: ToolKeywordMap = {
   'bitcoin-wallet': {
     'pt-br': [
@@ -1406,21 +1367,7 @@ const baseKeywordsByTool: ToolKeywordMap = {
   },
 };
 
-const buildKeywordMap = (): ToolKeywordMap => {
-  const output: ToolKeywordMap = {};
-
-  Object.entries(baseKeywordsByTool).forEach(([toolSlug, localeMap]) => {
-    const nextLocaleMap: LocaleKeywordMap = {};
-
-    locales.forEach((locale) => {
-      const baseKeywords = localeMap[locale] ?? [];
-      nextLocaleMap[locale] = expandKeywords(locale, baseKeywords);
-    });
-
-    output[toolSlug] = nextLocaleMap;
-  });
-
-  return output;
-};
-
-export const toolAliasKeywordSeeds: ToolKeywordMap = buildKeywordMap();
+// Keep only explicit, task-focused phrases. Automatically multiplying every phrase
+// by "free", "online", "fast", and sign-up modifiers created thousands of nearly
+// identical landing pages and diluted the useful routes in the sitemap.
+export const toolAliasKeywordSeeds: ToolKeywordMap = baseKeywordsByTool;

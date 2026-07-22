@@ -110,8 +110,6 @@ const nativelyEncodedFormats = new Set<RasterImageFormatId>([
   'jpeg',
   'webp',
   'avif',
-  'gif',
-  'tiff',
 ]);
 
 const customEncodedFormats = new Set<RasterImageFormatId>(['bmp', 'ico', 'svg', 'tga']);

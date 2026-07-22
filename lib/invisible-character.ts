@@ -52,7 +52,7 @@ export const invisibleCharacterDefinitions: InvisibleCharacterDefinition[] = [
 export type InvisibleCombinationDefinition = {
   id: string;
   label: string;
-  description: string;
+  descriptionByLocale: Record<AppLocale, string>;
   value: string;
   characterIds: string[];
 };
@@ -68,12 +68,12 @@ const buildCombinationValue = (characterIds: string[]): string =>
 const buildCombination = (
   id: string,
   label: string,
-  description: string,
+  descriptionByLocale: Record<AppLocale, string>,
   characterIds: string[],
 ): InvisibleCombinationDefinition => ({
   id,
   label,
-  description,
+  descriptionByLocale,
   characterIds,
   value: buildCombinationValue(characterIds),
 });
@@ -82,43 +82,71 @@ export const invisibleCombinationDefinitions: InvisibleCombinationDefinition[] =
   buildCombination(
     'hangul-double',
     'Hangul x2',
-    'Boa escolha quando o jogo bloqueia apenas 1 caractere invisivel.',
+    {
+      'pt-br': 'Boa escolha quando o jogo bloqueia apenas 1 caractere invisivel.',
+      en: 'A useful first option when a game blocks a single invisible character.',
+      es: 'Una buena primera opcion cuando el juego bloquea un solo caracter invisible.',
+    },
     ['hangul-filler', 'hangul-filler'],
   ),
   buildCombination(
     'braille-hangul-braille',
     'Braille + Hangul + Braille',
-    'Combinacao estavel para validacoes mais restritivas.',
+    {
+      'pt-br': 'Combinacao para validacoes mais restritivas.',
+      en: 'An alternative pattern for stricter nickname validation.',
+      es: 'Un patron alternativo para validaciones de nickname mas estrictas.',
+    },
     ['braille-blank', 'hangul-filler', 'braille-blank'],
   ),
   buildCombination(
     'zero-width-triple',
     'ZWSP + ZWNJ + ZWJ',
-    'Boa para plataformas que aceitam sequencias zero-width.',
+    {
+      'pt-br': 'Boa para plataformas que aceitam sequencias zero-width.',
+      en: 'Useful on platforms that accept zero-width sequences.',
+      es: 'Util en plataformas que aceptan secuencias zero-width.',
+    },
     ['zero-width-space', 'zero-width-non-joiner', 'zero-width-joiner'],
   ),
   buildCombination(
     'hangul-zero-hangul',
     'Hangul + ZWSP + Hangul',
-    'Alternativa para nicks quando o primeiro padrao falha.',
+    {
+      'pt-br': 'Alternativa para nicks quando o primeiro padrao falha.',
+      en: 'A fallback for nicknames when the first pattern fails.',
+      es: 'Una alternativa para nicknames cuando falla el primer patron.',
+    },
     ['hangul-filler', 'zero-width-space', 'hangul-filler'],
   ),
   buildCombination(
     'braille-zero-braille',
     'Braille + ZWSP + Braille',
-    'Opcao hibrida para tentar bypass de validacoes de espaco.',
+    {
+      'pt-br': 'Opcao hibrida para testar em validacoes de espaco.',
+      en: 'A mixed pattern to test against space validation rules.',
+      es: 'Un patron mixto para probar reglas de validacion de espacios.',
+    },
     ['braille-blank', 'zero-width-space', 'braille-blank'],
   ),
   buildCombination(
     'hangul-triple',
     'Hangul x3',
-    'Semi-invisivel para plataformas que pedem tamanho minimo maior.',
+    {
+      'pt-br': 'Semi-invisivel para plataformas que pedem tamanho minimo maior.',
+      en: 'A longer invisible sequence for platforms with minimum-length rules.',
+      es: 'Una secuencia invisible mas larga para plataformas con longitud minima.',
+    },
     ['hangul-filler', 'hangul-filler', 'hangul-filler'],
   ),
   buildCombination(
     'braille-quad',
     'Braille x4',
-    'Semi-invisivel para testes em validadores rigidos.',
+    {
+      'pt-br': 'Semi-invisivel para testes em validadores rigidos.',
+      en: 'A longer Braille pattern to test in strict validators.',
+      es: 'Un patron Braille mas largo para probar en validadores estrictos.',
+    },
     ['braille-blank', 'braille-blank', 'braille-blank', 'braille-blank'],
   ),
 ];
