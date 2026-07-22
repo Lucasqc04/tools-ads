@@ -5,6 +5,11 @@ import { ContentBlocks } from '@/components/shared/content-blocks';
 import { Faq } from '@/components/shared/faq';
 import { RelatedTools } from '@/components/shared/related-tools';
 import { TrustNote } from '@/components/shared/trust-note';
+import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
+import {
+  getRelatedToolAliasPages,
+  toLocalizedToolAliasLink,
+} from '@/data/tool-alias-pages';
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
 import type { ToolDefinition } from '@/types/tool';
@@ -29,6 +34,31 @@ export function ToolPageShell({
   locale = 'pt-br',
 }: ToolPageShellProps) {
   const dictionary = getDictionary(locale);
+  const toolsPrefix = `/${locale}/tools/`;
+  const toolPathRemainder = tool.canonicalPath.startsWith(toolsPrefix)
+    ? tool.canonicalPath.slice(toolsPrefix.length)
+    : '';
+  const isCanonicalToolRoute = Boolean(toolPathRemainder) && !toolPathRemainder.includes('/');
+  const intentLinks = isCanonicalToolRoute && !afterToolSection
+    ? getRelatedToolAliasPages(tool.slug, '', locale, 2).map((page) =>
+        toLocalizedToolAliasLink(page, locale),
+      )
+    : [];
+
+  const intentSectionCopy: Record<AppLocale, { title: string; description: string }> = {
+    'pt-br': {
+      title: 'Tarefas especificas com esta ferramenta',
+      description: 'Atalhos para usos frequentes com o mesmo fluxo completo.',
+    },
+    en: {
+      title: 'Specific tasks with this tool',
+      description: 'Shortcuts to common tasks using the same complete workflow.',
+    },
+    es: {
+      title: 'Tareas especificas con esta herramienta',
+      description: 'Atajos para usos frecuentes con el mismo flujo completo.',
+    },
+  };
 
   return (
     <Container className="py-8 md:py-10">
@@ -71,7 +101,16 @@ export function ToolPageShell({
 
           <Faq items={tool.faq} title={dictionary.toolShell.faqTitle} />
 
-          <RelatedTools tools={relatedTools} locale={locale} />
+          <RelatedTools
+            tools={relatedTools.slice(0, intentLinks.length ? 2 : 4)}
+            locale={locale}
+          />
+
+          <ToolAliasLinks
+            title={intentSectionCopy[locale].title}
+            description={intentSectionCopy[locale].description}
+            links={intentLinks}
+          />
 
           {afterContentSection ? afterContentSection : null}
 

@@ -98,6 +98,7 @@ import {
   invisibleCharacterFaq,
   invisibleCharacterIntro,
 } from '@/data/content/invisible-character';
+import { getNicknameSymbolGeneratorContent } from '@/data/content/nickname-symbol-generator';
 import {
   videoCompressionContentBlocks,
   videoCompressionFaq,
@@ -1461,7 +1462,25 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/invisible-character',
     faq: invisibleCharacterFaq,
     contentBlocks: invisibleCharacterContentBlocks,
-    relatedToolIds: ['qr-code-generator', 'password-generator', 'json-formatter'],
+    relatedToolIds: ['nickname-symbol-generator', 'qr-code-generator', 'password-generator'],
+  },
+  {
+    id: 'nickname-symbol-generator',
+    slug: 'nickname-symbol-generator',
+    name: getNicknameSymbolGeneratorContent('pt-br').name,
+    shortDescription: getNicknameSymbolGeneratorContent('pt-br').shortDescription,
+    category: 'gaming',
+    primaryKeyword: getNicknameSymbolGeneratorContent('pt-br').primaryKeyword,
+    secondaryKeywords: getNicknameSymbolGeneratorContent('pt-br').secondaryKeywords,
+    searchIntent: getNicknameSymbolGeneratorContent('pt-br').searchIntent,
+    seoTitle: getNicknameSymbolGeneratorContent('pt-br').seoTitle,
+    seoDescription: getNicknameSymbolGeneratorContent('pt-br').seoDescription,
+    h1: getNicknameSymbolGeneratorContent('pt-br').h1,
+    intro: getNicknameSymbolGeneratorContent('pt-br').intro,
+    canonicalPath: '/tools/nickname-symbol-generator',
+    faq: getNicknameSymbolGeneratorContent('pt-br').faq,
+    contentBlocks: getNicknameSymbolGeneratorContent('pt-br').contentBlocks,
+    relatedToolIds: ['invisible-character', 'cs2-crosshair-codes', 'contador-de-caracteres'],
   },
   {
     id: 'cs2-crosshair-codes',
@@ -1869,6 +1888,16 @@ const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>
   localizableToolIds.has(toolId as LocalizableToolId);
 
 const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition => {
+  if (tool.id === 'nickname-symbol-generator') {
+    const localized = getNicknameSymbolGeneratorContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
   if (tool.id === 'cs2-crosshair-codes') {
     const localized = getCs2CrosshairCodesContent(locale);
 

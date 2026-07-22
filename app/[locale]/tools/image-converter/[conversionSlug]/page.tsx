@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { ImageConversionLinks } from '@/components/tools/image-conversion-links';
 import { ImageConverterTool } from '@/components/tools/image-converter-tool';
@@ -9,6 +9,7 @@ import {
   getImageConversionStaticParams,
   getLocalizedImageConversionContent,
   getRelatedImageConversionPages,
+  isIndexableImageConversionPage,
   toLocalizedImageConversionLink,
 } from '@/data/image-conversion-pages';
 import {
@@ -27,7 +28,7 @@ import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import type { ToolDefinition } from '@/types/tool';
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 const toolSlug = 'image-converter';
 
@@ -45,17 +46,17 @@ const conversionSectionByLocale: Record<
   'pt-br': {
     title: 'Outras conversões relacionadas',
     description:
-      'Links internos com pares próximos para manter navegação objetiva e descoberta de novas combinações.',
+      'Acesse pares de formatos próximos para concluir outras conversões sem refazer o fluxo.',
   },
   en: {
     title: 'Related conversion pages',
     description:
-      'Internal links to nearby format pairs for faster navigation and broader workflow coverage.',
+      'Open nearby format pairs to complete other conversions without rebuilding your workflow.',
   },
   es: {
     title: 'Otras conversiones relacionadas',
     description:
-      'Enlaces internos a pares cercanos para navegar rápido y cubrir más flujos de trabajo.',
+      'Abre pares de formatos cercanos para completar otras conversiones sin rehacer el flujo.',
   },
 };
 
@@ -86,7 +87,7 @@ export async function generateMetadata({
   const resolution = getImageConversionResolutionBySlug(conversionSlug);
   const baseTool = getLocalizedToolBySlug(locale, toolSlug);
 
-  if (!resolution) {
+  if (!resolution || !isIndexableImageConversionPage(resolution.page)) {
     return buildLocalizedMetadata({
       locale,
       title: baseTool?.seoTitle ?? `${dictionary.common.tools} | ${dictionary.seo.siteDefaultTitle}`,
@@ -122,6 +123,10 @@ export default async function ConversionLandingPage({
 
   if (!resolution || !baseTool) {
     notFound();
+  }
+
+  if (!isIndexableImageConversionPage(resolution.page)) {
+    permanentRedirect(localizePath(locale, '/tools/image-converter'));
   }
 
   const conversionPage = resolution.page;

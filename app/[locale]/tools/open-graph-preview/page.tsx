@@ -64,7 +64,7 @@ export default async function OpenGraphPreviewPage({ params }: PageProps) {
   }
 
   const related = getLocalizedRelatedTools(locale, tool.id);
-  const aliasLinks = getRelatedToolAliasPages(toolSlug, '', 4).map((page) =>
+  const aliasLinks = getRelatedToolAliasPages(toolSlug, '', locale, 4).map((page) =>
     toLocalizedToolAliasLink(page, locale),
   );
 

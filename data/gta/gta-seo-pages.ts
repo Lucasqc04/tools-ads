@@ -300,7 +300,7 @@ export const getLocalizedGtaSeoContent = (
       title,
       intro: gameLabel
         ? `Copie codigos do ${gameLabel} com foco em PC e telefone quando disponivel. Filtre por categoria e busque termos como tanque, helicoptero, policia, vida e armas.`
-        : `Encontre codigos GTA por intencao de busca (${categoryLabel}). Use filtros por jogo e plataforma para copiar rapidamente os cheats certos para o modo historia.`,
+        : `Encontre codigos GTA da categoria ${categoryLabel}. Use filtros por jogo e plataforma para copiar rapidamente os cheats certos para o modo historia.`,
       seoTitle: `${title} | PC e Phone Cheats`,
       seoDescription:
         'Lista organizada de cheats GTA para modo historia/single-player com busca inteligente, filtros por jogo/plataforma e avisos de compatibilidade.',
@@ -332,7 +332,7 @@ export const getLocalizedGtaSeoContent = (
           ],
         },
         {
-          title: 'Busca inteligente e filtros por intencao',
+          title: 'Busca inteligente e filtros praticos',
           paragraphs: [
             'A busca aceita termos em portugues, ingles e espanhol e aplica sinonimos como carro/car/coche, policia/police, vida/health, tanque/tank/rhino e moto/bike.',
             'Isso ajuda a encontrar codigos mesmo quando a consulta nao bate exatamente com o nome do cheat no jogo.',
@@ -372,7 +372,7 @@ export const getLocalizedGtaSeoContent = (
       title,
       intro: gameLabel
         ? `Copy ${gameLabel} cheats with PC-first coverage and phone numbers when available. Filter by category and search terms like tank, helicopter, police, health, and weapons.`
-        : `Find GTA cheats by search intent (${categoryLabel}). Filter by game and platform to copy the right story-mode code faster.`,
+        : `Find GTA cheats in the ${categoryLabel} category. Filter by game and platform to copy the right story-mode code faster.`,
       seoTitle: `${title} | PC and Phone Codes`,
       seoDescription:
         'Structured GTA cheat code list for story mode/single-player with smart search, game/platform filters, and compatibility warnings.',
@@ -388,7 +388,7 @@ export const getLocalizedGtaSeoContent = (
           title: 'Use GTA cheats with less trial and error',
           paragraphs: [
             'This page groups cheats across GTA San Andreas, GTA V, GTA IV, GTA III, and GTA Vice City. Each result includes code format and platform hints so you can copy quickly.',
-            'Use filters first (game/category/platform) and then search by intent. This avoids mixing similar cheat names from different titles.',
+            'Use filters first (game/category/platform) and then search by the item you need. This avoids mixing similar cheat names from different titles.',
           ],
         },
         {
@@ -424,7 +424,7 @@ export const getLocalizedGtaSeoContent = (
         {
           question: 'Can I search with terms like tank or helicopter?',
           answer:
-            'Yes. The search supports intent terms and multilingual synonyms, then filters by game and platform.',
+            'Yes. The search supports common terms and multilingual synonyms, then filters by game and platform.',
         },
         {
           question: 'Which platforms are included?',
@@ -443,7 +443,7 @@ export const getLocalizedGtaSeoContent = (
     title,
     intro: gameLabel
       ? `Copia codigos de ${gameLabel} con enfoque en PC y numeros de telefono cuando existan. Filtra por categoria y busca terminos como tanque, helicoptero, policia, vida y armas.`
-      : `Encuentra codigos GTA por intencion de busqueda (${categoryLabel}). Usa filtros por juego y plataforma para copiar mas rapido el cheat correcto en modo historia.`,
+      : `Encuentra codigos GTA de la categoria ${categoryLabel}. Usa filtros por juego y plataforma para copiar mas rapido el cheat correcto en modo historia.`,
     seoTitle: `${title} | Codigos PC y telefono`,
     seoDescription:
       'Listado estructurado de codigos GTA para modo historia/single-player con busqueda inteligente, filtros por juego/plataforma y avisos de compatibilidad.',

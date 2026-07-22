@@ -70,20 +70,26 @@ type BuildLocalizedMetadataInput = {
   locale: AppLocale;
   title: string;
   description: string;
-  localePaths: Record<AppLocale, string>;
+  localePaths: Partial<Record<AppLocale, string>>;
   keywords?: string[];
 };
 
 const buildLanguageAlternates = (
-  localePaths: Record<AppLocale, string>,
+  localePaths: Partial<Record<AppLocale, string>>,
 ): Record<string, string> => {
   const alternates: Record<string, string> = {};
 
   locales.forEach((locale) => {
-    alternates[localeMetadata[locale].hreflang] = makeAbsoluteUrl(localePaths[locale]);
+    const path = localePaths[locale];
+    if (path) {
+      alternates[localeMetadata[locale].hreflang] = makeAbsoluteUrl(path);
+    }
   });
 
-  alternates['x-default'] = makeAbsoluteUrl(localePaths[defaultLocale]);
+  const defaultPath = localePaths[defaultLocale] ?? Object.values(localePaths)[0];
+  if (defaultPath) {
+    alternates['x-default'] = makeAbsoluteUrl(defaultPath);
+  }
 
   return alternates;
 };
@@ -95,7 +101,12 @@ export const buildLocalizedMetadata = ({
   localePaths,
   keywords = [],
 }: BuildLocalizedMetadataInput): Metadata => {
-  const canonical = makeAbsoluteUrl(localePaths[locale]);
+  const canonicalPath = localePaths[locale] ?? localePaths[defaultLocale] ?? Object.values(localePaths)[0];
+  if (!canonicalPath) {
+    throw new Error(`Missing canonical path for locale: ${locale}`);
+  }
+
+  const canonical = makeAbsoluteUrl(canonicalPath);
   const localeInfo = localeMetadata[locale];
 
   return {

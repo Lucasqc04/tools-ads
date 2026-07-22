@@ -1,13 +1,10 @@
 import Link from 'next/link';
-import { headers } from 'next/headers';
 import { Container } from '@/components/layout/container';
-import { defaultLocale, isValidLocale, localizePath } from '@/lib/i18n/config';
+import { defaultLocale, localizePath } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
 
-export default async function LocalizedNotFound() {
-  const headersList = await headers();
-  const localeHeader = headersList.get('x-locale') ?? '';
-  const locale = isValidLocale(localeHeader) ? localeHeader : defaultLocale;
+export default function LocalizedNotFound() {
+  const locale = defaultLocale;
   const dictionary = getDictionary(locale);
 
   return (

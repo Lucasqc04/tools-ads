@@ -286,10 +286,10 @@ const buildContentBlocks = (
         ],
       },
       {
-        title: 'Ventaja SEO y uso real',
+        title: 'Ventajas practicas frente a una lista generica',
         paragraphs: [
-          'Esta pagina evita contenido generico: trae contexto por plataforma, recomendaciones dinamicas, matriz Unicode, generador de variantes y detector de caracteres invisibles.',
-          'Asi mejoras tasa de acierto, puedes limpiar texto oculto y reduces intentos fallidos al editar tu perfil.',
+          'En lugar de mostrar un solo espacio en blanco, esta pagina combina contexto de la plataforma, recomendaciones, matriz Unicode, generador de variantes y detector de caracteres invisibles.',
+          'Asi puedes probar alternativas, limpiar texto oculto y reducir intentos fallidos al editar tu perfil.',
         ],
       },
     ];
@@ -317,10 +317,10 @@ const buildContentBlocks = (
       ],
     },
     {
-      title: 'Por que esta pagina rankeia melhor que listas genericas',
+      title: 'Por que esta pagina e mais util que uma lista generica',
       paragraphs: [
         'Aqui voce nao recebe apenas uma lista estatica: ha recomendacao por plataforma, gerador de variantes, matriz Unicode e detector de caracteres invisiveis para auditoria.',
-        'Esse contexto reduz erro operacional, permite limpar texto oculto, melhora UX e aumenta chance de sucesso em jogos e redes sociais com filtros variaveis.',
+        'Esse contexto reduz tentativa e erro, permite limpar texto oculto e oferece alternativas quando jogos e redes sociais mudam seus filtros.',
       ],
     },
   ];
@@ -532,15 +532,6 @@ export const getRelatedInvisiblePlatformPages = (
 export const getInvisiblePlatformStaticParamsByLocale = (
   locale: AppLocale,
 ): Array<{ platformPageSlug: string }> =>
-  Array.from(
-    new Set(
-      invisiblePlatformPages.flatMap((page) => [
-        getInvisiblePlatformSlugByLocale(page, locale),
-        page.slugPtBr,
-        page.slugEn,
-        page.slugEs,
-      ]),
-    ),
-  ).map((platformPageSlug) => ({
-    platformPageSlug,
+  invisiblePlatformPages.map((page) => ({
+    platformPageSlug: getInvisiblePlatformSlugByLocale(page, locale),
   }));

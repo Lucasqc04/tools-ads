@@ -10,8 +10,11 @@ import {
   localeRedirectCookieName,
   type AppLocale,
 } from '@/lib/i18n/config';
+import { siteConfig } from '@/lib/site-config';
 
 const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
+const canonicalUrl = new URL(siteConfig.url);
+const legacyHosts = new Set(['lucasqc.com', 'www.lucasqc.com']);
 
 const persistLocaleCookies = (response: NextResponse, locale: AppLocale) => {
   response.cookies.set(localeCookieName, locale, {
@@ -28,23 +31,26 @@ const persistLocaleCookies = (response: NextResponse, locale: AppLocale) => {
 };
 
 export function middleware(request: NextRequest) {
+  const forwardedHost = request.headers.get('x-forwarded-host');
+  const requestHost = (forwardedHost ?? request.headers.get('host') ?? request.nextUrl.host)
+    .split(',')[0]
+    ?.trim()
+    .split(':')[0]
+    ?.toLowerCase();
+
+  if (requestHost && legacyHosts.has(requestHost)) {
+    const canonicalRequestUrl = request.nextUrl.clone();
+    canonicalRequestUrl.protocol = canonicalUrl.protocol;
+    canonicalRequestUrl.hostname = canonicalUrl.hostname;
+    canonicalRequestUrl.port = canonicalUrl.port;
+    return NextResponse.redirect(canonicalRequestUrl, 308);
+  }
+
   const pathname = request.nextUrl.pathname;
   const localeInPath = getLocaleFromPathname(pathname);
 
   if (localeInPath) {
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-locale', localeInPath);
-
-    const response = NextResponse.next({
-      request: { headers: requestHeaders },
-    });
-    const cookieLocale = request.cookies.get(localeCookieName)?.value;
-
-    if (cookieLocale !== localeInPath) {
-      persistLocaleCookies(response, localeInPath);
-    }
-
-    return response;
+    return NextResponse.next();
   }
 
   const cookieLocale = request.cookies.get(localeCookieName)?.value;

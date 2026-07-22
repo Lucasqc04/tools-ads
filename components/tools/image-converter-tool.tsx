@@ -409,7 +409,11 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
 };
 
 const getOutputFormats = (fromFormat: ImageFormatId): ImageFormatId[] =>
-  formatOrder.filter((format) => format !== fromFormat);
+  formatOrder.filter(
+    (format) =>
+      format !== fromFormat &&
+      (format === 'pdf' || isImageFormatAvailableForOutput(format as RasterImageFormatId)),
+  );
 
 const isFileCompatibleWithFormat = (file: File, format: ImageFormatId): boolean => {
   const extension = file.name.split('.').pop()?.toLowerCase() ?? '';

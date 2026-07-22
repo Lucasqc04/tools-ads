@@ -414,7 +414,7 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
     locale === 'pt-br'
       ? `A ferramenta de ${focus} foi criada para encurtar o caminho entre pesquisa e execucao. Em vez de montar comando manualmente, voce escolhe opcoes, copia blocos prontos e testa em segundos.`
       : locale === 'en'
-        ? `The ${focus} tool is built to shorten the path from search intent to execution. Instead of assembling commands manually, you choose options, copy ready blocks, and test in seconds.`
+        ? `The ${focus} tool is built to shorten the path from setup to execution. Instead of assembling commands manually, you choose options, copy ready blocks, and test in seconds.`
         : `La herramienta de ${focus} fue creada para acortar el camino entre busqueda y ejecucion. En lugar de montar comandos manualmente, eliges opciones y copias bloques listos.`;
 
   const secondParagraph =

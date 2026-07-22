@@ -4,6 +4,7 @@ import {
 } from '@/data/crypto-conversion-pages';
 import {
   getImageConversionResolutionBySlug,
+  isIndexableImageConversionPage,
   type ImageConversionPage,
 } from '@/data/image-conversion-pages';
 import {
@@ -22,6 +23,7 @@ export type ToolAliasPage = {
   slug: string;
   toolSlug: string;
   keywordByLocale: LocalizedText;
+  sourceLocales: AppLocale[];
   imageConversionSlug?: string;
   cryptoConversionSlug?: string;
   universalConversionSlug?: string;
@@ -60,7 +62,25 @@ const ROOT_RESERVED_SLUGS = new Set<string>([
   'robots.txt',
 ]);
 
-const MAX_ALIASES_PER_TOOL = 72;
+const MAX_ALIASES_PER_LOCALE = 4;
+
+const TOOL_SLUGS_WITH_DEDICATED_LANDING_PAGES = new Set([
+  'nickname-symbol-generator',
+]);
+
+const LEGACY_ALIAS_SUFFIXES = [
+  'sem-cadastro',
+  'sem-login',
+  'no-sign-up',
+  'no-login',
+  'sin-registro',
+  'sin-login',
+  'online',
+  'gratis',
+  'free',
+  'rapido',
+  'fast',
+] as const;
 
 const invisiblePlatformSlugByAliasToken: Record<string, string> = {
   cod: 'cod-mobile',
@@ -120,11 +140,11 @@ const collectToolKeywordSeeds = (toolSlug: string, locale: AppLocale): string[] 
 
   return dedupe(
     [
+      localizedTool.primaryKeyword,
+      ...customSeeds,
       localizedTool.name,
       localizedTool.h1,
-      localizedTool.primaryKeyword,
       ...localizedTool.secondaryKeywords,
-      ...customSeeds,
     ]
       .map((phrase) => normalizePhrase(phrase))
       .filter(Boolean),
@@ -170,7 +190,9 @@ const detectInvisiblePlatform = (
 
 const detectImageConversionSlug = (slug: string): string | undefined => {
   const resolution = getImageConversionResolutionBySlug(slug);
-  return resolution?.page.slug;
+  return resolution && isIndexableImageConversionPage(resolution.page)
+    ? resolution.page.slug
+    : undefined;
 };
 
 const detectCryptoConversionSlug = (slug: string): string | undefined => {
@@ -270,10 +292,14 @@ const buildToolAliasPages = (): ToolAliasPage[] => {
   const pages: ToolAliasPage[] = [];
 
   toolsRegistry.forEach((tool) => {
+    if (TOOL_SLUGS_WITH_DEDICATED_LANDING_PAGES.has(tool.slug)) {
+      return;
+    }
+
     const keywordBucket = new Map<string, Partial<Record<AppLocale, string>>>();
 
     locales.forEach((locale) => {
-      const phrases = collectToolKeywordSeeds(tool.slug, locale);
+      const phrases = collectToolKeywordSeeds(tool.slug, locale).slice(0, MAX_ALIASES_PER_LOCALE);
 
       phrases.forEach((phrase) => {
         const slug = sanitizeSlug(phrase);
@@ -289,7 +315,7 @@ const buildToolAliasPages = (): ToolAliasPage[] => {
       });
     });
 
-    const sortedAliases = Array.from(keywordBucket.entries()).slice(0, MAX_ALIASES_PER_TOOL);
+    const sortedAliases = Array.from(keywordBucket.entries());
 
     sortedAliases.forEach(([slug, byLocale]) => {
       if (usedSlugs.has(slug)) {
@@ -297,15 +323,25 @@ const buildToolAliasPages = (): ToolAliasPage[] => {
       }
 
       const keywordByLocale: LocalizedText = {
-        'pt-br': pickKeywordForLocale('pt-br', byLocale, slug),
-        en: pickKeywordForLocale('en', byLocale, slug),
-        es: pickKeywordForLocale('es', byLocale, slug),
+        'pt-br':
+          byLocale['pt-br'] ??
+          getLocalizedToolBySlug('pt-br', tool.slug)?.primaryKeyword ??
+          pickKeywordForLocale('pt-br', byLocale, slug),
+        en:
+          byLocale.en ??
+          getLocalizedToolBySlug('en', tool.slug)?.primaryKeyword ??
+          pickKeywordForLocale('en', byLocale, slug),
+        es:
+          byLocale.es ??
+          getLocalizedToolBySlug('es', tool.slug)?.primaryKeyword ??
+          pickKeywordForLocale('es', byLocale, slug),
       };
 
       const basePage: ToolAliasPage = {
         slug,
         toolSlug: tool.slug,
         keywordByLocale,
+        sourceLocales: locales.filter((locale) => Boolean(byLocale[locale])),
       };
 
       pages.push(enrichAliasByTool(basePage));
@@ -319,9 +355,64 @@ const buildToolAliasPages = (): ToolAliasPage[] => {
 export const toolAliasPages: ToolAliasPage[] = buildToolAliasPages();
 
 const toolAliasPageBySlug = new Map(toolAliasPages.map((page) => [page.slug, page]));
+const explicitAliasToolSlugBySlug = new Map<string, string>();
+
+toolsRegistry.forEach((tool) => {
+  if (TOOL_SLUGS_WITH_DEDICATED_LANDING_PAGES.has(tool.slug)) {
+    return;
+  }
+
+  locales.forEach((locale) => {
+    collectToolKeywordSeeds(tool.slug, locale).forEach((phrase) => {
+      const slug = sanitizeSlug(phrase);
+      if (shouldKeepAliasSlug(slug) && !explicitAliasToolSlugBySlug.has(slug)) {
+        explicitAliasToolSlugBySlug.set(slug, tool.slug);
+      }
+    });
+  });
+});
 
 export const getToolAliasPageBySlug = (slug: string): ToolAliasPage | undefined =>
   toolAliasPageBySlug.get(slug);
+
+export const getLegacyToolAliasPageBySlug = (slug: string): ToolAliasPage | undefined => {
+  for (const suffix of LEGACY_ALIAS_SUFFIXES) {
+    const suffixToken = `-${suffix}`;
+    if (!slug.endsWith(suffixToken)) {
+      continue;
+    }
+
+    const baseSlug = slug.slice(0, -suffixToken.length);
+    const page = getToolAliasPageBySlug(baseSlug);
+    if (page) {
+      return page;
+    }
+  }
+
+  return undefined;
+};
+
+export const getLegacyToolAliasToolSlugBySlug = (slug: string): string | undefined => {
+  const exactToolSlug = explicitAliasToolSlugBySlug.get(slug);
+  if (exactToolSlug) {
+    return exactToolSlug;
+  }
+
+  for (const suffix of LEGACY_ALIAS_SUFFIXES) {
+    const suffixToken = `-${suffix}`;
+    if (!slug.endsWith(suffixToken)) {
+      continue;
+    }
+
+    const baseSlug = slug.slice(0, -suffixToken.length);
+    const toolSlug = explicitAliasToolSlugBySlug.get(baseSlug);
+    if (toolSlug) {
+      return toolSlug;
+    }
+  }
+
+  return undefined;
+};
 
 export const getToolAliasStaticParamsByLocale = (
   locale: AppLocale,
@@ -330,9 +421,11 @@ export const getToolAliasStaticParamsByLocale = (
     return [];
   }
 
-  return toolAliasPages.map((page) => ({
-    platformPageSlug: page.slug,
-  }));
+  return toolAliasPages
+    .filter((page) => page.sourceLocales.includes(locale))
+    .map((page) => ({
+      platformPageSlug: page.slug,
+    }));
 };
 
 export const getToolAliasPathByLocale = (
@@ -342,11 +435,10 @@ export const getToolAliasPathByLocale = (
 
 export const getToolAliasLocalePathMap = (
   page: ToolAliasPage,
-): Record<AppLocale, string> => ({
-  'pt-br': getToolAliasPathByLocale(page, 'pt-br'),
-  en: getToolAliasPathByLocale(page, 'en'),
-  es: getToolAliasPathByLocale(page, 'es'),
-});
+): Partial<Record<AppLocale, string>> =>
+  Object.fromEntries(
+    page.sourceLocales.map((locale) => [locale, getToolAliasPathByLocale(page, locale)]),
+  );
 
 export const getLocalizedToolAliasLabel = (
   page: ToolAliasPage,
@@ -407,10 +499,16 @@ export const getLocalizedToolAliasContent = (
 export const getRelatedToolAliasPages = (
   toolSlug: string,
   currentSlug: string,
-  limit = 8,
+  locale: AppLocale,
+  limit = 4,
 ): ToolAliasPage[] =>
   toolAliasPages
-    .filter((page) => page.toolSlug === toolSlug && page.slug !== currentSlug)
+    .filter(
+      (page) =>
+        page.toolSlug === toolSlug &&
+        page.slug !== currentSlug &&
+        page.sourceLocales.includes(locale),
+    )
     .slice(0, limit);
 
 export const toLocalizedToolAliasLink = (
