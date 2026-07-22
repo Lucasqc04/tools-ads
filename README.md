@@ -1,93 +1,165 @@
+<div align="center">
+
 # Tools Lucasqc
 
-Hub de ferramentas online com foco em:
+**Hub gratuito de ferramentas online para desenvolvimento, produtividade, mídia, dados, jogos e Bitcoin.**
 
-- SEO técnico + on-page
-- Performance (Core Web Vitals)
-- UX limpa e mobile-first
-- Estrutura pronta para Google AdSense
-- Escalabilidade para novas tools
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Production](https://img.shields.io/badge/status-production-success)](https://tools.lucasqc.com)
+
+[**Acessar o projeto**](https://tools.lucasqc.com) · [Explorar as ferramentas](https://tools.lucasqc.com/tools)
+
+</div>
+
+## Sobre o projeto
+
+O **Tools Lucasqc** reúne dezenas de utilitários gratuitos em uma aplicação única, rápida e responsiva. O projeto foi desenvolvido do zero com foco em:
+
+- SEO técnico e conteúdo orientado à intenção de busca;
+- performance e Core Web Vitals;
+- experiência mobile-first;
+- arquitetura modular para inclusão rápida de novas ferramentas;
+- internacionalização e URLs localizadas;
+- crescimento orgânico sustentável.
+
+O portal recebe **mais de 2 mil usuários únicos por mês**, conquistados de forma totalmente orgânica por mecanismos de busca.
+
+## Principais categorias
+
+### Desenvolvimento e dados
+
+- visualizador e editor de HTML;
+- formatador de JSON e SQL;
+- testador de expressões regulares;
+- decoder de JWT;
+- geradores de UUID, Nano ID e slug;
+- conversores de dados, Base64, URL e timestamp Unix;
+- comparador de textos e contador de caracteres.
+
+### Imagens, áudio, vídeo e documentos
+
+- conversão e compressão de imagens;
+- remoção de fundo;
+- extração de cores;
+- compressão de vídeo e extração de áudio;
+- visualização e manipulação de PDFs;
+- geração e leitura de QR Codes.
+
+### Bitcoin, Pix e criptografia
+
+- conversor de unidades de Bitcoin;
+- decoder de Pix;
+- decoder de invoices Lightning;
+- ferramentas para carteiras Bitcoin e seeds;
+- utilitários baseados em BIP32, BIP39, secp256k1 e BitcoinJS.
+
+### Produtividade e utilidades
+
+- geradores de senhas, CPF e dados fictícios;
+- calculadora de juros compostos;
+- sorteadores e conversores universais;
+- gerador de links para WhatsApp e Telegram;
+- consulta de IP público e e-mail temporário.
+
+### Games
+
+- ferramentas e configurações para CS2;
+- códigos, comandos e páginas especializadas para jogos;
+- conteúdo estruturado para buscas específicas.
+
+## Arquitetura
+
+A aplicação usa o **Next.js App Router** e mantém a definição das ferramentas centralizada em um registry tipado.
+
+```text
+app/                    páginas e rotas
+components/             componentes compartilhados e shells
+components/ads/         slots desacoplados de anúncios
+data/tools-registry.ts  catálogo central das ferramentas
+data/content/            conteúdo e FAQs por ferramenta
+lib/                    regras e lógica reutilizável
+lib/seo.ts              helpers de metadata e SEO
+types/                  contratos TypeScript
+```
+
+### Fluxo para adicionar uma ferramenta
+
+1. Definir nome, slug, categoria, palavra-chave e intenção de busca.
+2. Registrar a ferramenta em `data/tools-registry.ts`.
+3. Criar conteúdo, introdução e FAQ em `data/content/`.
+4. Implementar a lógica isolada em `lib/`.
+5. Criar a página usando os componentes compartilhados.
+6. Configurar metadata, canonical, JSON-LD e ferramentas relacionadas.
+7. Validar responsividade, acessibilidade, lint, typecheck e build.
+
+## SEO e distribuição de conteúdo
+
+- metadata dinâmica por rota;
+- URLs canônicas e localizadas;
+- suporte a conteúdo em português, inglês e espanhol;
+- dados estruturados com JSON-LD;
+- sitemap gerado automaticamente;
+- `robots.txt` e páginas institucionais;
+- FAQs e links internos entre ferramentas relacionadas;
+- arquitetura preparada para páginas long-tail.
 
 ## Stack
 
-- Next.js App Router
-- TypeScript
-- Tailwind CSS
+- **Framework:** Next.js 15 e React 18;
+- **Linguagem:** TypeScript;
+- **UI:** Tailwind CSS e Lucide React;
+- **Editores:** CodeMirror;
+- **Mídia:** FFmpeg, PDF.js, PDF-Lib, Canvas e browser-image-compression;
+- **Bitcoin:** bitcoinjs-lib, BIP32, BIP39, secp256k1 e bech32;
+- **Dados:** XLSX, ZIP.js e formatadores especializados;
+- **Infraestrutura:** Vercel Analytics e Upstash Redis.
 
-## Rotas principais
+## Executando localmente
 
-- `/`
-- `/tools`
-- `/tools/crypto-unit-converter`
-- `/tools/crypto-unit-converter/[from]-to-[to]` (slug técnico, canonical)
-- `/tools/crypto-unit-converter/[de]-para-[para]` (slug PT-BR automático, ex.: `/tools/crypto-unit-converter/satoshi-para-btc`)
-- `/tools/html-viewer`
-- `/tools/json-formatter`
-- `/tools/html-pdf-json` (legado, redireciona para `/tools/html-viewer`)
-- `/tools/image-converter`
-- `/tools/qr-code-generator`
-- `/about`
-- `/contact`
-- `/privacy-policy`
-- `/terms`
-- `/sitemap.xml`
-- `/robots.txt`
+### Requisitos
 
-## Como rodar localmente
+- Node.js 20 ou superior;
+- npm.
 
 ```bash
+git clone https://github.com/Lucasqc04/tools-ads.git
+cd tools-ads
 npm install
 npm run dev
 ```
 
-Build de produção:
+A aplicação ficará disponível em `http://localhost:3000`.
+
+### Verificações de qualidade
 
 ```bash
+npm run lint
+npm run typecheck
 npm run build
-npm start
 ```
 
-## Arquitetura de conteúdo e SEO
+## Scripts
 
-- Registry central de tools: `data/tools-registry.ts`
-- Conteúdo textual por ferramenta: `data/content/*`
-- Lógica pura em `lib/*`
-- Páginas em `app/tools/*`
-- Schema JSON-LD por página via `components/shared/json-ld.tsx`
-- Metadata por rota com helper em `lib/seo.ts`
-- Sitemap automático baseado no registry em `app/sitemap.ts`
+| Comando | Descrição |
+|---|---|
+| `npm run dev` | inicia o ambiente de desenvolvimento |
+| `npm run build` | gera o build de produção |
+| `npm run start` | executa o build gerado |
+| `npm run lint` | executa o ESLint |
+| `npm run typecheck` | valida os tipos sem emitir arquivos |
 
-## Arquitetura de anúncios (placeholders)
+## Roadmap
 
-- Registry de slots: `lib/ads-config.ts`
-- Tipos: `types/ads.ts`
-- Componentes:
-  - `AdSlotTop`
-  - `AdSlotInContent`
-  - `AdSlotSidebar`
-  - `AdSlotFooter`
+- ampliar o catálogo de ferramentas;
+- continuar a expansão internacional;
+- melhorar a cobertura de testes;
+- evoluir acessibilidade e métricas de performance;
+- expandir páginas programáticas sem comprometer a qualidade do conteúdo.
 
-Para integrar AdSense depois, troque o conteúdo de `components/ads/ad-slot.tsx` por `<ins class="adsbygoogle">` e use `adSlotId` do registry.
+## Autor
 
-## Fluxo para criar nova tool
+Desenvolvido por **[Lucas Quinteiro Campos](https://github.com/Lucasqc04)**.
 
-1. Defina nome, slug, keyword principal e intenção de busca.
-2. Cadastre em `data/tools-registry.ts`.
-3. Crie conteúdo em `data/content/<slug>.ts`.
-4. Coloque lógica em `lib/<slug>.ts`.
-5. Crie página em `app/tools/<slug>/page.tsx` usando `ToolPageShell`.
-6. Adicione metadata e JSON-LD da página.
-7. Configure links relacionados (`relatedToolIds`) no registry.
-8. Revise mobile, SEO e performance.
-
-## Checklist rápido de produção
-
-- [ ] Metadata e canonical em todas as páginas indexáveis
-- [ ] Sitemap e robots publicados
-- [ ] FAQ em todas as pages de tools
-- [ ] Conteúdo útil suficiente (evitar thin content)
-- [ ] Páginas institucionais completas
-- [ ] Placeholders de anúncio sem poluir UX
-- [ ] Build e lint sem erros
-- [ ] Search Console configurado
-- [ ] Política de privacidade compatível com anúncios
+[LinkedIn](https://www.linkedin.com/in/lucas-quinteiro-2071022a4/) · [Projeto em produção](https://tools.lucasqc.com)
