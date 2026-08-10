@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { AudioEditorTool } from '@/components/tools/audio-editor-tool';
+import { AuthenticatorCodeGeneratorTool } from '@/components/tools/authenticator-code-generator-tool';
 import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-tool';
 import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
 import { CompoundInterestTool } from '@/components/tools/compound-interest-tool';
@@ -271,6 +272,7 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'video-compression': 'UtilitiesApplication',
   'extrair-audio-de-video': 'MultimediaApplication',
   'qr-code-generator': 'UtilitiesApplication',
+  'authenticator-code-generator': 'SecurityApplication',
   'gerador-link-whatsapp-telegram': 'UtilitiesApplication',
   sorteador: 'UtilitiesApplication',
   'calculadora-juros-compostos': 'FinanceApplication',
@@ -480,6 +482,7 @@ const getContextualLandingContent = (
 };
 
 const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
+  'authenticator-code-generator': ({ locale }) => <AuthenticatorCodeGeneratorTool locale={locale} />,
   'bitcoin-wallet': ({ locale }) => <BitcoinWalletTool locale={locale} />,
   'html-viewer': ({ locale }) => <LazyHtmlViewerTool locale={locale} />,
   'markdown-editor': ({ locale }) => <MarkdownEditorTool locale={locale} />,

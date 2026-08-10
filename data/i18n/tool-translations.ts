@@ -38,6 +38,7 @@ type ToolId =
   | 'video-compression'
   | 'extrair-audio-de-video'
   | 'qr-code-generator'
+  | 'authenticator-code-generator'
   | 'sorteador'
   | 'calculadora-juros-compostos'
   | 'invisible-character'
@@ -827,6 +828,99 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Does it work on mobile devices?',
         answer:
           'Yes. The interface is responsive and keeps primary actions accessible on smaller screens.',
+      },
+    ],
+  },
+  'authenticator-code-generator': {
+    name: 'Authenticator Code Generator for Testing',
+    shortDescription:
+      'Scan an authenticator QR code or paste a Base32 secret/otpauth link to generate local TOTP codes, track expiry, and copy quickly.',
+    primaryKeyword: 'authenticator code generator for testing',
+    secondaryKeywords: [
+      'totp code generator online',
+      'scan authenticator qr code',
+      'paste base32 authenticator secret',
+      '2fa code generator for qa',
+      'google authenticator code for testing',
+      'otpauth totp generator',
+      'two factor code testing tool',
+    ],
+    searchIntent:
+      'Developers and QA teams who need to validate a TOTP flow from a QR code, Base32 secret, or otpauth link without registering a test account in a mobile authenticator.',
+    seoTitle: 'Authenticator Code Generator for Testing | TOTP, QR Code, Base32',
+    seoDescription:
+      'Scan an authenticator QR code or paste Base32/otpauth to generate browser-based TOTP codes, track expiry, copy, and save only for local testing.',
+    h1: 'Authenticator Code Generator for Testing with QR Code and TOTP',
+    intro:
+      'Scan an authenticator QR code or paste a Base32 secret or otpauth link to generate TOTP codes in your browser, track rotation, and copy with one click.',
+    contentBlocks: [
+      {
+        title: 'Generate authenticator codes for test workflows',
+        paragraphs: [
+          'This tool reads an authenticator setup QR code, a Base32 secret, or the otpauth:// link used by compatible TOTP apps. Once loaded, the temporary code is calculated directly in your browser and refreshes on the interval set by the service, usually every 30 seconds.',
+          'You can upload a QR screenshot, use the camera, or paste the secret manually. That is useful when validating OAuth, login, staging, or local environments without repeatedly enrolling the same test secret in a phone app. A standalone six-digit token cannot generate future codes: the QR, Base32 secret, or otpauth link is required.',
+        ],
+      },
+      {
+        title: 'Use a QR Code, Base32 secret, or otpauth link',
+        paragraphs: [
+          'Most setup QR codes contain an otpauth://totp/ link with the account name, issuer, algorithm, number of digits, and expiry period. The tool respects those parameters and supports SHA-1, SHA-256, and SHA-512 when they are included.',
+          'If you only have the secret, paste the Base32 value, normally letters A–Z and digits 2–7. Spaces and hyphens are accepted for easier copying. Passwords, recovery codes, and the currently visible one-time token are intentionally not interpreted as TOTP secrets.',
+        ],
+        list: [
+          'Upload an image that contains the setup QR Code.',
+          'Scan the QR Code with camera permission in your browser.',
+          'Paste a Base32 secret or an otpauth://totp/ link.',
+          'Click the displayed code to copy it to the clipboard.',
+        ],
+      },
+      {
+        title: 'What the expiry counter means',
+        paragraphs: [
+          'TOTP is a time-based one-time password. The same secret creates a different value on every period, and the counter shows how long remains before the next rotation. Copy a value before it expires; if a service rejects it, wait for the next rotation or check that your device clock is accurate.',
+          'Most services use six digits and 30-second periods. Some QR codes use eight digits, another algorithm, or a different period. Showing those settings helps debug an unexpected test failure without guessing which part of the configuration differs.',
+        ],
+      },
+      {
+        title: 'Local saving is for QA, not critical accounts',
+        paragraphs: [
+          'When you choose to save an entry, its secret stays only in this browser’s localStorage and is used to build your local testing list. The QR code, secret, and temporary code are not sent to this tool’s server by default. LocalStorage can still be accessible to people with access to the browser profile, malicious extensions, or device backups.',
+          'Use saving for disposable accounts, development, staging, and manual QA. For personal, financial, administrative, or production accounts, use a trusted mobile authenticator, a password manager with TOTP, or a security key. Remove saved entries after testing, especially on shared computers.',
+        ],
+      },
+      {
+        title: 'Security limits and good practices',
+        paragraphs: [
+          'This tool works with time-based TOTP codes. It does not replace push confirmation, SMS, FIDO2/WebAuthn security keys, or recovery codes. Other QR formats cannot be turned into a valid second factor unless they contain compatible TOTP setup data.',
+          'Never share the secret key, enrollment QR, or screenshots of that setup. Anyone who has the secret can generate the same temporary codes while it remains active. After a test, revoke or rotate the secret in the issuing service if it was used outside an isolated environment.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I paste only the current six-digit code?',
+        answer:
+          'Not to generate future codes. The current token expires and does not contain the required secret. Paste the Base32 secret, otpauth:// link, or scan the setup QR Code instead.',
+      },
+      {
+        question: 'Are QR scanning and TOTP calculation sent to a server?',
+        answer:
+          'No. The image, secret, and code calculation are handled locally in your browser. Setup data is not sent to a server by default.',
+      },
+      {
+        question: 'Is it safe to save an account in the list?',
+        answer:
+          'Saving uses this browser’s localStorage, so it is intended only for testing and non-critical accounts on a trusted device. Use a dedicated authenticator for important accounts.',
+      },
+      {
+        question: 'Why did a service reject the code shown here?',
+        answer:
+          'Check that the secret matches the service enrollment, your device clock is synced, and the value did not expire during submission. Also inspect the displayed digit, period, and algorithm settings.',
+      },
+      {
+        question: 'Does it work with Google Authenticator, Microsoft Authenticator, and Authy?',
+        answer:
+          'It works when the QR code or secret follows the TOTP/otpauth standard. App-specific sync, push, or backup features are outside this tool.',
       },
     ],
   },
@@ -2068,6 +2162,99 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
 };
 
 const esTranslations: Record<ToolId, ToolTranslation> = {
+  'authenticator-code-generator': {
+    name: 'Generador de Código Authenticator para Pruebas',
+    shortDescription:
+      'Lee un QR de authenticator o pega un secreto Base32/enlace otpauth para generar códigos TOTP locales, ver expiración y copiar rápido.',
+    primaryKeyword: 'generador de codigo authenticator para pruebas',
+    secondaryKeywords: [
+      'generador de codigo totp online',
+      'leer qr code authenticator',
+      'pegar secreto base32 authenticator',
+      'generador de codigo 2fa para qa',
+      'codigo google authenticator para pruebas',
+      'generador otpauth totp',
+      'probar codigo de dos factores',
+    ],
+    searchIntent:
+      'Desarrolladores y equipos de QA que necesitan validar un flujo TOTP con QR Code, secreto Base32 o enlace otpauth sin registrar la cuenta de prueba en un autenticador móvil.',
+    seoTitle: 'Generador de Código Authenticator para Pruebas | TOTP, QR y Base32',
+    seoDescription:
+      'Lee un QR de authenticator o pega Base32/otpauth para generar códigos TOTP en el navegador, ver expiración, copiar y guardar solo para pruebas locales.',
+    h1: 'Generador de Código Authenticator para Pruebas con QR Code y TOTP',
+    intro:
+      'Lee un QR de authenticator o pega un secreto Base32 o enlace otpauth para generar códigos TOTP en tu navegador, seguir la rotación y copiar en un toque.',
+    contentBlocks: [
+      {
+        title: 'Generar códigos de autenticador para flujos de prueba',
+        paragraphs: [
+          'Esta herramienta interpreta el QR de configuración de un autenticador, un secreto Base32 o el enlace otpauth:// usado por apps compatibles con TOTP. Después de cargarlo, el código temporal se calcula directamente en el navegador y se actualiza en el intervalo definido por el servicio, normalmente cada 30 segundos.',
+          'Puedes subir una captura del QR, usar la cámara o pegar el secreto manualmente. Es útil para validar OAuth, login, staging o entornos locales sin registrar una y otra vez el mismo secreto de prueba en una app de teléfono. Un token aislado de seis dígitos no permite crear los siguientes: se necesita el QR, secreto Base32 o enlace otpauth.',
+        ],
+      },
+      {
+        title: 'Usa QR Code, secreto Base32 o enlace otpauth',
+        paragraphs: [
+          'La mayoría de QR de configuración incluye un enlace otpauth://totp/ con nombre de cuenta, emisor, algoritmo, cantidad de dígitos y periodo de validez. La herramienta respeta esos parámetros y admite SHA-1, SHA-256 y SHA-512 cuando están presentes.',
+          'Si solo tienes el secreto, pega el valor Base32, normalmente letras A–Z y números del 2 al 7. Se aceptan espacios y guiones para facilitar la copia. Contraseñas, códigos de recuperación y el token temporal visible no se interpretan como secretos TOTP.',
+        ],
+        list: [
+          'Sube una imagen que contiene el QR Code de configuración.',
+          'Lee el QR Code con permiso de cámara en el navegador.',
+          'Pega un secreto Base32 o enlace otpauth://totp/.',
+          'Toca el código mostrado para copiarlo al portapapeles.',
+        ],
+      },
+      {
+        title: 'Qué indica el contador de expiración',
+        paragraphs: [
+          'TOTP es una contraseña de un solo uso basada en tiempo. El mismo secreto genera un valor distinto en cada periodo y el contador indica cuánto falta para la siguiente rotación. Copia el valor antes de que expire; si un servicio lo rechaza, espera la renovación o revisa la hora del dispositivo.',
+          'La mayoría de servicios usa seis dígitos y 30 segundos. Algunos QR usan ocho dígitos, otro algoritmo o un periodo diferente. Ver esos ajustes ayuda a depurar una falla de prueba sin adivinar qué parte de la configuración cambió.',
+        ],
+      },
+      {
+        title: 'Guardar localmente sirve para QA, no para cuentas críticas',
+        paragraphs: [
+          'Al guardar una entrada, su secreto queda solamente en el localStorage de este navegador y sirve para formar tu lista local de pruebas. El QR, secreto y código temporal no se envían al servidor de esta herramienta por defecto. Aun así, localStorage puede ser accesible para alguien con acceso al perfil del navegador, extensiones maliciosas o backups del dispositivo.',
+          'Usa el guardado para cuentas desechables, desarrollo, staging y QA manual. Para cuentas personales, financieras, administrativas o de producción, usa un autenticador móvil confiable, un gestor de contraseñas con TOTP o una llave de seguridad. Elimina las entradas al terminar, especialmente en equipos compartidos.',
+        ],
+      },
+      {
+        title: 'Límites y buenas prácticas de seguridad',
+        paragraphs: [
+          'La herramienta funciona con códigos TOTP basados en tiempo. No reemplaza confirmación push, SMS, llaves FIDO2/WebAuthn ni códigos de recuperación. Otros formatos QR no pueden convertirse en un segundo factor válido si no contienen datos compatibles con TOTP.',
+          'Nunca compartas el secreto, QR de registro o capturas de esa configuración. Quien tenga el secreto puede generar los mismos códigos mientras siga activo. Al terminar una prueba, revoca o rota la clave en el servicio emisor si se usó fuera de un entorno aislado.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Puedo pegar solamente el código actual de seis dígitos?',
+        answer:
+          'No para generar los próximos. El token actual expira y no contiene el secreto necesario. Pega el secreto Base32, enlace otpauth:// o lee el QR Code de configuración.',
+      },
+      {
+        question: '¿La lectura del QR y el cálculo TOTP se envían a servidor?',
+        answer:
+          'No. La imagen, el secreto y el cálculo del código se procesan localmente en tu navegador. La configuración no se envía a servidor por defecto.',
+      },
+      {
+        question: '¿Es seguro guardar una cuenta en la lista?',
+        answer:
+          'El guardado usa localStorage de este navegador, por eso solo sirve para pruebas y cuentas no críticas en un dispositivo confiable. Para cuentas importantes usa un autenticador dedicado.',
+      },
+      {
+        question: '¿Por qué un servicio rechazó el código mostrado?',
+        answer:
+          'Comprueba que el secreto coincide con el registro del servicio, que el reloj está sincronizado y que el valor no expiró durante el envío. También revisa los ajustes de dígitos, periodo y algoritmo mostrados.',
+      },
+      {
+        question: '¿Funciona con Google Authenticator, Microsoft Authenticator y Authy?',
+        answer:
+          'Funciona si el QR o secreto sigue el estándar TOTP/otpauth. Las funciones específicas de cada app, como sincronización, push o backup, no forman parte de esta herramienta.',
+      },
+    ],
+  },
   'gerador-pessoa-fake': {
     name: 'Generador de Persona Fake para Pruebas',
     shortDescription:

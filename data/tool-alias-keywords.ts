@@ -4,6 +4,32 @@ type LocaleKeywordMap = Partial<Record<AppLocale, string[]>>;
 type ToolKeywordMap = Record<string, LocaleKeywordMap>;
 
 const baseKeywordsByTool: ToolKeywordMap = {
+  'authenticator-code-generator': {
+    'pt-br': [
+      'gerador de codigo authenticator',
+      'gerador de codigo totp',
+      'ler qr code authenticator',
+      'codigo google authenticator para teste',
+      'gerar codigo 2fa para qa',
+      'chave base32 totp',
+    ],
+    en: [
+      'authenticator code generator',
+      'totp code generator',
+      'scan authenticator qr code',
+      'google authenticator code for testing',
+      '2fa code generator for qa',
+      'base32 totp secret',
+    ],
+    es: [
+      'generador de codigo authenticator',
+      'generador de codigo totp',
+      'leer qr code authenticator',
+      'codigo google authenticator para pruebas',
+      'generar codigo 2fa para qa',
+      'clave base32 totp',
+    ],
+  },
   'bitcoin-wallet': {
     'pt-br': [
       'carteira bitcoin',

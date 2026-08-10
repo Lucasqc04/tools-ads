@@ -141,6 +141,11 @@ import {
   qrCodeGeneratorIntro,
 } from '@/data/content/qr-code-generator';
 import {
+  authenticatorCodeGeneratorContentBlocks,
+  authenticatorCodeGeneratorFaq,
+  authenticatorCodeGeneratorIntro,
+} from '@/data/content/authenticator-code-generator';
+import {
   getTransferContent,
   transferContentBlocks,
   transferFaq,
@@ -1042,6 +1047,35 @@ export const toolsRegistry: ToolDefinition[] = [
     contentBlocks: qrCodeGeneratorContentBlocks,
     relatedToolIds: ['image-converter', 'json-formatter'],
   },
+  {
+    id: 'authenticator-code-generator',
+    slug: 'authenticator-code-generator',
+    name: 'Gerador de Código Authenticator para Testes',
+    shortDescription:
+      'Leia QR Code ou cole chave Base32/otpauth para gerar códigos TOTP localmente, acompanhar a expiração e copiar com um toque.',
+    category: 'dev',
+    primaryKeyword: 'gerador de codigo authenticator para testes',
+    secondaryKeywords: [
+      'gerar codigo totp online',
+      'ler qr code authenticator',
+      'colar chave base32 authenticator',
+      'gerador de codigo 2fa para qa',
+      'codigo google authenticator para teste',
+      'otpauth totp generator',
+      'testar codigo de dois fatores',
+    ],
+    searchIntent:
+      'Desenvolvedores e equipes de QA que precisam validar fluxo TOTP com QR Code, chave Base32 ou link otpauth sem cadastrar uma conta de teste em um aplicativo autenticador.',
+    seoTitle: 'Gerador de Código Authenticator para Testes | TOTP, QR e Base32',
+    seoDescription:
+      'Leia QR Code de authenticator ou cole chave Base32/otpauth para gerar código TOTP no navegador, ver expiração, copiar e salvar apenas para testes locais.',
+    h1: 'Gerador de Código Authenticator para Testes com QR Code e TOTP',
+    intro: authenticatorCodeGeneratorIntro,
+    canonicalPath: '/tools/authenticator-code-generator',
+    faq: authenticatorCodeGeneratorFaq,
+    contentBlocks: authenticatorCodeGeneratorContentBlocks,
+    relatedToolIds: ['password-generator', 'qr-code-generator', 'jwt-decoder', 'email-temporario'],
+  },
   ...frontOnlyToolDefinitions,
   {
     id: 'transfer',
@@ -1850,6 +1884,7 @@ type LocalizableToolId =
   | 'video-compression'
   | 'extrair-audio-de-video'
   | 'qr-code-generator'
+  | 'authenticator-code-generator'
   | 'sorteador'
   | 'calculadora-juros-compostos'
   | 'invisible-character'
@@ -1877,6 +1912,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'video-compression',
   'extrair-audio-de-video',
   'qr-code-generator',
+  'authenticator-code-generator',
   'sorteador',
   'calculadora-juros-compostos',
   'invisible-character',
