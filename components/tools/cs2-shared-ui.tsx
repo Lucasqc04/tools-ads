@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import {
   cs2CommandCategories,
-  getCs2CommandById,
   type Cs2Command,
   type Cs2CommandCategory,
 } from '@/data/cs2/commands';
@@ -22,7 +21,10 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/cn';
-import { buildCs2AutoexecFiles } from '@/lib/cs2/autoexec';
+import {
+  buildCs2AutoexecFiles,
+  getCs2AutoexecDefaultCommandIds,
+} from '@/lib/cs2/autoexec';
 
 const writeClipboard = async (value: string): Promise<boolean> => {
   try {
@@ -558,6 +560,7 @@ export function Cs2FpsCommandGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
   return (
     <Card className="space-y-3">
       <h3 className="text-base font-semibold text-slate-900">{copy.fpsGeneratorTitle}</h3>
+      <p className="text-sm leading-6 text-slate-700">{copy.fpsGeneratorHelp}</p>
       <div className="grid gap-3 sm:grid-cols-3">
         <Select value={fpsMax} onChange={(event) => setFpsMax(event.target.value)}>
           {['0', '144', '165', '240', '300', '400'].map((option) => (
@@ -591,14 +594,136 @@ export function Cs2FpsCommandGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
   );
 }
 
+export function Cs2TelemetryGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
+  const [frameTime, setFrameTime] = useState('1');
+  const [ping, setPing] = useState('1');
+  const [misdelivery, setMisdelivery] = useState('1');
+  const [networkGraph, setNetworkGraph] = useState(false);
+
+  const telemetryOptions = [
+    { value: '0', label: copy.telemetryOffOption },
+    { value: '1', label: copy.telemetryPoorOption },
+    { value: '2', label: copy.telemetryAlwaysOption },
+  ];
+
+  const output = [
+    `cl_hud_telemetry_frametime_show ${frameTime}`,
+    `cl_hud_telemetry_ping_show ${ping}`,
+    `cl_hud_telemetry_net_misdelivery_show ${misdelivery}`,
+    ...(networkGraph ? ['cl_hud_telemetry_net_quality_graph_show 1'] : []),
+  ].join('\n');
+
+  return (
+    <Card className="space-y-3">
+      <h3 className="text-base font-semibold text-slate-900">{copy.telemetryGeneratorTitle}</h3>
+      <p className="text-sm leading-6 text-slate-700">{copy.telemetryGeneratorHelp}</p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <label className="space-y-1.5 text-sm font-medium text-slate-800">
+          <span>{copy.telemetryFrameLabel}</span>
+          <Select value={frameTime} onChange={(event) => setFrameTime(event.target.value)}>
+            {telemetryOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+        </label>
+        <label className="space-y-1.5 text-sm font-medium text-slate-800">
+          <span>{copy.telemetryPingLabel}</span>
+          <Select value={ping} onChange={(event) => setPing(event.target.value)}>
+            {telemetryOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+        </label>
+        <label className="space-y-1.5 text-sm font-medium text-slate-800">
+          <span>{copy.telemetryNetworkLabel}</span>
+          <Select value={misdelivery} onChange={(event) => setMisdelivery(event.target.value)}>
+            {telemetryOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+        </label>
+      </div>
+      <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+        <input
+          type="checkbox"
+          checked={networkGraph}
+          onChange={(event) => setNetworkGraph(event.target.checked)}
+        />
+        <span>{copy.telemetryGraphLabel}</span>
+      </label>
+      <Cs2ConfigPreview
+        title={copy.generatedPreviewTitle}
+        filename="telemetry.cfg"
+        content={`${output}\n`}
+        copy={copy}
+      />
+    </Card>
+  );
+}
+
+export function Cs2BindGenerator({ copy }: { copy: Cs2SharedUiCopy }) {
+  const [key, setKey] = useState('mouse5');
+  const [action, setAction] = useState('clutch_mode_toggle');
+
+  const actions = [
+    { value: 'player_ping', label: copy.bindPingAction },
+    { value: 'clutch_mode_toggle', label: copy.bindClutchAction },
+    { value: 'switchhands', label: copy.bindSwitchHandsAction },
+    { value: 'slot6', label: copy.bindHeAction },
+    { value: 'slot7', label: copy.bindFlashAction },
+    { value: 'slot8', label: copy.bindSmokeAction },
+    { value: 'slot10', label: copy.bindFireAction },
+  ];
+  const output = `bind "${key}" "${action}"`;
+
+  return (
+    <Card className="space-y-3">
+      <h3 className="text-base font-semibold text-slate-900">{copy.bindGeneratorTitle}</h3>
+      <p className="text-sm leading-6 text-slate-700">{copy.bindGeneratorHelp}</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="space-y-1.5 text-sm font-medium text-slate-800">
+          <span>{copy.bindKeyLabel}</span>
+          <Select value={key} onChange={(event) => setKey(event.target.value)}>
+            {['mouse3', 'mouse4', 'mouse5', 'h', 'v', 'c', 'x', 'z', 'alt'].map((option) => (
+              <option key={option} value={option}>
+                {option.toUpperCase()}
+              </option>
+            ))}
+          </Select>
+        </label>
+        <label className="space-y-1.5 text-sm font-medium text-slate-800">
+          <span>{copy.bindActionLabel}</span>
+          <Select value={action} onChange={(event) => setAction(event.target.value)}>
+            {actions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+        </label>
+      </div>
+      <Cs2ConfigPreview
+        title={copy.generatedPreviewTitle}
+        filename="binds.cfg"
+        content={`${output}\n`}
+        copy={copy}
+      />
+    </Card>
+  );
+}
+
 export function Cs2AutoexecGenerator({
   copy,
-  generalCommandIds,
   practicePresetIds,
   funPresetIds,
 }: {
   copy: Cs2SharedUiCopy;
-  generalCommandIds: string[];
   practicePresetIds: string[];
   funPresetIds: string[];
 }) {
@@ -634,11 +759,8 @@ export function Cs2AutoexecGenerator({
       enabledCategories.add('binds');
     }
 
-    return generalCommandIds.filter((commandId) => {
-      const command = getCs2CommandById(commandId);
-      return Boolean(command && enabledCategories.has(command.category));
-    });
-  }, [generalCommandIds, includeAudio, includeBinds, includeFps, includeHud, includeRadar, includeViewmodel]);
+    return getCs2AutoexecDefaultCommandIds(enabledCategories);
+  }, [includeAudio, includeBinds, includeFps, includeHud, includeRadar, includeViewmodel]);
 
   const normalizedCrosshairLines = useMemo(
     () =>

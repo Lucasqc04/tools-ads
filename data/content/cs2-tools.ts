@@ -52,6 +52,27 @@ export type Cs2SharedUiCopy = {
   viewmodelGeneratorTitle: string;
   volumeGeneratorTitle: string;
   fpsGeneratorTitle: string;
+  fpsGeneratorHelp: string;
+  telemetryGeneratorTitle: string;
+  telemetryGeneratorHelp: string;
+  telemetryFrameLabel: string;
+  telemetryPingLabel: string;
+  telemetryNetworkLabel: string;
+  telemetryGraphLabel: string;
+  telemetryOffOption: string;
+  telemetryPoorOption: string;
+  telemetryAlwaysOption: string;
+  bindGeneratorTitle: string;
+  bindGeneratorHelp: string;
+  bindKeyLabel: string;
+  bindActionLabel: string;
+  bindPingAction: string;
+  bindClutchAction: string;
+  bindSwitchHandsAction: string;
+  bindHeAction: string;
+  bindFlashAction: string;
+  bindSmokeAction: string;
+  bindFireAction: string;
   autoexecGeneratorTitle: string;
   autoexecHelp: string;
   autoexecIncludeRadar: string;
@@ -68,11 +89,11 @@ export type Cs2SharedUiCopy = {
 
 const safeWarning: Record<AppLocale, string> = {
   'pt-br':
-    'Alguns binds e automacoes podem ser bloqueados ou considerados invalidos em servidores oficiais. Esta ferramenta prioriza comandos simples, treino local e configuracoes seguras.',
+    'Servidores oficiais podem bloquear automacoes que combinam movimento ou ataque no mesmo input. Esta ferramenta usa binds de uma unica acao, treino local separado e configuracoes client-side seguras.',
   en:
-    'Some binds and automation features may be blocked or considered invalid on official servers. This tool focuses on simple commands, local practice and safe settings.',
+    'Official servers can block automation that combines movement or attack actions on one input. This tool uses one-action binds, separate local practice, and safe client-side settings.',
   es:
-    'Algunos binds y automatizaciones pueden estar bloqueados o considerarse invalidos en servidores oficiales. Esta herramienta prioriza comandos simples, practica local y configuraciones seguras.',
+    'Los servidores oficiales pueden bloquear automatizaciones que combinan movimiento o ataque en una entrada. Esta herramienta usa binds de una sola accion, practica local separada y ajustes cliente seguros.',
 };
 
 const performanceNote: Record<AppLocale, string> = {
@@ -124,6 +145,30 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     viewmodelGeneratorTitle: 'Gerador de viewmodel',
     volumeGeneratorTitle: 'Gerador de volume',
     fpsGeneratorTitle: 'Gerador de FPS',
+    fpsGeneratorHelp:
+      'Defina fps_max antes de entrar em um servidor. Desde 2025, o CS2 nao permite alterar esse limite enquanto voce esta conectado.',
+    telemetryGeneratorTitle: 'Gerador de telemetria',
+    telemetryGeneratorHelp:
+      'Use indicadores apenas quando houver problema para manter a tela limpa e ainda identificar travamentos, ping e perda de pacotes.',
+    telemetryFrameLabel: 'Frame time / FPS',
+    telemetryPingLabel: 'Ping',
+    telemetryNetworkLabel: 'Perda ou pacotes fora de ordem',
+    telemetryGraphLabel: 'Incluir grafico de qualidade da rede',
+    telemetryOffOption: 'Desativado',
+    telemetryPoorOption: 'Somente em condicao ruim',
+    telemetryAlwaysOption: 'Sempre mostrar',
+    bindGeneratorTitle: 'Gerador de binds seguros',
+    bindGeneratorHelp:
+      'Gera um bind de uma unica acao para comunicacao, utilitarios ou viewmodel. Escolha uma tecla livre para evitar sobrescrever seu layout.',
+    bindKeyLabel: 'Tecla',
+    bindActionLabel: 'Acao',
+    bindPingAction: 'Marcar local (ping)',
+    bindClutchAction: 'Alternar modo clutch',
+    bindSwitchHandsAction: 'Alternar mao do viewmodel',
+    bindHeAction: 'Selecionar HE',
+    bindFlashAction: 'Selecionar flashbang',
+    bindSmokeAction: 'Selecionar smoke',
+    bindFireAction: 'Selecionar molotov/incendiaria',
     autoexecGeneratorTitle: 'Gerador de autoexec',
     autoexecHelp:
       'Gere arquivos separados para competitivo (autoexec.cfg), treino local (practice.cfg) e servidor privado (fun.cfg).',
@@ -175,6 +220,30 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     viewmodelGeneratorTitle: 'Viewmodel generator',
     volumeGeneratorTitle: 'Volume generator',
     fpsGeneratorTitle: 'FPS generator',
+    fpsGeneratorHelp:
+      'Set fps_max before you join a server. Since 2025, CS2 does not allow changing that cap while you are connected.',
+    telemetryGeneratorTitle: 'Telemetry generator',
+    telemetryGeneratorHelp:
+      'Show indicators only when there is a problem to keep the screen clean while still spotting stutter, ping, and packet loss.',
+    telemetryFrameLabel: 'Frame time / FPS',
+    telemetryPingLabel: 'Ping',
+    telemetryNetworkLabel: 'Packet loss or out-of-order delivery',
+    telemetryGraphLabel: 'Include network-quality graph',
+    telemetryOffOption: 'Off',
+    telemetryPoorOption: 'Only in poor conditions',
+    telemetryAlwaysOption: 'Always show',
+    bindGeneratorTitle: 'Safe bind generator',
+    bindGeneratorHelp:
+      'Builds a one-action bind for communication, utility, or viewmodel. Choose a free key so you do not overwrite your layout.',
+    bindKeyLabel: 'Key',
+    bindActionLabel: 'Action',
+    bindPingAction: 'Place a ping',
+    bindClutchAction: 'Toggle clutch mode',
+    bindSwitchHandsAction: 'Switch viewmodel hand',
+    bindHeAction: 'Select HE grenade',
+    bindFlashAction: 'Select flashbang',
+    bindSmokeAction: 'Select smoke',
+    bindFireAction: 'Select molotov/incendiary',
     autoexecGeneratorTitle: 'Autoexec generator',
     autoexecHelp:
       'Build separate files for competitive play (autoexec.cfg), local practice (practice.cfg), and private fun servers (fun.cfg).',
@@ -226,6 +295,30 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     viewmodelGeneratorTitle: 'Generador de viewmodel',
     volumeGeneratorTitle: 'Generador de volumen',
     fpsGeneratorTitle: 'Generador de FPS',
+    fpsGeneratorHelp:
+      'Define fps_max antes de entrar a un servidor. Desde 2025, CS2 no permite cambiar ese limite mientras estas conectado.',
+    telemetryGeneratorTitle: 'Generador de telemetria',
+    telemetryGeneratorHelp:
+      'Usa indicadores solo cuando haya un problema para mantener la pantalla limpia e identificar stutter, ping y perdida de paquetes.',
+    telemetryFrameLabel: 'Frame time / FPS',
+    telemetryPingLabel: 'Ping',
+    telemetryNetworkLabel: 'Perdida o paquetes fuera de orden',
+    telemetryGraphLabel: 'Incluir grafico de calidad de red',
+    telemetryOffOption: 'Desactivado',
+    telemetryPoorOption: 'Solo en condiciones malas',
+    telemetryAlwaysOption: 'Mostrar siempre',
+    bindGeneratorTitle: 'Generador de binds seguros',
+    bindGeneratorHelp:
+      'Genera un bind de una sola accion para comunicacion, utilitarios o viewmodel. Elige una tecla libre para no sobrescribir tu layout.',
+    bindKeyLabel: 'Tecla',
+    bindActionLabel: 'Accion',
+    bindPingAction: 'Marcar ubicacion (ping)',
+    bindClutchAction: 'Alternar modo clutch',
+    bindSwitchHandsAction: 'Cambiar mano del viewmodel',
+    bindHeAction: 'Seleccionar HE',
+    bindFlashAction: 'Seleccionar flashbang',
+    bindSmokeAction: 'Seleccionar smoke',
+    bindFireAction: 'Seleccionar molotov/incendiaria',
     autoexecGeneratorTitle: 'Generador de autoexec',
     autoexecHelp:
       'Genera archivos separados para competitivo (autoexec.cfg), practica local (practice.cfg) y servidor privado (fun.cfg).',
@@ -306,10 +399,10 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
               : 'Comandos clave para medir y ajustar',
         paragraphs: [
           locale === 'pt-br'
-            ? 'fps_max, fps_max_ui, cl_showfps e cq_netgraph ajudam a montar baseline de desempenho. Ajustes visuais como tracers podem reduzir ruído em alguns setups.'
+            ? 'fps_max, fps_max_ui, cl_showfps, cq_netgraph e a telemetria do HUD ajudam a montar uma baseline de desempenho. Em builds atuais, defina fps_max antes de entrar em um servidor, porque ele nao pode ser alterado durante a conexao.'
             : locale === 'en'
-              ? 'fps_max, fps_max_ui, cl_showfps, and cq_netgraph help build a measurable performance baseline. Visual toggles such as tracers can reduce clutter on some setups.'
-              : 'fps_max, fps_max_ui, cl_showfps y cq_netgraph ayudan a crear baseline medible. Ajustes visuales como tracers pueden reducir ruido en algunos equipos.',
+              ? 'fps_max, fps_max_ui, cl_showfps, cq_netgraph, and HUD telemetry help build a measurable performance baseline. On current builds, set fps_max before joining a server because it cannot be changed while connected.'
+              : 'fps_max, fps_max_ui, cl_showfps, cq_netgraph y la telemetria HUD ayudan a crear una baseline medible. En builds actuales, define fps_max antes de entrar a un servidor porque no se puede cambiar durante la conexion.',
           locale === 'pt-br'
             ? 'Evite alterar tudo ao mesmo tempo. Mudancas pequenas por etapa facilitam identificar causa de melhora ou piora.'
             : locale === 'en'

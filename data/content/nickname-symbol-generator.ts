@@ -33,16 +33,16 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
       'Jogadores que querem decorar um nickname com simbolos Unicode, molduras e estilos de letra antes de copiar para o perfil do jogo.',
     seoTitle: 'Simbolos para Nickname Fortnite e Jogos | Gerador Online',
     seoDescription:
-      'Crie nicknames com simbolos para Fortnite e outros jogos. Escolha molduras, letras Unicode, veja o preview e copie nomes prontos sem cadastro.',
+      'Monte nicknames para Fortnite e outros jogos com teclado de simbolos. Insira caracteres no meio do nome, escolha molduras e copie sem cadastro.',
     h1: 'Gerador de Simbolos para Nickname de Fortnite e Jogos',
     intro:
-      'Digite seu nome e combine 224 simbolos em 14 categorias, 28 molduras e 12 estilos de letras Unicode prontos para copiar e testar no seu jogo.',
+      'Digite seu nome e use o teclado para inserir 224 simbolos em qualquer posicao. Combine 14 categorias, 28 molduras e 12 estilos Unicode.',
     contentBlocks: [
       {
         title: 'Como criar um nickname gamer com simbolos',
         paragraphs: [
-          'Comece digitando o nome que voce ja usa ou uma palavra curta que represente seu estilo. Depois escolha o jogo para reorganizar os presets recomendados. A ferramenta monta variacoes com estrelas, raios, coroas, molduras japonesas, marcadores de clan e simbolos minimalistas sem enviar o texto para um servidor.',
-          'O preview personalizado permite combinar um prefixo e um sufixo diferentes. Voce tambem pode escolher entre 12 estilos de letras, incluindo original, small caps, largura completa, negrito, italico, circulado, quadrado, espacado e sublinhado. Quando encontrar uma combinacao legivel, copie o resultado e teste no campo real do perfil antes de confirmar a alteracao.',
+          'Comece digitando o nome que voce ja usa ou uma palavra curta que represente seu estilo. Posicione o cursor antes, depois ou entre as letras e toque no teclado de simbolos para montar a combinacao livremente. Tambem e possivel selecionar um trecho, substitui-lo por um simbolo, apagar e limpar tudo sem depender de um preset.',
+          'O preview personalizado permite combinar a montagem livre com prefixos, sufixos e 12 estilos de letras, incluindo original, small caps, largura completa, negrito, italico, circulado, quadrado, espacado e sublinhado. Quando encontrar uma combinacao legivel, copie o resultado e teste no campo real do perfil antes de confirmar a alteracao.',
         ],
       },
       {
@@ -95,8 +95,9 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
           'Nao. Ela cria e copia variacoes, mas a disponibilidade e a validacao final dependem do jogo e da sua conta.',
       },
       {
-        question: 'Meu nickname e enviado para um servidor?',
-        answer: 'Nao. A geracao ocorre localmente no navegador por padrao.',
+        question: 'Posso colocar simbolos no meio do nickname?',
+        answer:
+          'Sim. Toque no ponto desejado dentro do campo de edicao, mantenha a opcao No cursor selecionada e depois toque nos simbolos. Eles entram exatamente naquela posicao.',
       },
     ],
   },
@@ -117,16 +118,16 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
       'Players who want to decorate a gaming name with Unicode symbols, frames, and letter styles before copying it to a profile.',
     seoTitle: 'Fortnite Name Symbols Generator for Games | Copy and Paste',
     seoDescription:
-      'Create Fortnite names with symbols and styles for other games. Pick frames, preview Unicode names, and copy ready nicknames with no sign-up.',
+      'Build Fortnite and gaming names with a symbol keyboard. Insert characters anywhere, choose Unicode frames and styles, then copy with no sign-up.',
     h1: 'Fortnite Name Symbols Generator for Gaming Nicknames',
     intro:
-      'Type your name and combine 224 symbols in 14 categories, 28 frames, and 12 Unicode letter styles ready to copy and test in your game.',
+      'Type your name and use the keyboard to insert 224 symbols anywhere. Combine 14 categories, 28 frames, and 12 Unicode letter styles.',
     contentBlocks: [
       {
         title: 'Build a gaming name with symbols',
         paragraphs: [
-          'Start with the name you already use or a short word that matches your play style. Select a game to reorder the suggested presets, then compare stars, lightning marks, crowns, Japanese-style frames, clan markers, and minimal decorations. Everything is generated locally without sending your name to a server.',
-          'The custom preview lets you use different symbols on the left and right. You can also choose from 12 letter styles, including original, small caps, fullwidth, bold, italic, circled, squared, spaced, and underlined text. Once a version stays readable, copy it and test it in the real profile field before confirming a name change.',
+          'Start with the name you already use or a short word that matches your play style. Place the cursor before, after, or between letters and tap the symbol keyboard to build the combination freely. You can also select part of the name, replace it with a symbol, use backspace, or clear the editor without relying on a preset.',
+          'The custom preview combines free typing with prefixes, suffixes, and 12 letter styles, including original, small caps, fullwidth, bold, italic, circled, squared, spaced, and underlined text. Once a version stays readable, copy it and test it in the real profile field before confirming a name change.',
         ],
       },
       {
@@ -179,8 +180,9 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
           'No. It creates and copies variations, while availability and final validation depend on the game and your account.',
       },
       {
-        question: 'Is my nickname sent to a server?',
-        answer: 'No. Generation runs locally in your browser by default.',
+        question: 'Can I place symbols in the middle of a gaming name?',
+        answer:
+          'Yes. Tap the desired point in the editor, keep At cursor selected, and then tap any symbol. It will be inserted at that exact position.',
       },
     ],
   },
@@ -201,16 +203,16 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
       'Jugadores que quieren decorar un nickname con simbolos Unicode, marcos y estilos de letras antes de copiarlo al perfil.',
     seoTitle: 'Simbolos para Nombre Fortnite y Juegos | Generador Online',
     seoDescription:
-      'Crea nombres con simbolos para Fortnite y otros juegos. Elige marcos, letras Unicode, mira el preview y copia nicknames sin registro.',
+      'Monta nombres para Fortnite y otros juegos con un teclado de simbolos. Inserta caracteres donde quieras, elige marcos y copia sin registro.',
     h1: 'Generador de Simbolos para Nombres de Fortnite y Juegos',
     intro:
-      'Escribe tu nombre y combina 224 simbolos en 14 categorias, 28 marcos y 12 estilos de letras Unicode listos para copiar y probar en tu juego.',
+      'Escribe tu nombre y usa el teclado para insertar 224 simbolos en cualquier posicion. Combina 14 categorias, 28 marcos y 12 estilos Unicode.',
     contentBlocks: [
       {
         title: 'Como crear un nickname gamer con simbolos',
         paragraphs: [
-          'Empieza con el nombre que ya usas o una palabra corta que represente tu estilo. Elige un juego para ordenar los presets recomendados y compara estrellas, rayos, coronas, marcos japoneses, marcas de clan y decoraciones minimalistas. Todo se genera localmente sin enviar el nombre a un servidor.',
-          'El preview personalizado permite usar simbolos distintos a la izquierda y derecha. Tambien puedes elegir entre 12 estilos de letras, como original, small caps, ancho completo, negrita, cursiva, circulado, cuadrados, espaciado y subrayado. Cuando una combinacion siga legible, copiala y pruebala en el campo real del perfil antes de confirmar el cambio.',
+          'Empieza con el nombre que ya usas o una palabra corta que represente tu estilo. Coloca el cursor antes, despues o entre las letras y toca el teclado de simbolos para montar la combinacion libremente. Tambien puedes seleccionar una parte, sustituirla por un simbolo, borrar o limpiar todo sin depender de un preset.',
+          'El preview personalizado combina la escritura libre con prefijos, sufijos y 12 estilos de letras, como original, small caps, ancho completo, negrita, cursiva, circulado, cuadrados, espaciado y subrayado. Cuando una combinacion siga legible, copiala y pruebala en el campo real del perfil antes de confirmar el cambio.',
         ],
       },
       {
@@ -263,8 +265,9 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
           'No. Crea y copia variaciones, pero la disponibilidad y validacion final dependen del juego y de tu cuenta.',
       },
       {
-        question: '¿Mi nickname se envia a un servidor?',
-        answer: 'No. La generacion ocurre localmente en el navegador por defecto.',
+        question: '¿Puedo colocar simbolos en el medio del nickname?',
+        answer:
+          'Si. Toca el punto deseado en el editor, deja En el cursor seleccionado y despues toca cualquier simbolo. Se insertara exactamente en esa posicion.',
       },
     ],
   },

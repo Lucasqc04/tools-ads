@@ -3,6 +3,7 @@ import {
   checkCreateInboxRateLimit,
   createTempInbox,
   getClientIpFromHeaders,
+  TempEmailCustomAddressError,
 } from '@/lib/temp-email';
 import { TempEmailStoreUnavailableError } from '@/lib/temp-email-store';
 
@@ -12,8 +13,26 @@ const defaultHeaders = {
   'Cache-Control': 'no-store',
 };
 
+const getRequestedLocalPart = (value: unknown): string | undefined => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return undefined;
+  }
+
+  const localPart = (value as Record<string, unknown>).localPart;
+  return typeof localPart === 'string' ? localPart : undefined;
+};
+
 export async function POST(request: Request) {
   const clientIp = getClientIpFromHeaders(request.headers);
+  let body: unknown = null;
+
+  try {
+    body = await request.json();
+  } catch {
+    body = null;
+  }
+
+  const localPart = getRequestedLocalPart(body);
 
   try {
     const rateLimit = await checkCreateInboxRateLimit(clientIp);
@@ -33,7 +52,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const inbox = await createTempInbox();
+    const inbox = await createTempInbox({ localPart });
 
     return NextResponse.json(inbox, {
       status: 201,
@@ -47,6 +66,21 @@ export async function POST(request: Request) {
         },
         {
           status: 503,
+          headers: defaultHeaders,
+        },
+      );
+    }
+
+    if (error instanceof TempEmailCustomAddressError) {
+      return NextResponse.json(
+        {
+          error:
+            error.reason === 'invalid'
+              ? 'custom_prefix_invalid'
+              : 'custom_address_unavailable',
+        },
+        {
+          status: error.reason === 'invalid' ? 400 : 409,
           headers: defaultHeaders,
         },
       );

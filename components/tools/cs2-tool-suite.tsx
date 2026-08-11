@@ -21,6 +21,7 @@ import {
 } from '@/lib/cs2/commands';
 import {
   Cs2AutoexecGenerator,
+  Cs2BindGenerator,
   Cs2CommandFilters,
   Cs2CommandList,
   Cs2CommandSearch,
@@ -28,6 +29,7 @@ import {
   Cs2HudColorGenerator,
   Cs2PresetGenerator,
   Cs2RadarGenerator,
+  Cs2TelemetryGenerator,
   Cs2ViewmodelGenerator,
   Cs2VolumeGenerator,
 } from '@/components/tools/cs2-shared-ui';
@@ -64,18 +66,6 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
         uiConfig.presetCategories.includes(preset.category),
       ),
     [uiConfig.presetCategories],
-  );
-
-  const recommendedSafeCommandIds = useMemo(
-    () =>
-      cs2Commands
-        .filter(
-          (command) =>
-            uiConfig.commandCategories.includes(command.category) &&
-            command.safeForOfficialServers,
-        )
-        .map((command) => command.id),
-    [uiConfig.commandCategories],
   );
 
   const practicePresetIds = useMemo(
@@ -160,11 +150,12 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
       {uiConfig.showViewmodelGenerator ? <Cs2ViewmodelGenerator copy={copy} /> : null}
       {uiConfig.showFpsGenerator ? <Cs2FpsCommandGenerator copy={copy} /> : null}
       {uiConfig.showVolumeGenerator ? <Cs2VolumeGenerator copy={copy} /> : null}
+      {uiConfig.showTelemetryGenerator ? <Cs2TelemetryGenerator copy={copy} /> : null}
+      {uiConfig.showBindGenerator ? <Cs2BindGenerator copy={copy} /> : null}
 
       {uiConfig.showAutoexecGenerator ? (
         <Cs2AutoexecGenerator
           copy={copy}
-          generalCommandIds={recommendedSafeCommandIds}
           practicePresetIds={practicePresetIds}
           funPresetIds={funPresetIds}
         />
