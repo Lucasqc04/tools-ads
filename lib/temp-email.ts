@@ -18,6 +18,8 @@ export const MAX_TEMP_EMAIL_HTML_CHARS = 100_000;
 
 const MAX_MAIL_HEADER_CHARS = 320;
 const MAX_SUBJECT_CHARS = 300;
+const MIN_TEMP_EMAIL_LOCAL_PART_CHARS = 3;
+const MAX_TEMP_EMAIL_LOCAL_PART_CHARS = 40;
 
 const CREATE_RATE_LIMIT_WINDOW_SECONDS = 60;
 const CREATE_RATE_LIMIT_MAX_REQUESTS = 12;
@@ -26,6 +28,17 @@ const TEMP_EMAIL_KEY_PREFIX = 'tempemail';
 
 const TEMP_EMAIL_DOMAIN_REGEX =
   /^(?=.{3,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/i;
+const TEMP_EMAIL_LOCAL_PART_REGEX = /^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$/;
+
+export class TempEmailCustomAddressError extends Error {
+  readonly reason: 'invalid' | 'unavailable';
+
+  constructor(reason: 'invalid' | 'unavailable') {
+    super(reason === 'invalid' ? 'Prefixo de e-mail temporario invalido.' : 'Endereco temporario indisponivel.');
+    this.name = 'TempEmailCustomAddressError';
+    this.reason = reason;
+  }
+}
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -39,6 +52,15 @@ const trimAndClamp = (value: string, maxChars: number): string =>
 const normalizeAddress = (value: string): string => trimAndClamp(value, MAX_MAIL_HEADER_CHARS).toLowerCase();
 
 const normalizeToken = (value: string): string => value.trim().toLowerCase();
+
+const normalizeOptionalHeader = (value: unknown): string | undefined => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const normalized = trimAndClamp(value, MAX_MAIL_HEADER_CHARS);
+  return normalized || undefined;
+};
 
 const toIsoString = (value: unknown): string => {
   const asString = typeof value === 'string' ? value : '';
@@ -125,6 +147,21 @@ const isMessage = (value: unknown): value is TempEmailMessage => {
 export const isValidTempEmailToken = (token: string): boolean =>
   /^[a-f0-9]{64}$/.test(normalizeToken(token));
 
+const normalizeCustomLocalPart = (value: string): string | null => {
+  const normalized = value.trim().toLowerCase();
+
+  if (
+    normalized.length < MIN_TEMP_EMAIL_LOCAL_PART_CHARS ||
+    normalized.length > MAX_TEMP_EMAIL_LOCAL_PART_CHARS ||
+    !TEMP_EMAIL_LOCAL_PART_REGEX.test(normalized) ||
+    /[._-]{2,}/.test(normalized)
+  ) {
+    return null;
+  }
+
+  return normalized;
+};
+
 export const sanitizeEmailHtml = (unsafeHtml: string | undefined): string | undefined => {
   if (typeof unsafeHtml !== 'string') {
     return undefined;
@@ -138,6 +175,7 @@ export const sanitizeEmailHtml = (unsafeHtml: string | undefined): string | unde
 
   const sanitized = sanitizeHtml(clamped, {
     allowedTags: [
+      'style',
       'p',
       'br',
       'div',
@@ -168,11 +206,36 @@ export const sanitizeEmailHtml = (unsafeHtml: string | undefined): string | unde
       'h4',
       'h5',
       'h6',
+      'img',
+      'figure',
+      'figcaption',
+      'sup',
+      'sub',
     ],
     allowedAttributes: {
       a: ['href', 'title', 'target', 'rel'],
-      '*': ['aria-label'],
+      img: ['src', 'alt', 'width', 'height', 'title', 'style'],
+      '*': [
+        'aria-label',
+        'class',
+        'id',
+        'style',
+        'role',
+        'dir',
+        'lang',
+        'width',
+        'height',
+        'align',
+        'valign',
+        'bgcolor',
+        'border',
+        'cellpadding',
+        'cellspacing',
+      ],
     },
+    // The result is never inserted in the app DOM. It is rendered only in a
+    // sandboxed iframe with a CSP that blocks scripts, forms and same-origin access.
+    allowVulnerableTags: true,
     disallowedTagsMode: 'discard',
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedSchemesByTag: {
@@ -184,7 +247,7 @@ export const sanitizeEmailHtml = (unsafeHtml: string | undefined): string | unde
         rel: 'noopener noreferrer nofollow',
       }),
     },
-    nonTextTags: ['script', 'style', 'textarea', 'option', 'noscript'],
+    nonTextTags: ['script', 'textarea', 'option', 'noscript'],
   });
 
   const clean = sanitized.trim();
@@ -219,6 +282,8 @@ const normalizeInboundMessage = (
     from: safeFrom || 'unknown@unknown',
     to: normalizedRecipient,
     subject: safeSubject || '(sem assunto)',
+    replyTo: normalizeOptionalHeader(inboundMessage.replyTo),
+    messageId: normalizeOptionalHeader(inboundMessage.messageId),
     text: text || undefined,
     html,
     receivedAt: toIsoString(inboundMessage.receivedAt),
@@ -256,7 +321,9 @@ const clearByTokenAndAddress = async (
   await Promise.all(operations);
 };
 
-export const createTempInbox = async (): Promise<TempEmailInboxPayload> => {
+export const createTempInbox = async (
+  options: Readonly<{ localPart?: string }> = {},
+): Promise<TempEmailInboxPayload> => {
   const domain = getTempEmailDomain();
 
   if (!domain) {
@@ -264,26 +331,42 @@ export const createTempInbox = async (): Promise<TempEmailInboxPayload> => {
   }
 
   const ttlSeconds = parseTtlSeconds();
+  const requestedLocalPart = options.localPart?.trim()
+    ? normalizeCustomLocalPart(options.localPart)
+    : null;
 
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    const username = crypto.randomBytes(5).toString('hex');
+  if (options.localPart?.trim() && !requestedLocalPart) {
+    throw new TempEmailCustomAddressError('invalid');
+  }
+
+  for (let attempt = 0; attempt < (requestedLocalPart ? 1 : 5); attempt += 1) {
+    const username = requestedLocalPart ?? crypto.randomBytes(5).toString('hex');
     const token = crypto.randomBytes(32).toString('hex');
     const address = normalizeAddress(`${username}@${domain}`);
 
-    const existing = await tempEmailStore.get<string>(buildInboxKey(address));
+    const inboxKey = buildInboxKey(address);
+    const reservedAddress = await tempEmailStore.setIfAbsent(inboxKey, token, ttlSeconds);
 
-    if (typeof existing === 'string' && existing.trim()) {
+    if (!reservedAddress) {
+      if (requestedLocalPart) {
+        throw new TempEmailCustomAddressError('unavailable');
+      }
+
       continue;
     }
 
     const expiresAt = new Date(Date.now() + ttlSeconds * 1000).toISOString();
     const meta: TempEmailMeta = { address, expiresAt };
 
-    await Promise.all([
-      tempEmailStore.set(buildInboxKey(address), token, ttlSeconds),
-      tempEmailStore.set(buildMessagesKey(token), [], ttlSeconds),
-      tempEmailStore.set(buildMetaKey(token), meta, ttlSeconds),
-    ]);
+    try {
+      await Promise.all([
+        tempEmailStore.set(buildMessagesKey(token), [], ttlSeconds),
+        tempEmailStore.set(buildMetaKey(token), meta, ttlSeconds),
+      ]);
+    } catch (error: unknown) {
+      await tempEmailStore.del(inboxKey);
+      throw error;
+    }
 
     return {
       address,

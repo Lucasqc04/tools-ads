@@ -5,6 +5,7 @@ import {
   saveInboundMessage,
   verifyMailgunSignature,
 } from '@/lib/temp-email';
+import { TempEmailStoreUnavailableError } from '@/lib/temp-email-store';
 import type { TempEmailMessage } from '@/types/temp-email';
 
 export const runtime = 'nodejs';
@@ -16,6 +17,37 @@ const defaultHeaders = {
 const readField = (formData: FormData, fieldName: string): string => {
   const value = formData.get(fieldName);
   return typeof value === 'string' ? value : '';
+};
+
+const getMessageHeader = (value: string, headerName: string): string | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(value);
+
+    if (!Array.isArray(parsed)) {
+      return undefined;
+    }
+
+    const expectedHeader = headerName.toLowerCase();
+
+    for (const entry of parsed) {
+      if (
+        Array.isArray(entry) &&
+        typeof entry[0] === 'string' &&
+        entry[0].toLowerCase() === expectedHeader &&
+        typeof entry[1] === 'string'
+      ) {
+        return entry[1];
+      }
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
 };
 
 export async function POST(request: Request) {
@@ -88,9 +120,11 @@ export async function POST(request: Request) {
 
   const inboundMessage: TempEmailMessage = {
     id: crypto.randomUUID(),
-    from: readField(formData, 'sender'),
+    from: readField(formData, 'from') || readField(formData, 'sender'),
     to: recipient,
     subject: readField(formData, 'subject'),
+    replyTo: getMessageHeader(readField(formData, 'message-headers'), 'reply-to'),
+    messageId: getMessageHeader(readField(formData, 'message-headers'), 'message-id'),
     text: readField(formData, 'body-plain') || undefined,
     html: readField(formData, 'body-html') || undefined,
     receivedAt: new Date().toISOString(),
@@ -98,7 +132,19 @@ export async function POST(request: Request) {
 
   try {
     await saveInboundMessage(recipient, inboundMessage);
-  } catch {
+  } catch (error: unknown) {
+    if (error instanceof TempEmailStoreUnavailableError) {
+      return NextResponse.json(
+        {
+          error: 'Servico de inbox temporaria indisponivel no momento.',
+        },
+        {
+          status: 503,
+          headers: defaultHeaders,
+        },
+      );
+    }
+
     return NextResponse.json(
       {
         ok: true,

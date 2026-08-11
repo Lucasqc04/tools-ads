@@ -15,6 +15,8 @@ export type Cs2ToolUiConfig = {
   showViewmodelGenerator: boolean;
   showFpsGenerator: boolean;
   showVolumeGenerator: boolean;
+  showBindGenerator?: boolean;
+  showTelemetryGenerator?: boolean;
 };
 
 export const cs2ToolUiConfigs: Record<Cs2ToolId, Cs2ToolUiConfig> = {
@@ -115,6 +117,7 @@ export const cs2ToolUiConfigs: Record<Cs2ToolId, Cs2ToolUiConfig> = {
     showViewmodelGenerator: false,
     showFpsGenerator: false,
     showVolumeGenerator: false,
+    showBindGenerator: true,
   },
   'cs2-hud-color': {
     toolId: 'cs2-hud-color',
@@ -143,6 +146,7 @@ export const cs2ToolUiConfigs: Record<Cs2ToolId, Cs2ToolUiConfig> = {
     showViewmodelGenerator: true,
     showFpsGenerator: false,
     showVolumeGenerator: false,
+    showBindGenerator: true,
   },
   'cs2-fps-commands': {
     toolId: 'cs2-fps-commands',
@@ -157,6 +161,7 @@ export const cs2ToolUiConfigs: Record<Cs2ToolId, Cs2ToolUiConfig> = {
     showViewmodelGenerator: false,
     showFpsGenerator: true,
     showVolumeGenerator: true,
+    showTelemetryGenerator: true,
   },
   'cs2-autoexec-generator': {
     toolId: 'cs2-autoexec-generator',
@@ -183,6 +188,8 @@ export const cs2ToolUiConfigs: Record<Cs2ToolId, Cs2ToolUiConfig> = {
     showViewmodelGenerator: true,
     showFpsGenerator: true,
     showVolumeGenerator: true,
+    showBindGenerator: true,
+    showTelemetryGenerator: true,
   },
   'cs2-competitive-config': {
     toolId: 'cs2-competitive-config',
@@ -197,6 +204,8 @@ export const cs2ToolUiConfigs: Record<Cs2ToolId, Cs2ToolUiConfig> = {
     showViewmodelGenerator: true,
     showFpsGenerator: true,
     showVolumeGenerator: true,
+    showBindGenerator: true,
+    showTelemetryGenerator: true,
   },
   'cs2-tournament-safe-config': {
     toolId: 'cs2-tournament-safe-config',
@@ -211,6 +220,8 @@ export const cs2ToolUiConfigs: Record<Cs2ToolId, Cs2ToolUiConfig> = {
     showViewmodelGenerator: true,
     showFpsGenerator: true,
     showVolumeGenerator: true,
+    showBindGenerator: true,
+    showTelemetryGenerator: true,
   },
   'cs2-fun-commands': {
     toolId: 'cs2-fun-commands',

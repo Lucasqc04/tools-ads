@@ -693,8 +693,68 @@ export const transformNicknameText = (
   return value;
 };
 
+export type NicknameTextEditResult = {
+  value: string;
+  cursor: number;
+};
+
+const clampTextIndex = (value: string, index: number): number =>
+  Math.max(0, Math.min(index, value.length));
+
+export const limitNicknameCharacters = (value: string, limit = 48): string =>
+  Array.from(value).slice(0, limit).join('');
+
+export const insertNicknameTextAtSelection = (
+  value: string,
+  addition: string,
+  selectionStart: number,
+  selectionEnd: number,
+  limit = 48,
+): NicknameTextEditResult => {
+  const limitedValue = limitNicknameCharacters(value, limit);
+  const start = clampTextIndex(limitedValue, Math.min(selectionStart, selectionEnd));
+  const end = clampTextIndex(limitedValue, Math.max(selectionStart, selectionEnd));
+  const before = limitedValue.slice(0, start);
+  const after = limitedValue.slice(end);
+  const availableCharacters = Math.max(
+    0,
+    limit - Array.from(`${before}${after}`).length,
+  );
+  const insertedText = Array.from(addition).slice(0, availableCharacters).join('');
+
+  return {
+    value: `${before}${insertedText}${after}`,
+    cursor: before.length + insertedText.length,
+  };
+};
+
+export const deleteNicknameTextAtSelection = (
+  value: string,
+  selectionStart: number,
+  selectionEnd: number,
+): NicknameTextEditResult => {
+  const start = clampTextIndex(value, Math.min(selectionStart, selectionEnd));
+  const end = clampTextIndex(value, Math.max(selectionStart, selectionEnd));
+
+  if (start !== end) {
+    return {
+      value: `${value.slice(0, start)}${value.slice(end)}`,
+      cursor: start,
+    };
+  }
+
+  const charactersBeforeCursor = Array.from(value.slice(0, start));
+  charactersBeforeCursor.pop();
+  const before = charactersBeforeCursor.join('');
+
+  return {
+    value: `${before}${value.slice(end)}`,
+    cursor: before.length,
+  };
+};
+
 export const normalizeNicknameInput = (value: string): string =>
-  value.replaceAll(/\s+/g, ' ').trim().slice(0, 48);
+  limitNicknameCharacters(value.replaceAll(/\s+/g, ' ').trim());
 
 export const composeSymbolNickname = (
   baseName: string,
@@ -702,7 +762,7 @@ export const composeSymbolNickname = (
   right: string,
   styleId: NicknameTextStyleId = 'original',
 ): string => {
-  const normalizedName = normalizeNicknameInput(baseName) || 'Player';
+  const normalizedName = normalizeNicknameInput(baseName);
   return `${left}${transformNicknameText(normalizedName, styleId)}${right}`;
 };
 

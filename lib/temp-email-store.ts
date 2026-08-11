@@ -98,6 +98,15 @@ const setInMemory = (key: string, value: unknown, ttlSeconds: number): void => {
   });
 };
 
+const setIfAbsentInMemory = (key: string, value: unknown, ttlSeconds: number): boolean => {
+  if (getFromMemory(key) !== null) {
+    return false;
+  }
+
+  setInMemory(key, value, ttlSeconds);
+  return true;
+};
+
 const delFromMemory = (key: string): void => {
   const store = getMemoryStore();
   store.delete(key);
@@ -146,6 +155,22 @@ export const tempEmailStore = {
 
     try {
       await redis.set(key, value, { ex: safeTtl });
+    } catch (error: unknown) {
+      throw new TempEmailStoreUnavailableError('Redis/KV indisponivel no momento.', error);
+    }
+  },
+
+  async setIfAbsent(key: string, value: unknown, ttlSeconds: number): Promise<boolean> {
+    const safeTtl = Math.max(1, Math.floor(ttlSeconds));
+    const redis = getRedisClient();
+
+    if (!redis) {
+      return setIfAbsentInMemory(key, value, safeTtl);
+    }
+
+    try {
+      const result = await redis.set(key, value, { ex: safeTtl, nx: true });
+      return result === 'OK';
     } catch (error: unknown) {
       throw new TempEmailStoreUnavailableError('Redis/KV indisponivel no momento.', error);
     }

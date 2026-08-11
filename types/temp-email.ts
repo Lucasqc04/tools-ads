@@ -3,6 +3,8 @@ export type TempEmailMessage = {
   from: string;
   to: string;
   subject: string;
+  replyTo?: string;
+  messageId?: string;
   text?: string;
   html?: string;
   receivedAt: string;

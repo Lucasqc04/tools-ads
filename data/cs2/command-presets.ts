@@ -72,6 +72,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'sv-infinite-ammo-1',
       'ammo-grenade-limit-total-5',
       'sv-grenade-trajectory-preview-on',
+      'sv-grenade-trajectory-prac-trailtime-10',
       'sv-showimpacts-on',
       'sv-showimpacts-time-10',
       'bind-v-noclip',
@@ -107,6 +108,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'sv-infinite-ammo-1',
       'ammo-grenade-limit-total-5',
       'sv-grenade-trajectory-preview-on',
+      'sv-grenade-trajectory-prac-trailtime-10',
       'bind-r-rethrow',
       'bind-v-noclip',
     ],
@@ -256,6 +258,9 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'fps-max-ui-120',
       'cl-showfps-1',
       'cq-netgraph-1',
+      'cl-hud-telemetry-frametime-show-1',
+      'cl-hud-telemetry-ping-show-1',
+      'cl-hud-telemetry-net-misdelivery-show-1',
       'r-show-build-info-0',
     ],
     locales: {
@@ -285,6 +290,8 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'cl-radar-scale-05',
       'cl-hud-radar-scale-12',
       'cl-radar-icon-scale-min-1',
+      'cl-hud-playercount-showcount-1',
+      'cl-teamid-overhead-mode-2',
       'hud-scaling-085',
       'cl-showloadout-1',
       'viewmodel-fov-68',
@@ -293,8 +300,12 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'viewmodel-offset-z-n15',
       'fps-max-0',
       'r-show-build-info-0',
+      'cl-hud-telemetry-frametime-show-1',
+      'cl-hud-telemetry-ping-show-1',
+      'cl-hud-telemetry-net-misdelivery-show-1',
       'bind-mwheelup-jump',
       'bind-mwheeldown-jump',
+      'bind-h-switchhands',
     ],
     locales: {
       'pt-br': {
@@ -311,6 +322,36 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         title: 'Config competitiva segura',
         description:
           'Preset sin sv_cheats y sin automatizaciones riesgosas, enfocado en comandos cliente.',
+      },
+    },
+  },
+  {
+    id: 'safe-utility-communication-binds',
+    category: 'competitive',
+    commandIds: [
+      'bind-mouse3-player-ping',
+      'bind-mouse5-clutch-mode',
+      'bind-h-switchhands',
+      'bind-z-slot6',
+      'bind-x-slot7',
+      'bind-c-slot8',
+      'bind-v-slot10',
+    ],
+    locales: {
+      'pt-br': {
+        title: 'Binds seguros de comunicacao e utilitarios',
+        description:
+          'Atalhos de uma unica acao para ping, clutch, mao e granadas. Ajuste as teclas antes de copiar para nao sobrescrever seu layout.',
+      },
+      en: {
+        title: 'Safe communication and utility binds',
+        description:
+          'One-action shortcuts for ping, clutch mode, hand switching, and utility. Change keys before copying so you do not overwrite your layout.',
+      },
+      es: {
+        title: 'Binds seguros de comunicacion y utilitarios',
+        description:
+          'Atajos de una sola accion para ping, clutch, mano y granadas. Cambia las teclas antes de copiar para no sobrescribir tu layout.',
       },
     },
   },

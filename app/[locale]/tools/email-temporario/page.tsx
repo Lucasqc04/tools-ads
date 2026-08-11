@@ -82,7 +82,7 @@ export default async function TempEmailPage({ params }: TempEmailPageProps) {
         locale={locale}
         tool={tool}
         relatedTools={related}
-        toolUi={<TempEmailTool locale={locale} />}
+        toolUi={<TempEmailTool locale={locale} domain={process.env.TEMP_EMAIL_DOMAIN} />}
       />
     </>
   );

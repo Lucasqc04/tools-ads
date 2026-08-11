@@ -166,7 +166,7 @@ const buildContentBlocks = (
         title: `${platform.name} name symbols with a live preview`,
         paragraphs: [
           `This version opens the gaming symbol generator with ${platform.name} selected. Type a base name and compare the recommended ${frames} frames before copying anything. ${guidance}`,
-          `${context} The personalized preview combines your chosen left symbol, right symbol, and Unicode letter style, while the ready-made list provides shorter alternatives when the first result feels crowded.`,
+          `${context} Place the cursor anywhere in the name and use the symbol keyboard to build it freely, or combine left and right frames with a Unicode letter style. The ready-made list still provides shorter alternatives when a result feels crowded.`,
         ],
       },
       {
@@ -205,7 +205,7 @@ const buildContentBlocks = (
         title: `Simbolos para nombre de ${platform.name} con preview`,
         paragraphs: [
           `Esta version abre el generador con ${platform.name} seleccionado. Escribe un nombre base y compara los marcos recomendados: ${frames}. ${guidance}`,
-          `${context} El preview combina simbolo izquierdo, simbolo derecho y estilo Unicode, mientras la lista preparada ofrece alternativas mas cortas si el primer resultado queda cargado.`,
+          `${context} Coloca el cursor en cualquier punto y usa el teclado de simbolos para montar el nombre libremente, o combina marcos laterales con un estilo Unicode. La lista preparada ofrece alternativas mas cortas si el resultado queda cargado.`,
         ],
       },
       {
@@ -243,7 +243,7 @@ const buildContentBlocks = (
       title: `Simbolos para nickname de ${platform.name} com preview`,
       paragraphs: [
         `Esta versao abre o gerador com ${platform.name} selecionado. Digite um nome base e compare primeiro as molduras recomendadas: ${frames}. ${guidance}`,
-        `${context} O preview personalizado combina simbolo esquerdo, simbolo direito e estilo Unicode, enquanto a lista pronta oferece alternativas mais curtas quando o primeiro resultado fica carregado.`,
+        `${context} Posicione o cursor em qualquer ponto e use o teclado de simbolos para montar o nome livremente, ou combine molduras laterais com um estilo Unicode. A lista pronta ainda oferece alternativas mais curtas quando o resultado fica carregado.`,
       ],
     },
     {
