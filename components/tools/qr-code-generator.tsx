@@ -23,6 +23,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { ImageViewer } from '@/components/shared/image-viewer';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
   blobToDataUrl,
   buildQrFileBaseName,
@@ -568,11 +569,30 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
     }, 2600);
   };
 
+  // Analytics: real begin-of-use is entering QR content or customizing the
+  // style away from the default preset. Success/error of the actual QR
+  // render is reported below, guarded to only fire once per genuine
+  // transition (not on every keystroke/slider drag) and only after the user
+  // has actually started using the tool.
+  const hasStartedRef = useRef(false);
+  const lastRenderOutcomeRef = useRef<'success' | 'error' | null>(null);
+
+  const markToolStarted = () => {
+    if (hasStartedRef.current) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.qrCodeGenerator, locale });
+  };
+
   const markCustomPreset = () => {
+    markToolStarted();
     setSelectedPresetId((current) => (current === 'custom' ? current : 'custom'));
   };
 
   const applyPreset = (preset: StylePreset) => {
+    markToolStarted();
+    trackEvent('mode_selected', { tool: TOOL_ID.qrCodeGenerator, locale, mode: preset.id });
     setSelectedPresetId(preset.id);
     setDotType(preset.dotType);
     setCornerSquareType(preset.cornerSquareType);
@@ -639,12 +659,29 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
       return;
     }
 
-    qrRef.current.update(qrOptions);
+    try {
+      qrRef.current.update(qrOptions);
 
-    if (!containerRef.current.firstChild) {
-      qrRef.current.append(containerRef.current);
+      if (!containerRef.current.firstChild) {
+        qrRef.current.append(containerRef.current);
+      }
+
+      if (hasStartedRef.current && lastRenderOutcomeRef.current !== 'success') {
+        lastRenderOutcomeRef.current = 'success';
+        trackEvent('tool_completed', { tool: TOOL_ID.qrCodeGenerator, locale });
+      }
+    } catch {
+      if (hasStartedRef.current && lastRenderOutcomeRef.current !== 'error') {
+        lastRenderOutcomeRef.current = 'error';
+        trackEvent('tool_error', {
+          tool: TOOL_ID.qrCodeGenerator,
+          locale,
+          error_type: 'content_too_long',
+        });
+      }
     }
-  }, [hasContent, qrOptions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasContent, qrOptions, locale]);
 
   useEffect(() => {
     return () => {
@@ -712,6 +749,7 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
       const blob = await getRawBlob(format);
       const baseName = buildQrFileBaseName(trimmedContent);
       downloadBlob(blob, `${baseName}.${format}`);
+      trackEvent('result_downloaded', { tool: TOOL_ID.qrCodeGenerator, locale, format });
       setFeedback({
         type: 'success',
         message: `${ui.downloadSuccessPrefix} ${format.toUpperCase()} ${ui.downloadSuccessSuffix}`,
@@ -743,6 +781,7 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
 
       const baseName = buildQrFileBaseName(trimmedContent);
       pdf.save(`${baseName}.pdf`);
+      trackEvent('result_downloaded', { tool: TOOL_ID.qrCodeGenerator, locale, format: 'pdf' });
       setFeedback({ type: 'success', message: ui.pdfSuccess });
     });
   };
@@ -751,6 +790,7 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
     await runAction('copy-image', async () => {
       const pngBlob = await getRawBlob('png');
       await copyImageBlobToClipboard(pngBlob);
+      trackEvent('result_copied', { tool: TOOL_ID.qrCodeGenerator, locale, field: 'qr_image' });
       setFeedback({ type: 'success', message: ui.copySuccess });
     });
   };
@@ -773,7 +813,10 @@ export function QrCodeGeneratorTool({ locale = 'pt-br' }: QrCodeGeneratorToolPro
         <Textarea
           id="qr-content"
           value={content}
-          onChange={(event) => setContent(event.target.value)}
+          onChange={(event) => {
+            markToolStarted();
+            setContent(event.target.value);
+          }}
           className="min-h-[120px]"
           placeholder={ui.contentPlaceholder}
         />

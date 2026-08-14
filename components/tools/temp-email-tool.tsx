@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AtSign,
   Check,
@@ -28,6 +28,7 @@ import {
 } from '@/lib/temp-email-content';
 import { cn } from '@/lib/cn';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type {
   TempEmailInboxPayload,
   TempEmailMessage,
@@ -474,6 +475,7 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
   const [copiedTarget, setCopiedTarget] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
+  const hasReceivedFirstMessageRef = useRef(false);
 
   const clearStoredInbox = useCallback(() => {
     globalThis.localStorage.removeItem(localStorageKeys.token);
@@ -529,6 +531,16 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
 
         setMessages(parsed.messages);
         setErrorMessage('');
+
+        if (!hasReceivedFirstMessageRef.current && parsed.messages.length > 0) {
+          hasReceivedFirstMessageRef.current = true;
+          trackEvent('tool_completed', {
+            tool: TOOL_ID.tempEmail,
+            locale,
+            action: 'message_received',
+          });
+        }
+
         setInbox((current) => {
           if (!current || current.token !== token) {
             return current;
@@ -541,6 +553,12 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
       } catch (error: unknown) {
         if (!silent) {
           setErrorMessage(error instanceof Error ? error.message : ui.fetchError);
+          trackEvent('tool_error', {
+            tool: TOOL_ID.tempEmail,
+            locale,
+            action: 'refresh',
+            error_type: 'network_error',
+          });
         }
       } finally {
         if (!silent) {
@@ -548,7 +566,7 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
         }
       }
     },
-    [clearStoredInbox, persistInbox, ui],
+    [clearStoredInbox, persistInbox, ui, locale],
   );
 
   useEffect(() => {
@@ -637,12 +655,19 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
   const handleCreateInbox = async (requestedPrefix = requestedLocalPart) => {
     if (requestedPrefix && !isValidCustomLocalPart(requestedPrefix)) {
       setErrorMessage(ui.customInvalid);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.tempEmail,
+        locale,
+        action: 'create',
+        error_type: 'invalid_input',
+      });
       return;
     }
 
     setIsCreating(true);
     setErrorMessage('');
     setStatusMessage('');
+    trackEvent('tool_started', { tool: TOOL_ID.tempEmail, locale });
 
     try {
       const response = await fetch('/api/tools/temp-email/create', {
@@ -676,12 +701,38 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
       setSelectedMessageId(null);
       setRemoteImagesEnabled(false);
       setStatusMessage(ui.createdSuccess);
+      hasReceivedFirstMessageRef.current = false;
       await fetchMessages(nextInbox.token, { silent: true });
     } catch (error: unknown) {
-      setErrorMessage(error instanceof Error ? error.message : ui.createError);
+      const message = error instanceof Error ? error.message : ui.createError;
+      setErrorMessage(message);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.tempEmail,
+        locale,
+        action: 'create',
+        error_type:
+          message === ui.customInvalid
+            ? 'invalid_input'
+            : message === ui.customUnavailable
+              ? 'address_unavailable'
+              : 'processing_failed',
+      });
     } finally {
       setIsCreating(false);
     }
+  };
+
+  const copyFieldForTarget = (target: string): string => {
+    if (target === 'address') {
+      return 'email_address';
+    }
+    if (target.startsWith('from-')) {
+      return 'sender_address';
+    }
+    if (target.startsWith('code-')) {
+      return 'code_snippet';
+    }
+    return target;
   };
 
   const handleCopy = async (value: string, target: string) => {
@@ -689,6 +740,11 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
       await navigator.clipboard.writeText(value);
       setCopiedTarget(target);
       globalThis.setTimeout(() => setCopiedTarget((current) => (current === target ? null : current)), 1_600);
+      trackEvent('result_copied', {
+        tool: TOOL_ID.tempEmail,
+        locale,
+        field: copyFieldForTarget(target),
+      });
     } catch {
       setErrorMessage(ui.copyError);
     }

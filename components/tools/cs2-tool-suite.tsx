@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { cs2Commands } from '@/data/cs2/commands';
 import { cs2CommandPresets } from '@/data/cs2/command-presets';
@@ -21,6 +21,7 @@ import {
 } from '@/lib/cs2/commands';
 import {
   Cs2AutoexecGenerator,
+  Cs2AnalyticsProvider,
   Cs2BindGenerator,
   Cs2CommandFilters,
   Cs2CommandList,
@@ -33,6 +34,7 @@ import {
   Cs2ViewmodelGenerator,
   Cs2VolumeGenerator,
 } from '@/components/tools/cs2-shared-ui';
+import { trackEvent, toToolId } from '@/lib/analytics';
 
 type Cs2ToolSuiteProps = {
   locale: AppLocale;
@@ -54,6 +56,15 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
     localOnly: uiConfig.showOnlyLocalByDefault,
     recommendedOnly: uiConfig.showOnlyRecommendedByDefault,
   });
+  const hasStartedRef = useRef(false);
+  const analyticsTool = toToolId(toolId);
+
+  const markStarted = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: analyticsTool, locale });
+    }
+  };
 
   const filteredCommands = useMemo(
     () => filterCs2Commands(cs2Commands, filters, uiConfig.commandCategories, locale),
@@ -85,6 +96,7 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
   );
 
   return (
+    <Cs2AnalyticsProvider value={{ tool: analyticsTool, locale }}>
     <div className="space-y-6">
       <Card className="space-y-3">
         <h3 className="text-base font-semibold text-slate-900">{modeTitle}</h3>
@@ -119,7 +131,7 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
       <Card className="space-y-4">
         <Cs2CommandSearch
           value={filters.query}
-          onChange={(value) => setFilters((current) => ({ ...current, query: value }))}
+          onChange={(value) => { markStarted(); setFilters((current) => ({ ...current, query: value })); }}
           copy={copy}
         />
 
@@ -128,7 +140,7 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
           categories={uiConfig.commandCategories}
           locale={locale}
           copy={copy}
-          onChange={(next) => setFilters(next)}
+          onChange={(next) => { markStarted(); setFilters(next); }}
         />
 
         <p className="text-sm text-slate-600">
@@ -161,5 +173,6 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
         />
       ) : null}
     </div>
+    </Cs2AnalyticsProvider>
   );
 }

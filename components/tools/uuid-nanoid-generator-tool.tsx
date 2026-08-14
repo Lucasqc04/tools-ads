@@ -1,11 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { SearchableSelect } from '@/components/ui/searchable-select';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
   type IdMode,
   type UuidVersion,
@@ -216,6 +217,7 @@ export function UuidNanoIdGeneratorTool({ locale = 'pt-br' }: UuidNanoIdGenerato
   const [ids, setIds] = useState<string[]>([]);
   const [copied, setCopied] = useState('');
   const [warning, setWarning] = useState('');
+  const hasStartedRef = useRef(false);
 
   const amountNumber = Number(amount);
   const nanoLengthNumber = Number(nanoLength);
@@ -227,10 +229,17 @@ export function UuidNanoIdGeneratorTool({ locale = 'pt-br' }: UuidNanoIdGenerato
   const copyAllLabel = copied === 'all' ? ui.copied : ui.copyAll;
 
   const generateIds = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.uuidNanoidGenerator, locale });
+    }
+
     setWarning('');
 
+    const count = amountNumber || 1;
+
     if (mode === 'uuid') {
-      const generated = generateUuidList(amountNumber || 1, {
+      const generated = generateUuidList(count, {
         version: uuidVersion,
         namespace: uuidNamespace,
         name: uuidName,
@@ -242,39 +251,53 @@ export function UuidNanoIdGeneratorTool({ locale = 'pt-br' }: UuidNanoIdGenerato
         setWarning(generated.warning);
       }
 
+      trackEvent('tool_completed', {
+        tool: TOOL_ID.uuidNanoidGenerator,
+        locale,
+        id_mode: mode,
+        uuid_version: uuidVersion,
+        count,
+      });
+
       return;
     }
 
     if (mode === 'nanoid') {
-      setIds(generateNanoIdList(amountNumber || 1, nanoLengthNumber || 21, alphabet));
+      setIds(generateNanoIdList(count, nanoLengthNumber || 21, alphabet));
+      trackEvent('tool_completed', { tool: TOOL_ID.uuidNanoidGenerator, locale, id_mode: mode, count });
       return;
     }
 
     if (mode === 'ulid') {
-      setIds(generateUlidList(amountNumber || 1));
+      setIds(generateUlidList(count));
+      trackEvent('tool_completed', { tool: TOOL_ID.uuidNanoidGenerator, locale, id_mode: mode, count });
       return;
     }
 
     if (mode === 'ksuid') {
-      setIds(generateKsuidList(amountNumber || 1));
+      setIds(generateKsuidList(count));
+      trackEvent('tool_completed', { tool: TOOL_ID.uuidNanoidGenerator, locale, id_mode: mode, count });
       return;
     }
 
     if (mode === 'cuid2') {
-      setIds(generateCuid2List(amountNumber || 1));
+      setIds(generateCuid2List(count));
+      trackEvent('tool_completed', { tool: TOOL_ID.uuidNanoidGenerator, locale, id_mode: mode, count });
       return;
     }
 
-    setIds(generateObjectIdList(amountNumber || 1));
+    setIds(generateObjectIdList(count));
+    trackEvent('tool_completed', { tool: TOOL_ID.uuidNanoidGenerator, locale, id_mode: mode, count });
   };
 
-  const copyValue = async (key: string, value: string) => {
+  const copyValue = async (key: string, value: string, field: string) => {
     if (!value) return;
 
     try {
       await navigator.clipboard.writeText(value);
       setCopied(key);
       setTimeout(() => setCopied(''), 1300);
+      trackEvent('result_copied', { tool: TOOL_ID.uuidNanoidGenerator, locale, field });
     } catch {
       setCopied('');
     }
@@ -291,7 +314,10 @@ export function UuidNanoIdGeneratorTool({ locale = 'pt-br' }: UuidNanoIdGenerato
           <span className="text-sm font-semibold text-slate-800">{ui.modeLabel}</span>
           <SearchableSelect
             value={mode}
-            onValueChange={(nextValue) => setMode(nextValue as IdMode)}
+            onValueChange={(nextValue) => {
+              setMode(nextValue as IdMode);
+              trackEvent('mode_selected', { tool: TOOL_ID.uuidNanoidGenerator, locale, id_mode: nextValue });
+            }}
             options={[
               { value: 'uuid', label: ui.modeLabelByMode.uuid, keywords: ['guid', 'rfc4122'] },
               { value: 'nanoid', label: ui.modeLabelByMode.nanoid, keywords: ['id curto', 'custom alphabet'] },
@@ -310,7 +336,15 @@ export function UuidNanoIdGeneratorTool({ locale = 'pt-br' }: UuidNanoIdGenerato
             <span className="text-sm font-semibold text-slate-800">{ui.uuidVersionLabel}</span>
             <SearchableSelect
               value={uuidVersion}
-              onValueChange={(nextValue) => setUuidVersion(nextValue as UuidVersion)}
+              onValueChange={(nextValue) => {
+                setUuidVersion(nextValue as UuidVersion);
+                trackEvent('mode_selected', {
+                  tool: TOOL_ID.uuidNanoidGenerator,
+                  locale,
+                  id_mode: 'uuid',
+                  uuid_version: nextValue,
+                });
+              }}
               options={[
                 { value: 'v1', label: ui.uuidVersionLabelByVersion.v1, keywords: ['timestamp', 'mac'] },
                 { value: 'v3', label: ui.uuidVersionLabelByVersion.v3, keywords: ['md5', 'deterministico'] },
@@ -393,7 +427,7 @@ export function UuidNanoIdGeneratorTool({ locale = 'pt-br' }: UuidNanoIdGenerato
         <Button variant="secondary" onClick={generateIds}>
           {ui.regenerate}
         </Button>
-        <Button variant="secondary" onClick={() => copyValue('all', idsToTxt(ids, lineBreakCopy))}>
+        <Button variant="secondary" onClick={() => copyValue('all', idsToTxt(ids, lineBreakCopy), 'id_list')}>
           {copyAllLabel}
         </Button>
         <Button variant="ghost" onClick={() => setIds([])}>
@@ -407,8 +441,24 @@ export function UuidNanoIdGeneratorTool({ locale = 'pt-br' }: UuidNanoIdGenerato
       </label>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" onClick={() => downloadTextFile('ids.txt', idsToTxt(ids, true))}>{ui.exportTxt}</Button>
-        <Button variant="secondary" onClick={() => downloadTextFile('ids.csv', idsToCsv(ids), 'text/csv;charset=utf-8')}>{ui.exportCsv}</Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            downloadTextFile('ids.txt', idsToTxt(ids, true));
+            trackEvent('result_downloaded', { tool: TOOL_ID.uuidNanoidGenerator, locale, format: 'txt' });
+          }}
+        >
+          {ui.exportTxt}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            downloadTextFile('ids.csv', idsToCsv(ids), 'text/csv;charset=utf-8');
+            trackEvent('result_downloaded', { tool: TOOL_ID.uuidNanoidGenerator, locale, format: 'csv' });
+          }}
+        >
+          {ui.exportCsv}
+        </Button>
       </div>
 
       <section className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -419,7 +469,7 @@ export function UuidNanoIdGeneratorTool({ locale = 'pt-br' }: UuidNanoIdGenerato
           {ids.map((id, index) => (
             <li key={`${id}-${index}`} className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-2">
               <span className="truncate font-mono">{id}</span>
-              <Button variant="ghost" onClick={() => copyValue(`item-${index}`, id)}>
+              <Button variant="ghost" onClick={() => copyValue(`item-${index}`, id, 'id')}>
                 {copied === `item-${index}` ? ui.copied : ui.copy}
               </Button>
             </li>

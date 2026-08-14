@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/next';
+import { GoogleTagManager } from '@/components/analytics/google-tag-manager';
 import { JsonLd } from '@/components/shared/json-ld';
 import { FloatingTelegramSuggestion } from '@/components/layout/floating-telegram-suggestion';
 import { SiteFooter } from '@/components/layout/site-footer';
@@ -90,6 +91,7 @@ export default async function LocaleLayout({
         */}
       </head>
       <body className="min-h-screen bg-slate-50 text-slate-900">
+        <GoogleTagManager containerId={process.env.NEXT_PUBLIC_GTM_ID} />
         <div className="flex min-h-screen flex-col">
           <JsonLd data={organizationJsonLd} />
           <JsonLd data={buildWebsiteJsonLd(locale)} />

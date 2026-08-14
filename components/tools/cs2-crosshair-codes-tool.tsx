@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
@@ -15,6 +15,7 @@ import {
   getTeamOptions,
   type Cs2CrosshairFilters,
 } from '@/lib/cs2/crosshair';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 const localeTagByAppLocale: Record<AppLocale, string> = {
   'pt-br': 'pt-BR',
@@ -37,6 +38,14 @@ const defaultFilters: Cs2CrosshairFilters = {
 export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2CrosshairCodesToolProps>) {
   const [filters, setFilters] = useState<Cs2CrosshairFilters>(defaultFilters);
   const [copiedSlug, setCopiedSlug] = useState<string>('');
+  const hasStartedRef = useRef(false);
+
+  const markStarted = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.cs2CrosshairCodes, locale });
+    }
+  };
 
   const content = getCs2CrosshairCodesContent(locale);
 
@@ -53,6 +62,8 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
     try {
       await navigator.clipboard.writeText(code);
       setCopiedSlug(slug);
+      trackEvent('tool_completed', { tool: TOOL_ID.cs2CrosshairCodes, locale });
+      trackEvent('result_copied', { tool: TOOL_ID.cs2CrosshairCodes, locale, field: 'crosshair_code' });
       globalThis.setTimeout(() => {
         setCopiedSlug((current) => (current === slug ? '' : current));
       }, 1600);
@@ -91,10 +102,7 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
           <Input
             value={filters.query}
             onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                query: event.target.value,
-              }))
+              { markStarted(); setFilters((current) => ({ ...current, query: event.target.value })); }
             }
             placeholder={content.ui.searchPlaceholder}
           />
@@ -105,10 +113,7 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
           <Select
             value={filters.country}
             onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                country: event.target.value,
-              }))
+              { markStarted(); setFilters((current) => ({ ...current, country: event.target.value })); }
             }
           >
             <option value="">{content.ui.countryAll}</option>
@@ -125,10 +130,7 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
           <Select
             value={filters.team}
             onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                team: event.target.value,
-              }))
+              { markStarted(); setFilters((current) => ({ ...current, team: event.target.value })); }
             }
           >
             <option value="">{content.ui.teamAll}</option>
@@ -145,10 +147,7 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
           <Select
             value={filters.role}
             onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                role: event.target.value as '' | Cs2PlayerRole,
-              }))
+              { markStarted(); setFilters((current) => ({ ...current, role: event.target.value as '' | Cs2PlayerRole })); }
             }
           >
             <option value="">{content.ui.roleAll}</option>
@@ -166,10 +165,7 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
           type="checkbox"
           checked={filters.withCodeOnly}
           onChange={(event) =>
-            setFilters((current) => ({
-              ...current,
-              withCodeOnly: event.target.checked,
-            }))
+            { markStarted(); setFilters((current) => ({ ...current, withCodeOnly: event.target.checked })); }
           }
         />
         <span>{content.ui.withCodeOnly}</span>

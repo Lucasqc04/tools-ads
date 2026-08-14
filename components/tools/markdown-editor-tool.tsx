@@ -14,6 +14,7 @@ import {
   parseMarkdownToHtml,
   sanitizeMarkdownFileBaseName,
 } from '@/lib/markdown';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type MarkdownEditorToolProps = Readonly<{
   locale?: AppLocale;
@@ -368,6 +369,15 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
   const [status, setStatus] = useState<{ tone: StatusTone; text: string } | null>(null);
   const [splitRatio, setSplitRatio] = useState(50);
   const [isHydrated, setIsHydrated] = useState(false);
+  const hasStartedRef = useRef(false);
+
+  const reportStartedOnce = useCallback((value: string) => {
+    if (hasStartedRef.current || !value.trim()) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.markdownEditor, locale });
+  }, [locale]);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -619,8 +629,12 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
       setStatus({ tone: 'success', text: ui.statusFileLoaded });
       setLayoutMode('split');
       setIsHtmlCopied(false);
+      const fileType = file.name.split('.').pop()?.toLowerCase() || 'unknown';
+      trackEvent('file_uploaded', { tool: TOOL_ID.markdownEditor, locale, file_type: fileType });
+      reportStartedOnce(loadedText);
     } catch {
       setStatus({ tone: 'error', text: ui.statusFileReadError });
+      trackEvent('tool_error', { tool: TOOL_ID.markdownEditor, locale, error_type: 'processing_failed' });
     }
   };
 
@@ -634,6 +648,7 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
       setIsHtmlCopied(true);
       setStatus({ tone: 'success', text: ui.statusHtmlCopied });
       setTimeout(() => setIsHtmlCopied(false), 1800);
+      trackEvent('result_copied', { tool: TOOL_ID.markdownEditor, locale, field: 'markdown_html' });
     } catch {
       setStatus({ tone: 'error', text: ui.statusHtmlCopyError });
       setIsHtmlCopied(false);
@@ -643,27 +658,36 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
   const handleExport = async () => {
     if (!input.trim() || !renderedHtml.trim()) {
       setStatus({ tone: 'warning', text: ui.statusNoContentToExport });
+      trackEvent('tool_error', { tool: TOOL_ID.markdownEditor, locale, error_type: 'invalid_input' });
       return;
     }
 
     const base = sanitizedBaseName || 'markdown-document';
     setIsExporting(true);
 
+    const reportExportCompleted = () => {
+      trackEvent('tool_completed', { tool: TOOL_ID.markdownEditor, locale, format: exportFormat });
+      trackEvent('result_downloaded', { tool: TOOL_ID.markdownEditor, locale, format: exportFormat });
+    };
+
     try {
       if (exportFormat === 'md') {
         downloadTextFile(input, `${base}.md`, 'text/markdown;charset=utf-8');
         setStatus({ tone: 'success', text: ui.statusExportDone });
+        reportExportCompleted();
         return;
       }
       if (exportFormat === 'html') {
         const htmlDocument = buildMarkdownHtmlDocument({ title: base, renderedHtml });
         downloadTextFile(htmlDocument, `${base}.html`, 'text/html;charset=utf-8');
         setStatus({ tone: 'success', text: ui.statusExportDone });
+        reportExportCompleted();
         return;
       }
       if (exportFormat === 'docx') {
         await exportMarkdownAsDocx({ markdownText: input, filename: `${base}.docx` });
         setStatus({ tone: 'success', text: ui.statusExportDone });
+        reportExportCompleted();
         return;
       }
 
@@ -674,6 +698,7 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
         const tone = result.truncated || result.omittedExternalImages > 0 ? 'warning' : 'success';
         const text = result.truncated ? ui.statusExportDoneTruncated : result.omittedExternalImages > 0 ? ui.statusExportDoneExternalImages : ui.statusExportDone;
         setStatus({ tone, text });
+        reportExportCompleted();
         return;
       }
 
@@ -681,8 +706,10 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
       const tone = result.truncated || result.omittedExternalImages > 0 ? 'warning' : 'success';
       const text = result.truncated ? ui.statusExportDoneTruncated : result.omittedExternalImages > 0 ? ui.statusExportDoneExternalImages : ui.statusExportDone;
       setStatus({ tone, text });
+      reportExportCompleted();
     } catch {
       setStatus({ tone: 'error', text: ui.statusExportError });
+      trackEvent('tool_error', { tool: TOOL_ID.markdownEditor, locale, error_type: 'processing_failed' });
     } finally {
       setIsExporting(false);
     }
@@ -772,7 +799,7 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
 
           <button
             type="button"
-            onClick={() => { setInput(ui.sampleMarkdown); setFileName('markdown-document.md'); setStatus(null); }}
+            onClick={() => { setInput(ui.sampleMarkdown); setFileName('markdown-document.md'); setStatus(null); reportStartedOnce(ui.sampleMarkdown); }}
             className="rounded px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200 transition"
           >
             {ui.loadSample}
@@ -844,7 +871,7 @@ export function MarkdownEditorTool({ locale = 'pt-br' }: MarkdownEditorToolProps
             <textarea
               ref={editorRef}
               value={input}
-              onChange={(e) => { setInput(e.target.value); setStatus(null); setIsHtmlCopied(false); }}
+              onChange={(e) => { setInput(e.target.value); setStatus(null); setIsHtmlCopied(false); reportStartedOnce(e.target.value); }}
               onKeyDown={handleKeyDown}
               spellCheck={false}
               placeholder={ui.editorPlaceholder}

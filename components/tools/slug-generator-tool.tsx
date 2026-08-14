@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { AppLocale } from '@/lib/i18n/config';
 import { buildSlug, createSlugSuggestions, type SlugOptions } from '@/lib/slug-generator';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type SlugGeneratorToolProps = Readonly<{ locale?: AppLocale }>;
 
@@ -98,6 +99,20 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
   const [keepWordBoundaries, setKeepWordBoundaries] = useState(true);
   const [copied, setCopied] = useState('');
   const [history, setHistory] = useState<string[]>([]);
+  const hasStartedRef = useRef(false);
+
+  const trackStarted = () => {
+    if (hasStartedRef.current) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.slugGenerator, locale });
+  };
+
+  const updateText = (value: string) => {
+    trackStarted();
+    setText(value);
+  };
 
   useEffect(() => {
     const stored = localStorage.getItem(historyKey);
@@ -137,6 +152,11 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
       await navigator.clipboard.writeText(value);
       setCopied(key);
       setTimeout(() => setCopied(''), 1200);
+      trackEvent('result_copied', {
+        tool: TOOL_ID.slugGenerator,
+        locale,
+        field: key === 'slug' ? 'slug' : 'link',
+      });
     } catch {
       setCopied('');
     }
@@ -150,6 +170,7 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
       localStorage.setItem(historyKey, JSON.stringify(next));
       return next;
     });
+    trackEvent('tool_completed', { tool: TOOL_ID.slugGenerator, locale });
   };
 
   return (
@@ -160,7 +181,7 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
 
       <label className="space-y-2">
         <span className="text-sm font-semibold text-slate-800">{ui.originalTextLabel}</span>
-        <Textarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-[130px]" />
+        <Textarea value={text} onChange={(event) => updateText(event.target.value)} className="min-h-[130px]" />
       </label>
 
       <div className="grid gap-3 md:grid-cols-3">
@@ -219,7 +240,7 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
         <h3 className="text-sm font-semibold text-slate-800">{ui.suggestionsTitle}</h3>
         <div className="flex flex-wrap gap-2">
           {suggestions.map((item) => (
-            <Button key={item} variant="ghost" onClick={() => setText(item)}>{item}</Button>
+            <Button key={item} variant="ghost" onClick={() => updateText(item)}>{item}</Button>
           ))}
         </div>
       </section>
@@ -228,7 +249,7 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
         <h3 className="text-sm font-semibold text-slate-800">{ui.examplesTitle}</h3>
         <div className="flex flex-wrap gap-2">
           {exampleTexts.map((example) => (
-            <Button key={example} variant="ghost" onClick={() => setText(example)}>{example.slice(0, 28)}...</Button>
+            <Button key={example} variant="ghost" onClick={() => updateText(example)}>{example.slice(0, 28)}...</Button>
           ))}
         </div>
       </section>
@@ -237,7 +258,7 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
         <h3 className="text-sm font-semibold text-slate-800">{ui.localHistoryTitle}</h3>
         <div className="flex flex-wrap gap-2">
           {history.map((item) => (
-            <Button key={item} variant="ghost" onClick={() => setText(item)}>{item}</Button>
+            <Button key={item} variant="ghost" onClick={() => updateText(item)}>{item}</Button>
           ))}
         </div>
       </section>

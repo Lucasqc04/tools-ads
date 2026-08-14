@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import { decodeJwtToken } from '@/lib/jwt-decoder';
 
@@ -141,7 +142,41 @@ export function JwtDecoderTool({ locale = 'pt-br' }: JwtDecoderToolProps) {
 
   const decoded = useMemo(() => decodeJwtToken(token), [token]);
 
-  const copyValue = async (key: string, value: string) => {
+  // Tracks tool_started/tool_completed/tool_error for the auto-decode-as-you-type
+  // flow. `decoded` is only a new reference when `token` changes (useMemo), so
+  // this effect naturally skips unrelated re-renders. `lastAnalyzedTokenRef`
+  // remembers the last token we reported an outcome for, and is reset when the
+  // input is cleared, so `tool_started` fires once per distinct paste/attempt
+  // rather than once per keystroke.
+  const lastAnalyzedTokenRef = useRef('');
+
+  useEffect(() => {
+    const trimmed = token.trim();
+
+    if (!trimmed) {
+      lastAnalyzedTokenRef.current = '';
+      return;
+    }
+
+    if (trimmed === lastAnalyzedTokenRef.current) {
+      return;
+    }
+
+    const isNewAttempt = lastAnalyzedTokenRef.current === '';
+    lastAnalyzedTokenRef.current = trimmed;
+
+    if (isNewAttempt) {
+      trackEvent('tool_started', { tool: TOOL_ID.jwtDecoder, locale });
+    }
+
+    if (decoded.errors.length > 0) {
+      trackEvent('tool_error', { tool: TOOL_ID.jwtDecoder, locale, error_type: 'invalid_jwt' });
+    } else {
+      trackEvent('tool_completed', { tool: TOOL_ID.jwtDecoder, locale });
+    }
+  }, [token, decoded, locale]);
+
+  const copyValue = async (key: string, value: string, field: string) => {
     if (!value.trim()) {
       return;
     }
@@ -149,6 +184,7 @@ export function JwtDecoderTool({ locale = 'pt-br' }: JwtDecoderToolProps) {
     try {
       await navigator.clipboard.writeText(value);
       setCopiedKey(key);
+      trackEvent('result_copied', { tool: TOOL_ID.jwtDecoder, locale, field });
       setTimeout(() => setCopiedKey(''), 1400);
     } catch {
       setCopiedKey('');
@@ -183,7 +219,7 @@ export function JwtDecoderTool({ locale = 'pt-br' }: JwtDecoderToolProps) {
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => setToken((current) => current.trim())}>{ui.decode}</Button>
         <Button variant="secondary" onClick={() => setToken(exampleToken())}>{ui.loadExample}</Button>
-        <Button variant="secondary" onClick={() => copyValue('token', token)}>
+        <Button variant="secondary" onClick={() => copyValue('token', token, 'token')}>
           {copiedKey === 'token' ? ui.copied : ui.copyToken}
         </Button>
         <Button variant="ghost" onClick={() => setToken('')}>{ui.clear}</Button>
@@ -230,7 +266,7 @@ export function JwtDecoderTool({ locale = 'pt-br' }: JwtDecoderToolProps) {
         <pre className="max-h-60 overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-900">
           {decoded.headerJsonText || '{}'}
         </pre>
-        <Button variant="secondary" onClick={() => copyValue('header', decoded.headerJsonText)}>
+        <Button variant="secondary" onClick={() => copyValue('header', decoded.headerJsonText, 'header')}>
           {copiedKey === 'header' ? ui.copied : ui.copyHeader}
         </Button>
       </section>
@@ -241,7 +277,7 @@ export function JwtDecoderTool({ locale = 'pt-br' }: JwtDecoderToolProps) {
           {decoded.payloadJsonText || '{}'}
         </pre>
         <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => copyValue('payload', decoded.payloadJsonText)}>
+          <Button variant="secondary" onClick={() => copyValue('payload', decoded.payloadJsonText, 'payload')}>
             {copiedKey === 'payload' ? ui.copied : ui.copyPayload}
           </Button>
           <Button
@@ -250,6 +286,7 @@ export function JwtDecoderTool({ locale = 'pt-br' }: JwtDecoderToolProps) {
               copyValue(
                 'payload-clean',
                 JSON.stringify(decoded.payloadObject ?? {}),
+                'payload_clean',
               )
             }
           >

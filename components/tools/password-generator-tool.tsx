@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import {
   type PasswordOptions,
 } from '@/lib/password-generator';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type PasswordGeneratorToolProps = Readonly<{
   locale?: AppLocale;
@@ -148,12 +149,21 @@ export function PasswordGeneratorTool({ locale = 'pt-br' }: PasswordGeneratorToo
   const [errorMessage, setErrorMessage] = useState('');
   const [copied, setCopied] = useState(false);
   const [regenerationCount, setRegenerationCount] = useState(0);
+  const hasStartedRef = useRef(false);
 
   const finalLength = useMemo(() => parseLength(lengthInput), [lengthInput]);
   const sliderLength = useMemo(
     () => Math.min(Math.max(finalLength, SLIDER_MIN_LENGTH), SLIDER_MAX_LENGTH),
     [finalLength],
   );
+
+  const trackStarted = () => {
+    if (hasStartedRef.current) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.passwordGenerator, locale });
+  };
 
   useEffect(() => {
     if (!hasAnyPasswordOptionSelected(options)) {
@@ -170,10 +180,22 @@ export function PasswordGeneratorTool({ locale = 'pt-br' }: PasswordGeneratorToo
   }, [finalLength, options, regenerationCount, ui.noneOptionError]);
 
   const toggleOption = (key: keyof PasswordOptions) => {
+    trackStarted();
     setOptions((current) => ({
       ...current,
       [key]: !current[key],
     }));
+  };
+
+  const handleRegenerate = () => {
+    trackStarted();
+    setRegenerationCount((value) => value + 1);
+
+    if (hasAnyPasswordOptionSelected(options)) {
+      trackEvent('tool_completed', { tool: TOOL_ID.passwordGenerator, locale, length: finalLength });
+    } else {
+      trackEvent('tool_error', { tool: TOOL_ID.passwordGenerator, locale, error_type: 'invalid_input' });
+    }
   };
 
   const handleCopy = async () => {
@@ -181,10 +203,14 @@ export function PasswordGeneratorTool({ locale = 'pt-br' }: PasswordGeneratorToo
       return;
     }
 
+    trackStarted();
+
     try {
       await navigator.clipboard.writeText(generatedPassword);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
+      trackEvent('result_copied', { tool: TOOL_ID.passwordGenerator, locale, field: 'password' });
+      trackEvent('tool_completed', { tool: TOOL_ID.passwordGenerator, locale, length: finalLength });
     } catch {
       setErrorMessage(ui.copyError);
     }
@@ -205,6 +231,7 @@ export function PasswordGeneratorTool({ locale = 'pt-br' }: PasswordGeneratorToo
           min={1}
           value={lengthInput}
           onChange={(event) => {
+            trackStarted();
             setLengthInput(event.target.value);
             setErrorMessage('');
             setCopied(false);
@@ -226,6 +253,7 @@ export function PasswordGeneratorTool({ locale = 'pt-br' }: PasswordGeneratorToo
           max={SLIDER_MAX_LENGTH}
           value={sliderLength}
           onChange={(event) => {
+            trackStarted();
             setLengthInput(event.target.value);
             setErrorMessage('');
             setCopied(false);
@@ -286,7 +314,7 @@ export function PasswordGeneratorTool({ locale = 'pt-br' }: PasswordGeneratorToo
       ) : null}
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" onClick={() => setRegenerationCount((value) => value + 1)}>
+        <Button variant="secondary" onClick={handleRegenerate}>
           {ui.regenerate}
         </Button>
         <Button variant="secondary" onClick={handleCopy} disabled={!generatedPassword}>

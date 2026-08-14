@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { Check, Copy, Shuffle, Sparkles } from 'lucide-react';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
   buildNicknameSymbolVariants,
   composeSymbolNickname,
@@ -202,6 +203,13 @@ const targetOptions: SymbolTarget[] = ['cursor', 'both', 'left', 'right'];
 const limitCodePoints = (value: string, limit: number): string =>
   Array.from(value).slice(0, limit).join('');
 
+/** Categorical (never PII) description of what a copy action produced, for analytics. */
+const copyFieldByActionId: Record<string, string> = {
+  preview: 'nickname',
+  symbol: 'symbol_text',
+  all: 'variant_list',
+};
+
 export function NicknameSymbolGeneratorTool({
   locale = 'pt-br',
   initialPlatformId,
@@ -226,6 +234,15 @@ export function NicknameSymbolGeneratorTool({
   const baseNameInputRef = useRef<HTMLInputElement>(null);
   const activeBaseNameInputRef = useRef<HTMLInputElement | null>(null);
   const baseNameSelectionRef = useRef({ start: 6, end: 6 });
+  const hasStartedRef = useRef(false);
+
+  const trackStarted = () => {
+    if (hasStartedRef.current) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.nicknameSymbolGenerator, locale });
+  };
 
   const selectedPlatform =
     getNicknameSymbolPlatformById(platformId) ?? nicknameSymbolPlatforms[0];
@@ -255,6 +272,17 @@ export function NicknameSymbolGeneratorTool({
       setCopiedId(actionId);
       setFeedback('');
       window.setTimeout(() => setCopiedId(''), 1800);
+
+      const field = copyFieldByActionId[actionId] ?? 'variant';
+
+      trackEvent('result_copied', { tool: TOOL_ID.nicknameSymbolGenerator, locale, field });
+
+      // No explicit "generate" button in this live-preview tool: copying the
+      // composed nickname or a ready-made variant is the real completion
+      // signal (a bare symbol copy is a minor pick, not a full completion).
+      if (actionId !== 'symbol') {
+        trackEvent('tool_completed', { tool: TOOL_ID.nicknameSymbolGenerator, locale, field });
+      }
     } catch {
       setFeedback(ui.error);
     }
@@ -275,6 +303,7 @@ export function NicknameSymbolGeneratorTool({
   };
 
   const updateBaseName = (input: HTMLInputElement) => {
+    trackStarted();
     activeBaseNameInputRef.current = input;
     const nextValue = limitNicknameCharacters(input.value);
     setBaseName(nextValue);
@@ -307,6 +336,8 @@ export function NicknameSymbolGeneratorTool({
   };
 
   const selectPlatform = (nextPlatformId: string) => {
+    trackStarted();
+
     const platform = getNicknameSymbolPlatformById(nextPlatformId);
     if (!platform) {
       return;
@@ -318,9 +349,16 @@ export function NicknameSymbolGeneratorTool({
     setLeftSymbol(frame?.left ?? '');
     setRightSymbol(frame?.right ?? '');
     setSelectedSymbol(frame?.left || frame?.right || '★');
+    trackEvent('mode_selected', {
+      tool: TOOL_ID.nicknameSymbolGenerator,
+      locale,
+      mode: platform.id,
+    });
   };
 
   const applyFrame = (frameId: string) => {
+    trackStarted();
+
     const frame = getNicknameFrameById(frameId);
     if (!frame) {
       return;
@@ -332,6 +370,7 @@ export function NicknameSymbolGeneratorTool({
   };
 
   const applySymbol = (symbol: string) => {
+    trackStarted();
     setSelectedSymbol(symbol);
 
     if (symbolTarget === 'cursor') {
@@ -359,6 +398,8 @@ export function NicknameSymbolGeneratorTool({
   };
 
   const shufflePreset = () => {
+    trackStarted();
+
     const frame = nicknameFrameDefinitions[
       Math.floor(Math.random() * nicknameFrameDefinitions.length)
     ];
@@ -451,7 +492,10 @@ export function NicknameSymbolGeneratorTool({
             <span className="text-sm font-semibold text-slate-800">{ui.styleLabel}</span>
             <select
               value={styleId}
-              onChange={(event) => setStyleId(event.target.value as NicknameTextStyleId)}
+              onChange={(event) => {
+                trackStarted();
+                setStyleId(event.target.value as NicknameTextStyleId);
+              }}
               className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
             >
               {nicknameTextStyles.map((style) => (
@@ -700,7 +744,10 @@ export function NicknameSymbolGeneratorTool({
             <span className="text-sm font-semibold text-slate-800">{ui.leftLabel}</span>
             <input
               value={leftSymbol}
-              onChange={(event) => setLeftSymbol(limitCodePoints(event.target.value, 8))}
+              onChange={(event) => {
+                trackStarted();
+                setLeftSymbol(limitCodePoints(event.target.value, 8));
+              }}
               maxLength={8}
               className="min-h-11 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-lg text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
             />
@@ -709,7 +756,10 @@ export function NicknameSymbolGeneratorTool({
             <span className="text-sm font-semibold text-slate-800">{ui.rightLabel}</span>
             <input
               value={rightSymbol}
-              onChange={(event) => setRightSymbol(limitCodePoints(event.target.value, 8))}
+              onChange={(event) => {
+                trackStarted();
+                setRightSymbol(limitCodePoints(event.target.value, 8));
+              }}
               maxLength={8}
               className="min-h-11 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-lg text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
             />

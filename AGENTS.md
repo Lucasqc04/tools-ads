@@ -777,4 +777,80 @@ Antes de publicar:
 - [ ] todas as variações estão com `index,follow`
 - [ ] nenhuma variação depende de geração SEO dinâmica no runtime
 
+## 20. ANALYTICS (TRACKING DE USO E CONVERSÃO) — OBRIGATÓRIO PARA TOOLS NOVAS
+
+O projeto usa uma camada central de analytics que envia eventos para
+`window.dataLayer` (consumido depois por GTM → GA4). Toda tool nova DEVE
+implementar o tracking descrito aqui. Isso não é opcional.
+
+Infraestrutura (não recriar, só reutilizar):
+- `lib/analytics/track.ts` — `trackEvent(event, params)`
+- `lib/analytics/tool-ids.ts` — `TOOL_ID` (constantes) e `toToolId()`
+- `lib/analytics/events.ts` — tipos dos eventos/parâmetros
+- `lib/analytics/index.ts` — reexporta tudo (`import { trackEvent, TOOL_ID } from '@/lib/analytics'`)
+- `components/analytics/tool-view-tracker.tsx` — já disparado automaticamente
+  pelo `ToolPageShell` (evento `tool_view`). Uma tool nova que usa
+  `ToolPageShell` **não precisa fazer nada** para `tool_view`.
+
+### 20.1. PASSO OBRIGATÓRIO AO CRIAR UMA TOOL NOVA
+
+1. Adicionar o id da tool (mesmo `id` do `tools-registry.ts`/`Cs2ToolId`/
+   `FrontOnlyToolId`, só trocando `-` por `_`) em `TOOL_ID` dentro de
+   `lib/analytics/tool-ids.ts`.
+2. No componente client da tool (`components/tools/nome-da-tool-tool.tsx`),
+   importar `trackEvent` e `TOOL_ID` de `@/lib/analytics`.
+3. Analisar o fluxo real da tool (não copiar cegamente de outra) e disparar,
+   quando fizerem sentido:
+   - `tool_started` — quando o usuário realmente começa a usar a tool (não a
+     cada tecla digitada; uma vez por fluxo/execução).
+   - `tool_completed` — quando o objetivo principal foi concluído com
+     sucesso (não confundir "clicou em executar" com "terminou com sucesso").
+   - `tool_error` — só erros relevantes do fluxo, com `error_type`
+     normalizado (nunca stack trace ou mensagem crua).
+   - `result_copied` / `result_downloaded` / `result_shared` — quando existir
+     ação de copiar/baixar/compartilhar o resultado.
+   - Eventos específicos (`parameter_changed`, `format_selected`,
+     `mode_selected`, `file_uploaded`, `generation_started`) só quando
+     realmente agregarem valor analítico — não crie um evento para cada
+     clique/hover/foco de UI.
+4. Sempre incluir `tool: TOOL_ID.suaTool` em todo evento. Incluir `locale`
+   quando o componente já receber essa prop (não criar lógica nova só para
+   isso).
+
+### 20.2. REGRAS DE NOMENCLATURA
+
+- `snake_case` para nomes de evento e parâmetros.
+- Identificador de tool é permanente e independente de idioma/tradução —
+  nunca usar o título traduzido.
+- Preferir parâmetros reutilizáveis entre tools (`tool`, `mode`, `format`,
+  `field`, `error_type`, `action`, `method`) em vez de parâmetros
+  específicos demais de uma única tool.
+
+### 20.3. PRIVACIDADE — CRÍTICO
+
+Nenhum dado inserido pelo usuário pode ir para o dataLayer. Isso inclui,
+sem exceção: CPF/CNPJ, chave Pix ou payload Pix, endereço/hash de carteira
+cripto, e-mail, telefone, nome, senha, token, conteúdo de arquivo, texto
+digitado, resultado decodificado/gerado completo, IP. Envie só metadados
+analíticos (tipo de resultado, formato, categoria de erro), nunca o
+conteúdo em si.
+
+### 20.4. COMPORTAMENTO
+
+- `trackEvent` é best-effort: nunca usar `await`, nunca deixar analytics
+  bloquear ou impedir uma ação (copiar, baixar, gerar, etc.).
+- Tomar cuidado com Strict Mode / re-render / múltiplos cliques para não
+  duplicar `tool_started`/`tool_completed` (usar `useRef`/estado para
+  disparar só na transição real, não a cada render).
+
+### 20.5. CHECKLIST DE ANALYTICS PARA NOVA TOOL
+
+[ ] Id da tool adicionado em `lib/analytics/tool-ids.ts`
+[ ] `tool_started` implementado no ponto real de início de uso
+[ ] `tool_completed` implementado na conclusão real (sucesso)
+[ ] `tool_error` implementado com `error_type` normalizado
+[ ] Ações de copiar/baixar/compartilhar do resultado instrumentadas
+[ ] Nenhum dado do usuário enviado ao dataLayer
+[ ] Nenhum evento duplicado por re-render/Strict Mode/double click
+
 ## FIM

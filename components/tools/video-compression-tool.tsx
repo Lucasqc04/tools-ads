@@ -14,6 +14,7 @@ import {
 } from '@/lib/video-compression';
 import { calculateSavingsPercent, formatBytes } from '@/lib/file-size';
 import { downloadBlob } from '@/lib/image-conversion';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type VideoCompressionToolProps = Readonly<{
   locale?: AppLocale;
@@ -189,6 +190,16 @@ const buildId = (file: File): string =>
 
 const getFileKey = (file: File): string => `${file.name}-${file.size}-${file.lastModified}`;
 
+const getFileTypeLabel = (file: File): string => {
+  const mimeSubtype = file.type.split('/')[1];
+  if (mimeSubtype) {
+    return mimeSubtype.toLowerCase();
+  }
+
+  const extension = file.name.split('.').pop();
+  return extension ? extension.toLowerCase() : 'unknown';
+};
+
 const statusClassName: Record<ItemStatus, string> = {
   pending: 'border-slate-200 bg-slate-100 text-slate-700',
   compressing: 'border-amber-200 bg-amber-50 text-amber-700',
@@ -302,6 +313,14 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
           logs: [],
         }));
 
+      additions.forEach((addition) => {
+        trackEvent('file_uploaded', {
+          tool: TOOL_ID.videoCompression,
+          locale,
+          file_type: getFileTypeLabel(addition.file),
+        });
+      });
+
       return [...current, ...additions];
     });
   };
@@ -365,6 +384,12 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
       errorMessage: undefined,
     }));
 
+    trackEvent('tool_started', {
+      tool: TOOL_ID.videoCompression,
+      locale,
+      file_type: getFileTypeLabel(item.file),
+    });
+
     try {
       const result = await compressVideoFile(item.file, {
         compressionLevel,
@@ -404,6 +429,13 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
           errorMessage: undefined,
         };
       });
+
+      trackEvent('tool_completed', {
+        tool: TOOL_ID.videoCompression,
+        locale,
+        format: 'mp4',
+        compression_level: compressionLevel,
+      });
     } catch (error) {
       updateItem(item.id, (current) => ({
         ...current,
@@ -412,6 +444,12 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
         errorMessage: error instanceof Error ? error.message : ui.genericError,
         logs: [...(current.logs ?? []), error instanceof Error ? error.message : String(error)].slice(-12),
       }));
+
+      trackEvent('tool_error', {
+        tool: TOOL_ID.videoCompression,
+        locale,
+        error_type: 'processing_failed',
+      });
     }
   };
 
@@ -433,6 +471,17 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
   };
 
   const handleDownloadAll = () => {
+    if (!completedItems.length) {
+      return;
+    }
+
+    trackEvent('result_downloaded', {
+      tool: TOOL_ID.videoCompression,
+      locale,
+      format: 'mp4',
+      count: completedItems.length,
+    });
+
     completedItems.forEach((item, index) => {
       const resultFile = item.resultFile;
       if (!resultFile) {
@@ -636,6 +685,11 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
                     variant="secondary"
                     onClick={() => {
                       if (item.resultFile) {
+                        trackEvent('result_downloaded', {
+                          tool: TOOL_ID.videoCompression,
+                          locale,
+                          format: 'mp4',
+                        });
                         downloadBlob(item.resultFile, item.resultFile.name);
                       }
                     }}

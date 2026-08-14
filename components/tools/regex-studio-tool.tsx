@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
   BUILDER_BLOCKS,
   GENERATOR_CONFIGS,
@@ -70,16 +71,52 @@ export function RegexTesterTool({ locale = 'pt-br' }: Props) {
   const result = useMemo<RegexTestResult>(() => testRegex(pattern, flags, text, replacement), [pattern, flags, text, replacement]);
   const diagnostic = useMemo<RegexDiagnostic>(() => diagnoseRegex(pattern, flags), [pattern, flags]);
 
+  // Analytics: report the real begin-of-use (pattern + test string both typed) and
+  // subsequent success/error transitions of the tester flow. Guarded so it only
+  // fires once for "started" and only on genuine outcome transitions, not on
+  // every keystroke while the same success/error state persists.
+  const hasStartedRef = useRef(false);
+  const lastOutcomeRef = useRef<'success' | 'error' | null>(null);
+
+  useEffect(() => {
+    if (!pattern || !text) {
+      return;
+    }
+
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.regexTester, locale });
+    }
+
+    const outcome: 'success' | 'error' = result.ok ? 'success' : 'error';
+    if (lastOutcomeRef.current === outcome) {
+      return;
+    }
+    lastOutcomeRef.current = outcome;
+
+    if (outcome === 'error') {
+      trackEvent('tool_error', { tool: TOOL_ID.regexTester, locale, error_type: 'invalid_regex' });
+    } else {
+      trackEvent('tool_completed', { tool: TOOL_ID.regexTester, locale });
+    }
+  }, [pattern, text, result.ok, locale]);
+
   const copyValue = useCallback(async (key: string, value: string) => {
     if (!value) return;
     try {
       await navigator.clipboard.writeText(value);
       setCopied(key);
+      trackEvent('result_copied', { tool: TOOL_ID.regexTester, locale, field: key });
       setTimeout(() => setCopied(''), 1500);
     } catch { /* */ }
-  }, []);
+  }, [locale]);
 
   const toggleFlag = (f: string) => setFlags(cur => cur.includes(f) ? cur.replace(f, '') || 'g' : cur + f);
+
+  const handleTabChange = (key: TabKey) => {
+    setActiveTab(key);
+    trackEvent('mode_selected', { tool: TOOL_ID.regexTester, locale, mode: key });
+  };
 
   const loadPattern = useCallback((p: string, f: string, t: string, r?: string) => {
     setPattern(p);
@@ -104,7 +141,7 @@ export function RegexTesterTool({ locale = 'pt-br' }: Props) {
           <button
             key={key}
             type="button"
-            onClick={() => setActiveTab(key)}
+            onClick={() => handleTabChange(key)}
             className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${activeTab === key ? 'bg-white text-brand-700 shadow-sm border border-slate-200' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
           >
             {tabs[key]}
@@ -158,14 +195,17 @@ function TesterPanel({ text, setText, replacement, setReplacement, result, copie
     const data = result.matches.map((m, i) => ({ index: i + 1, value: m.value, start: m.indexStart, end: m.indexEnd, line: m.line, column: m.column, groups: m.groups }));
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     downloadBlob(blob, 'regex-matches.json');
+    trackEvent('result_downloaded', { tool: TOOL_ID.regexTester, locale, format: 'json' });
   };
   const exportCSV = () => {
     const rows = ['index,value,start,end,line,column,groups', ...result.matches.map((m, i) => `${i + 1},"${m.value.replace(/"/g, '""')}",${m.indexStart},${m.indexEnd},${m.line},${m.column},"${m.groups.join(';')}"`)] ;
     downloadBlob(new Blob([rows.join('\n')], { type: 'text/csv' }), 'regex-matches.csv');
+    trackEvent('result_downloaded', { tool: TOOL_ID.regexTester, locale, format: 'csv' });
   };
   const exportTXT = () => {
     const lines = result.matches.map((m, i) => `${i + 1}. ${m.value} [${m.indexStart}-${m.indexEnd}] L${m.line}:C${m.column}`);
     downloadBlob(new Blob([lines.join('\n')], { type: 'text/plain' }), 'regex-matches.txt');
+    trackEvent('result_downloaded', { tool: TOOL_ID.regexTester, locale, format: 'txt' });
   };
 
   return (
@@ -225,7 +265,7 @@ function TesterPanel({ text, setText, replacement, setReplacement, result, copie
                     <td className="px-2 py-1 text-slate-500">{m.indexStart}–{m.indexEnd}</td>
                     <td className="px-2 py-1 text-slate-500">{m.line}:{m.column}</td>
                     <td className="px-2 py-1 text-slate-600 font-mono">{m.groups.length > 0 ? m.groups.join(', ') : '—'}</td>
-                    <td className="px-2 py-1"><button type="button" onClick={() => void navigator.clipboard.writeText(m.value)} className="text-slate-400 hover:text-slate-700">⎘</button></td>
+                    <td className="px-2 py-1"><button type="button" onClick={() => { trackEvent('result_copied', { tool: TOOL_ID.regexTester, locale, field: 'match_value' }); void navigator.clipboard.writeText(m.value); }} className="text-slate-400 hover:text-slate-700">⎘</button></td>
                   </tr>
                 ))}
               </tbody>
@@ -307,7 +347,7 @@ function GeneratorPanel({ loadPattern, locale }: { loadPattern: (p: string, f: s
         </div>
         <div className="flex gap-2">
           <Button onClick={() => loadPattern(generated.pattern, generated.flags, generated.testText)}>{locale === 'en' ? 'Use in tester' : 'Usar no testador'}</Button>
-          <Button variant="secondary" onClick={() => void navigator.clipboard.writeText(generated.pattern)}>{locale === 'en' ? 'Copy' : 'Copiar'}</Button>
+          <Button variant="secondary" onClick={() => { trackEvent('result_copied', { tool: TOOL_ID.regexTester, locale, field: 'generated_pattern' }); void navigator.clipboard.writeText(generated.pattern); }}>{locale === 'en' ? 'Copy' : 'Copiar'}</Button>
         </div>
       </section>
     </div>
@@ -453,7 +493,7 @@ function PatternCard({ entry, onUse, locale }: { entry: PatternEntry; onUse: () 
       )}
       <div className="flex gap-1.5">
         <Button variant="ghost" className="h-6 text-[10px]" onClick={onUse}>{locale === 'en' ? 'Use' : 'Usar'}</Button>
-        <Button variant="ghost" className="h-6 text-[10px]" onClick={() => void navigator.clipboard.writeText(entry.pattern)}>⎘</Button>
+        <Button variant="ghost" className="h-6 text-[10px]" onClick={() => { trackEvent('result_copied', { tool: TOOL_ID.regexTester, locale, field: 'library_pattern' }); void navigator.clipboard.writeText(entry.pattern); }}>⎘</Button>
         <Button variant="ghost" className="h-6 text-[10px]" onClick={() => setShowDetails(!showDetails)}>{showDetails ? '▲' : '▼'}</Button>
       </div>
     </div>
@@ -516,6 +556,7 @@ function ExtractPanel({ locale, copied, copyValue }: { locale: AppLocale; copied
     else if (format === 'csv') content = results.map(r => `"${r.replace(/"/g, '""')}"`).join('\n');
     else content = results.join('\n');
     downloadBlob(new Blob([content], { type: 'text/plain' }), `extracted.${format}`);
+    trackEvent('result_downloaded', { tool: TOOL_ID.regexTester, locale, format });
   };
 
   const EXTRACT_TYPES: { id: ExtractionType; label: string }[] = [
@@ -631,7 +672,7 @@ function ReplacePanel({ text, setText, loadPattern, locale }: { text: string; se
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="secondary" onClick={() => void navigator.clipboard.writeText(preview)}>{locale === 'en' ? 'Copy result' : 'Copiar resultado'}</Button>
+                <Button variant="secondary" onClick={() => { trackEvent('result_copied', { tool: TOOL_ID.regexTester, locale, field: 'replaced_text' }); void navigator.clipboard.writeText(preview); }}>{locale === 'en' ? 'Copy result' : 'Copiar resultado'}</Button>
                 <Button variant="ghost" onClick={() => { setText(preview); loadPattern(activePreset.pattern, activePreset.flags, preview, activePreset.replacement); }}>{locale === 'en' ? 'Use in tester' : 'Usar no testador'}</Button>
               </div>
             </>

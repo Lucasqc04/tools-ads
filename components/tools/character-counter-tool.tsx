@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import {
   getCharacterCounterPresets,
   getCharacterCounterUiCopy,
 } from '@/data/content/character-counter';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   analyzeText,
@@ -212,6 +213,32 @@ export function CharacterCounterTool({ locale = 'pt-br' }: CharacterCounterToolP
     setText(stored);
   }, []);
 
+  // Analytics: `tool_started` once the user has real text in the box (typed,
+  // pasted, or loaded from a draft), `tool_completed` on the transition into
+  // having a non-empty analysis result — guarded so it doesn't re-fire on
+  // every keystroke while a result is already showing.
+  const hasStartedRef = useRef(false);
+  const hadResultRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasStartedRef.current && text.trim() !== '') {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.characterCounter, locale });
+    }
+  }, [text, locale]);
+
+  useEffect(() => {
+    if (!hasStartedRef.current) {
+      return;
+    }
+
+    const hasResult = analysis.metrics.charactersWithSpaces > 0;
+    if (hasResult && !hadResultRef.current) {
+      trackEvent('tool_completed', { tool: TOOL_ID.characterCounter, locale });
+    }
+    hadResultRef.current = hasResult;
+  }, [analysis, locale]);
+
   const copyFullText = async () => {
     if (!text) {
       return;
@@ -221,6 +248,7 @@ export function CharacterCounterTool({ locale = 'pt-br' }: CharacterCounterToolP
       await navigator.clipboard.writeText(text);
       setCopiedText(true);
       globalThis.setTimeout(() => setCopiedText(false), 1300);
+      trackEvent('result_copied', { tool: TOOL_ID.characterCounter, locale, field: 'text' });
     } catch {
       setCopiedText(false);
     }
@@ -331,16 +359,31 @@ export function CharacterCounterTool({ locale = 'pt-br' }: CharacterCounterToolP
         <Button variant="ghost" onClick={loadDraft}>
           {copy.loadDraft}
         </Button>
-        <Button variant="ghost" onClick={() => downloadTextFile('texto.txt', text)}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            trackEvent('result_downloaded', { tool: TOOL_ID.characterCounter, locale, format: 'txt' });
+            downloadTextFile('texto.txt', text);
+          }}
+        >
           {copy.exportTxt}
         </Button>
         <Button
           variant="ghost"
-          onClick={() => downloadTextFile('metricas.json', JSON.stringify({ analysis }, null, 2), 'application/json')}
+          onClick={() => {
+            trackEvent('result_downloaded', { tool: TOOL_ID.characterCounter, locale, format: 'json' });
+            downloadTextFile('metricas.json', JSON.stringify({ analysis }, null, 2), 'application/json');
+          }}
         >
           {copy.exportJson}
         </Button>
-        <Button variant="ghost" onClick={() => downloadTextFile('metricas.csv', toCsv(exportEntries), 'text/csv')}>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            trackEvent('result_downloaded', { tool: TOOL_ID.characterCounter, locale, format: 'csv' });
+            downloadTextFile('metricas.csv', toCsv(exportEntries), 'text/csv');
+          }}
+        >
           {copy.exportCsv}
         </Button>
       </div>

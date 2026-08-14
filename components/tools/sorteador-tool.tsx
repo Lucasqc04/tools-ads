@@ -18,6 +18,7 @@ import {
 } from "@/lib/random-picker";
 import { cn } from "@/lib/cn";
 import { type AppLocale } from "@/lib/i18n/config";
+import { trackEvent, TOOL_ID } from "@/lib/analytics";
 
 type SorteadorToolProps = Readonly<{
   locale?: AppLocale;
@@ -729,8 +730,10 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       : parsePositiveInt(resultCountInput, 1);
 
   const runDraw = async () => {
+    trackEvent('tool_started', { tool: TOOL_ID.sorteador, locale, mode: activeTab });
     if (!poolItems.length) {
       setErrorMessage(ui.invalidDraw);
+      trackEvent('tool_error', { tool: TOOL_ID.sorteador, locale, error_type: 'validation_failed' });
       return;
     }
 
@@ -797,6 +800,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
 
       stopRollingPreview(draw.results[0]?.label ?? ui.resultTitle);
       setIsDrawing(false);
+      trackEvent('tool_completed', { tool: TOOL_ID.sorteador, locale, mode: activeTab });
       return;
     }
 
@@ -832,6 +836,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       }
       stopRollingPreview(winnerLabel);
       setIsDrawing(false);
+      trackEvent('tool_completed', { tool: TOOL_ID.sorteador, locale, mode: activeTab });
     }
 
     if (avoidPreviousWinners && results.length) {
@@ -850,6 +855,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
     if (!value) return;
     try {
       await navigator.clipboard.writeText(value);
+      trackEvent('result_copied', { tool: TOOL_ID.sorteador, locale, field: 'draw_result' });
       setFeedbackMessage(ui.copied);
       globalThis.setTimeout(() => setFeedbackMessage(""), 1400);
     } catch {
@@ -869,6 +875,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       query.set("countdown", String(countdownSeconds));
       const shareUrl = `${globalThis.location.origin}${globalThis.location.pathname}?${query.toString()}`;
       await navigator.clipboard.writeText(shareUrl);
+      trackEvent('result_shared', { tool: TOOL_ID.sorteador, locale, method: 'copy_link' });
       setFeedbackMessage(ui.copied);
       globalThis.setTimeout(() => setFeedbackMessage(""), 1400);
     } catch {
@@ -1487,13 +1494,14 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
               <Button
                 variant="secondary"
                 className="text-xs"
-                onClick={() =>
+                onClick={() => {
                   downloadText(
                     csvFileNameByLocale[locale],
                     toResultsCsv(resultItems, locale),
                     "text/csv;charset=utf-8;",
-                  )
-                }
+                  );
+                  trackEvent('result_downloaded', { tool: TOOL_ID.sorteador, locale, format: 'csv' });
+                }}
               >
                 {ui.downloadCsv}
               </Button>
@@ -1601,6 +1609,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
             );
             setShowCountdownOverlay(false);
             setIsDrawing(false);
+            trackEvent('tool_completed', { tool: TOOL_ID.sorteador, locale, mode: activeTab });
           }}
         />
       )}

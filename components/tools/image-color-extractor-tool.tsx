@@ -11,6 +11,7 @@ import {
   formatRgb,
   type PaletteColor,
 } from '@/lib/color-utils';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type ImageColorExtractorToolProps = Readonly<{
   locale?: AppLocale;
@@ -45,6 +46,16 @@ function l(key: string, locale: AppLocale): string {
   return labels[key]?.[locale] ?? labels[key]?.['pt-br'] ?? key;
 }
 
+function getImageFileType(file: File): string {
+  const mimeSubtype = file.type.split('/')[1];
+  if (mimeSubtype) {
+    return mimeSubtype.toLowerCase();
+  }
+
+  const extension = file.name.split('.').pop();
+  return extension ? extension.toLowerCase() : 'unknown';
+}
+
 function generateExport(colors: PaletteColor[], format: ExportFormat): string {
   switch (format) {
     case 'css':
@@ -75,12 +86,13 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const copyToClipboard = useCallback((text: string, key: string) => {
+  const copyToClipboard = useCallback((text: string, key: string, field: string) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedKey(key);
+      trackEvent('result_copied', { tool: TOOL_ID.imageColorExtractor, locale, field });
       setTimeout(() => setCopiedKey(null), 1500);
     });
-  }, []);
+  }, [locale]);
 
   const processImage = useCallback((file: File) => {
     const url = URL.createObjectURL(file);
@@ -89,10 +101,24 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
     setProcessing(true);
     setColors([]);
 
+    trackEvent('tool_started', {
+      tool: TOOL_ID.imageColorExtractor,
+      locale,
+      file_type: getImageFileType(file),
+    });
+
     const img = new Image();
     img.onload = () => {
       const canvas = canvasRef.current;
-      if (!canvas) { setProcessing(false); return; }
+      if (!canvas) {
+        setProcessing(false);
+        trackEvent('tool_error', {
+          tool: TOOL_ID.imageColorExtractor,
+          locale,
+          error_type: 'processing_failed',
+        });
+        return;
+      }
 
       const maxSize = 400;
       const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
@@ -102,7 +128,15 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
       canvas.width = w;
       canvas.height = h;
       const ctx = canvas.getContext('2d');
-      if (!ctx) { setProcessing(false); return; }
+      if (!ctx) {
+        setProcessing(false);
+        trackEvent('tool_error', {
+          tool: TOOL_ID.imageColorExtractor,
+          locale,
+          error_type: 'processing_failed',
+        });
+        return;
+      }
 
       ctx.drawImage(img, 0, 0, w, h);
       const imageData = ctx.getImageData(0, 0, w, h);
@@ -113,15 +147,35 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
       });
       setColors(extracted);
       setProcessing(false);
+
+      trackEvent('tool_completed', {
+        tool: TOOL_ID.imageColorExtractor,
+        locale,
+        color_count: extracted.length,
+      });
     };
-    img.onerror = () => { setProcessing(false); };
+    img.onerror = () => {
+      setProcessing(false);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.imageColorExtractor,
+        locale,
+        error_type: 'processing_failed',
+      });
+    };
     img.src = url;
-  }, [colorCount, ignoreWhite, ignoreBlack]);
+  }, [colorCount, ignoreWhite, ignoreBlack, locale]);
 
   const handleFilesSelected = useCallback((files: File[]) => {
     const file = files[0];
-    if (file?.type.startsWith('image/')) processImage(file);
-  }, [processImage]);
+    if (file?.type.startsWith('image/')) {
+      trackEvent('file_uploaded', {
+        tool: TOOL_ID.imageColorExtractor,
+        locale,
+        file_type: getImageFileType(file),
+      });
+      processImage(file);
+    }
+  }, [processImage, locale]);
 
   const handleRemoveFile = useCallback(() => {
     setImageUrl(null);
@@ -240,7 +294,7 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
                   type="button"
                   className="relative h-12 w-full rounded-lg border transition-transform hover:scale-105"
                   style={{ backgroundColor: color.hex }}
-                  onClick={() => copyToClipboard(color.hex, `color-${i}`)}
+                  onClick={() => copyToClipboard(color.hex, `color-${i}`, 'hex_color')}
                   title={color.hex}
                 >
                   {copiedKey === `color-${i}` && (
@@ -300,7 +354,7 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
                 key={format}
                 variant="secondary"
                 className="h-8 px-3 text-xs"
-                onClick={() => copyToClipboard(generateExport(colors, format), `export-${format}`)}
+                onClick={() => copyToClipboard(generateExport(colors, format), `export-${format}`, format)}
               >
                 {copiedKey === `export-${format}` ? l('copied', locale) : l(`export${format.charAt(0).toUpperCase() + format.slice(1)}` as string, locale)}
               </Button>

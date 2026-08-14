@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,6 +25,7 @@ import {
   type FakeStateMode,
 } from '@/lib/fake-person';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type FakePersonGeneratorToolProps = Readonly<{
   locale?: AppLocale;
@@ -430,6 +431,7 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
   const [history, setHistory] = useState<Array<{ stamp: string; count: number }>>([]);
   const [previewMode, setPreviewMode] = useState<'text' | 'json' | 'csv' | 'sql'>('text');
   const [isGenerating, setIsGenerating] = useState(false);
+  const hasStartedRef = useRef(false);
 
   const states = useMemo(() => getFakePersonStateOptions(), []);
   const citiesFromState = useMemo(() => getFakePersonCitiesByState(stateUf), [stateUf]);
@@ -654,16 +656,37 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
     ].slice(0, 8));
     setErrorMessage('');
     setFeedbackMessage('');
+    trackEvent('tool_completed', {
+      tool: TOOL_ID.fakePersonGenerator,
+      locale,
+      count: nextPeople.length,
+      mode: append ? 'append' : 'generate',
+    });
   };
 
   const generatePeople = async (append: boolean) => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.fakePersonGenerator, locale });
+    }
+
     if (normalizedOptions.quantity < 1 || normalizedOptions.quantity > 30) {
       setErrorMessage(ui.invalidInput);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.fakePersonGenerator,
+        locale,
+        error_type: 'invalid_input',
+      });
       return;
     }
 
     if (normalizedOptions.ageMode === 'range' && normalizedOptions.minAge > normalizedOptions.maxAge) {
       setErrorMessage(ui.invalidInput);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.fakePersonGenerator,
+        locale,
+        error_type: 'validation_failed',
+      });
       return;
     }
 
@@ -716,9 +739,15 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
     }
 
     setPeople((current) => current.map((item, itemIndex) => (itemIndex === index ? replacement : item)));
+    trackEvent('tool_completed', {
+      tool: TOOL_ID.fakePersonGenerator,
+      locale,
+      count: 1,
+      mode: 'regenerate_single',
+    });
   };
 
-  const copyText = async (token: string, value: string) => {
+  const copyText = async (token: string, value: string, field: string) => {
     if (!value) {
       return;
     }
@@ -730,6 +759,7 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
       globalThis.setTimeout(() => {
         setCopiedToken((current) => (current === token ? '' : current));
       }, 1400);
+      trackEvent('result_copied', { tool: TOOL_ID.fakePersonGenerator, locale, field });
     } catch {
       setFeedbackMessage(ui.copyError);
     }
@@ -764,7 +794,7 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
       }
 
       const link = `${globalThis.location.origin}${globalThis.location.pathname}?${query.toString()}`;
-      await copyText('share-link', link);
+      await copyText('share-link', link, 'share_link');
     } catch {
       setFeedbackMessage(ui.copyError);
     }
@@ -1090,6 +1120,7 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
                           void copyText(
                             `card-${index}`,
                             fields.map((field) => `${field.label}: ${field.value}`).join('\n'),
+                            'person_card',
                           )
                         }
                       >
@@ -1121,7 +1152,7 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
                         <Button
                           variant="ghost"
                           className="h-8 px-3 text-xs"
-                          onClick={() => void copyText(`${person.id}-${field.id}`, field.value)}
+                          onClick={() => void copyText(`${person.id}-${field.id}`, field.value, field.id)}
                         >
                           {copiedToken === `${person.id}-${field.id}`
                             ? ui.copiedField
@@ -1174,31 +1205,33 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
         <Textarea readOnly rows={8} value={previewValue || ''} />
 
         <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => void copyText('output-text', currentOutput.text)}>
+          <Button variant="secondary" onClick={() => void copyText('output-text', currentOutput.text, 'output_text')}>
             {copiedToken === 'output-text' ? ui.copiedField : ui.copyTextOutput}
           </Button>
-          <Button variant="secondary" onClick={() => void copyText('output-json', currentOutput.json)}>
+          <Button variant="secondary" onClick={() => void copyText('output-json', currentOutput.json, 'output_json')}>
             {copiedToken === 'output-json' ? ui.copiedField : ui.copyJsonOutput}
           </Button>
-          <Button variant="secondary" onClick={() => void copyText('output-csv', currentOutput.csv)}>
+          <Button variant="secondary" onClick={() => void copyText('output-csv', currentOutput.csv, 'output_csv')}>
             {copiedToken === 'output-csv' ? ui.copiedField : ui.copyCsvOutput}
           </Button>
-          <Button variant="secondary" onClick={() => void copyText('output-sql', currentOutput.sql)}>
+          <Button variant="secondary" onClick={() => void copyText('output-sql', currentOutput.sql, 'output_sql')}>
             {copiedToken === 'output-sql' ? ui.copiedField : ui.copySqlOutput}
           </Button>
           <Button
             variant="secondary"
-            onClick={() =>
-              downloadFile('pessoas-fake.json', currentOutput.json, 'application/json;charset=utf-8;')
-            }
+            onClick={() => {
+              downloadFile('pessoas-fake.json', currentOutput.json, 'application/json;charset=utf-8;');
+              trackEvent('result_downloaded', { tool: TOOL_ID.fakePersonGenerator, locale, format: 'json' });
+            }}
           >
             {ui.downloadJson}
           </Button>
           <Button
             variant="secondary"
-            onClick={() =>
-              downloadFile('pessoas-fake.csv', currentOutput.csv, 'text/csv;charset=utf-8;')
-            }
+            onClick={() => {
+              downloadFile('pessoas-fake.csv', currentOutput.csv, 'text/csv;charset=utf-8;');
+              trackEvent('result_downloaded', { tool: TOOL_ID.fakePersonGenerator, locale, format: 'csv' });
+            }}
           >
             {ui.downloadCsv}
           </Button>

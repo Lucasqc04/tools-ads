@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import {
   toLocalizedUniversalConversionLink,
   universalConversionLandingPages,
 } from '@/data/universal-converter-pages';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   convertBatchLines,
@@ -382,12 +383,31 @@ export function UniversalConverterTool({
     [key, shift],
   );
 
+  // Analytics: this tool's flows are all explicit-button-triggered (Convert,
+  // preset, batch, pipeline, Caesar attack), so `tool_started` fires once on
+  // the first such action, and `tool_completed`/`tool_error` fire once per
+  // real click (never on typing) with the conversion id/mode as metadata.
+  const hasStartedRef = useRef(false);
+  const markStarted = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.universalConverter, locale });
+    }
+  };
+
   const handleConvert = async () => {
+    markStarted();
     const response = await convertById(conversionId, input, options);
     if (!response.ok) {
       setResult('');
       setError(response.error ?? 'Erro');
       setWarning('');
+      trackEvent('tool_error', {
+        tool: TOOL_ID.universalConverter,
+        locale,
+        error_type: 'conversion_failed',
+        format: conversionId,
+      });
       return;
     }
 
@@ -395,6 +415,7 @@ export function UniversalConverterTool({
     setError('');
     setWarning(response.warning ?? '');
     setCaesarAttempts([]);
+    trackEvent('tool_completed', { tool: TOOL_ID.universalConverter, locale, format: conversionId });
   };
 
   const handleCopy = async () => {
@@ -406,6 +427,7 @@ export function UniversalConverterTool({
       await navigator.clipboard.writeText(result);
       setCopied(true);
       setTimeout(() => setCopied(false), 1100);
+      trackEvent('result_copied', { tool: TOOL_ID.universalConverter, locale, field: 'result' });
     } catch {
       setCopied(false);
     }
@@ -421,6 +443,8 @@ export function UniversalConverterTool({
       return;
     }
 
+    markStarted();
+
     const responses = await convertToMultipleDestinations(input, preset.destinationIds, options);
     setMultiResults(
       responses.map((item) => ({
@@ -435,9 +459,14 @@ export function UniversalConverterTool({
     if (preset.warningByLocale?.[locale]) {
       setWarning(preset.warningByLocale[locale] ?? '');
     }
+
+    if (responses.some((item) => item.result.ok)) {
+      trackEvent('tool_completed', { tool: TOOL_ID.universalConverter, locale, mode: 'preset', format: presetId });
+    }
   };
 
   const handleBatch = async () => {
+    markStarted();
     const rows = await convertBatchLines(conversionId, input, options);
     setBatchRows(
       rows.map((row) => ({
@@ -447,9 +476,14 @@ export function UniversalConverterTool({
         error: row.result.error,
       })),
     );
+
+    if (rows.some((row) => row.result.ok)) {
+      trackEvent('tool_completed', { tool: TOOL_ID.universalConverter, locale, mode: 'batch', format: conversionId });
+    }
   };
 
   const handlePipeline = async () => {
+    markStarted();
     const steps = pipeline
       .split(',')
       .map((item) => item.trim())
@@ -457,6 +491,7 @@ export function UniversalConverterTool({
 
     if (steps.length === 0) {
       setError(ui.invalidPipeline);
+      trackEvent('tool_error', { tool: TOOL_ID.universalConverter, locale, error_type: 'invalid_input', mode: 'pipeline' });
       return;
     }
 
@@ -465,14 +500,18 @@ export function UniversalConverterTool({
     if (execution.ok) {
       setResult(execution.finalOutput);
       setError('');
+      trackEvent('tool_completed', { tool: TOOL_ID.universalConverter, locale, mode: 'pipeline' });
     } else {
       setError(execution.stepResults.at(-1)?.error ?? ui.invalidPipeline);
+      trackEvent('tool_error', { tool: TOOL_ID.universalConverter, locale, error_type: 'conversion_failed', mode: 'pipeline' });
     }
   };
 
   const handleCaesarAttack = async () => {
+    markStarted();
     const attempts = await getAllCaesarShiftAttempts(input);
     setCaesarAttempts(attempts);
+    trackEvent('tool_completed', { tool: TOOL_ID.universalConverter, locale, mode: 'caesar_attack' });
   };
 
   const conversionNeedsShift = selectedConversion?.needsShift ?? false;
@@ -602,20 +641,24 @@ export function UniversalConverterTool({
           <div className="flex flex-wrap gap-2">
             <Button
               variant="ghost"
-              onClick={() =>
+              onClick={() => {
+                trackEvent('result_downloaded', { tool: TOOL_ID.universalConverter, locale, format: 'txt' });
                 downloadText(
                   'universal-results.txt',
                   exportResultsAsTxt(
                     multiResults.map((item) => ({ title: item.title, output: item.ok ? item.output : item.error ?? '' })),
                   ),
-                )
-              }
+                );
+              }}
             >
               {ui.exportTxt}
             </Button>
             <Button
               variant="ghost"
-              onClick={() => downloadText('universal-results.json', exportResultsAsJson(input, multiResults))}
+              onClick={() => {
+                trackEvent('result_downloaded', { tool: TOOL_ID.universalConverter, locale, format: 'json' });
+                downloadText('universal-results.json', exportResultsAsJson(input, multiResults));
+              }}
             >
               {ui.exportJson}
             </Button>
@@ -641,7 +684,8 @@ export function UniversalConverterTool({
             </div>
             <Button
               variant="ghost"
-              onClick={() =>
+              onClick={() => {
+                trackEvent('result_downloaded', { tool: TOOL_ID.universalConverter, locale, format: 'csv' });
                 downloadText(
                   'universal-batch.csv',
                   exportBatchAsCsv(
@@ -652,8 +696,8 @@ export function UniversalConverterTool({
                       error: row.error,
                     })),
                   ),
-                )
-              }
+                );
+              }}
             >
               {ui.exportCsv}
             </Button>

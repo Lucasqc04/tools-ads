@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import type { ChangeEvent } from 'react';
 import {
   cs2CommandCategories,
@@ -25,6 +25,24 @@ import {
   buildCs2AutoexecFiles,
   getCs2AutoexecDefaultCommandIds,
 } from '@/lib/cs2/autoexec';
+import { trackEvent, type ToolId } from '@/lib/analytics';
+
+type Cs2AnalyticsContextValue = {
+  tool: ToolId;
+  locale: AppLocale;
+};
+
+const Cs2AnalyticsContext = createContext<Cs2AnalyticsContextValue | null>(null);
+
+export function Cs2AnalyticsProvider({
+  value,
+  children,
+}: {
+  value: Cs2AnalyticsContextValue;
+  children: ReactNode;
+}) {
+  return <Cs2AnalyticsContext.Provider value={value}>{children}</Cs2AnalyticsContext.Provider>;
+}
 
 const writeClipboard = async (value: string): Promise<boolean> => {
   try {
@@ -47,6 +65,7 @@ export function CopyButton({
   className?: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const analytics = useContext(Cs2AnalyticsContext);
 
   const onCopy = async () => {
     if (!(await writeClipboard(value))) {
@@ -54,6 +73,10 @@ export function CopyButton({
     }
 
     setCopied(true);
+    if (analytics) {
+      trackEvent('tool_completed', { tool: analytics.tool, locale: analytics.locale });
+      trackEvent('result_copied', { tool: analytics.tool, locale: analytics.locale, field: 'cs2_command' });
+    }
     window.setTimeout(() => setCopied(false), 1600);
   };
 
@@ -75,6 +98,7 @@ export function DownloadCfgButton({
   label: string;
   className?: string;
 }) {
+  const analytics = useContext(Cs2AnalyticsContext);
   const onDownload = () => {
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -86,6 +110,10 @@ export function DownloadCfgButton({
     anchor.click();
     anchor.remove();
     URL.revokeObjectURL(url);
+    if (analytics) {
+      trackEvent('tool_completed', { tool: analytics.tool, locale: analytics.locale });
+      trackEvent('result_downloaded', { tool: analytics.tool, locale: analytics.locale, format: 'cfg' });
+    }
   };
 
   return (

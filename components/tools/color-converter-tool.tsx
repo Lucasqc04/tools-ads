@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   checkContrast,
@@ -76,6 +77,39 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
   const parsed: ParsedColor | null = useMemo(() => fullParse(input), [input]);
   const bgParsed = useMemo(() => fullParse(bgInput), [bgInput]);
 
+  // Analytics: fire `tool_started` once the user actually changes the input
+  // away from the pre-filled default, `tool_completed` on each transition to
+  // a new valid parsed color, and `tool_error` on invalid input (guarded so
+  // none of these re-fire on every keystroke/render).
+  const hasStartedRef = useRef(false);
+  const initialInputRef = useRef(input);
+  const lastCompletedHexRef = useRef<string | null>(null);
+  const hasErroredRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasStartedRef.current && input.trim() !== '' && input !== initialInputRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.colorConverter, locale });
+    }
+  }, [input, locale]);
+
+  useEffect(() => {
+    if (!hasStartedRef.current) {
+      return;
+    }
+
+    if (parsed) {
+      if (lastCompletedHexRef.current !== parsed.hex) {
+        lastCompletedHexRef.current = parsed.hex;
+        trackEvent('tool_completed', { tool: TOOL_ID.colorConverter, locale });
+      }
+      hasErroredRef.current = false;
+    } else if (input.trim() !== '' && !hasErroredRef.current) {
+      hasErroredRef.current = true;
+      trackEvent('tool_error', { tool: TOOL_ID.colorConverter, locale, error_type: 'invalid_input' });
+    }
+  }, [parsed, input, locale]);
+
   const contrastResult = useMemo(() => {
     if (!parsed || !bgParsed) return null;
     return checkContrast(parsed.rgb, bgParsed.rgb);
@@ -90,8 +124,9 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
     navigator.clipboard.writeText(text).then(() => {
       setCopiedKey(key);
       setTimeout(() => setCopiedKey(null), 1500);
+      trackEvent('result_copied', { tool: TOOL_ID.colorConverter, locale, field: key });
     });
-  }, []);
+  }, [locale]);
 
   const toggleFavorite = useCallback((hex: string) => {
     setFavorites((prev) => {

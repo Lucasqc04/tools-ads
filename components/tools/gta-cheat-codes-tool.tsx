@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import {
   type GtaPlatformFilter,
 } from '@/lib/gta/cheats';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type GtaCheatCodesToolProps = {
   locale?: AppLocale;
@@ -105,6 +106,14 @@ export function GtaCheatCodesTool({
   const [platform, setPlatform] = useState<GtaPlatformFilter>('all');
   const [query, setQuery] = useState('');
   const [copiedKey, setCopiedKey] = useState('');
+  const hasStartedRef = useRef(false);
+
+  const markStarted = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.gtaCheatCodes, locale });
+    }
+  };
 
   const games = useMemo(() => getGtaGames(), []);
   const categories = useMemo(() => {
@@ -127,6 +136,8 @@ export function GtaCheatCodesTool({
     try {
       await navigator.clipboard.writeText(value);
       setCopiedKey(key);
+      trackEvent('tool_completed', { tool: TOOL_ID.gtaCheatCodes, locale });
+      trackEvent('result_copied', { tool: TOOL_ID.gtaCheatCodes, locale, field: 'cheat_code' });
       window.setTimeout(() => {
         setCopiedKey((current) => (current === key ? '' : current));
       }, 1400);
@@ -147,14 +158,14 @@ export function GtaCheatCodesTool({
           <span className="text-sm font-semibold text-slate-800">{content.ui.searchLabel}</span>
           <Input
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => { markStarted(); setQuery(event.target.value); }}
             placeholder={content.ui.searchPlaceholder}
           />
         </label>
 
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-800">{content.ui.gameLabel}</span>
-          <Select value={game} onChange={(event) => setGame(event.target.value as GtaGameId | 'all')}>
+          <Select value={game} onChange={(event) => { markStarted(); setGame(event.target.value as GtaGameId | 'all'); }}>
             <option value="all">{content.ui.gameAll}</option>
             {games.map((item) => (
               <option key={item} value={item}>
@@ -168,7 +179,7 @@ export function GtaCheatCodesTool({
           <span className="text-sm font-semibold text-slate-800">{content.ui.categoryLabel}</span>
           <Select
             value={category}
-            onChange={(event) => setCategory(event.target.value as GtaCheatCategory | 'all')}
+            onChange={(event) => { markStarted(); setCategory(event.target.value as GtaCheatCategory | 'all'); }}
           >
             <option value="all">{content.ui.categoryAll}</option>
             {categories.map((item) => (
@@ -183,7 +194,7 @@ export function GtaCheatCodesTool({
           <span className="text-sm font-semibold text-slate-800">{content.ui.platformLabel}</span>
           <Select
             value={platform}
-            onChange={(event) => setPlatform(event.target.value as GtaPlatformFilter)}
+            onChange={(event) => { markStarted(); setPlatform(event.target.value as GtaPlatformFilter); }}
           >
             {platformOrder.map((item) => (
               <option key={item} value={item}>

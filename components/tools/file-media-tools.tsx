@@ -12,6 +12,7 @@ import { formatBytes } from '@/lib/file-size';
 import { downloadBlob } from '@/lib/image-conversion';
 import { generateFaviconPackage, loadImageBitmapFromFile, type FaviconAsset, type FaviconPackage } from '@/lib/favicon-generator';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type Notice = { tone: 'info' | 'success' | 'error'; text: string } | null;
 
@@ -52,6 +53,20 @@ const makeZip = async (
 
   const blob = await writer.close();
   downloadBlob(blob, fileName);
+};
+
+// Analytics-only helpers: derive a categorical file type (extension) for
+// tracking, never the file name itself.
+const getFileTypeCategory = (file: File): string => {
+  const extensionMatch = /\.([a-z0-9]+)$/i.exec(file.name);
+  if (extensionMatch) return extensionMatch[1].toLowerCase();
+  const mimeSubtype = file.type.split('/')[1];
+  return mimeSubtype ? mimeSubtype.toLowerCase() : 'unknown';
+};
+
+const getExtensionFromFileName = (fileName: string): string => {
+  const match = /\.([a-z0-9]+)$/i.exec(fileName);
+  return match ? match[1].toLowerCase() : 'unknown';
 };
 
 function ToolHeader({ title, intro }: Readonly<{ title: string; intro: string }>) {
@@ -155,6 +170,15 @@ export function FileHashChecksumTool({ locale = 'pt-br' }: Readonly<{ locale?: A
   const json = JSON.stringify({ file: file?.name, size: file?.size, results }, null, 2);
   const csv = ['algorithm,value', ...results.map((item) => `${item.algorithm},${item.value}`)].join('\n');
 
+  const handleFileSelected = (next: File[]) => {
+    setFiles(next.slice(0, 1));
+    const uploaded = next[0];
+    if (uploaded) {
+      trackEvent('file_uploaded', { tool: TOOL_ID.fileChecksum, locale, file_type: getFileTypeCategory(uploaded) });
+      trackEvent('tool_started', { tool: TOOL_ID.fileChecksum, locale });
+    }
+  };
+
   const calculate = async () => {
     if (!file) return;
     setIsBusy(true);
@@ -162,8 +186,10 @@ export function FileHashChecksumTool({ locale = 'pt-br' }: Readonly<{ locale?: A
     setCopiedAlgorithm(null);
     try {
       setResults(await calculateFileChecksums(file, selectedAlgorithms));
+      trackEvent('tool_completed', { tool: TOOL_ID.fileChecksum, locale, algorithm_count: selectedAlgorithms.length });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro ao calcular.' });
+      trackEvent('tool_error', { tool: TOOL_ID.fileChecksum, locale, error_type: 'processing_failed' });
     } finally {
       setIsBusy(false);
     }
@@ -172,7 +198,7 @@ export function FileHashChecksumTool({ locale = 'pt-br' }: Readonly<{ locale?: A
   return (
     <Card className="space-y-5">
       <ToolHeader title={ui.title} intro={ui.intro} />
-      <FileUploadDropzone locale={locale} label={ui.file} multiple={false} selectedFiles={files} onFilesSelected={(next) => setFiles(next.slice(0, 1))} onRemoveFile={() => setFiles([])} />
+      <FileUploadDropzone locale={locale} label={ui.file} multiple={false} selectedFiles={files} onFilesSelected={handleFileSelected} onRemoveFile={() => setFiles([])} />
       <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr]">
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-800">{ui.expected}</span>
@@ -204,9 +230,9 @@ export function FileHashChecksumTool({ locale = 'pt-br' }: Readonly<{ locale?: A
         <Button variant="secondary" disabled={!file || isBusy || !selectedAlgorithms.length} onClick={() => void calculate()}>
           {isBusy ? ui.calculating : ui.calculate}
         </Button>
-        <Button variant="secondary" disabled={!results.length} onClick={() => void copyText(resultText, setNotice, ui.copied, ui.copyError)}>{ui.copyAll}</Button>
-        <Button variant="secondary" disabled={!results.length} onClick={() => downloadText(json, 'checksums.json', 'application/json')}>{ui.exportJson}</Button>
-        <Button variant="secondary" disabled={!results.length} onClick={() => downloadText(csv, 'checksums.csv', 'text/csv')}>{ui.exportCsv}</Button>
+        <Button variant="secondary" disabled={!results.length} onClick={() => { void copyText(resultText, setNotice, ui.copied, ui.copyError); trackEvent('result_copied', { tool: TOOL_ID.fileChecksum, locale, field: 'all_hashes' }); }}>{ui.copyAll}</Button>
+        <Button variant="secondary" disabled={!results.length} onClick={() => { downloadText(json, 'checksums.json', 'application/json'); trackEvent('result_downloaded', { tool: TOOL_ID.fileChecksum, locale, format: 'json' }); }}>{ui.exportJson}</Button>
+        <Button variant="secondary" disabled={!results.length} onClick={() => { downloadText(csv, 'checksums.csv', 'text/csv'); trackEvent('result_downloaded', { tool: TOOL_ID.fileChecksum, locale, format: 'csv' }); }}>{ui.exportCsv}</Button>
       </div>
       <NoticeBox notice={notice} />
       {results.length ? (
@@ -232,6 +258,7 @@ export function FileHashChecksumTool({ locale = 'pt-br' }: Readonly<{ locale?: A
                         onClick={() => {
                           setCopiedAlgorithm(item.algorithm);
                           void copyText(item.value, setNotice, ui.copied, ui.copyError);
+                          trackEvent('result_copied', { tool: TOOL_ID.fileChecksum, locale, field: 'checksum', algorithm: item.algorithm });
                           setTimeout(() => setCopiedAlgorithm(null), 1800);
                         }}
                       >
@@ -501,21 +528,27 @@ export function ExifReaderRemoverTool({ locale = 'pt-br' }: Readonly<{ locale?: 
   const readMetadata = async () => {
     if (!files.length) return;
     setNotice(null);
-    const exifr = await import('exifr');
-    const items = await Promise.all(files.map(async (imageFile) => {
-      const parsed = (await exifr.parse(imageFile, { xmp: true, iptc: true, gps: true, jfif: true, ihdr: true })) as Record<string, unknown> | undefined;
-      return {
-        fileKey: getFileKey(imageFile),
-        fileName: imageFile.name,
-        fileSize: imageFile.size,
-        fileType: imageFile.type,
-        metadata: parsed ?? null,
-      };
-    }));
-    setMetadataItems(items);
-    setActiveIndex((current) => Math.min(current, Math.max(0, items.length - 1)));
-    if (!items.some((item) => item.metadata && Object.keys(item.metadata).length > 0)) {
-      setNotice({ tone: 'info', text: ui.noMetadata });
+    try {
+      const exifr = await import('exifr');
+      const items = await Promise.all(files.map(async (imageFile) => {
+        const parsed = (await exifr.parse(imageFile, { xmp: true, iptc: true, gps: true, jfif: true, ihdr: true })) as Record<string, unknown> | undefined;
+        return {
+          fileKey: getFileKey(imageFile),
+          fileName: imageFile.name,
+          fileSize: imageFile.size,
+          fileType: imageFile.type,
+          metadata: parsed ?? null,
+        };
+      }));
+      setMetadataItems(items);
+      setActiveIndex((current) => Math.min(current, Math.max(0, items.length - 1)));
+      if (!items.some((item) => item.metadata && Object.keys(item.metadata).length > 0)) {
+        setNotice({ tone: 'info', text: ui.noMetadata });
+      }
+      trackEvent('tool_completed', { tool: TOOL_ID.exifViewer, locale, action: 'view' });
+    } catch (error) {
+      trackEvent('tool_error', { tool: TOOL_ID.exifViewer, locale, error_type: 'parse_error' });
+      throw error;
     }
   };
 
@@ -525,8 +558,11 @@ export function ExifReaderRemoverTool({ locale = 'pt-br' }: Readonly<{ locale?: 
       const blob = await cleanImage(file, format, quality);
       downloadBlob(blob, `${file.name.replace(/\.[^.]+$/, '')}-sem-exif.${format === 'jpeg' ? 'jpg' : format}`);
       setNotice({ tone: 'success', text: ui.cleanDone });
+      trackEvent('tool_completed', { tool: TOOL_ID.exifViewer, locale, action: 'remove' });
+      trackEvent('result_downloaded', { tool: TOOL_ID.exifViewer, locale, format: format === 'jpeg' ? 'jpg' : format });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.exifViewer, locale, error_type: 'processing_failed' });
     }
   };
 
@@ -545,13 +581,18 @@ export function ExifReaderRemoverTool({ locale = 'pt-br' }: Readonly<{ locale?: 
       if (entries.length === 1) {
         downloadBlob(entries[0].blob, entries[0].name);
         setNotice({ tone: 'success', text: ui.cleanDone });
+        trackEvent('tool_completed', { tool: TOOL_ID.exifViewer, locale, action: 'remove' });
+        trackEvent('result_downloaded', { tool: TOOL_ID.exifViewer, locale, format: format === 'jpeg' ? 'jpg' : format });
         return;
       }
 
       await makeZip(entries, 'imagens-sem-exif.zip');
       setNotice({ tone: 'success', text: ui.cleanAllDone });
+      trackEvent('tool_completed', { tool: TOOL_ID.exifViewer, locale, action: 'remove', count: entries.length });
+      trackEvent('result_downloaded', { tool: TOOL_ID.exifViewer, locale, format: 'zip' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.exifViewer, locale, error_type: 'processing_failed' });
     }
   };
 
@@ -560,6 +601,11 @@ export function ExifReaderRemoverTool({ locale = 'pt-br' }: Readonly<{ locale?: 
     setMetadataItems([]);
     setActiveIndex(0);
     setNotice(null);
+    const uploaded = next[0];
+    if (uploaded) {
+      trackEvent('file_uploaded', { tool: TOOL_ID.exifViewer, locale, file_type: getFileTypeCategory(uploaded), count: next.length });
+      trackEvent('tool_started', { tool: TOOL_ID.exifViewer, locale });
+    }
   };
 
   const handleRemoveFile = (index: number) => {
@@ -590,8 +636,8 @@ export function ExifReaderRemoverTool({ locale = 'pt-br' }: Readonly<{ locale?: 
         <Button variant="secondary" disabled={!files.length} onClick={() => void readMetadata()}>{ui.read}</Button>
         <Button variant="secondary" disabled={!file} onClick={() => void removeMetadata()}>{ui.remove}</Button>
         <Button variant="secondary" disabled={!files.length} onClick={() => void removeAllMetadata()}>{ui.removeAll}</Button>
-        <Button variant="secondary" disabled={!activeMetadata} onClick={() => void copyText(metadataJson, setNotice, ui.copied, ui.copyError)}>{ui.copyJson}</Button>
-        <Button variant="secondary" disabled={!activeMetadata} onClick={() => downloadText(metadataJson, `${activeMetadata?.fileName ?? 'exif'}-metadata.json`, 'application/json')}>{ui.exportJson}</Button>
+        <Button variant="secondary" disabled={!activeMetadata} onClick={() => { void copyText(metadataJson, setNotice, ui.copied, ui.copyError); trackEvent('result_copied', { tool: TOOL_ID.exifViewer, locale, field: 'metadata_json' }); }}>{ui.copyJson}</Button>
+        <Button variant="secondary" disabled={!activeMetadata} onClick={() => { downloadText(metadataJson, `${activeMetadata?.fileName ?? 'exif'}-metadata.json`, 'application/json'); trackEvent('result_downloaded', { tool: TOOL_ID.exifViewer, locale, format: 'json' }); }}>{ui.exportJson}</Button>
       </div>
       <NoticeBox notice={notice} />
       {files.length ? (
@@ -903,6 +949,7 @@ export function ImageResizeCropTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
   const imageRef = useRef<HTMLImageElement | null>(null);
   const dragRef = useRef<CropDragState | null>(null);
   const resultUrlRef = useRef('');
+  const lastReportedOutcomeRef = useRef<'success' | 'error' | null>(null);
   const file = files[0];
   const targetWidth = parsePositiveDimension(width, 1080);
   const targetHeight = mode === 'square' ? targetWidth : parsePositiveDimension(height, 1080);
@@ -918,6 +965,8 @@ export function ImageResizeCropTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
   }, []);
 
   useEffect(() => {
+    lastReportedOutcomeRef.current = null;
+
     if (!file) {
       setSourceUrl('');
       setNaturalSize(null);
@@ -969,9 +1018,19 @@ export function ImageResizeCropTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
             return nextUrl;
           });
           setNotice(null);
+          if (lastReportedOutcomeRef.current !== 'success') {
+            lastReportedOutcomeRef.current = 'success';
+            trackEvent('tool_completed', { tool: TOOL_ID.imageResizeCrop, locale, mode, format });
+          }
         })
         .catch((error) => {
-          if (!cancelled) setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+          if (!cancelled) {
+            setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+            if (lastReportedOutcomeRef.current !== 'error') {
+              lastReportedOutcomeRef.current = 'error';
+              trackEvent('tool_error', { tool: TOOL_ID.imageResizeCrop, locale, error_type: 'processing_failed' });
+            }
+          }
         })
         .finally(() => {
           if (!cancelled) setIsRendering(false);
@@ -1054,10 +1113,19 @@ export function ImageResizeCropTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
     setCrop(createCenteredCrop(nextSize.width, nextSize.height, cropAspect));
   };
 
+  const handleFileSelected = (next: File[]) => {
+    setFiles(next.slice(0, 1));
+    const uploaded = next[0];
+    if (uploaded) {
+      trackEvent('file_uploaded', { tool: TOOL_ID.imageResizeCrop, locale, file_type: getFileTypeCategory(uploaded) });
+      trackEvent('tool_started', { tool: TOOL_ID.imageResizeCrop, locale });
+    }
+  };
+
   return (
     <Card className="space-y-5">
       <ToolHeader title={ui.title} intro={ui.intro} />
-      <FileUploadDropzone locale={locale} label={ui.file} accept={imageAccept} multiple={false} selectedFiles={files} onFilesSelected={(next) => setFiles(next.slice(0, 1))} onRemoveFile={() => setFiles([])} />
+      <FileUploadDropzone locale={locale} label={ui.file} accept={imageAccept} multiple={false} selectedFiles={files} onFilesSelected={handleFileSelected} onRemoveFile={() => setFiles([])} />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <label className="space-y-2"><span className="text-sm font-semibold text-slate-800">{ui.width}</span><Input type="number" value={width} onChange={(event) => updateWidth(event.target.value)} /></label>
         <label className="space-y-2"><span className="text-sm font-semibold text-slate-800">{ui.height}</span><Input type="number" value={mode === 'square' ? width : height} disabled={mode === 'square'} onChange={(event) => updateHeight(event.target.value)} /></label>
@@ -1067,7 +1135,17 @@ export function ImageResizeCropTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
       <label className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox" checked={keepRatio} onChange={(event) => setKeepRatio(event.target.checked)} />{ui.keepRatio}</label>
       <label className="space-y-2 block"><span className="text-sm font-semibold text-slate-800">{ui.quality}: {quality}%</span><input className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-brand-600" type="range" min={10} max={100} value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></label>
       <div className="flex flex-wrap items-center gap-2">
-        <Button variant="secondary" disabled={!resultBlob} onClick={() => resultBlob && downloadBlob(resultBlob, `imagem-${targetWidth}x${targetHeight}.${format === 'jpeg' ? 'jpg' : format}`)}>{ui.download}</Button>
+        <Button
+          variant="secondary"
+          disabled={!resultBlob}
+          onClick={() => {
+            if (!resultBlob) return;
+            downloadBlob(resultBlob, `imagem-${targetWidth}x${targetHeight}.${format === 'jpeg' ? 'jpg' : format}`);
+            trackEvent('result_downloaded', { tool: TOOL_ID.imageResizeCrop, locale, format, mode });
+          }}
+        >
+          {ui.download}
+        </Button>
         <span className="text-xs text-slate-500">{ui.outputSize}: {targetWidth} x {targetHeight}px</span>
       </div>
       <NoticeBox notice={notice} />
@@ -1303,8 +1381,11 @@ export function PdfOrganizerTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
       const bytes = await encryptPdfBytes(await output.save(), outputPassword, ownerPassword);
       downloadBlob(new Blob([bytes], { type: 'application/pdf' }), outputPassword ? 'pdf-combinado-protegido.pdf' : 'pdf-combinado.pdf');
       setNotice({ tone: 'success', text: outputPassword ? ui.encryptedReady : ui.ready });
+      trackEvent('tool_completed', { tool: TOOL_ID.pdfOrganizer, locale, action: 'merge', protected: Boolean(outputPassword) });
+      trackEvent('result_downloaded', { tool: TOOL_ID.pdfOrganizer, locale, format: 'pdf' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.pdfOrganizer, locale, error_type: 'processing_failed', action: 'merge' });
     }
   };
 
@@ -1325,8 +1406,11 @@ export function PdfOrganizerTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
       }
       await makeZip(entries, 'paginas-pdf.zip', zipPassword);
       setNotice({ tone: 'success', text: ui.ready });
+      trackEvent('tool_completed', { tool: TOOL_ID.pdfOrganizer, locale, action: 'split', page_count: entries.length });
+      trackEvent('result_downloaded', { tool: TOOL_ID.pdfOrganizer, locale, format: 'zip' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.pdfOrganizer, locale, error_type: 'processing_failed', action: 'split' });
     }
   };
 
@@ -1345,8 +1429,10 @@ export function PdfOrganizerTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
       }));
       setSecurityInfo(next);
       setNotice(null);
+      trackEvent('tool_completed', { tool: TOOL_ID.pdfOrganizer, locale, action: 'inspect' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.pdfOrganizer, locale, error_type: 'processing_failed', action: 'inspect' });
     }
   };
 
@@ -1357,8 +1443,11 @@ export function PdfOrganizerTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
       const { bytes } = await readPdfBytesForEditing(file, inputPassword, ui);
       downloadBlob(new Blob([bytes], { type: 'application/pdf' }), `${file.name.replace(/\.pdf$/i, '')}-sem-senha.pdf`);
       setNotice({ tone: 'success', text: ui.decryptedReady });
+      trackEvent('tool_completed', { tool: TOOL_ID.pdfOrganizer, locale, action: 'decrypt' });
+      trackEvent('result_downloaded', { tool: TOOL_ID.pdfOrganizer, locale, format: 'pdf' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.pdfOrganizer, locale, error_type: 'processing_failed', action: 'decrypt' });
     }
   };
 
@@ -1370,15 +1459,26 @@ export function PdfOrganizerTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
       const encrypted = await encryptPdfBytes(bytes, outputPassword, ownerPassword);
       downloadBlob(new Blob([encrypted], { type: 'application/pdf' }), `${file.name.replace(/\.pdf$/i, '')}-protegido.pdf`);
       setNotice({ tone: 'success', text: ui.encryptedReady });
+      trackEvent('tool_completed', { tool: TOOL_ID.pdfOrganizer, locale, action: 'protect' });
+      trackEvent('result_downloaded', { tool: TOOL_ID.pdfOrganizer, locale, format: 'pdf' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.pdfOrganizer, locale, error_type: 'processing_failed', action: 'protect' });
+    }
+  };
+
+  const handleFilesSelected = (next: File[]) => {
+    setFiles((current) => [...current, ...next]);
+    if (next.length) {
+      trackEvent('file_uploaded', { tool: TOOL_ID.pdfOrganizer, locale, file_type: 'pdf', count: next.length });
+      trackEvent('tool_started', { tool: TOOL_ID.pdfOrganizer, locale });
     }
   };
 
   return (
     <Card className="space-y-5">
       <ToolHeader title={ui.title} intro={ui.intro} />
-      <FileUploadDropzone locale={locale} label={ui.files} accept="application/pdf,.pdf" multiple selectedFiles={files} onFilesSelected={(next) => setFiles((current) => [...current, ...next])} onRemoveFile={(index) => setFiles((current) => current.filter((_, itemIndex) => itemIndex !== index))} />
+      <FileUploadDropzone locale={locale} label={ui.files} accept="application/pdf,.pdf" multiple selectedFiles={files} onFilesSelected={handleFilesSelected} onRemoveFile={(index) => setFiles((current) => current.filter((_, itemIndex) => itemIndex !== index))} />
       <section className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 lg:grid-cols-3">
         <label className="space-y-2 block">
           <span className="text-sm font-semibold text-slate-800">{ui.inputPassword}</span>
@@ -1619,6 +1719,7 @@ export function FaviconManifestGeneratorTool({ locale = 'pt-br' }: Readonly<{ lo
   const [pkg, setPkg] = useState<FaviconPackage | null>(null);
   const [assetPreviews, setAssetPreviews] = useState<FaviconAssetPreview[]>([]);
   const [notice, setNotice] = useState<Notice>(null);
+  const lastReportedOutcomeRef = useRef<'success' | 'error' | null>(null);
   const file = files[0];
   const appleIcon = findFaviconPreview(assetPreviews, 'apple-touch-icon.png');
   const androidIcon = findFaviconPreview(assetPreviews, 'web-app-manifest-192x192.png');
@@ -1628,6 +1729,8 @@ export function FaviconManifestGeneratorTool({ locale = 'pt-br' }: Readonly<{ lo
   const nextSnippet = buildNextFaviconSnippet(themeColor, backgroundColor);
 
   useEffect(() => {
+    lastReportedOutcomeRef.current = null;
+
     if (!file) {
       setSourceUrl('');
       return undefined;
@@ -1661,8 +1764,16 @@ export function FaviconManifestGeneratorTool({ locale = 'pt-br' }: Readonly<{ lo
       });
       setPkg(next);
       setNotice({ tone: 'success', text: `${next.assets.length} ${ui.filesReady}` });
+      if (lastReportedOutcomeRef.current !== 'success') {
+        lastReportedOutcomeRef.current = 'success';
+        trackEvent('tool_completed', { tool: TOOL_ID.faviconGenerator, locale, asset_count: next.assets.length });
+      }
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      if (lastReportedOutcomeRef.current !== 'error') {
+        lastReportedOutcomeRef.current = 'error';
+        trackEvent('tool_error', { tool: TOOL_ID.faviconGenerator, locale, error_type: 'processing_failed' });
+      }
     }
   };
 
@@ -1675,10 +1786,19 @@ export function FaviconManifestGeneratorTool({ locale = 'pt-br' }: Readonly<{ lo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoGenerate, backgroundColor, display, file, invertImage, name, padding, rounded, shortName, standardBackground, startUrl, themeColor]);
 
+  const handleFileSelected = (next: File[]) => {
+    setFiles(next.slice(0, 1));
+    const uploaded = next[0];
+    if (uploaded) {
+      trackEvent('file_uploaded', { tool: TOOL_ID.faviconGenerator, locale, file_type: getFileTypeCategory(uploaded) });
+      trackEvent('tool_started', { tool: TOOL_ID.faviconGenerator, locale });
+    }
+  };
+
   return (
     <Card className="space-y-5">
       <ToolHeader title={ui.title} intro={ui.intro} />
-      <FileUploadDropzone locale={locale} label={ui.file} accept={imageAccept} multiple={false} selectedFiles={files} onFilesSelected={(next) => setFiles(next.slice(0, 1))} onRemoveFile={() => setFiles([])} />
+      <FileUploadDropzone locale={locale} label={ui.file} accept={imageAccept} multiple={false} selectedFiles={files} onFilesSelected={handleFileSelected} onRemoveFile={() => setFiles([])} />
       <div className="grid gap-4 xl:grid-cols-[1fr_340px]">
         <section className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -1706,11 +1826,58 @@ export function FaviconManifestGeneratorTool({ locale = 'pt-br' }: Readonly<{ lo
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" disabled={!file} onClick={() => void generate()}>{ui.generate}</Button>
-        <Button variant="secondary" disabled={!pkg} onClick={() => pkg && void makeZip(pkg.assets.map((asset) => ({ name: asset.fileName, blob: asset.blob })), 'favicon-package.zip')}>{ui.downloadZip}</Button>
-        <Button variant="secondary" disabled={!pkg} onClick={() => pkg && void copyText(pkg.html, setNotice, ui.copied, 'Erro')}>{ui.copyHtml}</Button>
-        <Button variant="secondary" disabled={!pkg} onClick={() => pkg && void copyText(pkg.manifest, setNotice, ui.copied, 'Erro')}>{ui.copyManifest}</Button>
-        <Button variant="secondary" disabled={!pkg} onClick={() => void copyText(reactSnippet, setNotice, ui.copied, 'Erro')}>{ui.copyReact}</Button>
-        <Button variant="secondary" onClick={() => void copyText(nextSnippet, setNotice, ui.copied, 'Erro')}>{ui.copyNext}</Button>
+        <Button
+          variant="secondary"
+          disabled={!pkg}
+          onClick={() => {
+            if (!pkg) return;
+            void makeZip(pkg.assets.map((asset) => ({ name: asset.fileName, blob: asset.blob })), 'favicon-package.zip');
+            trackEvent('result_downloaded', { tool: TOOL_ID.faviconGenerator, locale, format: 'zip' });
+          }}
+        >
+          {ui.downloadZip}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={!pkg}
+          onClick={() => {
+            if (!pkg) return;
+            void copyText(pkg.html, setNotice, ui.copied, 'Erro');
+            trackEvent('result_copied', { tool: TOOL_ID.faviconGenerator, locale, field: 'html_snippet' });
+          }}
+        >
+          {ui.copyHtml}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={!pkg}
+          onClick={() => {
+            if (!pkg) return;
+            void copyText(pkg.manifest, setNotice, ui.copied, 'Erro');
+            trackEvent('result_copied', { tool: TOOL_ID.faviconGenerator, locale, field: 'manifest' });
+          }}
+        >
+          {ui.copyManifest}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={!pkg}
+          onClick={() => {
+            void copyText(reactSnippet, setNotice, ui.copied, 'Erro');
+            trackEvent('result_copied', { tool: TOOL_ID.faviconGenerator, locale, field: 'react_snippet' });
+          }}
+        >
+          {ui.copyReact}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            void copyText(nextSnippet, setNotice, ui.copied, 'Erro');
+            trackEvent('result_copied', { tool: TOOL_ID.faviconGenerator, locale, field: 'next_snippet' });
+          }}
+        >
+          {ui.copyNext}
+        </Button>
       </div>
       <NoticeBox notice={notice} />
       {pkg ? (
@@ -1779,7 +1946,15 @@ export function FaviconManifestGeneratorTool({ locale = 'pt-br' }: Readonly<{ lo
           {activeTab === 'files' ? (
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {assetPreviews.map((asset) => (
-                <button key={asset.fileName} type="button" onClick={() => downloadBlob(asset.blob, asset.fileName)} className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 text-left text-sm hover:border-brand-300">
+                <button
+                  key={asset.fileName}
+                  type="button"
+                  onClick={() => {
+                    downloadBlob(asset.blob, asset.fileName);
+                    trackEvent('result_downloaded', { tool: TOOL_ID.faviconGenerator, locale, format: getExtensionFromFileName(asset.fileName) });
+                  }}
+                  className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 text-left text-sm hover:border-brand-300"
+                >
                   {asset.width ? <img src={asset.url} alt={asset.fileName} className="h-10 w-10 shrink-0 rounded-md border border-slate-100 object-contain" /> : <span className="h-10 w-10 rounded-md bg-slate-100" />}
                   <span className="min-w-0">
                     <span className="block truncate font-semibold text-slate-900">{asset.fileName}</span>

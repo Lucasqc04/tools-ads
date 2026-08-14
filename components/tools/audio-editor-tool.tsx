@@ -39,6 +39,7 @@ import {
 import { formatBytes } from '@/lib/file-size';
 import { downloadBlob } from '@/lib/image-conversion';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type AudioEditorToolProps = Readonly<{
   locale?: AppLocale;
@@ -1113,6 +1114,14 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
   };
 
   const handleFilesSelected = (files: File[]) => {
+    if (files.length) {
+      trackEvent('tool_started', { tool: TOOL_ID.audioExtractor, locale, mode: 'upload' });
+      trackEvent('file_uploaded', {
+        tool: TOOL_ID.audioExtractor,
+        locale,
+        file_type: files.some((file) => !isLikelyAudioFile(file)) ? 'media' : 'audio',
+      });
+    }
     const knownFiles = new Set([
       ...selectedUploadFiles.map((file) => getFileKey(file)),
       ...pendingMedia.map((item) => getFileKey(item.file)),
@@ -1154,6 +1163,11 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
 
             await addAudioTrackFromFile(file);
           }
+          if (nextAudioFiles.length) {
+            trackEvent('tool_completed', { tool: TOOL_ID.audioExtractor, locale, mode: 'upload' });
+          }
+        } catch {
+          trackEvent('tool_error', { tool: TOOL_ID.audioExtractor, locale, error_type: 'processing_failed' });
         } finally {
           setIsImporting(false);
         }
@@ -1162,6 +1176,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
   };
 
   const handleImportRemoteUrl = async () => {
+    trackEvent('tool_started', { tool: TOOL_ID.audioExtractor, locale, mode: 'remote_url' });
     const value = remoteUrl.trim();
     setRemoteUrlError(null);
 
@@ -1234,14 +1249,17 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
       }
 
       setRemoteUrl('');
+      trackEvent('tool_completed', { tool: TOOL_ID.audioExtractor, locale, mode: 'remote_url' });
     } catch (error) {
       setRemoteUrlError(error instanceof Error ? error.message : ui.remoteUrlFetchError);
+      trackEvent('tool_error', { tool: TOOL_ID.audioExtractor, locale, error_type: 'network_error' });
     } finally {
       setIsImportingRemoteUrl(false);
     }
   };
 
   const handleExtractMedia = async (item: PendingMediaItem) => {
+    trackEvent('tool_started', { tool: TOOL_ID.audioExtractor, locale, mode: 'extract_audio' });
     updatePendingMedia(item.id, (current) => ({
       ...current,
       status: 'extracting',
@@ -1287,6 +1305,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
         progressPercent: 100,
         logs: [...current.logs, ui.createdFromVideo(results.length)].slice(-8),
       }));
+      trackEvent('tool_completed', { tool: TOOL_ID.audioExtractor, locale, mode: 'extract_audio' });
     } catch (error) {
       updatePendingMedia(item.id, (current) => ({
         ...current,
@@ -1298,6 +1317,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
           error instanceof Error ? error.message : String(error),
         ].slice(-8),
       }));
+      trackEvent('tool_error', { tool: TOOL_ID.audioExtractor, locale, error_type: 'processing_failed' });
     }
   };
 
@@ -1657,6 +1677,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
   };
 
   const exportSegmentForTrack = async (track: AudioTrack, segment: AudioSegment) => {
+    trackEvent('tool_started', { tool: TOOL_ID.audioExtractor, locale, mode: 'export_segment' });
     if (segment.resultUrl) {
       URL.revokeObjectURL(segment.resultUrl);
     }
@@ -1699,6 +1720,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
         resultUrl,
         errorMessage: undefined,
       }));
+      trackEvent('tool_completed', { tool: TOOL_ID.audioExtractor, locale, mode: 'export_segment' });
 
       return file;
     } catch (error) {
@@ -1708,6 +1730,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
         progressPercent: 0,
         errorMessage: error instanceof Error ? error.message : ui.genericExportError,
       }));
+      trackEvent('tool_error', { tool: TOOL_ID.audioExtractor, locale, error_type: 'processing_failed' });
       return null;
     }
   };
@@ -1720,6 +1743,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
     const file = await exportSegmentForTrack(activeTrack, selectedSegment);
     if (file) {
       downloadBlob(file, file.name);
+      trackEvent('result_downloaded', { tool: TOOL_ID.audioExtractor, locale, format: outputFormat });
     }
   };
 
@@ -1727,6 +1751,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
     const file = await exportSegmentForTrack(track, segment);
     if (file) {
       downloadBlob(file, file.name);
+      trackEvent('result_downloaded', { tool: TOOL_ID.audioExtractor, locale, format: outputFormat });
     }
   };
 
@@ -1760,6 +1785,7 @@ export function AudioEditorTool({ locale = 'pt-br' }: AudioEditorToolProps) {
         }
 
         window.setTimeout(() => downloadBlob(resultFile, resultFile.name), index * 120);
+        trackEvent('result_downloaded', { tool: TOOL_ID.audioExtractor, locale, format: outputFormat });
       });
   };
 

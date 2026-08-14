@@ -21,6 +21,7 @@ import { cn } from '@/lib/cn';
 import { formatBytes } from '@/lib/file-size';
 import type { AppLocale } from '@/lib/i18n/config';
 import { downloadBlob } from '@/lib/qr-code';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
   addPacketToAssembly,
   buildUint8Chunks,
@@ -1243,14 +1244,17 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     try {
       if (navigator.share) {
         await navigator.share({ title, text: rawJson });
+        trackEvent('result_shared', { tool: TOOL_ID.transfer, locale, method: 'web_share' });
       } else {
         await navigator.clipboard.writeText(rawJson);
         setConnectionNotice({ tone: 'success', text: ui.btShareNotSupported });
+        trackEvent('result_shared', { tool: TOOL_ID.transfer, locale, method: 'copy_link' });
       }
     } catch {
       try {
         await navigator.clipboard.writeText(rawJson);
         setConnectionNotice({ tone: 'success', text: ui.btShareNotSupported });
+        trackEvent('result_shared', { tool: TOOL_ID.transfer, locale, method: 'copy_link' });
       } catch {
         setConnectionNotice({ tone: 'error', text: ui.copyError });
       }
@@ -1456,6 +1460,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     try {
       await navigator.clipboard.writeText(value);
       setter({ tone: 'success', text: ui.copied });
+      trackEvent('result_copied', { tool: TOOL_ID.transfer, locale, field: 'transfer_payload' });
     } catch {
       setter({ tone: 'error', text: ui.copyError });
     }
@@ -1732,6 +1737,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     rawValue.trim().replace(SIGNAL_RAW_TAG_REGEX, '').trim();
 
   const createOffer = async () => {
+    trackEvent('tool_started', { tool: TOOL_ID.transfer, locale, mode: 'p2p_offer' });
     try {
       setBusyAction('offer');
       closeScanner();
@@ -1776,14 +1782,17 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
             : ui.offerReadyMany(generated.packets.length),
       });
       setPeerConnected(false);
+      trackEvent('tool_completed', { tool: TOOL_ID.transfer, locale, mode: 'p2p_offer' });
     } catch {
       setConnectionNotice({ tone: 'error', text: ui.connectionFailed });
+      trackEvent('tool_error', { tool: TOOL_ID.transfer, locale, error_type: 'processing_failed' });
     } finally {
       setBusyAction(null);
     }
   };
 
   const importOffer = async (rawValue: string, fromHash = false) => {
+    trackEvent('tool_started', { tool: TOOL_ID.transfer, locale, mode: 'p2p_import_offer' });
     try {
       setBusyAction('import-offer');
       const sanitizedRawValue = stripSignalRawTag(rawValue);
@@ -1839,17 +1848,20 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
             : ui.answerReadyMany(generated.packets.length),
       });
       setToolMode('p2p');
+      trackEvent('tool_completed', { tool: TOOL_ID.transfer, locale, mode: 'p2p_import_offer' });
     } catch (error) {
       setConnectionNotice({
         tone: 'error',
         text: error instanceof Error ? error.message : ui.invalidOffer,
       });
+      trackEvent('tool_error', { tool: TOOL_ID.transfer, locale, error_type: 'invalid_input' });
     } finally {
       setBusyAction(null);
     }
   };
 
   const importAnswer = async (rawValue: string, fromHash = false) => {
+    trackEvent('tool_started', { tool: TOOL_ID.transfer, locale, mode: 'p2p_import_answer' });
     try {
       setBusyAction('import-answer');
       const sanitizedRawValue = stripSignalRawTag(rawValue);
@@ -1871,11 +1883,13 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
         text: fromHash ? ui.scannerHashAnswerDone : ui.importAnswerOk,
       });
       setToolMode('p2p');
+      trackEvent('tool_completed', { tool: TOOL_ID.transfer, locale, mode: 'p2p_import_answer' });
     } catch (error) {
       setConnectionNotice({
         tone: 'error',
         text: error instanceof Error ? error.message : ui.invalidAnswer,
       });
+      trackEvent('tool_error', { tool: TOOL_ID.transfer, locale, error_type: 'invalid_input' });
     } finally {
       setBusyAction(null);
     }
@@ -2039,10 +2053,12 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   };
 
   const generateSimpleQr = () => {
+    trackEvent('tool_started', { tool: TOOL_ID.transfer, locale, mode: 'simple_qr' });
     const trimmed = simpleInput.trim();
 
     if (!trimmed) {
       setSimpleNotice({ tone: 'error', text: ui.sendNeedsText });
+      trackEvent('tool_error', { tool: TOOL_ID.transfer, locale, error_type: 'validation_failed' });
       return;
     }
 
@@ -2068,6 +2084,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
           ? ui.simpleGeneratedOne
           : ui.simpleGeneratedMany(generated.packets.length),
     });
+    trackEvent('tool_completed', { tool: TOOL_ID.transfer, locale, mode: 'simple_qr' });
   };
 
   const sendPayload = async () => {
@@ -2075,6 +2092,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
     if (!channel || channel.readyState !== 'open') {
       setConnectionNotice({ tone: 'error', text: ui.sendNeedsChannel });
+      trackEvent('tool_error', { tool: TOOL_ID.transfer, locale, error_type: 'validation_failed' });
       return;
     }
 
@@ -2108,6 +2126,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
     const chunks = buildUint8Chunks(bytes, DATA_CHANNEL_CHUNK_SIZE);
 
     try {
+      trackEvent('tool_started', { tool: TOOL_ID.transfer, locale, mode: 'p2p_send' });
       setBusyAction('send');
       setSendBusy(true);
       setSendProgress(0);
@@ -2132,8 +2151,10 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
       channel.send(JSON.stringify({ type: 'done' }));
       setConnectionNotice({ tone: 'success', text: ui.sendDone });
+      trackEvent('tool_completed', { tool: TOOL_ID.transfer, locale, mode: 'p2p_send' });
     } catch {
       setConnectionNotice({ tone: 'error', text: ui.connectionFailed });
+      trackEvent('tool_error', { tool: TOOL_ID.transfer, locale, error_type: 'processing_failed' });
     } finally {
       setBusyAction(null);
       setSendBusy(false);

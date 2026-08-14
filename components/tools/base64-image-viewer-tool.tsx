@@ -1,12 +1,13 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ImageViewer } from '@/components/shared/image-viewer';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
   availableBase64ImageOutputFormats,
   exportParsedBase64Image,
@@ -175,11 +176,25 @@ export function Base64ImageViewerTool({ locale = 'pt-br' }: Base64ImageViewerToo
   const [outputFormat, setOutputFormat] = useState<Base64ImageOutputFormat | 'original'>('original');
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
+  // Tracks tool_started/tool_completed/tool_error for the auto-decode-as-you-type
+  // flow. `hasStartedRef` resets when the input is cleared, so `tool_started`
+  // only fires once per distinct paste/attempt (the empty -> non-empty
+  // transition) rather than on every keystroke. `tool_completed`/`tool_error`
+  // are derived from the existing debounced decode, so they only fire once
+  // per genuinely new (input, fallbackMime) combination.
+  const hasStartedRef = useRef(false);
+
   useEffect(() => {
     if (!input.trim()) {
       setParsed(null);
       setErrorMessage('');
+      hasStartedRef.current = false;
       return;
+    }
+
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.base64ImageViewer, locale });
     }
 
     const timer = setTimeout(() => {
@@ -187,14 +202,20 @@ export function Base64ImageViewerTool({ locale = 'pt-br' }: Base64ImageViewerToo
         const decoded = parseBase64ImageInput(input, fallbackMime);
         setParsed(decoded);
         setErrorMessage('');
+        trackEvent('tool_completed', { tool: TOOL_ID.base64ImageViewer, locale });
       } catch (error) {
         setParsed(null);
         setErrorMessage(error instanceof Error ? error.message : 'Base64 invalido.');
+        trackEvent('tool_error', {
+          tool: TOOL_ID.base64ImageViewer,
+          locale,
+          error_type: 'invalid_base64',
+        });
       }
     }, 150);
 
     return () => clearTimeout(timer);
-  }, [input, fallbackMime]);
+  }, [input, fallbackMime, locale]);
 
   const outputFormatOptions = useMemo(
     () => [
@@ -216,6 +237,7 @@ export function Base64ImageViewerTool({ locale = 'pt-br' }: Base64ImageViewerToo
 
     try {
       await exportParsedBase64Image(parsed, outputFormat);
+      trackEvent('result_downloaded', { tool: TOOL_ID.base64ImageViewer, locale, format: outputFormat });
     } finally {
       setIsDownloading(false);
     }

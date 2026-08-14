@@ -15,6 +15,7 @@ import {
 } from '@/lib/image-compression';
 import { calculateSavingsPercent, formatBytes } from '@/lib/file-size';
 import { downloadBlob } from '@/lib/image-conversion';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type ImageCompressionToolProps = Readonly<{
   locale?: AppLocale;
@@ -189,6 +190,16 @@ const buildId = (file: File): string =>
 
 const getFileKey = (file: File): string => `${file.name}-${file.size}-${file.lastModified}`;
 
+const getFileTypeLabel = (file: File): string => {
+  const mimeSubtype = file.type.split('/')[1];
+  if (mimeSubtype) {
+    return mimeSubtype.toLowerCase();
+  }
+
+  const extension = file.name.split('.').pop();
+  return extension ? extension.toLowerCase() : 'unknown';
+};
+
 const statusClassName: Record<ItemStatus, string> = {
   pending: 'border-slate-200 bg-slate-100 text-slate-700',
   compressing: 'border-amber-200 bg-amber-50 text-amber-700',
@@ -286,6 +297,14 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
           status: 'pending',
         }));
 
+      additions.forEach((addition) => {
+        trackEvent('file_uploaded', {
+          tool: TOOL_ID.imageCompression,
+          locale,
+          file_type: getFileTypeLabel(addition.file),
+        });
+      });
+
       return [...current, ...additions];
     });
   };
@@ -330,6 +349,12 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
       errorMessage: undefined,
     }));
 
+    trackEvent('tool_started', {
+      tool: TOOL_ID.imageCompression,
+      locale,
+      file_type: getFileTypeLabel(item.file),
+    });
+
     try {
       const compressedFile = await compressImageFile(item.file, {
         compressionLevel,
@@ -350,12 +375,25 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
           errorMessage: undefined,
         };
       });
+
+      trackEvent('tool_completed', {
+        tool: TOOL_ID.imageCompression,
+        locale,
+        format: outputFormat,
+        compression_level: compressionLevel,
+      });
     } catch {
       updateItem(item.id, (current) => ({
         ...current,
         status: 'error',
         errorMessage: ui.genericError,
       }));
+
+      trackEvent('tool_error', {
+        tool: TOOL_ID.imageCompression,
+        locale,
+        error_type: 'processing_failed',
+      });
     }
   };
 
@@ -377,6 +415,17 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
   };
 
   const handleDownloadAll = () => {
+    if (!completedItems.length) {
+      return;
+    }
+
+    trackEvent('result_downloaded', {
+      tool: TOOL_ID.imageCompression,
+      locale,
+      format: outputFormat,
+      count: completedItems.length,
+    });
+
     completedItems.forEach((item, index) => {
       const resultFile = item.resultFile;
       if (!resultFile) {
@@ -556,7 +605,14 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
                             setViewerState({
                               src: resultUrl,
                               alt: resultFile.name,
-                              onDownload: () => downloadBlob(resultFile, resultFile.name),
+                              onDownload: () => {
+                                trackEvent('result_downloaded', {
+                                  tool: TOOL_ID.imageCompression,
+                                  locale,
+                                  format: getFileTypeLabel(resultFile),
+                                });
+                                downloadBlob(resultFile, resultFile.name);
+                              },
                             })
                           }
                         >
@@ -575,7 +631,14 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
                             setViewerState({
                               src: resultUrl,
                               alt: resultFile.name,
-                              onDownload: () => downloadBlob(resultFile, resultFile.name),
+                              onDownload: () => {
+                                trackEvent('result_downloaded', {
+                                  tool: TOOL_ID.imageCompression,
+                                  locale,
+                                  format: getFileTypeLabel(resultFile),
+                                });
+                                downloadBlob(resultFile, resultFile.name);
+                              },
                             })
                           }
                         >
@@ -612,6 +675,11 @@ export function ImageCompressionTool({ locale = 'pt-br' }: ImageCompressionToolP
                     variant="secondary"
                     onClick={() => {
                       if (item.resultFile) {
+                        trackEvent('result_downloaded', {
+                          tool: TOOL_ID.imageCompression,
+                          locale,
+                          format: getFileTypeLabel(item.resultFile),
+                        });
                         downloadBlob(item.resultFile, item.resultFile.name);
                       }
                     }}

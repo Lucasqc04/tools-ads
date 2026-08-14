@@ -9,14 +9,22 @@ import { Textarea } from '@/components/ui/textarea';
 import { formatCnpj, generateValidCnpjList, isValidCnpj, stripCnpjFormatting } from '@/lib/cnpj';
 import { parseBoleto, type BoletoParseResult } from '@/lib/boleto';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID, type ToolId } from '@/lib/analytics';
 
 type CopyState = 'idle' | 'copied' | 'error';
 
-const copyText = async (value: string, setState: (state: CopyState) => void) => {
+const copyText = async (
+  value: string,
+  setState: (state: CopyState) => void,
+  analytics?: { tool: ToolId; locale?: AppLocale; field: string },
+) => {
   try {
     await navigator.clipboard.writeText(value);
     setState('copied');
     setTimeout(() => setState('idle'), 1600);
+    if (analytics) {
+      trackEvent('result_copied', { tool: analytics.tool, locale: analytics.locale, field: analytics.field });
+    }
   } catch {
     setState('error');
     setTimeout(() => setState('idle'), 2200);
@@ -161,6 +169,7 @@ export function CnpjValidatorGeneratorTool({ locale = 'pt-br' }: Readonly<{ loca
   const [copyState, setCopyState] = useState<CopyState>('idle');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const hasStartedRef = useRef(false);
 
   const clean = stripCnpjFormatting(value);
   const hasValidation = clean.length > 0;
@@ -168,12 +177,18 @@ export function CnpjValidatorGeneratorTool({ locale = 'pt-br' }: Readonly<{ loca
   const generatedText = generated.join('\n');
 
   const handleGenerate = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.cnpjGenerator, locale });
+    }
+
     const parsedQuantity = Number.parseInt(quantity, 10);
     if (!Number.isFinite(parsedQuantity) || parsedQuantity < 1 || parsedQuantity > 200) {
       setErrorMessage(ui.invalidQuantity);
       setGenerated([]);
       setCopyState('idle');
       setCopiedIndex(null);
+      trackEvent('tool_error', { tool: TOOL_ID.cnpjGenerator, locale, error_type: 'invalid_input' });
       return;
     }
 
@@ -182,6 +197,7 @@ export function CnpjValidatorGeneratorTool({ locale = 'pt-br' }: Readonly<{ loca
     setCopyState('idle');
     setCopiedIndex(null);
     setErrorMessage('');
+    trackEvent('tool_completed', { tool: TOOL_ID.cnpjGenerator, locale, count: amount, with_punctuation: withPunctuation });
   };
 
   const handleCopyAll = async () => {
@@ -190,6 +206,7 @@ export function CnpjValidatorGeneratorTool({ locale = 'pt-br' }: Readonly<{ loca
       setCopyState('copied');
       setCopiedIndex(null);
       setTimeout(() => setCopyState('idle'), 1800);
+      trackEvent('result_copied', { tool: TOOL_ID.cnpjGenerator, locale, field: 'cnpj_list' });
     } catch {
       setErrorMessage(ui.copyError);
     }
@@ -201,6 +218,7 @@ export function CnpjValidatorGeneratorTool({ locale = 'pt-br' }: Readonly<{ loca
       setCopyState('idle');
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 1800);
+      trackEvent('result_copied', { tool: TOOL_ID.cnpjGenerator, locale, field: 'cnpj' });
     } catch {
       setErrorMessage(ui.copyError);
     }
@@ -272,9 +290,36 @@ export function CnpjValidatorGeneratorTool({ locale = 'pt-br' }: Readonly<{ loca
             <Button variant="secondary" disabled={!generated.length} onClick={() => void handleCopyAll()}>
               {copyState === 'copied' ? ui.copiedAll : ui.copyAll}
             </Button>
-            <Button variant="secondary" disabled={!generated.length} onClick={() => downloadText(generatedText, 'cnpjs.txt')}>{ui.exportTxt}</Button>
-            <Button variant="secondary" disabled={!generated.length} onClick={() => downloadText(csv, 'cnpjs.csv', 'text/csv')}>{ui.exportCsv}</Button>
-            <Button variant="secondary" disabled={!generated.length} onClick={() => downloadText(JSON.stringify(generated, null, 2), 'cnpjs.json', 'application/json')}>{ui.exportJson}</Button>
+            <Button
+              variant="secondary"
+              disabled={!generated.length}
+              onClick={() => {
+                downloadText(generatedText, 'cnpjs.txt');
+                trackEvent('result_downloaded', { tool: TOOL_ID.cnpjGenerator, locale, format: 'txt' });
+              }}
+            >
+              {ui.exportTxt}
+            </Button>
+            <Button
+              variant="secondary"
+              disabled={!generated.length}
+              onClick={() => {
+                downloadText(csv, 'cnpjs.csv', 'text/csv');
+                trackEvent('result_downloaded', { tool: TOOL_ID.cnpjGenerator, locale, format: 'csv' });
+              }}
+            >
+              {ui.exportCsv}
+            </Button>
+            <Button
+              variant="secondary"
+              disabled={!generated.length}
+              onClick={() => {
+                downloadText(JSON.stringify(generated, null, 2), 'cnpjs.json', 'application/json');
+                trackEvent('result_downloaded', { tool: TOOL_ID.cnpjGenerator, locale, format: 'json' });
+              }}
+            >
+              {ui.exportJson}
+            </Button>
             <Button
               variant="ghost"
               onClick={() => {
@@ -564,8 +609,26 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
   const [cameraMessage, setCameraMessage] = useState('');
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<{ stop: () => void } | null>(null);
+  const hasStartedRef = useRef(false);
 
-  const analyze = () => setResult(parseBoleto(input));
+  const reportStartedOnce = () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.boletoValidator, locale });
+  };
+
+  const analyze = () => {
+    reportStartedOnce();
+    const parsed = parseBoleto(input);
+    setResult(parsed);
+    if (parsed.kind === 'unknown') {
+      trackEvent('tool_error', { tool: TOOL_ID.boletoValidator, locale, error_type: 'invalid_input' });
+    } else if (parsed.ok) {
+      trackEvent('tool_completed', { tool: TOOL_ID.boletoValidator, locale, result_type: parsed.kind });
+    } else {
+      trackEvent('tool_error', { tool: TOOL_ID.boletoValidator, locale, error_type: 'validation_failed' });
+    }
+  };
   const outputJson = result ? JSON.stringify(result, null, 2) : '';
   const visualSegments = result ? getBoletoVisualSegments(result, locale) : [];
   const lineSegments = result ? getBoletoLineSegments(result, locale) : [];
@@ -591,7 +654,13 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
         setInput(text);
         setResult(parsed);
         setCameraMessage(ui.cameraFound);
+        reportStartedOnce();
         if (parsed.kind !== 'unknown') {
+          if (parsed.ok) {
+            trackEvent('tool_completed', { tool: TOOL_ID.boletoValidator, locale, result_type: parsed.kind });
+          } else {
+            trackEvent('tool_error', { tool: TOOL_ID.boletoValidator, locale, error_type: 'validation_failed' });
+          }
           stopCamera();
         }
       });
@@ -611,7 +680,13 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
         <span className="text-sm font-semibold text-slate-800">{ui.input}</span>
         <Textarea
           value={input}
-          onChange={(event) => setInput(event.target.value)}
+          onChange={(event) => {
+            const nextValue = event.target.value;
+            setInput(nextValue);
+            if (nextValue.trim()) {
+              reportStartedOnce();
+            }
+          }}
           placeholder={ui.placeholder}
           className="min-h-[120px] font-mono text-sm"
         />
@@ -622,13 +697,28 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
         <Button variant="secondary" onClick={() => (cameraActive ? stopCamera() : void startCamera())}>
           {cameraActive ? ui.stopCamera : ui.startCamera}
         </Button>
-        <Button variant="secondary" disabled={!result?.barcode} onClick={() => void copyText(result?.barcode ?? '', setCopyState)}>
+        <Button
+          variant="secondary"
+          disabled={!result?.barcode}
+          onClick={() => void copyText(result?.barcode ?? '', setCopyState, { tool: TOOL_ID.boletoValidator, locale, field: 'barcode' })}
+        >
           {copyState === 'copied' ? ui.copied : ui.copyBarcode}
         </Button>
-        <Button variant="secondary" disabled={!result?.formattedLine} onClick={() => void copyText(result?.formattedLine ?? '', setCopyState)}>
+        <Button
+          variant="secondary"
+          disabled={!result?.formattedLine}
+          onClick={() => void copyText(result?.formattedLine ?? '', setCopyState, { tool: TOOL_ID.boletoValidator, locale, field: 'boleto_line' })}
+        >
           {ui.copyLine}
         </Button>
-        <Button variant="secondary" disabled={!result} onClick={() => downloadText(outputJson, 'boleto.json', 'application/json')}>
+        <Button
+          variant="secondary"
+          disabled={!result}
+          onClick={() => {
+            downloadText(outputJson, 'boleto.json', 'application/json');
+            trackEvent('result_downloaded', { tool: TOOL_ID.boletoValidator, locale, format: 'json' });
+          }}
+        >
           {ui.exportJson}
         </Button>
       </div>

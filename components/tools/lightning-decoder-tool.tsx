@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   decodeLightningInput,
@@ -522,14 +523,15 @@ export function LightningDecoderTool({ locale = 'pt-br' }: LightningDecoderToolP
   const [selectedExplanationKey, setSelectedExplanationKey] = useState<string | null>(null);
   const [nowUnix, setNowUnix] = useState<number>(() => Math.floor(Date.now() / 1000));
 
-  const copyToClipboard = useCallback((value: string, key: string) => {
+  const copyToClipboard = useCallback((value: string, key: string, field: string) => {
     navigator.clipboard.writeText(value).then(() => {
       setCopiedKey(key);
+      trackEvent('result_copied', { tool: TOOL_ID.lightningDecoder, locale, field });
       setTimeout(() => setCopiedKey(null), 1500);
     });
-  }, []);
+  }, [locale]);
 
-  const downloadFile = useCallback((content: string, filename: string, type: string) => {
+  const downloadFile = useCallback((content: string, filename: string, type: string, format: string) => {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
@@ -537,7 +539,8 @@ export function LightningDecoderTool({ locale = 'pt-br' }: LightningDecoderToolP
     anchor.download = filename;
     anchor.click();
     URL.revokeObjectURL(url);
-  }, []);
+    trackEvent('result_downloaded', { tool: TOOL_ID.lightningDecoder, locale, format });
+  }, [locale]);
 
   const normalizedPayload = result?.normalized ?? input.trim();
 
@@ -546,9 +549,27 @@ export function LightningDecoderTool({ locale = 'pt-br' }: LightningDecoderToolP
   }, []);
 
   const handleDecode = useCallback(() => {
-    setResult(decodeLightningInput(input));
+    const hasInput = input.trim().length > 0;
+    if (hasInput) {
+      trackEvent('tool_started', { tool: TOOL_ID.lightningDecoder, locale });
+    }
+
+    const decoded = decodeLightningInput(input);
+    setResult(decoded);
     setActiveTab('decoder');
-  }, [input]);
+
+    if (hasInput) {
+      if (decoded.isValid) {
+        trackEvent('tool_completed', { tool: TOOL_ID.lightningDecoder, locale, result_type: decoded.type });
+      } else {
+        trackEvent('tool_error', {
+          tool: TOOL_ID.lightningDecoder,
+          locale,
+          error_type: 'invalid_lightning_invoice',
+        });
+      }
+    }
+  }, [input, locale]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -626,6 +647,8 @@ export function LightningDecoderTool({ locale = 'pt-br' }: LightningDecoderToolP
       return;
     }
 
+    trackEvent('result_downloaded', { tool: TOOL_ID.lightningDecoder, locale, format: extension });
+
     const qr = qrInstanceRef.current as QrCodeStylingInstance | null;
     if (qr) {
       qr.download({ extension, name: 'lightning-decoder' });
@@ -646,7 +669,7 @@ export function LightningDecoderTool({ locale = 'pt-br' }: LightningDecoderToolP
     });
     tempQr.append(tempContainer);
     tempQr.download({ extension, name: 'lightning-decoder' });
-  }, [normalizedPayload, qrLib, qrSize, qrColor, qrBg]);
+  }, [normalizedPayload, qrLib, qrSize, qrColor, qrBg, locale]);
 
   const copyQrImageToClipboard = useCallback(async () => {
     if (!normalizedPayload || !qrLib || !navigator.clipboard?.write || globalThis.ClipboardItem === undefined) {
@@ -682,7 +705,9 @@ export function LightningDecoderTool({ locale = 'pt-br' }: LightningDecoderToolP
         [blob.type || 'image/png']: blob,
       }),
     ]);
-  }, [normalizedPayload, qrBg, qrColor, qrLib, qrSize]);
+
+    trackEvent('result_copied', { tool: TOOL_ID.lightningDecoder, locale, field: 'qr_image' });
+  }, [normalizedPayload, qrBg, qrColor, qrLib, qrSize, locale]);
 
   const tabs: Array<{ key: Tab; label: string }> = [
     { key: 'decoder', label: t('tabDecoder', locale) },
@@ -705,7 +730,7 @@ export function LightningDecoderTool({ locale = 'pt-br' }: LightningDecoderToolP
         />
         <div className="flex flex-wrap gap-2">
           <Button onClick={handleDecode}>{t('decode', locale)}</Button>
-          <Button variant="secondary" onClick={() => copyToClipboard(input, 'input-copy')}>
+          <Button variant="secondary" onClick={() => copyToClipboard(input, 'input-copy', 'input')}>
             <Copy className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
             {copiedKey === 'input-copy' ? t('copied', locale) : t('copy', locale)}
           </Button>
@@ -865,7 +890,7 @@ function DecoderTab({
   locale: AppLocale;
   result: LightningDecodeResult | null;
   rawJson: string;
-  copyToClipboard: (value: string, key: string) => void;
+  copyToClipboard: (value: string, key: string, field: string) => void;
   copiedKey: string | null;
   payloadSegments: PayloadSegment[];
   urlParts: UrlPart[];
@@ -938,7 +963,7 @@ function DecoderTab({
                   <Button
                     variant="ghost"
                     className="h-7 px-2 text-[11px]"
-                    onClick={() => copyToClipboard(selectedSegment.displayValue, `segment-${selectedSegment.id}`)}
+                    onClick={() => copyToClipboard(selectedSegment.displayValue, `segment-${selectedSegment.id}`, 'payload_segment')}
                   >
                     {copiedKey === `segment-${selectedSegment.id}` ? 'OK' : t('copy', locale)}
                   </Button>
@@ -974,7 +999,7 @@ function DecoderTab({
                 <Button
                   variant="ghost"
                   className="h-7 px-2 text-[11px]"
-                  onClick={() => copyToClipboard(selectedUrlPart.value, `url-${selectedUrlPart.id}`)}
+                  onClick={() => copyToClipboard(selectedUrlPart.value, `url-${selectedUrlPart.id}`, 'url_part')}
                 >
                   {copiedKey === `url-${selectedUrlPart.id}` ? 'OK' : t('copy', locale)}
                 </Button>
@@ -1014,7 +1039,7 @@ function DecoderTab({
                   <Button
                     variant="ghost"
                     className="h-7 px-2 text-[11px]"
-                    onClick={() => copyToClipboard(field.value, fieldCopyKey)}
+                    onClick={() => copyToClipboard(field.value, fieldCopyKey, 'decoded_field')}
                   >
                     {copiedKey === fieldCopyKey ? 'OK' : t('copy', locale)}
                   </Button>
@@ -1032,7 +1057,7 @@ function DecoderTab({
       <section className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-sm font-semibold text-slate-800">{t('rawDetails', locale)}</h3>
-          <Button className="h-8 gap-1.5 px-3 text-xs" onClick={() => copyToClipboard(rawJson, 'raw-json-copy')}>
+          <Button className="h-8 gap-1.5 px-3 text-xs" onClick={() => copyToClipboard(rawJson, 'raw-json-copy', 'raw_json')}>
             <Copy className="h-3.5 w-3.5" aria-hidden="true" />
             {copiedKey === 'raw-json-copy' ? t('copied', locale) : t('copy', locale)}
           </Button>
@@ -1184,9 +1209,9 @@ function ExportTab({
   locale: AppLocale;
   result: LightningDecodeResult | null;
   rawJson: string;
-  copyToClipboard: (value: string, key: string) => void;
+  copyToClipboard: (value: string, key: string, field: string) => void;
   copiedKey: string | null;
-  downloadFile: (content: string, filename: string, type: string) => void;
+  downloadFile: (content: string, filename: string, type: string, format: string) => void;
   onDownloadQr: (extension: QrCodeExtension) => Promise<void>;
   onCopyQrImage: () => Promise<void>;
 }>) {
@@ -1200,26 +1225,26 @@ function ExportTab({
 
   return (
     <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
-      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => copyToClipboard(result.normalized, 'export-payload')}>
+      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => copyToClipboard(result.normalized, 'export-payload', 'payload')}>
         <Copy className="h-3.5 w-3.5" aria-hidden="true" />
         {copiedKey === 'export-payload' ? t('copied', locale) : `${t('copy', locale)} payload`}
       </Button>
       <Button
         className="h-9 gap-1.5 text-xs"
         variant="secondary"
-        onClick={() => downloadFile(result.normalized, 'lightning-input.txt', 'text/plain')}
+        onClick={() => downloadFile(result.normalized, 'lightning-input.txt', 'text/plain', 'txt')}
       >
         <FileText className="h-3.5 w-3.5" aria-hidden="true" />
         {t('exportTxt', locale)}
       </Button>
-      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => copyToClipboard(rawJson, 'export-json-copy')}>
+      <Button className="h-9 gap-1.5 text-xs" variant="secondary" onClick={() => copyToClipboard(rawJson, 'export-json-copy', 'raw_json')}>
         <Copy className="h-3.5 w-3.5" aria-hidden="true" />
         {copiedKey === 'export-json-copy' ? t('copied', locale) : `${t('copy', locale)} JSON`}
       </Button>
       <Button
         className="h-9 gap-1.5 text-xs"
         variant="secondary"
-        onClick={() => downloadFile(rawJson, 'lightning-decoded.json', 'application/json')}
+        onClick={() => downloadFile(rawJson, 'lightning-decoded.json', 'application/json', 'json')}
       >
         <FileJson className="h-3.5 w-3.5" aria-hidden="true" />
         {t('exportJson', locale)}

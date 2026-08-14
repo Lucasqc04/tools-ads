@@ -53,6 +53,7 @@ import { formatBytes } from '@/lib/file-size';
 import { type AppLocale } from '@/lib/i18n/config';
 import { downloadBlob } from '@/lib/image-conversion';
 import { cn } from '@/lib/cn';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type ChromaBackgroundRemoverToolProps = Readonly<{
   locale?: AppLocale;
@@ -447,6 +448,16 @@ const formatDimensions = (width: number, height: number): string =>
 const getTransparentPercent = (stats: ChromaRemovalStats): number =>
   Math.round(stats.transparentRatio * 100);
 
+const getImageFileType = (file: File): string => {
+  const mimeSubtype = file.type.split('/')[1];
+  if (mimeSubtype) {
+    return mimeSubtype.toLowerCase();
+  }
+
+  const extension = file.name.split('.').pop();
+  return extension ? extension.toLowerCase() : 'unknown';
+};
+
 const revokePreviewUrls = (items: OptionPreview[]) => {
   items.forEach((item) => URL.revokeObjectURL(item.url));
 };
@@ -837,6 +848,16 @@ export function ChromaBackgroundRemoverTool({
     setErrorMessage(null);
     setViewerState(null);
 
+    trackEvent('file_uploaded', {
+      tool: TOOL_ID.chromaBackgroundRemover,
+      locale,
+      file_type: getImageFileType(file),
+    });
+    trackEvent('tool_started', {
+      tool: TOOL_ID.chromaBackgroundRemover,
+      locale,
+    });
+
     const sourceUrl = URL.createObjectURL(file);
 
     try {
@@ -864,10 +885,22 @@ export function ChromaBackgroundRemoverTool({
       setSelectedOptionId('balanced');
       setIsPreviewStale(false);
       setStatus(ui.loadedOk);
+
+      trackEvent('tool_completed', {
+        tool: TOOL_ID.chromaBackgroundRemover,
+        locale,
+        format: 'png',
+      });
     } catch (error) {
       URL.revokeObjectURL(sourceUrl);
       setErrorMessage(error instanceof Error ? error.message : ui.genericError);
       setStatus(ui.noFile);
+
+      trackEvent('tool_error', {
+        tool: TOOL_ID.chromaBackgroundRemover,
+        locale,
+        error_type: 'processing_failed',
+      });
     } finally {
       setIsLoadingFile(false);
     }
@@ -917,6 +950,12 @@ export function ChromaBackgroundRemoverTool({
 
       downloadBlob(blob, fileName);
       setStatus(ui.downloadOk(fileName));
+
+      trackEvent('result_downloaded', {
+        tool: TOOL_ID.chromaBackgroundRemover,
+        locale,
+        format: 'png',
+      });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : ui.genericError);
     } finally {
@@ -1582,14 +1621,20 @@ export function ChromaBackgroundRemoverTool({
                     setViewerState({
                       src: selectedPreview.url,
                       alt: `${ui.optionLabels[selectedPreview.id]} - ${source?.file.name ?? ''}`,
-                      onDownload: () =>
+                      onDownload: () => {
+                        trackEvent('result_downloaded', {
+                          tool: TOOL_ID.chromaBackgroundRemover,
+                          locale,
+                          format: 'png',
+                        });
                         downloadBlob(
                           selectedPreview.blob,
                           buildRemovedBackgroundFileName(
                             source?.file.name ?? 'preview.png',
                             selectedPreview.id,
                           ),
-                        ),
+                        );
+                      },
                     })
                   }
                 >

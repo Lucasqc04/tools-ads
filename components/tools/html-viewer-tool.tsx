@@ -34,6 +34,7 @@ import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { Select } from '@/components/ui/select';
 import { cn } from '@/lib/cn';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 const CodeMirror = dynamic<ReactCodeMirrorProps>(
   () => import('@uiw/react-codemirror'),
@@ -1396,6 +1397,38 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
   const [consoleEntries, setConsoleEntries] = useState<ConsoleEntry[]>([]);
   const [copiedActionId, setCopiedActionId] = useState('');
 
+  const hasStartedRef = useRef(false);
+  const lastReportedOutcomeRef = useRef<'success' | 'error' | null>(null);
+
+  const markToolStarted = () => {
+    if (hasStartedRef.current) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.htmlViewer, locale });
+  };
+
+  const reportRunOutcome = (issues: CodeIssue[]) => {
+    if (!hasStartedRef.current) {
+      return;
+    }
+
+    const outcome: 'success' | 'error' = issues.some((issue) => issue.severity === 'error')
+      ? 'error'
+      : 'success';
+
+    if (lastReportedOutcomeRef.current === outcome) {
+      return;
+    }
+    lastReportedOutcomeRef.current = outcome;
+
+    if (outcome === 'error') {
+      trackEvent('tool_error', { tool: TOOL_ID.htmlViewer, locale, error_type: 'parse_error' });
+    } else {
+      trackEvent('tool_completed', { tool: TOOL_ID.htmlViewer, locale });
+    }
+  };
+
   const htmlFiles = useMemo(
     () => loadedFiles.filter((file) => file.kind === 'html'),
     [loadedFiles],
@@ -1484,14 +1517,18 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
     const timer = window.setTimeout(() => {
       setConsoleEntries([]);
       setRenderedDocument(previewDocument);
+      reportRunOutcome(allIssues);
     }, 450);
 
     return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRun, previewDocument]);
 
   const handleRunPreview = () => {
+    markToolStarted();
     setConsoleEntries([]);
     setRenderedDocument(previewDocument);
+    reportRunOutcome(allIssues);
   };
 
   const handleTemplateChange = (templateId: TemplateId) => {
@@ -1539,6 +1576,7 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
     try {
       await navigator.clipboard.writeText(previewDocument);
       setCopiedActionId('copy-final');
+      trackEvent('result_copied', { tool: TOOL_ID.htmlViewer, locale, field: 'html_document' });
       window.setTimeout(() => {
         setCopiedActionId((current) => (current === 'copy-final' ? '' : current));
       }, 1600);
@@ -1549,6 +1587,7 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
 
   const handleDownloadHtml = () => {
     downloadBlob(new Blob([previewDocument], { type: 'text/html;charset=utf-8' }), 'html-preview.html');
+    trackEvent('result_downloaded', { tool: TOOL_ID.htmlViewer, locale, format: 'html' });
   };
 
   const handleOpenNewTab = () => {
@@ -1652,6 +1691,7 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
     const cssContent = joinFileBundle(supported, 'css');
     const jsContent = joinFileBundle(supported, 'js');
 
+    markToolStarted();
     setLoadedFiles(supported);
     setSelectedHtmlFileId(firstHtml?.id ?? '');
     setHtmlInput(firstHtml?.content ?? '');
@@ -1684,6 +1724,8 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
   };
 
   const handleEditorChange = (value: string) => {
+    markToolStarted();
+
     if (activeTab === 'html') {
       setHtmlInput(value);
       return;

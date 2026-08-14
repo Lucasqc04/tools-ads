@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   CheckCircle2,
   Clipboard,
@@ -28,6 +28,7 @@ import {
 } from '@/lib/invisible-character';
 import { cn } from '@/lib/cn';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type InvisibleCharacterToolProps = Readonly<{
   locale?: AppLocale;
@@ -445,6 +446,7 @@ export function InvisibleCharacterTool({
   initialPlatformId,
 }: InvisibleCharacterToolProps) {
   const ui = uiByLocale[locale];
+  const hasStartedRef = useRef(false);
 
   const defaultPlatformId =
     initialPlatformId && invisiblePlatforms.some((platform) => platform.id === initialPlatformId)
@@ -586,6 +588,11 @@ export function InvisibleCharacterTool({
       await navigator.clipboard.writeText(value);
       setFeedbackMessage('');
       setCopiedActionId(actionId);
+      trackEvent('result_copied', {
+        tool: TOOL_ID.invisibleCharacter,
+        locale,
+        field: actionId === 'copy-cleaned' ? 'cleaned_text' : 'invisible_value',
+      });
       globalThis.setTimeout(() => {
         setCopiedActionId((current) => (current === actionId ? '' : current));
       }, 1600);
@@ -599,8 +606,13 @@ export function InvisibleCharacterTool({
   };
 
   const handleGenerateFromControls = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.invisibleCharacter, locale });
+    }
     setGeneratedValue(computedGeneratedValue);
     setFeedbackMessage('');
+    trackEvent('tool_completed', { tool: TOOL_ID.invisibleCharacter, locale });
   };
 
   const handleUseCombination = (nextPatternId: string) => {
