@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { formatJsonText, type JsonFormatterMessages } from '@/lib/json-formatter';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type JsonFormatterToolProps = {
   locale?: AppLocale;
@@ -89,6 +90,15 @@ export function JsonFormatterTool({ locale = 'pt-br' }: JsonFormatterToolProps) 
   const [result, setResult] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [copied, setCopied] = useState(false);
+  const hasStartedRef = useRef(false);
+
+  const reportStartedOnce = (value: string) => {
+    if (hasStartedRef.current || !value.trim()) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.jsonFormatter, locale });
+  };
 
   const applyAction = (mode: 'pretty' | 'minify') => {
     const output = formatJsonText(input, mode, ui.messages);
@@ -96,6 +106,7 @@ export function JsonFormatterTool({ locale = 'pt-br' }: JsonFormatterToolProps) 
     if (!output.ok) {
       setErrorMessage(output.error);
       setCopied(false);
+      trackEvent('tool_error', { tool: TOOL_ID.jsonFormatter, locale, error_type: 'invalid_json' });
       return;
     }
 
@@ -103,6 +114,7 @@ export function JsonFormatterTool({ locale = 'pt-br' }: JsonFormatterToolProps) 
     setResult(output.value);
     setErrorMessage('');
     setCopied(false);
+    trackEvent('tool_completed', { tool: TOOL_ID.jsonFormatter, locale, mode });
   };
 
   const handleCopy = async () => {
@@ -116,6 +128,7 @@ export function JsonFormatterTool({ locale = 'pt-br' }: JsonFormatterToolProps) 
       await navigator.clipboard.writeText(valueToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
+      trackEvent('result_copied', { tool: TOOL_ID.jsonFormatter, locale, field: 'formatted_json' });
     } catch {
       setCopied(false);
     }
@@ -136,6 +149,7 @@ export function JsonFormatterTool({ locale = 'pt-br' }: JsonFormatterToolProps) 
             setInput(event.target.value);
             setErrorMessage('');
             setCopied(false);
+            reportStartedOnce(event.target.value);
           }}
           className="min-h-[260px] font-mono text-xs"
           placeholder={ui.textareaPlaceholder}

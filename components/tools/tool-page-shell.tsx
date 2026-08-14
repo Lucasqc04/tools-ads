@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ToolViewTracker } from '@/components/analytics/tool-view-tracker';
 import { Container } from '@/components/layout/container';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ContentBlocks } from '@/components/shared/content-blocks';
@@ -62,6 +63,7 @@ export function ToolPageShell({
 
   return (
     <Container className="py-8 md:py-10">
+      <ToolViewTracker toolId={tool.id} locale={locale} />
       <Breadcrumbs
         items={[
           { name: dictionary.common.home, href: localizePath(locale, '/') },

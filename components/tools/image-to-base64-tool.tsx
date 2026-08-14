@@ -8,6 +8,7 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { ImageViewer } from '@/components/shared/image-viewer';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
   availableBase64ImageOutputFormats,
   imageFileToBase64DataUrl,
@@ -246,6 +247,11 @@ export function ImageToBase64Tool({ locale = 'pt-br' }: ImageToBase64ToolProps) 
 
     if (!isImageFormatAvailableForOutput(outputFormat)) {
       setErrorMessage(ui.unsupportedOutput);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.imageToBase64,
+        locale,
+        error_type: 'unsupported_format',
+      });
       return;
     }
 
@@ -289,11 +295,18 @@ export function ImageToBase64Tool({ locale = 'pt-br' }: ImageToBase64ToolProps) 
 
           return objectUrl;
         });
+
+        trackEvent('tool_completed', {
+          tool: TOOL_ID.imageToBase64,
+          locale,
+          result_type: outputFormat,
+        });
       } catch {
         if (!cancelled) {
           setDataUrl('');
           setPreviewUrl('');
           setErrorMessage(ui.genericError);
+          trackEvent('tool_error', { tool: TOOL_ID.imageToBase64, locale, error_type: 'invalid_image' });
         }
       } finally {
         if (!cancelled) {
@@ -307,7 +320,7 @@ export function ImageToBase64Tool({ locale = 'pt-br' }: ImageToBase64ToolProps) 
     return () => {
       cancelled = true;
     };
-  }, [sourceFile, outputFormat, ui.genericError, ui.unsupportedOutput]);
+  }, [sourceFile, outputFormat, ui.genericError, ui.unsupportedOutput, locale]);
 
   useEffect(
     () => () => {
@@ -326,6 +339,7 @@ export function ImageToBase64Tool({ locale = 'pt-br' }: ImageToBase64ToolProps) 
     try {
       await navigator.clipboard.writeText(outputText);
       setCopied(true);
+      trackEvent('result_copied', { tool: TOOL_ID.imageToBase64, locale, field: 'base64_string' });
       setTimeout(() => setCopied(false), 1800);
     } catch {
       setCopied(false);
@@ -339,6 +353,7 @@ export function ImageToBase64Tool({ locale = 'pt-br' }: ImageToBase64ToolProps) 
 
     const blob = new Blob([outputText], { type: 'text/plain;charset=utf-8' });
     downloadBlob(blob, buildTextFileName(sourceFile.name));
+    trackEvent('result_downloaded', { tool: TOOL_ID.imageToBase64, locale, format: 'txt' });
   };
 
   return (
@@ -357,8 +372,14 @@ export function ImageToBase64Tool({ locale = 'pt-br' }: ImageToBase64ToolProps) 
             accept={fileInputAccept}
             multiple={false}
             onFilesSelected={(files) => {
-              setSourceFile(files[0] ?? null);
+              const nextFile = files[0] ?? null;
+              setSourceFile(nextFile);
               setCopied(false);
+
+              if (nextFile) {
+                trackEvent('tool_started', { tool: TOOL_ID.imageToBase64, locale });
+                trackEvent('file_uploaded', { tool: TOOL_ID.imageToBase64, locale });
+              }
             }}
             selectedFiles={sourceFile ? [sourceFile] : []}
             onRemoveFile={() => {

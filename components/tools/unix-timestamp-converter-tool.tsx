@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   getNowTimestamp,
@@ -113,6 +114,61 @@ export function UnixTimestampConverterTool({ locale = 'pt-br' }: UnixTimestampCo
   const copySecondsLabel = copied === 's' ? ui.copied : ui.copySeconds;
   const copyMsLabel = copied === 'ms' ? ui.copied : ui.copyMilliseconds;
 
+  // Analytics: `tool_started` once the user actually types into either
+  // direction, `tool_completed` per direction on a genuine new valid result,
+  // `tool_error` on real parse failures. Guarded with refs so live-as-you-type
+  // input doesn't spam events on every keystroke.
+  const hasStartedRef = useRef(false);
+  const lastForwardSecondsRef = useRef<number | undefined>(undefined);
+  const lastReverseSecondsRef = useRef<number | undefined>(undefined);
+  const forwardErroredRef = useRef(false);
+  const reverseErroredRef = useRef(false);
+
+  useEffect(() => {
+    if (hasStartedRef.current) {
+      return;
+    }
+
+    if (timestampInput.trim() !== '' || dateInput.trim() !== '' || timeInput.trim() !== '') {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.unixTimestampConverter, locale });
+    }
+  }, [timestampInput, dateInput, timeInput, locale]);
+
+  useEffect(() => {
+    if (!hasStartedRef.current) {
+      return;
+    }
+
+    if (forward.ok) {
+      if (lastForwardSecondsRef.current !== forward.seconds) {
+        lastForwardSecondsRef.current = forward.seconds;
+        trackEvent('tool_completed', { tool: TOOL_ID.unixTimestampConverter, locale, format: 'unix_to_date' });
+      }
+      forwardErroredRef.current = false;
+    } else if (timestampInput.trim() !== '' && !forwardErroredRef.current) {
+      forwardErroredRef.current = true;
+      trackEvent('tool_error', { tool: TOOL_ID.unixTimestampConverter, locale, error_type: 'invalid_input' });
+    }
+  }, [forward, timestampInput, locale]);
+
+  useEffect(() => {
+    if (!hasStartedRef.current) {
+      return;
+    }
+
+    if (reverse.ok) {
+      if (lastReverseSecondsRef.current !== reverse.seconds) {
+        lastReverseSecondsRef.current = reverse.seconds;
+        trackEvent('tool_completed', { tool: TOOL_ID.unixTimestampConverter, locale, format: 'date_to_unix' });
+      }
+      reverseErroredRef.current = false;
+    } else if ((dateInput.trim() !== '' || timeInput.trim() !== '') && !reverseErroredRef.current) {
+      reverseErroredRef.current = true;
+      trackEvent('tool_error', { tool: TOOL_ID.unixTimestampConverter, locale, error_type: 'invalid_input' });
+    }
+  }, [reverse, dateInput, timeInput, locale]);
+
   const copyValue = async (key: string, value?: string | number) => {
     if (value === undefined) return;
 
@@ -120,6 +176,11 @@ export function UnixTimestampConverterTool({ locale = 'pt-br' }: UnixTimestampCo
       await navigator.clipboard.writeText(String(value));
       setCopied(key);
       setTimeout(() => setCopied(''), 1300);
+      trackEvent('result_copied', {
+        tool: TOOL_ID.unixTimestampConverter,
+        locale,
+        field: key === 's' ? 'seconds' : 'milliseconds',
+      });
     } catch {
       setCopied('');
     }

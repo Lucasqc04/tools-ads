@@ -11,6 +11,7 @@ import { generateJsonCode } from '@/lib/json-codegen';
 import { formatBytes } from '@/lib/file-size';
 import { downloadBlob } from '@/lib/image-conversion';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type Notice = { tone: 'info' | 'success' | 'error'; text: string } | null;
 type QrCodeStylingInstance = {
@@ -29,8 +30,10 @@ const copyText = async (value: string, setNotice: (notice: Notice) => void, succ
   try {
     await navigator.clipboard.writeText(value);
     setNotice({ tone: 'success', text: success });
+    return true;
   } catch {
     setNotice({ tone: 'error', text: error });
+    return false;
   }
 };
 
@@ -125,8 +128,22 @@ export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<{ stop: () => void } | null>(null);
   const file = files[0];
+  const hasStartedRef = useRef(false);
+  const lastCompletedResultRef = useRef<string | null>(null);
 
   useEffect(() => () => controlsRef.current?.stop(), []);
+
+  const reportStarted = () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.qrCodeScanner, locale });
+  };
+
+  const reportCompletedOnce = (decodedText: string) => {
+    if (lastCompletedResultRef.current === decodedText) return;
+    lastCompletedResultRef.current = decodedText;
+    trackEvent('tool_completed', { tool: TOOL_ID.qrCodeScanner, locale });
+  };
 
   const scanImage = async () => {
     if (!file) return;
@@ -137,8 +154,10 @@ export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale
       const decoded = await reader.decodeFromImageUrl(url);
       setResult(decoded.getText());
       setNotice({ tone: 'success', text: ui.result });
+      reportCompletedOnce(decoded.getText());
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'QR nao encontrado.' });
+      trackEvent('tool_error', { tool: TOOL_ID.qrCodeScanner, locale, error_type: 'not_found' });
     } finally {
       URL.revokeObjectURL(url);
     }
@@ -146,15 +165,20 @@ export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale
 
   const startCamera = async () => {
     if (!videoRef.current) return;
+    reportStarted();
     const { BrowserQRCodeReader } = await import('@zxing/browser');
     const reader = new BrowserQRCodeReader();
     try {
       controlsRef.current = await reader.decodeFromVideoDevice(undefined, videoRef.current, (decoded) => {
-        if (decoded) setResult(decoded.getText());
+        if (decoded) {
+          setResult(decoded.getText());
+          reportCompletedOnce(decoded.getText());
+        }
       });
       setIsCameraActive(true);
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Falha ao abrir camera.' });
+      trackEvent('tool_error', { tool: TOOL_ID.qrCodeScanner, locale, error_type: 'processing_failed' });
     }
   };
 
@@ -169,7 +193,22 @@ export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale
       <ToolHeader title={ui.title} intro={ui.intro} />
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="space-y-3">
-          <FileUploadDropzone locale={locale} label={ui.image} accept="image/*" multiple={false} selectedFiles={files} onFilesSelected={(next) => setFiles(next.slice(0, 1))} onRemoveFile={() => setFiles([])} />
+          <FileUploadDropzone
+            locale={locale}
+            label={ui.image}
+            accept="image/*"
+            multiple={false}
+            selectedFiles={files}
+            onFilesSelected={(next) => {
+              setFiles(next.slice(0, 1));
+              const uploaded = next[0];
+              if (uploaded) {
+                reportStarted();
+                trackEvent('file_uploaded', { tool: TOOL_ID.qrCodeScanner, locale, file_type: uploaded.type || 'unknown' });
+              }
+            }}
+            onRemoveFile={() => setFiles([])}
+          />
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" disabled={!file} onClick={() => void scanImage()}>{ui.scanImage}</Button>
             <Button variant="secondary" onClick={() => (isCameraActive ? stopCamera() : void startCamera())}>{isCameraActive ? ui.stopCamera : ui.startCamera}</Button>
@@ -180,9 +219,37 @@ export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale
           <h4 className="text-sm font-semibold text-slate-900">{ui.result}</h4>
           <pre className="min-h-[180px] overflow-auto whitespace-pre-wrap break-all rounded-lg bg-white p-3 text-sm text-slate-800">{result || ui.empty}</pre>
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" disabled={!result} onClick={() => void copyText(result, setNotice, ui.copied)}>{ui.copy}</Button>
-            <Button variant="secondary" disabled={!result} onClick={() => downloadText(result, 'qr-code.txt')}>{ui.exportTxt}</Button>
-            <Button variant="secondary" disabled={!result} onClick={() => downloadText(JSON.stringify({ value: result }, null, 2), 'qr-code.json', 'application/json')}>{ui.exportJson}</Button>
+            <Button
+              variant="secondary"
+              disabled={!result}
+              onClick={() =>
+                void copyText(result, setNotice, ui.copied).then((ok) => {
+                  if (ok) trackEvent('result_copied', { tool: TOOL_ID.qrCodeScanner, locale, field: 'decoded_text' });
+                })
+              }
+            >
+              {ui.copy}
+            </Button>
+            <Button
+              variant="secondary"
+              disabled={!result}
+              onClick={() => {
+                downloadText(result, 'qr-code.txt');
+                trackEvent('result_downloaded', { tool: TOOL_ID.qrCodeScanner, locale, format: 'txt' });
+              }}
+            >
+              {ui.exportTxt}
+            </Button>
+            <Button
+              variant="secondary"
+              disabled={!result}
+              onClick={() => {
+                downloadText(JSON.stringify({ value: result }, null, 2), 'qr-code.json', 'application/json');
+                trackEvent('result_downloaded', { tool: TOOL_ID.qrCodeScanner, locale, format: 'json' });
+              }}
+            >
+              {ui.exportJson}
+            </Button>
           </div>
         </section>
       </div>
@@ -300,6 +367,13 @@ export function QrPayloadGeneratorTool({ locale = 'pt-br' }: Readonly<{ locale?:
   const [notice, setNotice] = useState<Notice>(null);
   const qrContainerRef = useRef<HTMLDivElement | null>(null);
   const qrRef = useRef<QrCodeStylingInstance | null>(null);
+  const hasStartedRef = useRef(false);
+
+  const reportStarted = () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.qrPayloadGenerator, locale });
+  };
 
   const buildPayload = () => {
     if (mode === 'wifi') {
@@ -324,22 +398,28 @@ export function QrPayloadGeneratorTool({ locale = 'pt-br' }: Readonly<{ locale?:
   };
 
   const generate = async () => {
+    reportStarted();
     const nextPayload = buildPayload();
     setPayload(nextPayload);
-    const { default: QRCodeStyling } = await import('qr-code-styling');
-    if (!qrRef.current) {
-      qrRef.current = new QRCodeStyling({
-        width: 260,
-        height: 260,
-        data: nextPayload,
-        dotsOptions: { color: '#0f172a', type: 'rounded' },
-        cornersSquareOptions: { type: 'extra-rounded' },
-        backgroundOptions: { color: '#ffffff' },
-        qrOptions: { errorCorrectionLevel: 'Q' },
-      }) as unknown as QrCodeStylingInstance;
-      if (qrContainerRef.current) qrRef.current?.append(qrContainerRef.current);
-    } else {
-      qrRef.current.update({ data: nextPayload });
+    try {
+      const { default: QRCodeStyling } = await import('qr-code-styling');
+      if (!qrRef.current) {
+        qrRef.current = new QRCodeStyling({
+          width: 260,
+          height: 260,
+          data: nextPayload,
+          dotsOptions: { color: '#0f172a', type: 'rounded' },
+          cornersSquareOptions: { type: 'extra-rounded' },
+          backgroundOptions: { color: '#ffffff' },
+          qrOptions: { errorCorrectionLevel: 'Q' },
+        }) as unknown as QrCodeStylingInstance;
+        if (qrContainerRef.current) qrRef.current?.append(qrContainerRef.current);
+      } else {
+        qrRef.current.update({ data: nextPayload });
+      }
+      trackEvent('tool_completed', { tool: TOOL_ID.qrPayloadGenerator, locale, format: mode });
+    } catch {
+      trackEvent('tool_error', { tool: TOOL_ID.qrPayloadGenerator, locale, error_type: 'processing_failed' });
     }
   };
 
@@ -349,6 +429,7 @@ export function QrPayloadGeneratorTool({ locale = 'pt-br' }: Readonly<{ locale?:
     if (!raw) return;
     const blob = raw instanceof Blob ? raw : new Blob([raw], { type: format === 'png' ? 'image/png' : 'image/svg+xml' });
     downloadBlob(blob, `qr-${mode}.${format}`);
+    trackEvent('result_downloaded', { tool: TOOL_ID.qrPayloadGenerator, locale, format });
   };
 
   return (
@@ -356,7 +437,7 @@ export function QrPayloadGeneratorTool({ locale = 'pt-br' }: Readonly<{ locale?:
       <ToolHeader title={ui.title} intro={ui.intro} />
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <section className="space-y-4">
-          <label className="space-y-2 block"><span className="text-sm font-semibold text-slate-800">{ui.mode}</span><Select value={mode} onChange={(event) => setMode(event.target.value as QrPayloadMode)}><option value="wifi">{ui.wifi}</option><option value="vcard">{ui.vcard}</option><option value="event">{ui.event}</option></Select></label>
+          <label className="space-y-2 block"><span className="text-sm font-semibold text-slate-800">{ui.mode}</span><Select value={mode} onChange={(event) => { const nextMode = event.target.value as QrPayloadMode; setMode(nextMode); trackEvent('mode_selected', { tool: TOOL_ID.qrPayloadGenerator, locale, mode: nextMode }); }}><option value="wifi">{ui.wifi}</option><option value="vcard">{ui.vcard}</option><option value="event">{ui.event}</option></Select></label>
           {mode === 'wifi' ? (
             <div className="grid gap-3 md:grid-cols-2">
               <Input value={ssid} onChange={(event) => setSsid(event.target.value)} placeholder={ui.ssid} />
@@ -382,7 +463,17 @@ export function QrPayloadGeneratorTool({ locale = 'pt-br' }: Readonly<{ locale?:
           )}
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => void generate()}>{ui.generate}</Button>
-            <Button variant="secondary" disabled={!payload} onClick={() => void copyText(payload, setNotice, ui.copied)}>{ui.copyPayload}</Button>
+            <Button
+              variant="secondary"
+              disabled={!payload}
+              onClick={() =>
+                void copyText(payload, setNotice, ui.copied).then((ok) => {
+                  if (ok) trackEvent('result_copied', { tool: TOOL_ID.qrPayloadGenerator, locale, field: 'qr_payload' });
+                })
+              }
+            >
+              {ui.copyPayload}
+            </Button>
             <Button variant="secondary" disabled={!payload} onClick={() => void downloadQr('png')}>{ui.downloadPng}</Button>
             <Button variant="secondary" disabled={!payload} onClick={() => void downloadQr('svg')}>{ui.downloadSvg}</Button>
           </div>
@@ -445,13 +536,23 @@ export function JsonTypeSchemaGeneratorTool({ locale = 'pt-br' }: Readonly<{ loc
   const [output, setOutput] = useState<ReturnType<typeof generateJsonCode> | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
   const activeOutput = output?.[tab] ?? '';
+  const hasStartedRef = useRef(false);
+  const tabFieldByTab = { typeScript: 'ts_type', zod: 'zod_schema', jsonSchema: 'json_schema' } as const;
+
+  const reportStartedOnce = () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.jsonToTypescript, locale });
+  };
 
   const generate = () => {
     try {
       setOutput(generateJsonCode(input, rootName));
       setNotice(null);
+      trackEvent('tool_completed', { tool: TOOL_ID.jsonToTypescript, locale });
     } catch {
       setNotice({ tone: 'error', text: ui.invalid });
+      trackEvent('tool_error', { tool: TOOL_ID.jsonToTypescript, locale, error_type: 'invalid_json' });
     }
   };
 
@@ -463,6 +564,7 @@ export function JsonTypeSchemaGeneratorTool({ locale = 'pt-br' }: Readonly<{ loc
       { name: `${rootName}.schema.json`, blob: new Blob([output.jsonSchema], { type: 'application/json' }) },
     ];
     await makeZip(entries, 'json-codegen.zip');
+    trackEvent('result_downloaded', { tool: TOOL_ID.jsonToTypescript, locale, format: 'zip' });
   };
 
   return (
@@ -471,7 +573,14 @@ export function JsonTypeSchemaGeneratorTool({ locale = 'pt-br' }: Readonly<{ loc
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="space-y-3">
           <label className="space-y-2 block"><span className="text-sm font-semibold text-slate-800">{ui.root}</span><Input value={rootName} onChange={(event) => setRootName(event.target.value)} /></label>
-          <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-[360px] font-mono text-xs" />
+          <Textarea
+            value={input}
+            onChange={(event) => {
+              setInput(event.target.value);
+              reportStartedOnce();
+            }}
+            className="min-h-[360px] font-mono text-xs"
+          />
         </section>
         <section className="space-y-3">
           <div className="flex flex-wrap gap-2">
@@ -482,7 +591,17 @@ export function JsonTypeSchemaGeneratorTool({ locale = 'pt-br' }: Readonly<{ loc
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={generate}>{ui.generate}</Button>
-        <Button variant="secondary" disabled={!activeOutput} onClick={() => void copyText(activeOutput, setNotice, ui.copied)}>{ui.copy}</Button>
+        <Button
+          variant="secondary"
+          disabled={!activeOutput}
+          onClick={() =>
+            void copyText(activeOutput, setNotice, ui.copied).then((ok) => {
+              if (ok) trackEvent('result_copied', { tool: TOOL_ID.jsonToTypescript, locale, field: tabFieldByTab[tab] });
+            })
+          }
+        >
+          {ui.copy}
+        </Button>
         <Button variant="secondary" disabled={!output} onClick={() => void exportZip()}>{ui.exportAll}</Button>
       </div>
       <NoticeBox notice={notice} />
@@ -536,8 +655,17 @@ export function CronGeneratorExplainerTool({ locale = 'pt-br' }: Readonly<{ loca
   const [localizedDescription, setLocalizedDescription] = useState('');
   const [runs, setRuns] = useState<string[]>([]);
   const [notice, setNotice] = useState<Notice>(null);
+  const hasStartedRef = useRef(false);
 
-  const explain = async () => {
+  // `isAutoRun` distinguishes the automatic mount-time explanation (default
+  // preset, not real user interaction) from explicit user-triggered runs
+  // (Explain button), so tool_started/tool_completed/tool_error only fire
+  // for genuine usage.
+  const explain = async (isAutoRun = false) => {
+    if (!isAutoRun && !hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.cronGenerator, locale });
+    }
     try {
       const cronstrue = (await import('cronstrue/i18n')).default;
       const parser = await import('cron-parser');
@@ -553,13 +681,15 @@ export function CronGeneratorExplainerTool({ locale = 'pt-br' }: Readonly<{ loca
       for (let index = 0; index < 8; index += 1) nextRuns.push(parsed.next().toDate().toLocaleString());
       setRuns(nextRuns);
       setNotice(null);
+      if (!isAutoRun) trackEvent('tool_completed', { tool: TOOL_ID.cronGenerator, locale });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Cron invalido.' });
+      if (!isAutoRun) trackEvent('tool_error', { tool: TOOL_ID.cronGenerator, locale, error_type: 'invalid_cron' });
     }
   };
 
   useEffect(() => {
-    void explain();
+    void explain(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -573,7 +703,16 @@ export function CronGeneratorExplainerTool({ locale = 'pt-br' }: Readonly<{ loca
       <div className="flex flex-wrap gap-2">{cronPresets.map((preset) => <Button key={preset} variant="secondary" onClick={() => setExpression(preset)}>{preset}</Button>)}</div>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => void explain()}>{ui.explain}</Button>
-        <Button variant="secondary" onClick={() => void copyText(expression, setNotice, ui.copied)}>{ui.copy}</Button>
+        <Button
+          variant="secondary"
+          onClick={() =>
+            void copyText(expression, setNotice, ui.copied).then((ok) => {
+              if (ok) trackEvent('result_copied', { tool: TOOL_ID.cronGenerator, locale, field: 'cron_expression' });
+            })
+          }
+        >
+          {ui.copy}
+        </Button>
       </div>
       <NoticeBox notice={notice} />
       <section className="grid gap-4 lg:grid-cols-2">
@@ -648,6 +787,15 @@ const streamTransform = async (file: File, mode: 'gzip' | 'deflate' | 'gunzip' |
   return await new Response(stream).blob();
 };
 
+/** Categorical file type for analytics (extension only, never the filename). */
+const resolveFileType = (items: File[]): string => {
+  if (items.length === 0) return 'unknown';
+  const types = new Set(
+    items.map((item) => item.type || item.name.split('.').pop()?.toLowerCase() || 'unknown'),
+  );
+  return types.size === 1 ? [...types][0] : 'multiple';
+};
+
 export function GzipDeflateZipTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLocale }>) {
   const ui = archiveUi[locale];
   const [files, setFiles] = useState<File[]>([]);
@@ -655,9 +803,25 @@ export function GzipDeflateZipTool({ locale = 'pt-br' }: Readonly<{ locale?: App
   const [notice, setNotice] = useState<Notice>(null);
   const directoryInputRef = useRef<HTMLInputElement | null>(null);
   const file = files[0];
+  const hasStartedRef = useRef(false);
+
+  const reportStarted = () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.gzipDeflateZip, locale });
+  };
+
+  const reportFilesUploaded = (items: File[]) => {
+    if (items.length === 0) return;
+    reportStarted();
+    trackEvent('file_uploaded', { tool: TOOL_ID.gzipDeflateZip, locale, file_type: resolveFileType(items) });
+  };
 
   const transform = async (mode: 'gzip' | 'deflate' | 'gunzip' | 'inflate') => {
     if (!file) return;
+    const format = mode === 'gzip' || mode === 'gunzip' ? 'gzip' : 'deflate';
+    const direction = mode === 'gzip' || mode === 'deflate' ? 'compress' : 'decompress';
+    trackEvent('mode_selected', { tool: TOOL_ID.gzipDeflateZip, locale, mode: format, direction });
     try {
       const blob = await streamTransform(file, mode);
       const outputName =
@@ -668,26 +832,37 @@ export function GzipDeflateZipTool({ locale = 'pt-br' }: Readonly<{ locale?: App
             : file.name.replace(/\.(gz|gzip|deflate)$/i, '') || 'arquivo';
       downloadBlob(blob, outputName);
       setNotice({ tone: 'success', text: ui.ready });
+      trackEvent('tool_completed', { tool: TOOL_ID.gzipDeflateZip, locale, mode: format, direction });
+      trackEvent('result_downloaded', { tool: TOOL_ID.gzipDeflateZip, locale, format: direction === 'compress' ? format : 'decompressed' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.gzipDeflateZip, locale, error_type: 'processing_failed' });
     }
   };
 
   const zipFiles = async () => {
     if (!files.length) return;
-    await makeZip(
-      files.map((item) => ({
-        name: (item as File & { webkitRelativePath?: string }).webkitRelativePath || item.name,
-        blob: item,
-      })),
-      'arquivos.zip',
-      password,
-    );
-    setNotice({ tone: 'success', text: ui.ready });
+    trackEvent('mode_selected', { tool: TOOL_ID.gzipDeflateZip, locale, mode: 'zip', direction: 'compress' });
+    try {
+      await makeZip(
+        files.map((item) => ({
+          name: (item as File & { webkitRelativePath?: string }).webkitRelativePath || item.name,
+          blob: item,
+        })),
+        'arquivos.zip',
+        password,
+      );
+      setNotice({ tone: 'success', text: ui.ready });
+      trackEvent('tool_completed', { tool: TOOL_ID.gzipDeflateZip, locale, mode: 'zip', direction: 'compress' });
+      trackEvent('result_downloaded', { tool: TOOL_ID.gzipDeflateZip, locale, format: 'zip' });
+    } catch {
+      trackEvent('tool_error', { tool: TOOL_ID.gzipDeflateZip, locale, error_type: 'processing_failed' });
+    }
   };
 
   const unzipFile = async () => {
     if (!file) return;
+    trackEvent('mode_selected', { tool: TOOL_ID.gzipDeflateZip, locale, mode: 'zip', direction: 'decompress' });
     try {
       const zip = await import('@zip.js/zip.js');
       const reader = new zip.ZipReader(new zip.BlobReader(file), { password: password || undefined });
@@ -701,16 +876,40 @@ export function GzipDeflateZipTool({ locale = 'pt-br' }: Readonly<{ locale?: App
       await reader.close();
       await makeZip(extracted, 'zip-extraido.zip');
       setNotice({ tone: 'success', text: ui.ready });
+      trackEvent('tool_completed', { tool: TOOL_ID.gzipDeflateZip, locale, mode: 'zip', direction: 'decompress' });
+      trackEvent('result_downloaded', { tool: TOOL_ID.gzipDeflateZip, locale, format: 'zip' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.gzipDeflateZip, locale, error_type: 'processing_failed' });
     }
   };
 
   return (
     <Card className="space-y-5">
       <ToolHeader title={ui.title} intro={ui.intro} />
-      <FileUploadDropzone locale={locale} label={ui.files} multiple selectedFiles={files} onFilesSelected={(next) => setFiles((current) => [...current, ...next])} onRemoveFile={(index) => setFiles((current) => current.filter((_, itemIndex) => itemIndex !== index))} />
-      <input ref={directoryInputRef} type="file" multiple className="hidden" onChange={(event) => setFiles(Array.from(event.target.files ?? []))} {...({ webkitdirectory: '', directory: '' } as Record<string, string>)} />
+      <FileUploadDropzone
+        locale={locale}
+        label={ui.files}
+        multiple
+        selectedFiles={files}
+        onFilesSelected={(next) => {
+          setFiles((current) => [...current, ...next]);
+          reportFilesUploaded(next);
+        }}
+        onRemoveFile={(index) => setFiles((current) => current.filter((_, itemIndex) => itemIndex !== index))}
+      />
+      <input
+        ref={directoryInputRef}
+        type="file"
+        multiple
+        className="hidden"
+        onChange={(event) => {
+          const next = Array.from(event.target.files ?? []);
+          setFiles(next);
+          reportFilesUploaded(next);
+        }}
+        {...({ webkitdirectory: '', directory: '' } as Record<string, string>)}
+      />
       <div className="grid gap-4 md:grid-cols-[1fr_auto]">
         <label className="space-y-2"><span className="text-sm font-semibold text-slate-800">{ui.password}</span><Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
         <Button variant="secondary" className="self-end" onClick={() => directoryInputRef.current?.click()}>{ui.directory}</Button>
@@ -772,18 +971,32 @@ export function SqlFormatterTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
   const [language, setLanguage] = useState('postgresql');
   const [keywordCase, setKeywordCase] = useState('upper');
   const [notice, setNotice] = useState<Notice>(null);
+  const hasStartedRef = useRef(false);
+
+  const reportStartedOnce = () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.sqlFormatter, locale });
+  };
 
   const formatSql = async () => {
+    reportStartedOnce();
     try {
       const mod = await import('sql-formatter');
       setOutput(mod.format(input, { language: language as never, keywordCase: keywordCase as never, tabWidth: 2 }));
       setNotice(null);
+      trackEvent('tool_completed', { tool: TOOL_ID.sqlFormatter, locale, mode: 'format' });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Erro.' });
+      trackEvent('tool_error', { tool: TOOL_ID.sqlFormatter, locale, error_type: 'invalid_sql' });
     }
   };
 
-  const minify = () => setOutput(input.replaceAll(/--.*$/gm, '').replaceAll(/\s+/g, ' ').trim());
+  const minify = () => {
+    reportStartedOnce();
+    setOutput(input.replaceAll(/--.*$/gm, '').replaceAll(/\s+/g, ' ').trim());
+    trackEvent('tool_completed', { tool: TOOL_ID.sqlFormatter, locale, mode: 'minify' });
+  };
   const valueToUse = output || input;
 
   return (
@@ -794,14 +1007,38 @@ export function SqlFormatterTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
         <label className="space-y-2"><span className="text-sm font-semibold text-slate-800">{ui.keywordCase}</span><Select value={keywordCase} onChange={(event) => setKeywordCase(event.target.value)}><option value="upper">UPPER</option><option value="lower">lower</option><option value="preserve">preserve</option></Select></label>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <Textarea value={input} onChange={(event) => setInput(event.target.value)} className="min-h-[360px] font-mono text-xs" />
+        <Textarea
+          value={input}
+          onChange={(event) => {
+            setInput(event.target.value);
+            reportStartedOnce();
+          }}
+          className="min-h-[360px] font-mono text-xs"
+        />
         <pre className="min-h-[360px] overflow-auto whitespace-pre-wrap rounded-xl border border-slate-200 bg-slate-950 p-4 text-xs text-slate-50">{valueToUse}</pre>
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => void formatSql()}>{ui.format}</Button>
         <Button variant="secondary" onClick={minify}>{ui.minify}</Button>
-        <Button variant="secondary" onClick={() => void copyText(valueToUse, setNotice, ui.copied)}>{ui.copy}</Button>
-        <Button variant="secondary" onClick={() => downloadText(valueToUse, 'query.sql', 'application/sql')}>{ui.exportSql}</Button>
+        <Button
+          variant="secondary"
+          onClick={() =>
+            void copyText(valueToUse, setNotice, ui.copied).then((ok) => {
+              if (ok) trackEvent('result_copied', { tool: TOOL_ID.sqlFormatter, locale, field: 'formatted_sql' });
+            })
+          }
+        >
+          {ui.copy}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            downloadText(valueToUse, 'query.sql', 'application/sql');
+            trackEvent('result_downloaded', { tool: TOOL_ID.sqlFormatter, locale, format: 'sql' });
+          }}
+        >
+          {ui.exportSql}
+        </Button>
       </div>
       <NoticeBox notice={notice} />
     </Card>

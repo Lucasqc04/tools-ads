@@ -132,6 +132,16 @@ npm run dev
 
 A aplicação ficará disponível em `http://localhost:3000`.
 
+### Google Tag Manager e GA4
+
+O container do GTM é carregado quando a variável pública abaixo estiver configurada:
+
+```bash
+NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
+```
+
+Em produção, cadastre a mesma variável em **Vercel → Project Settings → Environment Variables** e faça um novo deploy. O código não usa o Measurement ID do GA4 no repositório: ele deve ser configurado dentro do container GTM, para que eventos da `dataLayer` sejam encaminhados ao GA4.
+
 ### Verificações de qualidade
 
 ```bash

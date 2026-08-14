@@ -19,6 +19,7 @@ import {
   type RateFrequency,
 } from '@/lib/compound-interest';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type CompoundInterestToolProps = Readonly<{
   locale?: AppLocale;
@@ -632,7 +633,10 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
     inflationInput,
   ]);
 
-  const calculateInvestment = () => {
+  const calculateInvestment = (shouldTrack = true) => {
+    if (shouldTrack) {
+      trackEvent('tool_started', { tool: TOOL_ID.compoundInterest, locale, mode: 'invest' });
+    }
     const initialAmount = parseNumberInput(initialAmountInput);
     const monthlyContribution = parseNumberInput(monthlyContributionInput);
     const ratePercent = parseNumberInput(rateInput);
@@ -645,6 +649,9 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
       periodValue === null
     ) {
       setErrorMessage(ui.invalidInput);
+      if (shouldTrack) {
+        trackEvent('tool_error', { tool: TOOL_ID.compoundInterest, locale, error_type: 'validation_failed' });
+      }
       return;
     }
 
@@ -661,9 +668,13 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
     const result = buildCompoundProjection(payload);
     setProjectionResult(result);
     setErrorMessage('');
+    if (shouldTrack) {
+      trackEvent('tool_completed', { tool: TOOL_ID.compoundInterest, locale, mode: 'invest' });
+    }
   };
 
   const calculateGoal = () => {
+    trackEvent('tool_started', { tool: TOOL_ID.compoundInterest, locale, mode: 'goal' });
     const targetAmount = parseNumberInput(goalTargetInput);
     const initialAmount = parseNumberInput(goalInitialInput);
     const ratePercent = parseNumberInput(goalRateInput);
@@ -676,6 +687,7 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
       periodValue === null
     ) {
       setErrorMessage(ui.invalidInput);
+      trackEvent('tool_error', { tool: TOOL_ID.compoundInterest, locale, error_type: 'validation_failed' });
       return;
     }
 
@@ -702,9 +714,11 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
     setGoalContributionResult(monthlyContribution);
     setGoalProjectionResult(validationProjection);
     setErrorMessage('');
+    trackEvent('tool_completed', { tool: TOOL_ID.compoundInterest, locale, mode: 'goal' });
   };
 
   const calculateRate = () => {
+    trackEvent('tool_started', { tool: TOOL_ID.compoundInterest, locale, mode: 'rate' });
     const targetAmount = parseNumberInput(rateTargetInput);
     const initialAmount = parseNumberInput(rateInitialInput);
     const monthlyContribution = parseNumberInput(rateContributionInput);
@@ -717,6 +731,7 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
       periodValue === null
     ) {
       setErrorMessage(ui.invalidInput);
+      trackEvent('tool_error', { tool: TOOL_ID.compoundInterest, locale, error_type: 'validation_failed' });
       return;
     }
 
@@ -731,10 +746,11 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
 
     setRateResult(solved);
     setErrorMessage('');
+    trackEvent('tool_completed', { tool: TOOL_ID.compoundInterest, locale, mode: 'rate' });
   };
 
   useEffect(() => {
-    calculateInvestment();
+    calculateInvestment(false);
     // initial render hydration
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -787,6 +803,7 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
 
     try {
       await navigator.clipboard.writeText(value);
+      trackEvent('result_copied', { tool: TOOL_ID.compoundInterest, locale, field: 'summary' });
       setFeedbackMessage(ui.copied);
       globalThis.setTimeout(() => {
         setFeedbackMessage('');
@@ -812,6 +829,7 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
 
       const link = `${globalThis.location.origin}${globalThis.location.pathname}?${query.toString()}`;
       await navigator.clipboard.writeText(link);
+      trackEvent('result_shared', { tool: TOOL_ID.compoundInterest, locale, method: 'copy_link' });
       setFeedbackMessage(ui.copied);
       globalThis.setTimeout(() => {
         setFeedbackMessage('');
@@ -958,7 +976,7 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
           </label>
 
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={calculateInvestment}>
+            <Button variant="secondary" onClick={() => calculateInvestment()}>
               {ui.calculate}
             </Button>
             <Button

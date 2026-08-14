@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SearchableSelect } from '@/components/ui/searchable-select';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import { type AppLocale } from '@/lib/i18n/config';
 import {
   assets,
@@ -127,7 +128,49 @@ export function CryptoUnitConverterTool({
     [assetId, fromUnitId, toUnitId, ui.conversionMessages, value],
   );
 
+  // Analytics: this component is reused across every crypto pair page, so it
+  // always reports under the same TOOL_ID.cryptoUnitConverter (never a
+  // per-pair id). `tool_started` fires once on the first real interaction
+  // (typing a value, changing asset/units, inverting). `tool_completed` fires
+  // when the conversion becomes valid for a new asset/unit pair (not on every
+  // keystroke of the amount while the pair is unchanged). `tool_error` fires
+  // on genuinely invalid input.
+  const hasStartedRef = useRef(false);
+  const lastCompletedPairKeyRef = useRef<string | null>(null);
+  const hasErroredRef = useRef(false);
+
+  const markStarted = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.cryptoUnitConverter, locale });
+    }
+  };
+
+  useEffect(() => {
+    if (!hasStartedRef.current) {
+      return;
+    }
+
+    const pairKey = `${assetId}:${fromUnitId}:${toUnitId}`;
+
+    if (conversion.ok) {
+      if (lastCompletedPairKeyRef.current !== pairKey || hasErroredRef.current) {
+        lastCompletedPairKeyRef.current = pairKey;
+        trackEvent('tool_completed', {
+          tool: TOOL_ID.cryptoUnitConverter,
+          locale,
+          format: `${fromUnitId}_to_${toUnitId}`,
+        });
+      }
+      hasErroredRef.current = false;
+    } else if (value.trim() !== '' && !hasErroredRef.current) {
+      hasErroredRef.current = true;
+      trackEvent('tool_error', { tool: TOOL_ID.cryptoUnitConverter, locale, error_type: 'invalid_input' });
+    }
+  }, [conversion, assetId, fromUnitId, toUnitId, value, locale]);
+
   const handleAssetChange = (nextAsset: CryptoAssetId) => {
+    markStarted();
     const nextDefaults = getDefaultUnitsForAsset(nextAsset);
     setAssetId(nextAsset);
     setFromUnitId(nextDefaults.from);
@@ -136,9 +179,20 @@ export function CryptoUnitConverterTool({
   };
 
   const handleInvert = () => {
+    markStarted();
     setFromUnitId(toUnitId);
     setToUnitId(fromUnitId);
     setCopied(false);
+  };
+
+  const handleFromUnitChange = (nextValue: string) => {
+    markStarted();
+    setFromUnitId(nextValue);
+  };
+
+  const handleToUnitChange = (nextValue: string) => {
+    markStarted();
+    setToUnitId(nextValue);
   };
 
   const handleCopy = async () => {
@@ -150,6 +204,7 @@ export function CryptoUnitConverterTool({
       await navigator.clipboard.writeText(conversion.raw);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
+      trackEvent('result_copied', { tool: TOOL_ID.cryptoUnitConverter, locale, field: 'result' });
     } catch {
       setCopied(false);
     }
@@ -199,6 +254,7 @@ export function CryptoUnitConverterTool({
             placeholder={ui.valuePlaceholder}
             value={value}
             onChange={(event) => {
+              markStarted();
               setValue(event.target.value);
               setCopied(false);
             }}
@@ -221,7 +277,7 @@ export function CryptoUnitConverterTool({
           <span className="text-sm font-semibold text-slate-800">{ui.sourceUnit}</span>
           <SearchableSelect
             value={fromUnitId}
-            onValueChange={setFromUnitId}
+            onValueChange={handleFromUnitChange}
             options={unitOptions}
             searchPlaceholder="Buscar unidade de origem..."
             noResultsText="Nenhuma unidade encontrada."
@@ -236,7 +292,7 @@ export function CryptoUnitConverterTool({
           <span className="text-sm font-semibold text-slate-800">{ui.targetUnit}</span>
           <SearchableSelect
             value={toUnitId}
-            onValueChange={setToUnitId}
+            onValueChange={handleToUnitChange}
             options={unitOptions}
             searchPlaceholder="Buscar unidade de destino..."
             noResultsText="Nenhuma unidade encontrada."

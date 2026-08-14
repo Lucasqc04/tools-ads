@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { decodeBitcoinTransaction, inspectBitcoinAddress, type BitcoinReadonlyNe
 import { fetchRecommendedFeeRate } from '@/lib/bitcoin/mempool';
 import type { BitcoinNetworkId } from '@/lib/bitcoin/networks';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID, type ToolId } from '@/lib/analytics';
 
 type Notice = { tone: 'info' | 'success' | 'error'; text: string } | null;
 
@@ -24,10 +25,14 @@ const copyText = async (
   setNotice: (notice: Notice) => void,
   success: string,
   errorText = 'Copy failed.',
+  analytics?: { tool: ToolId; locale?: AppLocale; field: string },
 ) => {
   try {
     await navigator.clipboard.writeText(value);
     setNotice({ tone: 'success', text: success });
+    if (analytics) {
+      trackEvent('result_copied', { tool: analytics.tool, locale: analytics.locale, field: analytics.field });
+    }
   } catch {
     setNotice({ tone: 'error', text: errorText });
   }
@@ -206,6 +211,12 @@ export function DnsLookupDohTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
   const [filter, setFilter] = useState('');
   const [showMode, setShowMode] = useState<'all' | 'answers' | 'empty' | 'errors'>('all');
   const [notice, setNotice] = useState<Notice>(null);
+  const hasStartedRef = useRef(false);
+  const reportStartedOnce = () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.dnsLookup, locale });
+  };
   const filteredResults = useMemo(() => {
     const term = filter.trim().toLowerCase();
     return results.filter((item) => {
@@ -243,19 +254,28 @@ export function DnsLookupDohTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
   ].join('\n'), [results]);
 
   const lookup = async () => {
+    reportStartedOnce();
     try {
       const normalized = normalizeDomainInput(domain);
-      setResults([{ resolver, type: recordType, response: await queryDns(resolver, normalized, recordType) }]);
+      const response = await queryDns(resolver, normalized, recordType);
+      setResults([{ resolver, type: recordType, response }]);
       setNotice(null);
+      if ((response.Answer?.length ?? 0) > 0) {
+        trackEvent('tool_completed', { tool: TOOL_ID.dnsLookup, locale, record_type: recordType });
+      } else {
+        trackEvent('tool_error', { tool: TOOL_ID.dnsLookup, locale, error_type: 'not_found' });
+      }
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'DNS error.' });
+      trackEvent('tool_error', { tool: TOOL_ID.dnsLookup, locale, error_type: 'network_error' });
     }
   };
 
   const lookupAll = async () => {
+    reportStartedOnce();
     const normalized = normalizeDomainInput(domain);
     const queries = dnsResolvers.flatMap((resolverId) => dnsTypeOptions.map((type) => ({ resolver: resolverId, type })));
-    const next = await Promise.all(queries.map(async (query) => {
+    const next: DnsLookupResult[] = await Promise.all(queries.map(async (query): Promise<DnsLookupResult> => {
       try {
         return { ...query, response: await queryDns(query.resolver, normalized, query.type) };
       } catch (error) {
@@ -264,6 +284,12 @@ export function DnsLookupDohTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
     }));
     setResults(next);
     setNotice(null);
+    const hasAnyAnswers = next.some((item) => (item.response?.Answer?.length ?? 0) > 0);
+    if (hasAnyAnswers) {
+      trackEvent('tool_completed', { tool: TOOL_ID.dnsLookup, locale, record_type: 'all' });
+    } else {
+      trackEvent('tool_error', { tool: TOOL_ID.dnsLookup, locale, error_type: 'not_found' });
+    }
   };
 
   return (
@@ -271,15 +297,39 @@ export function DnsLookupDohTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
       <ToolHeader title={ui.title} intro={ui.intro} />
       <div className="grid gap-4 md:grid-cols-[1fr_160px_180px]">
         <label className="space-y-2"><span className="text-sm font-semibold text-slate-800">{ui.domain}</span><Input value={domain} onChange={(event) => setDomain(event.target.value)} /></label>
-        <label className="space-y-2"><span className="text-sm font-semibold text-slate-800">{ui.type}</span><Select value={recordType} onChange={(event) => setRecordType(event.target.value)}>{dnsTypeOptions.map((item) => <option key={item} value={item}>{item}</option>)}</Select></label>
+        <label className="space-y-2"><span className="text-sm font-semibold text-slate-800">{ui.type}</span><Select value={recordType} onChange={(event) => { const nextType = event.target.value; setRecordType(nextType); trackEvent('mode_selected', { tool: TOOL_ID.dnsLookup, locale, mode: nextType }); }}>{dnsTypeOptions.map((item) => <option key={item} value={item}>{item}</option>)}</Select></label>
         <label className="space-y-2"><span className="text-sm font-semibold text-slate-800">{ui.resolver}</span><Select value={resolver} onChange={(event) => setResolver(event.target.value as DnsResolver)}><option value="cloudflare">Cloudflare</option><option value="google">Google</option></Select></label>
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => void lookup()}>{ui.lookup}</Button>
         <Button variant="secondary" onClick={() => void lookupAll()}>{ui.lookupAll}</Button>
-        <Button variant="secondary" disabled={!results.length} onClick={() => void copyText(json, setNotice, ui.copied, ui.copyError)}>{ui.copy}</Button>
-        <Button variant="secondary" disabled={!results.length} onClick={() => downloadText(json, 'dns-lookup.json', 'application/json')}>{ui.exportJson}</Button>
-        <Button variant="secondary" disabled={!results.length} onClick={() => downloadText(csv, 'dns-lookup.csv', 'text/csv')}>{ui.exportCsv}</Button>
+        <Button
+          variant="secondary"
+          disabled={!results.length}
+          onClick={() => void copyText(json, setNotice, ui.copied, ui.copyError, { tool: TOOL_ID.dnsLookup, locale, field: 'dns_records' })}
+        >
+          {ui.copy}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={!results.length}
+          onClick={() => {
+            downloadText(json, 'dns-lookup.json', 'application/json');
+            trackEvent('result_downloaded', { tool: TOOL_ID.dnsLookup, locale, format: 'json' });
+          }}
+        >
+          {ui.exportJson}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={!results.length}
+          onClick={() => {
+            downloadText(csv, 'dns-lookup.csv', 'text/csv');
+            trackEvent('result_downloaded', { tool: TOOL_ID.dnsLookup, locale, format: 'csv' });
+          }}
+        >
+          {ui.exportCsv}
+        </Button>
       </div>
       <NoticeBox notice={notice} />
       {results.length ? (
@@ -464,6 +514,7 @@ export function BitcoinFeeMempoolTool({ locale = 'pt-br' }: Readonly<{ locale?: 
   const [selectedPriority, setSelectedPriority] = useState('halfHourFee');
   const [fees, setFees] = useState<Record<string, number> | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
+  const hasStartedRef = useRef(false);
   const estimatedVsize = estimateBitcoinVsize(profile, Number(inputs) || 1, Number(outputs) || 1, vsize);
 
   const rows = useMemo(() => {
@@ -488,12 +539,18 @@ export function BitcoinFeeMempoolTool({ locale = 'pt-br' }: Readonly<{ locale?: 
   const json = JSON.stringify({ network, profile, inputs, outputs, recipient, amountBtc: sendAmount, vsize: estimatedVsize, selected: selectedRow, totalSats, rows }, null, 2);
 
   const refresh = async () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.bitcoinFeeCalculator, locale });
+    }
     try {
       const next = await fetchRecommendedFeeRate(network);
       setFees({ ...next, customFee: Number(customFee) || next.hourFee });
       setNotice(null);
+      trackEvent('tool_completed', { tool: TOOL_ID.bitcoinFeeCalculator, locale, network });
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Mempool error.' });
+      trackEvent('tool_error', { tool: TOOL_ID.bitcoinFeeCalculator, locale, error_type: 'network_error' });
     }
   };
 
@@ -530,8 +587,21 @@ export function BitcoinFeeMempoolTool({ locale = 'pt-br' }: Readonly<{ locale?: 
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => void refresh()}>{ui.refresh}</Button>
-        <Button variant="secondary" onClick={() => void copyText(json, setNotice, ui.copied, ui.copyError)}>{ui.copy}</Button>
-        <Button variant="secondary" onClick={() => downloadText(json, 'bitcoin-fees.json', 'application/json')}>{ui.exportJson}</Button>
+        <Button
+          variant="secondary"
+          onClick={() => void copyText(json, setNotice, ui.copied, ui.copyError, { tool: TOOL_ID.bitcoinFeeCalculator, locale, field: 'fee_summary' })}
+        >
+          {ui.copy}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            downloadText(json, 'bitcoin-fees.json', 'application/json');
+            trackEvent('result_downloaded', { tool: TOOL_ID.bitcoinFeeCalculator, locale, format: 'json' });
+          }}
+        >
+          {ui.exportJson}
+        </Button>
       </div>
       <NoticeBox notice={notice} />
       <div className="overflow-x-auto rounded-xl border border-slate-200">
@@ -594,6 +664,12 @@ export function BitcoinAddressTxDecoderTool({ locale = 'pt-br' }: Readonly<{ loc
   const [addressResult, setAddressResult] = useState<ReturnType<typeof inspectBitcoinAddress> | null>(null);
   const [txResult, setTxResult] = useState<BitcoinTxDecodeResult | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
+  const hasStartedRef = useRef(false);
+  const reportStartedOnce = () => {
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.bitcoinAddressTxDecoder, locale });
+  };
   const json = JSON.stringify({ address: addressResult, transaction: txResult }, null, 2);
 
   return (
@@ -602,17 +678,60 @@ export function BitcoinAddressTxDecoderTool({ locale = 'pt-br' }: Readonly<{ loc
       <label className="space-y-2 block"><span className="text-sm font-semibold text-slate-800">{ui.network}</span><Select value={network} onChange={(event) => setNetwork(event.target.value as BitcoinReadonlyNetwork)}><option value="mainnet">Mainnet</option><option value="testnet">Testnet</option></Select></label>
       <section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
         <label className="space-y-2 block"><span className="text-sm font-semibold text-slate-800">{ui.address}</span><Input value={addressInput} onChange={(event) => setAddressInput(event.target.value)} className="font-mono" /></label>
-        <Button variant="secondary" onClick={() => setAddressResult(inspectBitcoinAddress(addressInput, network))}>{ui.inspect}</Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            reportStartedOnce();
+            const inspected = inspectBitcoinAddress(addressInput, network);
+            setAddressResult(inspected);
+            if (inspected.ok) {
+              trackEvent('tool_completed', { tool: TOOL_ID.bitcoinAddressTxDecoder, locale, action: 'address', result_type: inspected.type });
+            } else {
+              trackEvent('tool_error', { tool: TOOL_ID.bitcoinAddressTxDecoder, locale, action: 'address', error_type: 'invalid_input' });
+            }
+          }}
+        >
+          {ui.inspect}
+        </Button>
         {addressResult ? <pre className={`overflow-auto rounded-lg p-3 text-xs ${addressResult.ok ? 'bg-emerald-50 text-emerald-900' : 'bg-red-50 text-red-900'}`}>{JSON.stringify(addressResult, null, 2)}</pre> : null}
       </section>
       <section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
         <label className="space-y-2 block"><span className="text-sm font-semibold text-slate-800">{ui.tx}</span><Textarea value={txHex} onChange={(event) => setTxHex(event.target.value)} className="min-h-[180px] font-mono text-xs" /></label>
-        <Button variant="secondary" onClick={() => setTxResult(decodeBitcoinTransaction(txHex, network))}>{ui.decode}</Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            reportStartedOnce();
+            const decoded = decodeBitcoinTransaction(txHex, network);
+            setTxResult(decoded);
+            if (decoded.ok) {
+              trackEvent('tool_completed', { tool: TOOL_ID.bitcoinAddressTxDecoder, locale, action: 'transaction' });
+            } else {
+              trackEvent('tool_error', { tool: TOOL_ID.bitcoinAddressTxDecoder, locale, action: 'transaction', error_type: 'invalid_input' });
+            }
+          }}
+        >
+          {ui.decode}
+        </Button>
         {txResult ? <pre className={`max-h-[460px] overflow-auto rounded-lg p-3 text-xs ${txResult.ok ? 'bg-white text-slate-800' : 'bg-red-50 text-red-900'}`}>{JSON.stringify(txResult, null, 2)}</pre> : null}
       </section>
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" disabled={!addressResult && !txResult} onClick={() => void copyText(json, setNotice, ui.copied, ui.copyError)}>{ui.copyJson}</Button>
-        <Button variant="secondary" disabled={!addressResult && !txResult} onClick={() => downloadText(json, 'bitcoin-decoder.json', 'application/json')}>{ui.exportJson}</Button>
+        <Button
+          variant="secondary"
+          disabled={!addressResult && !txResult}
+          onClick={() => void copyText(json, setNotice, ui.copied, ui.copyError, { tool: TOOL_ID.bitcoinAddressTxDecoder, locale, field: 'decoded_json' })}
+        >
+          {ui.copyJson}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={!addressResult && !txResult}
+          onClick={() => {
+            downloadText(json, 'bitcoin-decoder.json', 'application/json');
+            trackEvent('result_downloaded', { tool: TOOL_ID.bitcoinAddressTxDecoder, locale, format: 'json' });
+          }}
+        >
+          {ui.exportJson}
+        </Button>
       </div>
       <NoticeBox notice={notice} />
     </Card>

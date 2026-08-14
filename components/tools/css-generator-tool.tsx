@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 // ---------- TYPES ----------
 
@@ -1000,9 +1001,30 @@ export function CssGeneratorTool({ locale = 'pt-br', initialCategory = 'presets'
 
   const previewRef = useRef<HTMLDivElement>(null);
 
+  // Analytics: a real customization of the generator options is the actual
+  // "start of use" for this tool. Since the CSS snippet regenerates live and
+  // deterministically (no failure state), the first customization also
+  // counts as the tool's core purpose succeeding ("a CSS snippet was
+  // generated"). Both guarded to fire only once per session, never per
+  // keystroke/slider-drag.
+  const hasStartedRef = useRef(false);
+  const hasCompletedRef = useRef(false);
+
+  const reportUsage = useCallback(() => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.cssGenerator, locale });
+    }
+    if (!hasCompletedRef.current) {
+      hasCompletedRef.current = true;
+      trackEvent('tool_completed', { tool: TOOL_ID.cssGenerator, locale });
+    }
+  }, [locale]);
+
   const update = useCallback((partial: Partial<CssState>) => {
+    reportUsage();
     setState((prev) => ({ ...prev, ...partial }));
-  }, []);
+  }, [reportUsage]);
 
   const removeShadowLayer = useCallback((layerId: string) => {
     update({ shadowLayers: state.shadowLayers.filter((l) => l.id !== layerId) });
@@ -1087,12 +1109,24 @@ export function CssGeneratorTool({ locale = 'pt-br', initialCategory = 'presets'
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(codeOutput);
     setCopied(true);
+    trackEvent('result_copied', { tool: TOOL_ID.cssGenerator, locale, field: codeTab });
     setTimeout(() => setCopied(false), 2000);
-  }, [codeOutput]);
+  }, [codeOutput, codeTab, locale]);
 
   const applyPreset = useCallback((preset: Preset) => {
+    reportUsage();
     setState(() => ({ ...DEFAULT_STATE, ...preset.state }));
-  }, []);
+  }, [reportUsage]);
+
+  const handleCategoryChange = useCallback((cat: CategoryId) => {
+    setCategory(cat);
+    trackEvent('mode_selected', { tool: TOOL_ID.cssGenerator, locale, mode: cat });
+  }, [locale]);
+
+  const handleCodeTabChange = useCallback((tab: CodeTab) => {
+    setCodeTab(tab);
+    trackEvent('format_selected', { tool: TOOL_ID.cssGenerator, locale, format: tab });
+  }, [locale]);
 
   const handleReset = useCallback(() => {
     setState({ ...DEFAULT_STATE });
@@ -1450,7 +1484,7 @@ export function CssGeneratorTool({ locale = 'pt-br', initialCategory = 'presets'
           {categoryList.map((cat) => (
             <button
               key={cat}
-              onClick={() => setCategory(cat)}
+              onClick={() => handleCategoryChange(cat)}
               className={`whitespace-nowrap px-3 py-2 text-xs font-medium transition ${category === cat ? 'border-b-2 border-brand-600 text-brand-600' : 'text-slate-500 hover:text-slate-700'}`}
             >
               {labels.categories[cat]}
@@ -1467,7 +1501,7 @@ export function CssGeneratorTool({ locale = 'pt-br', initialCategory = 'presets'
         <div className="border-t border-slate-200 bg-slate-50 p-4">
           <div className="mb-2 flex gap-1">
             {(Object.keys(labels.codeTab) as CodeTab[]).map((tab) => (
-              <button key={tab} onClick={() => setCodeTab(tab)} className={`rounded px-2 py-1 text-xs font-medium ${codeTab === tab ? 'bg-brand-600 text-white' : 'bg-white text-slate-600'}`}>{labels.codeTab[tab]}</button>
+              <button key={tab} onClick={() => handleCodeTabChange(tab)} className={`rounded px-2 py-1 text-xs font-medium ${codeTab === tab ? 'bg-brand-600 text-white' : 'bg-white text-slate-600'}`}>{labels.codeTab[tab]}</button>
             ))}
           </div>
           <pre className="max-h-[200px] overflow-auto rounded-lg bg-slate-900 p-3 text-xs text-slate-100">
@@ -1488,7 +1522,7 @@ export function CssGeneratorTool({ locale = 'pt-br', initialCategory = 'presets'
             {categoryList.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`rounded-md px-2 py-1 text-xs font-medium transition ${category === cat ? 'bg-brand-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
               >
                 {labels.categories[cat]}
@@ -1540,7 +1574,7 @@ export function CssGeneratorTool({ locale = 'pt-br', initialCategory = 'presets'
               <h3 className="text-xs font-semibold text-slate-700">{labels.codeTitle}</h3>
               <div className="ml-auto flex gap-1">
                 {(Object.keys(labels.codeTab) as CodeTab[]).map((tab) => (
-                  <button key={tab} onClick={() => setCodeTab(tab)} className={`rounded px-2 py-1 text-xs font-medium transition ${codeTab === tab ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'}`}>{labels.codeTab[tab]}</button>
+                  <button key={tab} onClick={() => handleCodeTabChange(tab)} className={`rounded px-2 py-1 text-xs font-medium transition ${codeTab === tab ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'}`}>{labels.codeTab[tab]}</button>
                 ))}
               </div>
             </div>

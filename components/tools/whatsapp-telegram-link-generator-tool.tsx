@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import type { AppLocale } from '@/lib/i18n/config';
 import { generateMessageLinks } from '@/lib/message-link-generator';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type WhatsAppTelegramLinkGeneratorToolProps = Readonly<{ locale?: AppLocale }>;
 
@@ -136,6 +137,7 @@ export function WhatsAppTelegramLinkGeneratorTool({ locale = 'pt-br' }: WhatsApp
   const [message, setMessage] = useState('');
   const [generated, setGenerated] = useState<ReturnType<typeof generateMessageLinks> | null>(null);
   const [copyKey, setCopyKey] = useState<'whatsapp' | 'telegram' | null>(null);
+  const hasStartedRef = useRef(false);
 
   const parsedTargetHint = useMemo(() => {
     if (!generated?.target) {
@@ -164,8 +166,31 @@ export function WhatsAppTelegramLinkGeneratorTool({ locale = 'pt-br' }: WhatsApp
   }, [generated, ui.invalidTarget, ui.whatsappNeedsPhone]);
 
   const generate = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.whatsappTelegramLinkGenerator, locale });
+    }
+
     setCopyKey(null);
-    setGenerated(generateMessageLinks(target, message));
+    const result = generateMessageLinks(target, message);
+    setGenerated(result);
+
+    if (result.errors.includes('invalid-target')) {
+      trackEvent('tool_error', {
+        tool: TOOL_ID.whatsappTelegramLinkGenerator,
+        locale,
+        error_type: 'invalid_input',
+      });
+      return;
+    }
+
+    trackEvent('tool_completed', {
+      tool: TOOL_ID.whatsappTelegramLinkGenerator,
+      locale,
+      target_kind: result.target?.kind,
+      whatsapp_generated: Boolean(result.whatsappLink),
+      telegram_generated: Boolean(result.telegramLink),
+    });
   };
 
   const clear = () => {
@@ -180,6 +205,11 @@ export function WhatsAppTelegramLinkGeneratorTool({ locale = 'pt-br' }: WhatsApp
       await navigator.clipboard.writeText(value);
       setCopyKey(key);
       setTimeout(() => setCopyKey(null), 1200);
+      trackEvent('result_copied', {
+        tool: TOOL_ID.whatsappTelegramLinkGenerator,
+        locale,
+        field: `${key}_link`,
+      });
     } catch {
       setCopyKey(null);
     }

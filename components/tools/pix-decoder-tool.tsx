@@ -33,6 +33,7 @@ import {
   type PixKeyType,
   type PixValidationResult,
 } from '@/lib/pix-emv';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 // ---------- TYPES ----------
 
@@ -125,6 +126,44 @@ function t(key: string, locale: AppLocale): string {
   return ui[key]?.[locale] ?? ui[key]?.['pt-br'] ?? key;
 }
 
+// ---------- ANALYTICS HELPERS ----------
+// Map internal, non-sensitive identifiers (copy keys, validation status, file
+// extensions) to the categorical values used in trackEvent params. None of
+// these ever carry the actual payload/field value the user typed or pasted.
+
+/** Maps a `copyToClipboard` `key` argument to a generic `field` label. */
+function resolveCopyField(key: string): string {
+  if (key.startsWith('field-')) return 'field_value';
+  if (key.startsWith('tree-')) return 'tree_value';
+  switch (key) {
+    case 'gen-payload':
+    case 'validate-payload':
+    case 'export-payload':
+      return 'pix_payload';
+    case 'qr-payload':
+      return 'qr_payload';
+    case 'fixed-payload':
+      return 'fixed_payload';
+    case 'export-json':
+      return 'export_json';
+    default:
+      return 'unknown';
+  }
+}
+
+/** Maps a downloaded filename to a generic `format` label (e.g. "txt", "json"). */
+function resolveDownloadFormat(filename: string): string {
+  const ext = filename.split('.').pop();
+  return ext ? ext.toLowerCase() : 'unknown';
+}
+
+/** Maps a `PixValidationResult['status']` to a normalized `error_type`. */
+function resolveValidationErrorType(status: PixValidationResult['status']): string {
+  if (status === 'crc-invalid') return 'crc_invalid';
+  if (status === 'not-pix') return 'not_pix';
+  return 'invalid_pix';
+}
+
 // ---------- FIELD CATEGORY COLORS ----------
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; label: string }> = {
@@ -164,12 +203,22 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
   const [qrBg, setQrBg] = useState('#ffffff');
   const qrCanvasRef = useRef<HTMLDivElement>(null);
 
+  // Analytics: `tool_started` fires once per mount, the first time the user
+  // either clicks "Generate" or pastes something that resolves as an actual
+  // Pix payload. `lastReportedResultRef`/`lastReportedErrorRef` remember the
+  // payload string that was last reported so the effect-driven events below
+  // don't refire on unrelated re-renders, only on a genuinely new payload.
+  const hasStartedRef = useRef(false);
+  const lastReportedResultRef = useRef<string | null>(null);
+  const lastReportedErrorRef = useRef<string | null>(null);
+
   const copyToClipboard = useCallback((text: string, key: string) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedKey(key);
       setTimeout(() => setCopiedKey(null), 1500);
+      trackEvent('result_copied', { tool: TOOL_ID.pixDecoder, locale, field: resolveCopyField(key) });
     });
-  }, []);
+  }, [locale]);
 
   const downloadFile = useCallback((content: string, filename: string, type: string) => {
     const blob = new Blob([content], { type });
@@ -179,19 +228,58 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
-  }, []);
+    trackEvent('result_downloaded', { tool: TOOL_ID.pixDecoder, locale, format: resolveDownloadFormat(filename) });
+  }, [locale]);
 
   // Auto-validate when payload changes
   useEffect(() => {
-    if (inputPayload.trim()) {
-      setValidationResult(validatePixPayload(inputPayload));
-    } else {
+    if (!inputPayload.trim()) {
       setValidationResult(null);
+      lastReportedResultRef.current = null;
+      lastReportedErrorRef.current = null;
+      return;
     }
-  }, [inputPayload]);
+
+    const result = validatePixPayload(inputPayload);
+    setValidationResult(result);
+
+    // (b) pasted/typed a payload that actually looks like Pix.
+    if (result.isPix && !hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.pixDecoder, locale });
+    }
+
+    const succeeded = result.status === 'valid' || result.status === 'valid-warnings';
+    if (succeeded) {
+      if (lastReportedResultRef.current !== inputPayload) {
+        lastReportedResultRef.current = inputPayload;
+        lastReportedErrorRef.current = null;
+        trackEvent('tool_completed', {
+          tool: TOOL_ID.pixDecoder,
+          locale,
+          result_type: 'validated',
+          pix_type: result.type,
+        });
+      }
+    } else if (lastReportedErrorRef.current !== inputPayload) {
+      lastReportedErrorRef.current = inputPayload;
+      lastReportedResultRef.current = null;
+      trackEvent('tool_error', {
+        tool: TOOL_ID.pixDecoder,
+        locale,
+        error_type: resolveValidationErrorType(result.status),
+      });
+    }
+  }, [inputPayload, locale]);
 
   // Generate handler
   const handleGenerate = useCallback(() => {
+    // (a) user clicks "Gerar Pix Copia e Cola" — real start of the flow.
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.pixDecoder, locale });
+    }
+
     const input: PixGeneratorInput = {
       type: genMode,
       keyType: genKeyType,
@@ -207,13 +295,36 @@ export function PixDecoderTool({ locale = 'pt-br', initialTab = 'generate' }: Pi
     const validation = validatePixPayload(result.payload);
     setGenResult(result);
     if (result.payload) {
+      // Report success/error based on the same validation used below so the
+      // auto-validate effect (triggered by setInputPayload right after) sees
+      // the refs already up to date and doesn't double-report this payload.
+      const succeeded = validation.status === 'valid' || validation.status === 'valid-warnings';
+      if (succeeded) {
+        lastReportedResultRef.current = result.payload;
+        lastReportedErrorRef.current = null;
+        trackEvent('tool_completed', {
+          tool: TOOL_ID.pixDecoder,
+          locale,
+          result_type: 'generated',
+          gen_mode: genMode,
+        });
+      } else {
+        lastReportedErrorRef.current = result.payload;
+        lastReportedResultRef.current = null;
+        trackEvent('tool_error', {
+          tool: TOOL_ID.pixDecoder,
+          locale,
+          error_type: resolveValidationErrorType(validation.status),
+        });
+      }
+
       setInputPayload(result.payload);
       setValidationResult(validation);
       if (result.isValid && validation.isPix && result.issues.length === 0) {
         setActiveTab('validate');
       }
     }
-  }, [genMode, genKeyType, genKey, genUrl, genName, genCity, genAmount, genTxid, genInfo]);
+  }, [genMode, genKeyType, genKey, genUrl, genName, genCity, genAmount, genTxid, genInfo, locale]);
 
   const handleReset = useCallback(() => {
     setGenMode('static');
@@ -965,11 +1076,13 @@ function QrCodeTab({ locale, payload, qrSize, setQrSize, qrColor, setQrColor, qr
 
   const handleDownloadPng = useCallback(() => {
     qrInstanceRef.current?.download({ extension: 'png', name: 'pix-qrcode' });
-  }, []);
+    trackEvent('result_downloaded', { tool: TOOL_ID.pixDecoder, locale, format: 'png' });
+  }, [locale]);
 
   const handleDownloadSvg = useCallback(() => {
     qrInstanceRef.current?.download({ extension: 'svg', name: 'pix-qrcode' });
-  }, []);
+    trackEvent('result_downloaded', { tool: TOOL_ID.pixDecoder, locale, format: 'svg' });
+  }, [locale]);
 
   if (!payload.trim()) {
     return (

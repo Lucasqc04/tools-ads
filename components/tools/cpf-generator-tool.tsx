@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { generateValidCpfList, type GenerateCpfOptions } from '@/lib/cpf';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type CpfGeneratorToolProps = Readonly<{
   locale?: AppLocale;
@@ -134,11 +135,17 @@ export function CpfGeneratorTool({ locale = 'pt-br' }: CpfGeneratorToolProps) {
   const [errorMessage, setErrorMessage] = useState('');
   const [copiedAll, setCopiedAll] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const hasStartedRef = useRef(false);
 
   const canCopyAll = cpfs.length > 0;
   const countLabel = useMemo(() => ui.generatedCount(cpfs.length), [cpfs.length, ui]);
 
   const generateCpfs = () => {
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.cpfGenerator, locale });
+    }
+
     const quantity = parseQuantity(quantityInput);
 
     if (quantity === null) {
@@ -146,6 +153,7 @@ export function CpfGeneratorTool({ locale = 'pt-br' }: CpfGeneratorToolProps) {
       setCpfs([]);
       setCopiedAll(false);
       setCopiedIndex(null);
+      trackEvent('tool_error', { tool: TOOL_ID.cpfGenerator, locale, error_type: 'invalid_input' });
       return;
     }
 
@@ -159,6 +167,12 @@ export function CpfGeneratorTool({ locale = 'pt-br' }: CpfGeneratorToolProps) {
     setErrorMessage('');
     setCopiedAll(false);
     setCopiedIndex(null);
+    trackEvent('tool_completed', {
+      tool: TOOL_ID.cpfGenerator,
+      locale,
+      count: quantity,
+      format: withPunctuation ? 'with_punctuation' : 'without_punctuation',
+    });
   };
 
   const handleCopyAll = async () => {
@@ -171,6 +185,7 @@ export function CpfGeneratorTool({ locale = 'pt-br' }: CpfGeneratorToolProps) {
       setCopiedAll(true);
       setCopiedIndex(null);
       setTimeout(() => setCopiedAll(false), 1800);
+      trackEvent('result_copied', { tool: TOOL_ID.cpfGenerator, locale, field: 'cpf', scope: 'all' });
     } catch {
       setErrorMessage(ui.copyError);
     }
@@ -182,6 +197,7 @@ export function CpfGeneratorTool({ locale = 'pt-br' }: CpfGeneratorToolProps) {
       setCopiedAll(false);
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 1800);
+      trackEvent('result_copied', { tool: TOOL_ID.cpfGenerator, locale, field: 'cpf', scope: 'single' });
     } catch {
       setErrorMessage(ui.copyError);
     }

@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   buildDiffReport,
@@ -177,8 +178,27 @@ export function TextDiffTool({ locale = 'pt-br' }: TextDiffToolProps) {
 
   const finalText = useMemo(() => textB || '', [textB]);
 
+  // Analytics: `tool_started` once either side has real text (typed, pasted,
+  // or uploaded). Comparison here only happens on an explicit "Compare"
+  // click, so `tool_completed` fires once per real click (no live-as-you-type
+  // guard needed) with the diff mode as metadata. There is no meaningful
+  // "invalid input" case for a text diff, so no `tool_error` is emitted.
+  const hasStartedRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasStartedRef.current && (textA.trim() !== '' || textB.trim() !== '')) {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.textDiff, locale });
+    }
+  }, [textA, textB, locale]);
+
   const compareNow = () => {
-    setResult(compareTexts(textA, textB, options));
+    const diffResult = compareTexts(textA, textB, options);
+    setResult(diffResult);
+
+    if (textA.trim() !== '' || textB.trim() !== '') {
+      trackEvent('tool_completed', { tool: TOOL_ID.textDiff, locale, format: options.mode });
+    }
   };
 
   const copyToClipboard = async (key: string, value: string) => {
@@ -190,6 +210,7 @@ export function TextDiffTool({ locale = 'pt-br' }: TextDiffToolProps) {
       await navigator.clipboard.writeText(value);
       setCopiedKey(key);
       setTimeout(() => setCopiedKey(''), 1200);
+      trackEvent('result_copied', { tool: TOOL_ID.textDiff, locale, field: key });
     } catch {
       setCopiedKey('');
     }
@@ -435,18 +456,25 @@ export function TextDiffTool({ locale = 'pt-br' }: TextDiffToolProps) {
           ) : null}
 
           <div className="flex flex-wrap gap-2">
-            <Button variant="ghost" onClick={() => downloadText('text-diff-report.txt', buildDiffReport(result))}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                trackEvent('result_downloaded', { tool: TOOL_ID.textDiff, locale, format: 'txt' });
+                downloadText('text-diff-report.txt', buildDiffReport(result));
+              }}
+            >
               {ui.exportTxt}
             </Button>
             <Button
               variant="ghost"
-              onClick={() =>
+              onClick={() => {
+                trackEvent('result_downloaded', { tool: TOOL_ID.textDiff, locale, format: 'json' });
                 downloadText(
                   'text-diff-report.json',
                   JSON.stringify(result, null, 2),
                   'application/json;charset=utf-8',
-                )
-              }
+                );
+              }}
             >
               {ui.exportJson}
             </Button>

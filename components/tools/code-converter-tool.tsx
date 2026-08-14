@@ -16,6 +16,7 @@ import {
   getLanguageLabel,
 } from '@/lib/code-converter';
 import type { CodeStats, ConversionResult, Language } from '@/lib/code-converter/types';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 // ---------- Labels ----------
 
@@ -112,6 +113,15 @@ export function CodeConverterTool({ locale }: Props) {
   const [selectedExample, setSelectedExample] = useState<ExampleModalState | null>(null);
   const [studyMode, setStudyMode] = useState<StudyMode>('complete');
   const editorTopRef = useRef<HTMLDivElement | null>(null);
+  const hasStartedRef = useRef(false);
+
+  const reportStartedOnce = useCallback((code: string) => {
+    if (hasStartedRef.current || !code.trim()) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.codeConverter, locale });
+  }, [locale]);
 
   const stats = useMemo<CodeStats | null>(() => {
     if (!sourceCode.trim()) return null;
@@ -154,7 +164,12 @@ export function CodeConverterTool({ locale }: Props) {
   const handleConvert = useCallback(() => {
     const r = convertCode(sourceCode, fromLang, toLang);
     setResult(r);
-  }, [sourceCode, fromLang, toLang]);
+    if (r.success) {
+      trackEvent('tool_completed', { tool: TOOL_ID.codeConverter, locale, from: fromLang, to: toLang });
+    } else {
+      trackEvent('tool_error', { tool: TOOL_ID.codeConverter, locale, error_type: 'parse_error' });
+    }
+  }, [sourceCode, fromLang, toLang, locale]);
 
   const handleClear = useCallback(() => {
     setSourceCode('');
@@ -180,8 +195,11 @@ export function CodeConverterTool({ locale }: Props) {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedKey(key);
       setTimeout(() => setCopiedKey(null), 1500);
+      if (key === 'result') {
+        trackEvent('result_copied', { tool: TOOL_ID.codeConverter, locale, field: 'converted_code' });
+      }
     });
-  }, []);
+  }, [locale]);
 
   const handleDownload = useCallback((content: string, lang: Language) => {
     const ext = getFileExtension(lang);
@@ -192,7 +210,8 @@ export function CodeConverterTool({ locale }: Props) {
     a.download = `converted${ext}`;
     a.click();
     URL.revokeObjectURL(url);
-  }, []);
+    trackEvent('result_downloaded', { tool: TOOL_ID.codeConverter, locale, format: ext.replace('.', '') });
+  }, [locale]);
 
   const handleLoadExample = useCallback((exampleId: string) => {
     const example = CODE_EXAMPLES.find(e => e.id === exampleId);
@@ -209,9 +228,10 @@ export function CodeConverterTool({ locale }: Props) {
       setStudyMode('complete');
       setSourceCode(completeCode);
       setResult(null);
+      reportStartedOnce(completeCode);
       editorTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [fromLang]);
+  }, [fromLang, reportStartedOnce]);
 
   const handleLoadClassicTopic = useCallback((title: string, category: string) => {
     const completeCode = getClassicStudyExampleCode(title, category, fromLang, 'complete');
@@ -220,8 +240,9 @@ export function CodeConverterTool({ locale }: Props) {
     setStudyMode('complete');
     setSourceCode(completeCode);
     setResult(null);
+    reportStartedOnce(completeCode);
     editorTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [fromLang]);
+  }, [fromLang, reportStartedOnce]);
 
   const handleUseStudyMode = useCallback((mode: StudyMode) => {
     setStudyMode(mode);
@@ -320,7 +341,7 @@ export function CodeConverterTool({ locale }: Props) {
           <div className="relative">
             <textarea
               value={sourceCode}
-              onChange={(e) => { setSourceCode(e.target.value); setResult(null); }}
+              onChange={(e) => { setSourceCode(e.target.value); setResult(null); reportStartedOnce(e.target.value); }}
               placeholder={locale === 'en' ? 'Paste your code here...' : locale === 'es' ? 'Pegue su código aquí...' : 'Cole seu código aqui...'}
               className="min-h-[280px] w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 p-4 font-mono text-xs leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               spellCheck={false}

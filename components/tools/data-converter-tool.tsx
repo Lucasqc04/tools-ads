@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   ClipboardPaste,
   Copy,
@@ -25,6 +25,7 @@ import {
   type ParsedDataTable,
 } from '@/lib/data-converter';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type DataConverterToolProps = {
   locale?: AppLocale;
@@ -264,6 +265,15 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
+  const hasStartedRef = useRef(false);
+
+  const reportStarted = () => {
+    if (hasStartedRef.current) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.dataConverter, locale });
+  };
 
   const parsedState = useMemo(() => {
     if (uploadedTable) {
@@ -330,6 +340,13 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
         await downloadXlsx(table, buildDataConverterFilename(sourceFileName, 'xlsx'));
         setResult('');
         setMessage(ui.convertedXlsx);
+        trackEvent('tool_completed', {
+          tool: TOOL_ID.dataConverter,
+          locale,
+          source_format: table.detectedFormat,
+          target_format: 'xlsx',
+        });
+        trackEvent('result_downloaded', { tool: TOOL_ID.dataConverter, locale, format: 'xlsx' });
         return;
       }
 
@@ -340,13 +357,21 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
 
       if (!output) {
         setError(ui.outputEmpty);
+        trackEvent('tool_error', { tool: TOOL_ID.dataConverter, locale, error_type: 'processing_failed' });
         return;
       }
 
       setResult(output);
       setMessage(ui.convertedText);
+      trackEvent('tool_completed', {
+        tool: TOOL_ID.dataConverter,
+        locale,
+        source_format: table.detectedFormat,
+        target_format: outputFormat,
+      });
     } catch {
       setError(ui.parseError);
+      trackEvent('tool_error', { tool: TOOL_ID.dataConverter, locale, error_type: 'processing_failed' });
     } finally {
       setIsBusy(false);
     }
@@ -361,6 +386,7 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
       await navigator.clipboard.writeText(result);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1200);
+      trackEvent('result_copied', { tool: TOOL_ID.dataConverter, locale, field: 'converted_data' });
     } catch {
       setCopied(false);
     }
@@ -376,6 +402,9 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
       setSourceFileName('');
       setSourceFormat('auto');
       setResult('');
+      if (text.trim()) {
+        reportStarted();
+      }
     } catch {
       setError(ui.clipboardError);
     }
@@ -394,6 +423,10 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
 
     try {
       const detectedFormat = formatFromFilename(file.name);
+      const fileTypeForTracking =
+        detectedFormat ?? (file.name.split('.').pop()?.toLowerCase() || 'unknown');
+      trackEvent('file_uploaded', { tool: TOOL_ID.dataConverter, locale, file_type: fileTypeForTracking });
+      reportStarted();
 
       if (detectedFormat === 'xlsx') {
         const xlsxModule = await import('xlsx');
@@ -403,6 +436,7 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
 
         if (!sheetName) {
           setError(ui.xlsxSheetMissing);
+          trackEvent('tool_error', { tool: TOOL_ID.dataConverter, locale, error_type: 'unsupported_format' });
           return;
         }
 
@@ -428,6 +462,7 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
       setMessage(`${ui.selectedFile}: ${file.name}`);
     } catch {
       setError(ui.fileReadError);
+      trackEvent('tool_error', { tool: TOOL_ID.dataConverter, locale, error_type: 'processing_failed' });
     } finally {
       setIsBusy(false);
     }
@@ -513,6 +548,9 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
             setSourceFileName('');
             setResult('');
             resetFeedback();
+            if (event.target.value.trim()) {
+              reportStarted();
+            }
           }}
           className="min-h-[220px] font-mono text-xs"
           placeholder={ui.pastePlaceholder}
@@ -592,6 +630,7 @@ export function DataConverterTool({ locale = 'pt-br' }: DataConverterToolProps) 
               result,
               outputFormat,
             );
+            trackEvent('result_downloaded', { tool: TOOL_ID.dataConverter, locale, format: outputFormat });
           }}
           disabled={!result || !isTextOutputFormat(outputFormat)}
           className="gap-2"

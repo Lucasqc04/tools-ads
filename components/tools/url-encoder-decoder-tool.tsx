@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   decodeFullUrl,
@@ -105,23 +106,51 @@ export function UrlEncoderDecoderTool({ locale = 'pt-br' }: UrlEncoderDecoderToo
 
   const applyEncode = () => {
     setError('');
+    const hasInput = source.trim().length > 0;
+
+    if (hasInput) {
+      trackEvent('tool_started', { tool: TOOL_ID.urlEncoderDecoder, locale });
+    }
+
     try {
       const output = mode === 'full' ? encodeFullUrl(source) : encodeQueryValue(source);
       setResult(output);
       setParams(parseUrlQueryParams(output));
+
+      if (hasInput) {
+        trackEvent('tool_completed', { tool: TOOL_ID.urlEncoderDecoder, locale, result_type: 'encode' });
+      }
     } catch {
       setError(ui.encodeError);
+
+      if (hasInput) {
+        trackEvent('tool_error', { tool: TOOL_ID.urlEncoderDecoder, locale, error_type: 'malformed_uri' });
+      }
     }
   };
 
   const applyDecode = () => {
     setError('');
+    const hasInput = source.trim().length > 0;
+
+    if (hasInput) {
+      trackEvent('tool_started', { tool: TOOL_ID.urlEncoderDecoder, locale });
+    }
+
     try {
       const output = mode === 'full' ? decodeFullUrl(source) : decodeQueryValue(source);
       setResult(output);
       setParams(parseUrlQueryParams(output));
+
+      if (hasInput) {
+        trackEvent('tool_completed', { tool: TOOL_ID.urlEncoderDecoder, locale, result_type: 'decode' });
+      }
     } catch {
       setError(ui.decodeError);
+
+      if (hasInput) {
+        trackEvent('tool_error', { tool: TOOL_ID.urlEncoderDecoder, locale, error_type: 'malformed_uri' });
+      }
     }
   };
 
@@ -131,6 +160,7 @@ export function UrlEncoderDecoderTool({ locale = 'pt-br' }: UrlEncoderDecoderToo
     try {
       await navigator.clipboard.writeText(result);
       setCopied(true);
+      trackEvent('result_copied', { tool: TOOL_ID.urlEncoderDecoder, locale, field: 'result' });
       setTimeout(() => setCopied(false), 1200);
     } catch {
       setCopied(false);
@@ -150,7 +180,14 @@ export function UrlEncoderDecoderTool({ locale = 'pt-br' }: UrlEncoderDecoderToo
       <div className="grid gap-3 md:grid-cols-3">
         <label className="space-y-2 md:col-span-1">
           <span className="text-sm font-semibold text-slate-800">Modo</span>
-          <Select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
+          <Select
+            value={mode}
+            onChange={(event) => {
+              const nextMode = event.target.value as Mode;
+              setMode(nextMode);
+              trackEvent('mode_selected', { tool: TOOL_ID.urlEncoderDecoder, locale, mode: nextMode });
+            }}
+          >
             <option value="full">URL completa</option>
             <option value="param">Parametro</option>
           </Select>

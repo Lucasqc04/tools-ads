@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -13,6 +13,7 @@ import {
   parseCsvText,
   type CsvDelimiter,
 } from '@/lib/csv-viewer';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type CsvViewerToolProps = {
   locale?: AppLocale;
@@ -247,12 +248,39 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
+  const hasStartedRef = useRef(false);
+  const hasReportedCompletionRef = useRef(false);
+
+  const reportStartedOnce = (value: string) => {
+    if (hasStartedRef.current || !value.trim()) {
+      return;
+    }
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.csvViewer, locale });
+  };
 
   const detected = useMemo(() => detectCsvDelimiter(input), [input]);
 
   const activeSeparator = selectedSeparator === 'auto' ? detected.delimiter : selectedSeparator;
 
   const parsed = useMemo(() => parseCsvText(input, activeSeparator), [input, activeSeparator]);
+
+  useEffect(() => {
+    if (parsed.rows.length > 0) {
+      if (!hasReportedCompletionRef.current) {
+        hasReportedCompletionRef.current = true;
+        trackEvent('tool_completed', {
+          tool: TOOL_ID.csvViewer,
+          locale,
+          rows: parsed.rows.length,
+          columns: parsed.columnCount,
+        });
+      }
+    } else {
+      hasReportedCompletionRef.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parsed.rows.length, parsed.columnCount, locale]);
 
   const convertedCsv = useMemo(
     () => convertCsvDelimiter(input, activeSeparator, outputSeparator),
@@ -361,6 +389,7 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
       await navigator.clipboard.writeText(convertedCsv);
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
+      trackEvent('result_copied', { tool: TOOL_ID.csvViewer, locale, field: 'converted_csv' });
     } catch {
       setCopied(false);
     }
@@ -378,8 +407,10 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
       xlsxModule.utils.book_append_sheet(workbook, sheet, 'CSV');
       xlsxModule.writeFile(workbook, 'csv-viewer-export.xlsx');
       setError('');
+      trackEvent('result_downloaded', { tool: TOOL_ID.csvViewer, locale, format: 'xlsx' });
     } catch {
       setError(ui.parseError);
+      trackEvent('tool_error', { tool: TOOL_ID.csvViewer, locale, error_type: 'processing_failed' });
     }
   };
 
@@ -395,8 +426,12 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
       setInput(content);
       setError('');
       setCopied(false);
+      const fileType = firstFile.name.split('.').pop()?.toLowerCase() || 'unknown';
+      trackEvent('file_uploaded', { tool: TOOL_ID.csvViewer, locale, file_type: fileType });
+      reportStartedOnce(content);
     } catch {
       setError(ui.fileReadError);
+      trackEvent('tool_error', { tool: TOOL_ID.csvViewer, locale, error_type: 'processing_failed' });
     }
   };
 
@@ -414,6 +449,7 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
             setInput(event.target.value);
             setError('');
             setCopied(false);
+            reportStartedOnce(event.target.value);
           }}
           className="min-h-[220px] font-mono text-xs"
           placeholder={ui.pastePlaceholder}
@@ -499,7 +535,10 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
         </Button>
         <Button
           variant="secondary"
-          onClick={() => saveTextFile('csv-convertido.csv', convertedCsv)}
+          onClick={() => {
+            saveTextFile('csv-convertido.csv', convertedCsv);
+            trackEvent('result_downloaded', { tool: TOOL_ID.csvViewer, locale, format: 'csv' });
+          }}
           disabled={!convertedCsv}
         >
           {ui.exportConvertedCsv}

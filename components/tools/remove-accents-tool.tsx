@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import type { AppLocale } from '@/lib/i18n/config';
 import { removeAccentsText, type RemoveAccentsOptions } from '@/lib/remove-accents';
 
@@ -51,6 +52,32 @@ export function RemoveAccentsTool({ locale = 'pt-br' }: RemoveAccentsToolProps) 
     [source, mode, removeSymbols, removePunct, removeEmojis, collapseSpaces, spaceReplacement, toSlug],
   );
 
+  // Analytics: this is a pure, always-succeeding text transform (no invalid
+  // input state), so we only track the start of a real session and the
+  // transition into having a non-empty result — guarded so it doesn't fire
+  // again on every keystroke while a result is already showing.
+  const hasStartedRef = useRef(false);
+  const hadResultRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasStartedRef.current && source.trim() !== '') {
+      hasStartedRef.current = true;
+      trackEvent('tool_started', { tool: TOOL_ID.removeAccents, locale });
+    }
+  }, [source, locale]);
+
+  useEffect(() => {
+    if (!hasStartedRef.current) {
+      return;
+    }
+
+    const hasResult = output.value.trim() !== '';
+    if (hasResult && !hadResultRef.current) {
+      trackEvent('tool_completed', { tool: TOOL_ID.removeAccents, locale });
+    }
+    hadResultRef.current = hasResult;
+  }, [output.value, locale]);
+
   const copyResult = async () => {
     if (!output.value) return;
 
@@ -58,6 +85,7 @@ export function RemoveAccentsTool({ locale = 'pt-br' }: RemoveAccentsToolProps) 
       await navigator.clipboard.writeText(output.value);
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
+      trackEvent('result_copied', { tool: TOOL_ID.removeAccents, locale, field: 'result' });
     } catch {
       setCopied(false);
     }
@@ -107,7 +135,15 @@ export function RemoveAccentsTool({ locale = 'pt-br' }: RemoveAccentsToolProps) 
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={copyResult}>{copied ? (isPt ? 'Copiado' : isEs ? 'Copiado' : 'Copied') : (isPt ? 'Copiar resultado' : isEs ? 'Copiar resultado' : 'Copy result')}</Button>
         <Button variant="secondary" onClick={() => setSource(output.value)}>{isPt ? 'Substituir original' : isEs ? 'Reemplazar original' : 'Replace original'}</Button>
-        <Button variant="secondary" onClick={() => downloadTextFile('texto-sem-acentos.txt', output.value)}>{isPt ? 'Baixar TXT' : isEs ? 'Descargar TXT' : 'Download TXT'}</Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            trackEvent('result_downloaded', { tool: TOOL_ID.removeAccents, locale, format: 'txt' });
+            downloadTextFile('texto-sem-acentos.txt', output.value);
+          }}
+        >
+          {isPt ? 'Baixar TXT' : isEs ? 'Descargar TXT' : 'Download TXT'}
+        </Button>
         <Button
           variant="ghost"
           onClick={() => {

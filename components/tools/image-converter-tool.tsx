@@ -8,6 +8,7 @@ import { Select } from '@/components/ui/select';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { ImageViewer } from '@/components/shared/image-viewer';
 import { cn } from '@/lib/cn';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
   buildConvertedFileName,
   convertImageToImage,
@@ -562,10 +563,20 @@ export function ImageConverterTool({
     if (!isFileCompatibleWithFormat(file, fromFormat)) {
       setSourceFile(null);
       setErrorMessage(ui.invalidFileForFormat(ui.formatLabels[fromFormat]));
+      trackEvent('tool_error', {
+        tool: TOOL_ID.imageConverter,
+        locale,
+        error_type: 'unsupported_format',
+      });
       return;
     }
 
     setSourceFile(file);
+    trackEvent('file_uploaded', {
+      tool: TOOL_ID.imageConverter,
+      locale,
+      file_type: fromFormat,
+    });
 
     if (fromFormat === 'pdf') {
       const requestId = pdfMetadataRequestRef.current + 1;
@@ -625,8 +636,20 @@ export function ImageConverterTool({
 
     if (!outputIsLocallySupported && toFormat !== 'pdf') {
       setErrorMessage(ui.unsupportedOutput(ui.formatLabels[toFormat]));
+      trackEvent('tool_error', {
+        tool: TOOL_ID.imageConverter,
+        locale,
+        error_type: 'unsupported_format',
+      });
       return;
     }
+
+    trackEvent('tool_started', {
+      tool: TOOL_ID.imageConverter,
+      locale,
+      from_format: fromFormat,
+      to_format: toFormat,
+    });
 
     setIsConverting(true);
     resetFeedback();
@@ -656,6 +679,11 @@ export function ImageConverterTool({
           items,
           totalPages: result.totalPages,
         });
+        trackEvent('tool_completed', {
+          tool: TOOL_ID.imageConverter,
+          locale,
+          format: outputFormat,
+        });
 
         if (result.totalPages > items.length) {
           setInfoMessage(ui.partialPagesNotice(items.length, result.totalPages));
@@ -673,6 +701,11 @@ export function ImageConverterTool({
           filename: buildConvertedFileName(sourceFile.name, 'pdf'),
           outputFormat: 'pdf',
         });
+        trackEvent('tool_completed', {
+          tool: TOOL_ID.imageConverter,
+          locale,
+          format: 'pdf',
+        });
         return;
       }
 
@@ -686,8 +719,18 @@ export function ImageConverterTool({
         filename: buildConvertedFileName(sourceFile.name, outputFormat),
         outputFormat,
       });
+      trackEvent('tool_completed', {
+        tool: TOOL_ID.imageConverter,
+        locale,
+        format: outputFormat,
+      });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : ui.genericError);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.imageConverter,
+        locale,
+        error_type: 'processing_failed',
+      });
     } finally {
       setIsConverting(false);
     }
@@ -925,7 +968,14 @@ export function ImageConverterTool({
                   setViewerState({
                     src: singleResult.url,
                     alt: singleResult.filename,
-                    onDownload: () => downloadBlob(singleResult.blob, singleResult.filename),
+                    onDownload: () => {
+                      trackEvent('result_downloaded', {
+                        tool: TOOL_ID.imageConverter,
+                        locale,
+                        format: singleResult.outputFormat,
+                      });
+                      downloadBlob(singleResult.blob, singleResult.filename);
+                    },
                   })
                 }
               >
@@ -941,7 +991,14 @@ export function ImageConverterTool({
                   setViewerState({
                     src: singleResult.url,
                     alt: singleResult.filename,
-                    onDownload: () => downloadBlob(singleResult.blob, singleResult.filename),
+                    onDownload: () => {
+                      trackEvent('result_downloaded', {
+                        tool: TOOL_ID.imageConverter,
+                        locale,
+                        format: singleResult.outputFormat,
+                      });
+                      downloadBlob(singleResult.blob, singleResult.filename);
+                    },
                   })
                 }
               >
@@ -952,7 +1009,16 @@ export function ImageConverterTool({
             <p className="text-sm text-emerald-900">{ui.pdfResultMessage}</p>
           )}
 
-          <Button onClick={() => downloadBlob(singleResult.blob, singleResult.filename)}>
+          <Button
+            onClick={() => {
+              trackEvent('result_downloaded', {
+                tool: TOOL_ID.imageConverter,
+                locale,
+                format: singleResult.outputFormat,
+              });
+              downloadBlob(singleResult.blob, singleResult.filename);
+            }}
+          >
             {ui.download}
           </Button>
         </section>
@@ -983,7 +1049,14 @@ export function ImageConverterTool({
                     setViewerState({
                       src: item.url,
                       alt: `#${item.pageNumber}`,
-                      onDownload: () => downloadBlob(item.blob, item.filename),
+                      onDownload: () => {
+                        trackEvent('result_downloaded', {
+                          tool: TOOL_ID.imageConverter,
+                          locale,
+                          format: toFormat,
+                        });
+                        downloadBlob(item.blob, item.filename);
+                      },
                     })
                   }
                 >
@@ -998,7 +1071,14 @@ export function ImageConverterTool({
                   <Button
                     variant="secondary"
                     className="w-full"
-                    onClick={() => downloadBlob(item.blob, item.filename)}
+                    onClick={() => {
+                      trackEvent('result_downloaded', {
+                        tool: TOOL_ID.imageConverter,
+                        locale,
+                        format: toFormat,
+                      });
+                      downloadBlob(item.blob, item.filename);
+                    }}
                   >
                     {ui.download}
                   </Button>
@@ -1009,7 +1089,14 @@ export function ImageConverterTool({
                       setViewerState({
                         src: item.url,
                         alt: `#${item.pageNumber}`,
-                        onDownload: () => downloadBlob(item.blob, item.filename),
+                        onDownload: () => {
+                          trackEvent('result_downloaded', {
+                            tool: TOOL_ID.imageConverter,
+                            locale,
+                            format: toFormat,
+                          });
+                          downloadBlob(item.blob, item.filename);
+                        },
                       })
                     }
                   >
@@ -1023,6 +1110,12 @@ export function ImageConverterTool({
           <Button
             variant="secondary"
             onClick={() => {
+              trackEvent('result_downloaded', {
+                tool: TOOL_ID.imageConverter,
+                locale,
+                format: toFormat,
+                count: multiResult.items.length,
+              });
               multiResult.items.forEach((item, index) => {
                 globalThis.setTimeout(() => downloadBlob(item.blob, item.filename), index * 120);
               });

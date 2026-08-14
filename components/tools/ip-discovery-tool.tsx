@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { parseUserAgent, formatIpNoDots, type DeviceInfo } from '@/lib/device-info';
 import { type AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type Ui = {
   title: string;
@@ -216,6 +217,7 @@ export function IpDiscoveryTool({ locale = 'pt-br' }: IpDiscoveryToolProps) {
   const fetchIp = async () => {
     setLoading(true);
     setError(null);
+    trackEvent('tool_started', { tool: TOOL_ID.ipDiscovery, locale });
 
     try {
       const endpoints = ['https://ipwho.is/', 'https://ipapi.co/json/', 'https://ipwhois.app/json/'];
@@ -225,6 +227,7 @@ export function IpDiscoveryTool({ locale = 'pt-br' }: IpDiscoveryToolProps) {
         try {
           const info = await fetchIpFrom(endpoint);
           setIpInfo(info);
+          trackEvent('tool_completed', { tool: TOOL_ID.ipDiscovery, locale });
           return;
         } catch (endpointError) {
           lastError = endpointError;
@@ -234,6 +237,7 @@ export function IpDiscoveryTool({ locale = 'pt-br' }: IpDiscoveryToolProps) {
       try {
         const ipOnly = await fetchIpOnlyFallback();
         setIpInfo(ipOnly);
+        trackEvent('tool_completed', { tool: TOOL_ID.ipDiscovery, locale });
         return;
       } catch (fallbackError) {
         throw fallbackError ?? lastError ?? new Error('No IP endpoint available');
@@ -243,9 +247,20 @@ export function IpDiscoveryTool({ locale = 'pt-br' }: IpDiscoveryToolProps) {
       console.error('ip fetch error', err);
       setIpInfo(null);
       setError(ui.fetchError);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.ipDiscovery,
+        locale,
+        error_type: 'network_error',
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const copyFieldByKey: Record<string, string> = {
+    ip: 'ip_address',
+    ipNoDots: 'ip_address_no_dots',
+    all: 'ip_details',
   };
 
   const handleCopy = async (text?: string, key?: string) => {
@@ -255,6 +270,11 @@ export function IpDiscoveryTool({ locale = 'pt-br' }: IpDiscoveryToolProps) {
       await navigator.clipboard.writeText(text);
       setCopied(key ?? 'copied');
       setTimeout(() => setCopied(null), 1600);
+      trackEvent('result_copied', {
+        tool: TOOL_ID.ipDiscovery,
+        locale,
+        field: copyFieldByKey[key ?? ''] ?? 'ip_details',
+      });
     } catch {
       setError(ui.copyError);
     }

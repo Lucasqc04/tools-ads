@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { copyImageBlobToClipboard } from '@/lib/qr-code';
 import type { AppLocale } from '@/lib/i18n/config';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type OpenGraphPreviewToolProps = Readonly<{
   locale?: AppLocale;
@@ -531,7 +532,7 @@ function AssetCard({
   );
 }
 
-export function OpenGraphPreviewTool({ locale: _locale = 'pt-br' }: OpenGraphPreviewToolProps) {
+export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolProps) {
   const [state, setState] = useState<OpenGraphState>(defaultState);
   const [targetUrl, setTargetUrl] = useState('');
   const [fetchedUrl, setFetchedUrl] = useState('');
@@ -568,6 +569,7 @@ export function OpenGraphPreviewTool({ locale: _locale = 'pt-br' }: OpenGraphPre
     const ok = await copyToClipboard(value);
     if (ok) {
       setCopied(key);
+      trackEvent('result_copied', { tool: TOOL_ID.openGraphPreview, locale, field: 'generated_snippet' });
     }
   };
 
@@ -575,6 +577,7 @@ export function OpenGraphPreviewTool({ locale: _locale = 'pt-br' }: OpenGraphPre
     try {
       await copyImageViaProxy(item.imageUrl);
       setCopied(`img:${item.id}`);
+      trackEvent('result_copied', { tool: TOOL_ID.openGraphPreview, locale, field: 'preview_image' });
     } catch {
       setError('Nao foi possivel copiar essa imagem agora.');
     }
@@ -583,6 +586,7 @@ export function OpenGraphPreviewTool({ locale: _locale = 'pt-br' }: OpenGraphPre
   const handleDownloadItem = async (item: VisualItem) => {
     try {
       await downloadViaProxy(item.imageUrl);
+      trackEvent('result_downloaded', { tool: TOOL_ID.openGraphPreview, locale, format: 'asset' });
     } catch {
       setError('Nao foi possivel baixar esse arquivo agora.');
     }
@@ -591,14 +595,17 @@ export function OpenGraphPreviewTool({ locale: _locale = 'pt-br' }: OpenGraphPre
   const handleDownloadUrl = async (url: string) => {
     try {
       await downloadViaProxy(url);
+      trackEvent('result_downloaded', { tool: TOOL_ID.openGraphPreview, locale, format: 'asset' });
     } catch {
       setError('Nao foi possivel baixar esse arquivo agora.');
     }
   };
 
   const handleFetch = async () => {
+    trackEvent('tool_started', { tool: TOOL_ID.openGraphPreview, locale });
     if (!targetUrl.trim()) {
       setError('Informe uma URL valida.');
+      trackEvent('tool_error', { tool: TOOL_ID.openGraphPreview, locale, error_type: 'validation_failed' });
       return;
     }
 
@@ -611,6 +618,7 @@ export function OpenGraphPreviewTool({ locale: _locale = 'pt-br' }: OpenGraphPre
 
       if (!response.ok || !payload.ok) {
         setError(payload.error ?? 'Nao foi possivel buscar tags dessa URL.');
+        trackEvent('tool_error', { tool: TOOL_ID.openGraphPreview, locale, error_type: 'network_error' });
         return;
       }
 
@@ -619,8 +627,10 @@ export function OpenGraphPreviewTool({ locale: _locale = 'pt-br' }: OpenGraphPre
       setFetchMeta(payload.fetchMeta);
       setAssetsPage(1);
       setViewerItem(null);
+      trackEvent('tool_completed', { tool: TOOL_ID.openGraphPreview, locale });
     } catch {
       setError('Falha ao buscar a URL agora.');
+      trackEvent('tool_error', { tool: TOOL_ID.openGraphPreview, locale, error_type: 'network_error' });
     } finally {
       setLoading(false);
     }

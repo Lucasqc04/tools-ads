@@ -12,6 +12,7 @@ import { btcToSats, satsToBtc } from '@/lib/bitcoin/fee';
 import { createAndSignSendTransaction, type SignedTransactionResult } from '@/lib/bitcoin/create-send-tx';
 import { defaultBitcoinNetworkId, getBitcoinNetworkConfig, type BitcoinNetworkId } from '@/lib/bitcoin/networks';
 import { deriveWalletFromMnemonic, deriveWalletFromWif, generateEnglishMnemonic, type WalletMaterial } from '@/lib/bitcoin/wallet';
+import { trackEvent, TOOL_ID } from '@/lib/analytics';
 
 type BitcoinWalletToolProps = Readonly<{
   locale?: AppLocale;
@@ -591,12 +592,24 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
       setTimeout(() => {
         setCopiedField((current) => (current === fieldId ? '' : current));
       }, 1400);
+      const copyFieldByFieldId: Record<string, string> = {
+        address: 'wallet_address',
+        seed: 'seed_phrase',
+        wif: 'wallet_private_key',
+      };
+      trackEvent('result_copied', {
+        tool: TOOL_ID.bitcoinWallet,
+        locale,
+        field: copyFieldByFieldId[fieldId] ?? fieldId,
+      });
     } catch {
       setCopiedField('');
     }
   };
 
   const handleGenerateWallet = () => {
+    trackEvent('tool_started', { tool: TOOL_ID.bitcoinWallet, locale, mode: 'new' });
+
     try {
       const mnemonic = generateEnglishMnemonic(12);
       const derived = deriveWalletFromMnemonic({
@@ -623,13 +636,22 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
       });
       setShowSeed(false);
       setShowWif(false);
+      trackEvent('tool_completed', { tool: TOOL_ID.bitcoinWallet, locale, mode: 'new' });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Falha ao gerar carteira.';
       setWalletErrorMessage(message);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.bitcoinWallet,
+        locale,
+        mode: 'new',
+        error_type: 'processing_failed',
+      });
     }
   };
 
   const handleImportMnemonic = () => {
+    trackEvent('tool_started', { tool: TOOL_ID.bitcoinWallet, locale, mode: 'import_mnemonic' });
+
     try {
       const derived = deriveWalletFromMnemonic({
         mnemonic: mnemonicInput,
@@ -655,13 +677,26 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
       });
       setShowSeed(false);
       setShowWif(false);
+      trackEvent('tool_completed', {
+        tool: TOOL_ID.bitcoinWallet,
+        locale,
+        mode: 'import_mnemonic',
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Falha ao importar seed.';
       setWalletErrorMessage(message);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.bitcoinWallet,
+        locale,
+        mode: 'import_mnemonic',
+        error_type: 'invalid_input',
+      });
     }
   };
 
   const handleImportWif = () => {
+    trackEvent('tool_started', { tool: TOOL_ID.bitcoinWallet, locale, mode: 'import_wif' });
+
     try {
       const derived = deriveWalletFromWif({
         wif: wifInput,
@@ -686,9 +721,16 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
       });
       setShowSeed(false);
       setShowWif(false);
+      trackEvent('tool_completed', { tool: TOOL_ID.bitcoinWallet, locale, mode: 'import_wif' });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Falha ao importar WIF.';
       setWalletErrorMessage(message);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.bitcoinWallet,
+        locale,
+        mode: 'import_wif',
+        error_type: 'invalid_input',
+      });
     }
   };
 
@@ -706,6 +748,12 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
         ...current,
         errorMessage: ui.invalidSend,
       }));
+      trackEvent('tool_error', {
+        tool: TOOL_ID.bitcoinWallet,
+        locale,
+        action: 'send',
+        error_type: 'invalid_input',
+      });
       return;
     }
 
@@ -748,6 +796,7 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
         successTxid: txid,
         result: signed,
       });
+      trackEvent('tool_completed', { tool: TOOL_ID.bitcoinWallet, locale, action: 'send' });
 
       await loadWalletData(walletSession.address);
     } catch (error) {
@@ -757,6 +806,12 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
         errorMessage: message,
         successTxid: '',
         result: null,
+      });
+      trackEvent('tool_error', {
+        tool: TOOL_ID.bitcoinWallet,
+        locale,
+        action: 'send',
+        error_type: 'processing_failed',
       });
     }
   };
@@ -794,21 +849,38 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
             <button
               type="button"
               className={tabClassName(activeTab === 'generate')}
-              onClick={() => setActiveTab('generate')}
+              onClick={() => {
+                setActiveTab('generate');
+                trackEvent('mode_selected', { tool: TOOL_ID.bitcoinWallet, locale, mode: 'new' });
+              }}
             >
               {ui.modeGenerate}
             </button>
             <button
               type="button"
               className={tabClassName(activeTab === 'import-mnemonic')}
-              onClick={() => setActiveTab('import-mnemonic')}
+              onClick={() => {
+                setActiveTab('import-mnemonic');
+                trackEvent('mode_selected', {
+                  tool: TOOL_ID.bitcoinWallet,
+                  locale,
+                  mode: 'import_mnemonic',
+                });
+              }}
             >
               {ui.modeImportMnemonic}
             </button>
             <button
               type="button"
               className={tabClassName(activeTab === 'import-wif')}
-              onClick={() => setActiveTab('import-wif')}
+              onClick={() => {
+                setActiveTab('import-wif');
+                trackEvent('mode_selected', {
+                  tool: TOOL_ID.bitcoinWallet,
+                  locale,
+                  mode: 'import_wif',
+                });
+              }}
             >
               {ui.modeImportWif}
             </button>
