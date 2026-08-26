@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import {
   getCryptoConversionResolutionBySlug,
+  getCryptoConversionLocalePathMap,
+  getCryptoConversionPathByLocale,
   getCryptoConversionStaticParams,
   getLocalizedCryptoConversionContent,
   getRelatedCryptoConversionPages,
@@ -21,7 +23,7 @@ import {
   buildSoftwareApplicationJsonLd,
   buildToolWebPageJsonLd,
 } from '@/lib/json-ld';
-import { buildLocalePathMap, localizePath, locales } from '@/lib/i18n/config';
+import { localizePath, locales } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
 import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { buildLocalizedMetadata } from '@/lib/seo';
@@ -76,7 +78,7 @@ export async function generateMetadata({
     locale,
     title: localized.seoTitle,
     description: localized.seoDescription,
-    localePaths: buildLocalePathMap(`/tools/crypto-unit-converter/${conversionSlug}`),
+    localePaths: getCryptoConversionLocalePathMap(conversionPage),
     keywords: localized.keywords,
   });
 }
@@ -101,8 +103,13 @@ export default async function ConversionLandingPage({
     locale,
     `/tools/crypto-unit-converter/${conversionSlug}`,
   );
-  const canonicalPath = currentRequestPath;
-  const currentPath = currentRequestPath;
+  const canonicalPath = getCryptoConversionPathByLocale(conversionPage, locale);
+
+  if (currentRequestPath !== canonicalPath) {
+    permanentRedirect(canonicalPath);
+  }
+
+  const currentPath = canonicalPath;
 
   const relatedTools = getLocalizedRelatedTools(locale, baseTool.id);
   const relatedConversions = getRelatedCryptoConversionPages(conversionPage.slug, 4).map(

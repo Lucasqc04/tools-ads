@@ -6,6 +6,8 @@ import { ImageConverterTool } from '@/components/tools/image-converter-tool';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import {
   getImageConversionResolutionBySlug,
+  getImageConversionLocalePathMap,
+  getImageConversionPathByLocale,
   getImageConversionStaticParams,
   getLocalizedImageConversionContent,
   getRelatedImageConversionPages,
@@ -106,7 +108,7 @@ export async function generateMetadata({
     locale,
     title: localized.seoTitle,
     description: localized.seoDescription,
-    localePaths: buildLocalePathMap(`/tools/image-converter/${conversionSlug}`),
+    localePaths: getImageConversionLocalePathMap(conversionPage),
     keywords: localized.keywords,
   });
 }
@@ -132,8 +134,13 @@ export default async function ConversionLandingPage({
   const conversionPage = resolution.page;
   const localized = getLocalizedImageConversionContent(conversionPage, locale);
   const currentRequestPath = localizePath(locale, `/tools/image-converter/${conversionSlug}`);
-  const canonicalPath = currentRequestPath;
-  const currentPath = currentRequestPath;
+  const canonicalPath = getImageConversionPathByLocale(conversionPage, locale);
+
+  if (currentRequestPath !== canonicalPath) {
+    permanentRedirect(canonicalPath);
+  }
+
+  const currentPath = canonicalPath;
 
   const relatedTools = getLocalizedRelatedTools(locale, baseTool.id);
   const relatedConversions = getRelatedImageConversionPages(conversionPage.slug, 4).map((page) =>

@@ -30,6 +30,14 @@ import { InvisibleCharacterTool } from '@/components/tools/invisible-character-t
 import { InvisiblePlatformLinks } from '@/components/tools/invisible-platform-links';
 import { NicknameSymbolGeneratorTool } from '@/components/tools/nickname-symbol-generator-tool';
 import { NicknameSymbolPlatformLinks } from '@/components/tools/nickname-symbol-platform-links';
+import { SymbolsToCopyTool } from '@/components/tools/symbols-to-copy-tool';
+import { SymbolCategoryLinks } from '@/components/tools/symbol-category-links';
+import { MultiplicationTableQuizTool } from '@/components/tools/multiplication-table-quiz-tool';
+import { MultiplicationTableLinks } from '@/components/tools/multiplication-table-links';
+import { KeyboardShortcutsTool } from '@/components/tools/keyboard-shortcuts-tool';
+import { KeyboardShortcutsAppLinks } from '@/components/tools/keyboard-shortcuts-app-links';
+import { GamerUsernameGeneratorTool } from '@/components/tools/gamer-username-generator-tool';
+import { GamerUsernamePlatformLinks } from '@/components/tools/gamer-username-platform-links';
 import { JsonFormatterTool } from '@/components/tools/json-formatter-tool';
 import { GtaCheatCodesTool } from '@/components/tools/gta-cheat-codes-tool';
 import { PasswordGeneratorTool } from '@/components/tools/password-generator-tool';
@@ -77,6 +85,46 @@ import {
   getRelatedNicknameSymbolPlatformPages,
   toLocalizedNicknameSymbolPlatformLink,
 } from '@/data/nickname-symbol-platform-pages';
+import {
+  getLocalizedSymbolCategoryContent,
+  getSymbolCategoryLocalePathMap,
+  getSymbolCategoryPathByLocale,
+  getSymbolCategoryResolutionBySlug,
+  getSymbolCategorySlugByLocale,
+  getSymbolCategoryStaticParamsByLocale,
+  getRelatedSymbolCategoryPages,
+  toLocalizedSymbolCategoryLink,
+} from '@/data/symbol-category-pages';
+import {
+  getLocalizedMultiplicationTableContent,
+  getMultiplicationTableLocalePathMap,
+  getMultiplicationTablePathByLocale,
+  getMultiplicationTableResolutionBySlug,
+  getMultiplicationTableSlugByLocale,
+  getMultiplicationTableStaticParamsByLocale,
+  getRelatedMultiplicationTablePages,
+  toLocalizedMultiplicationTableLink,
+} from '@/data/multiplication-table-pages';
+import {
+  getKeyboardShortcutsAppLocalePathMap,
+  getKeyboardShortcutsAppPathByLocale,
+  getKeyboardShortcutsAppResolutionBySlug,
+  getKeyboardShortcutsAppSlugByLocale,
+  getKeyboardShortcutsAppStaticParamsByLocale,
+  getLocalizedKeyboardShortcutsAppContent,
+  getRelatedKeyboardShortcutsAppPages,
+  toLocalizedKeyboardShortcutsAppLink,
+} from '@/data/keyboard-shortcuts-app-pages';
+import {
+  getGamerUsernamePlatformLocalePathMap,
+  getGamerUsernamePlatformPathByLocale,
+  getGamerUsernamePlatformResolutionBySlug,
+  getGamerUsernamePlatformSlugByLocale,
+  getGamerUsernamePlatformStaticParamsByLocale,
+  getLocalizedGamerUsernamePlatformContent,
+  getRelatedGamerUsernamePlatformPages,
+  toLocalizedGamerUsernamePlatformLink,
+} from '@/data/gamer-username-platform-pages';
 import {
   getLocalizedRelatedTools,
   getLocalizedToolBySlug,
@@ -128,6 +176,10 @@ export const dynamicParams = true;
 
 const baseInvisibleToolSlug = 'invisible-character';
 const baseNicknameSymbolToolSlug = 'nickname-symbol-generator';
+const baseSymbolsToCopyToolSlug = 'symbols-to-copy';
+const baseMultiplicationTableToolSlug = 'multiplication-table-quiz';
+const baseKeyboardShortcutsToolSlug = 'keyboard-shortcuts';
+const baseGamerUsernameToolSlug = 'gamer-username-generator';
 const credentialGeneratorToolSlug = ['pas', 'sword-generator'].join('');
 
 const localizedSearchIntent: Record<AppLocale, string> = {
@@ -142,6 +194,94 @@ const nicknameSymbolSearchIntent: Record<AppLocale, string> = {
     'Jogadores que querem criar um nickname com simbolos e estilos Unicode adaptados ao contexto do jogo.',
   en: 'Players who want to create a gaming name with symbols and Unicode styles for a specific game.',
   es: 'Jugadores que quieren crear un nickname con simbolos y estilos Unicode para un juego concreto.',
+};
+
+const symbolCategorySearchIntent: Record<AppLocale, string> = {
+  'pt-br':
+    'Pessoas que buscam um simbolo especifico de uma categoria (setas, coracoes, estrelas, etc.) para copiar e colar rapidamente.',
+  en: 'People looking for a specific symbol from one category (arrows, hearts, stars, etc.) to quickly copy and paste.',
+  es: 'Personas que buscan un simbolo especifico de una categoria (flechas, corazones, estrellas, etc.) para copiar y pegar rapidamente.',
+};
+
+const symbolCategoryRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
+  'pt-br': {
+    title: 'Outras categorias de símbolos',
+    description: 'Navegue por outras categorias de símbolos prontos para copiar.',
+  },
+  en: {
+    title: 'Other symbol categories',
+    description: 'Browse other categories of symbols ready to copy.',
+  },
+  es: {
+    title: 'Otras categorías de símbolos',
+    description: 'Explora otras categorías de símbolos listos para copiar.',
+  },
+};
+
+const multiplicationTableSearchIntent: Record<AppLocale, string> = {
+  'pt-br':
+    'Estudantes, pais e professores que buscam a tabuada de um numero especifico para consultar ou treinar com quiz.',
+  en: 'Students, parents, and teachers looking up the times table of a specific number to review or practice with a quiz.',
+  es: 'Estudiantes, padres y docentes que buscan la tabla de multiplicar de un numero especifico para consultar o practicar con un quiz.',
+};
+
+const multiplicationTableRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
+  'pt-br': {
+    title: 'Outras tabuadas',
+    description: 'Consulte e treine a tabuada de outros números.',
+  },
+  en: {
+    title: 'Other times tables',
+    description: 'Look up and practice the times table of other numbers.',
+  },
+  es: {
+    title: 'Otras tablas de multiplicar',
+    description: 'Consulta y practica la tabla de multiplicar de otros números.',
+  },
+};
+
+const keyboardShortcutsSearchIntent: Record<AppLocale, string> = {
+  'pt-br':
+    'Usuarios que buscam os atalhos de teclado de um aplicativo especifico para consulta rapida.',
+  en: 'People looking up the keyboard shortcuts of a specific app for quick reference.',
+  es: 'Personas que buscan los atajos de teclado de una app especifica para consulta rapida.',
+};
+
+const keyboardShortcutsRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
+  'pt-br': {
+    title: 'Atalhos de outros aplicativos',
+    description: 'Consulte atalhos de teclado de outros apps e sistemas.',
+  },
+  en: {
+    title: 'Shortcuts for other apps',
+    description: 'Look up keyboard shortcuts for other apps and systems.',
+  },
+  es: {
+    title: 'Atajos de otras aplicaciones',
+    description: 'Consulta atajos de teclado de otras apps y sistemas.',
+  },
+};
+
+const gamerUsernameSearchIntent: Record<AppLocale, string> = {
+  'pt-br':
+    'Jogadores que querem gerar um nome de usuario aleatorio e tematico para um jogo especifico.',
+  en: 'Players who want to generate a random, game-themed username for a specific game.',
+  es: 'Jugadores que quieren generar un nombre de usuario aleatorio y tematico para un juego especifico.',
+};
+
+const gamerUsernameRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
+  'pt-br': {
+    title: 'Gerar nick para outros jogos',
+    description: 'Sorteie nomes tematicos para outros jogos populares.',
+  },
+  en: {
+    title: 'Generate usernames for other games',
+    description: 'Roll themed names for other popular games.',
+  },
+  es: {
+    title: 'Generar nombre para otros juegos',
+    description: 'Sortea nombres tematicos para otros juegos populares.',
+  },
 };
 
 const relatedSectionCopy: Record<AppLocale, { title: string; description: string }> = {
@@ -276,6 +416,10 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'calculadora-juros-compostos': 'FinanceApplication',
   'invisible-character': 'UtilitiesApplication',
   'nickname-symbol-generator': 'UtilitiesApplication',
+  'symbols-to-copy': 'UtilitiesApplication',
+  'multiplication-table-quiz': 'EducationApplication',
+  'keyboard-shortcuts': 'DeveloperApplication',
+  'gamer-username-generator': 'UtilitiesApplication',
   'conversor-universal': 'DeveloperApplication',
 };
 
@@ -291,6 +435,22 @@ type LandingResolution =
   | {
       kind: 'nickname-symbol-platform';
       resolution: NonNullable<ReturnType<typeof getNicknameSymbolPlatformResolutionBySlug>>;
+    }
+  | {
+      kind: 'symbol-category';
+      resolution: NonNullable<ReturnType<typeof getSymbolCategoryResolutionBySlug>>;
+    }
+  | {
+      kind: 'multiplication-table';
+      resolution: NonNullable<ReturnType<typeof getMultiplicationTableResolutionBySlug>>;
+    }
+  | {
+      kind: 'keyboard-shortcuts-app';
+      resolution: NonNullable<ReturnType<typeof getKeyboardShortcutsAppResolutionBySlug>>;
+    }
+  | {
+      kind: 'gamer-username-platform';
+      resolution: NonNullable<ReturnType<typeof getGamerUsernamePlatformResolutionBySlug>>;
     }
   | {
       kind: 'tool-alias';
@@ -344,6 +504,38 @@ const resolveLanding = (slug: string): LandingResolution | undefined => {
     return {
       kind: 'nickname-symbol-platform',
       resolution: nicknameSymbolResolution,
+    };
+  }
+
+  const symbolCategoryResolution = getSymbolCategoryResolutionBySlug(slug);
+  if (symbolCategoryResolution) {
+    return {
+      kind: 'symbol-category',
+      resolution: symbolCategoryResolution,
+    };
+  }
+
+  const multiplicationTableResolution = getMultiplicationTableResolutionBySlug(slug);
+  if (multiplicationTableResolution) {
+    return {
+      kind: 'multiplication-table',
+      resolution: multiplicationTableResolution,
+    };
+  }
+
+  const keyboardShortcutsAppResolution = getKeyboardShortcutsAppResolutionBySlug(slug);
+  if (keyboardShortcutsAppResolution) {
+    return {
+      kind: 'keyboard-shortcuts-app',
+      resolution: keyboardShortcutsAppResolution,
+    };
+  }
+
+  const gamerUsernameResolution = getGamerUsernamePlatformResolutionBySlug(slug);
+  if (gamerUsernameResolution) {
+    return {
+      kind: 'gamer-username-platform',
+      resolution: gamerUsernameResolution,
     };
   }
 
@@ -969,6 +1161,362 @@ const renderNicknameSymbolLandingPage = (
   );
 };
 
+const renderSymbolCategoryLandingPage = (
+  resolution: NonNullable<ReturnType<typeof getSymbolCategoryResolutionBySlug>>,
+  context: RenderContext,
+): ReactNode => {
+  const baseTool = getLocalizedToolBySlug(context.locale, baseSymbolsToCopyToolSlug);
+
+  if (!baseTool) {
+    notFound();
+  }
+
+  const localizedContent = getLocalizedSymbolCategoryContent(resolution.page, context.locale);
+  const relatedTools = getLocalizedRelatedTools(context.locale, baseTool.id);
+  const relatedCategoryPages = getRelatedSymbolCategoryPages(resolution.page.categoryId, 4).map(
+    (page) => toLocalizedSymbolCategoryLink(page, context.locale),
+  );
+  const canonicalPath = getSymbolCategoryPathByLocale(resolution.page, context.locale);
+
+  const landingTool: ToolDefinition = {
+    ...baseTool,
+    name: localizedContent.title,
+    h1: localizedContent.title,
+    intro: localizedContent.intro,
+    seoTitle: localizedContent.seoTitle,
+    seoDescription: localizedContent.seoDescription,
+    canonicalPath,
+    primaryKeyword: localizedContent.keywords[0] ?? baseTool.primaryKeyword,
+    secondaryKeywords: localizedContent.keywords.slice(1),
+    searchIntent: symbolCategorySearchIntent[context.locale],
+    contentBlocks: localizedContent.contentBlocks,
+    faq: localizedContent.faq,
+  };
+
+  return (
+    <>
+      <JsonLd
+        data={buildToolWebPageJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          locale: context.locale,
+          keywords: [landingTool.primaryKeyword, ...landingTool.secondaryKeywords],
+        })}
+      />
+
+      <JsonLd
+        data={buildSoftwareApplicationJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          category: 'UtilitiesApplication',
+        })}
+      />
+
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: context.dictionary.common.home, path: localizePath(context.locale, '/') },
+          { name: context.dictionary.common.tools, path: localizePath(context.locale, '/tools') },
+          {
+            name: baseTool.name,
+            path: localizePath(context.locale, '/tools/symbols-to-copy'),
+          },
+          { name: resolution.page.categoryLabel, path: canonicalPath },
+        ])}
+      />
+
+      <JsonLd data={buildFaqJsonLd(landingTool.faq)} />
+
+      <ToolPageShell
+        locale={context.locale}
+        tool={landingTool}
+        relatedTools={relatedTools}
+        toolUi={
+          <SymbolsToCopyTool
+            locale={context.locale}
+            initialCategoryId={resolution.page.categoryId}
+          />
+        }
+        afterToolSection={
+          <SymbolCategoryLinks
+            title={symbolCategoryRelatedCopy[context.locale].title}
+            description={symbolCategoryRelatedCopy[context.locale].description}
+            links={relatedCategoryPages}
+          />
+        }
+      />
+    </>
+  );
+};
+
+const renderMultiplicationTableLandingPage = (
+  resolution: NonNullable<ReturnType<typeof getMultiplicationTableResolutionBySlug>>,
+  context: RenderContext,
+): ReactNode => {
+  const baseTool = getLocalizedToolBySlug(context.locale, baseMultiplicationTableToolSlug);
+
+  if (!baseTool) {
+    notFound();
+  }
+
+  const localizedContent = getLocalizedMultiplicationTableContent(resolution.page, context.locale);
+  const relatedTools = getLocalizedRelatedTools(context.locale, baseTool.id);
+  const relatedTablePages = getRelatedMultiplicationTablePages(resolution.page.tableNumber, 4).map(
+    (page) => toLocalizedMultiplicationTableLink(page, context.locale),
+  );
+  const canonicalPath = getMultiplicationTablePathByLocale(resolution.page, context.locale);
+
+  const landingTool: ToolDefinition = {
+    ...baseTool,
+    name: localizedContent.title,
+    h1: localizedContent.title,
+    intro: localizedContent.intro,
+    seoTitle: localizedContent.seoTitle,
+    seoDescription: localizedContent.seoDescription,
+    canonicalPath,
+    primaryKeyword: localizedContent.keywords[0] ?? baseTool.primaryKeyword,
+    secondaryKeywords: localizedContent.keywords.slice(1),
+    searchIntent: multiplicationTableSearchIntent[context.locale],
+    contentBlocks: localizedContent.contentBlocks,
+    faq: localizedContent.faq,
+  };
+
+  return (
+    <>
+      <JsonLd
+        data={buildToolWebPageJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          locale: context.locale,
+          keywords: [landingTool.primaryKeyword, ...landingTool.secondaryKeywords],
+        })}
+      />
+
+      <JsonLd
+        data={buildSoftwareApplicationJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          category: 'EducationApplication',
+        })}
+      />
+
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: context.dictionary.common.home, path: localizePath(context.locale, '/') },
+          { name: context.dictionary.common.tools, path: localizePath(context.locale, '/tools') },
+          {
+            name: baseTool.name,
+            path: localizePath(context.locale, '/tools/multiplication-table-quiz'),
+          },
+          { name: landingTool.name, path: canonicalPath },
+        ])}
+      />
+
+      <JsonLd data={buildFaqJsonLd(landingTool.faq)} />
+
+      <ToolPageShell
+        locale={context.locale}
+        tool={landingTool}
+        relatedTools={relatedTools}
+        toolUi={
+          <MultiplicationTableQuizTool
+            locale={context.locale}
+            initialTableNumber={resolution.page.tableNumber}
+          />
+        }
+        afterToolSection={
+          <MultiplicationTableLinks
+            title={multiplicationTableRelatedCopy[context.locale].title}
+            description={multiplicationTableRelatedCopy[context.locale].description}
+            links={relatedTablePages}
+          />
+        }
+      />
+    </>
+  );
+};
+
+const renderKeyboardShortcutsLandingPage = (
+  resolution: NonNullable<ReturnType<typeof getKeyboardShortcutsAppResolutionBySlug>>,
+  context: RenderContext,
+): ReactNode => {
+  const baseTool = getLocalizedToolBySlug(context.locale, baseKeyboardShortcutsToolSlug);
+
+  if (!baseTool) {
+    notFound();
+  }
+
+  const localizedContent = getLocalizedKeyboardShortcutsAppContent(resolution.page, context.locale);
+  const relatedTools = getLocalizedRelatedTools(context.locale, baseTool.id);
+  const relatedAppPages = getRelatedKeyboardShortcutsAppPages(resolution.page.appId, 4).map(
+    (page) => toLocalizedKeyboardShortcutsAppLink(page, context.locale),
+  );
+  const canonicalPath = getKeyboardShortcutsAppPathByLocale(resolution.page, context.locale);
+
+  const landingTool: ToolDefinition = {
+    ...baseTool,
+    name: localizedContent.title,
+    h1: localizedContent.title,
+    intro: localizedContent.intro,
+    seoTitle: localizedContent.seoTitle,
+    seoDescription: localizedContent.seoDescription,
+    canonicalPath,
+    primaryKeyword: localizedContent.keywords[0] ?? baseTool.primaryKeyword,
+    secondaryKeywords: localizedContent.keywords.slice(1),
+    searchIntent: keyboardShortcutsSearchIntent[context.locale],
+    contentBlocks: localizedContent.contentBlocks,
+    faq: localizedContent.faq,
+  };
+
+  return (
+    <>
+      <JsonLd
+        data={buildToolWebPageJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          locale: context.locale,
+          keywords: [landingTool.primaryKeyword, ...landingTool.secondaryKeywords],
+        })}
+      />
+
+      <JsonLd
+        data={buildSoftwareApplicationJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          category: 'DeveloperApplication',
+        })}
+      />
+
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: context.dictionary.common.home, path: localizePath(context.locale, '/') },
+          { name: context.dictionary.common.tools, path: localizePath(context.locale, '/tools') },
+          {
+            name: baseTool.name,
+            path: localizePath(context.locale, '/tools/keyboard-shortcuts'),
+          },
+          { name: landingTool.name, path: canonicalPath },
+        ])}
+      />
+
+      <JsonLd data={buildFaqJsonLd(landingTool.faq)} />
+
+      <ToolPageShell
+        locale={context.locale}
+        tool={landingTool}
+        relatedTools={relatedTools}
+        toolUi={
+          <KeyboardShortcutsTool
+            locale={context.locale}
+            initialAppId={resolution.page.appId}
+          />
+        }
+        afterToolSection={
+          <KeyboardShortcutsAppLinks
+            title={keyboardShortcutsRelatedCopy[context.locale].title}
+            description={keyboardShortcutsRelatedCopy[context.locale].description}
+            links={relatedAppPages}
+          />
+        }
+      />
+    </>
+  );
+};
+
+const renderGamerUsernameLandingPage = (
+  resolution: NonNullable<ReturnType<typeof getGamerUsernamePlatformResolutionBySlug>>,
+  context: RenderContext,
+): ReactNode => {
+  const baseTool = getLocalizedToolBySlug(context.locale, baseGamerUsernameToolSlug);
+
+  if (!baseTool) {
+    notFound();
+  }
+
+  const localizedContent = getLocalizedGamerUsernamePlatformContent(resolution.page, context.locale);
+  const relatedTools = getLocalizedRelatedTools(context.locale, baseTool.id);
+  const relatedGamePages = getRelatedGamerUsernamePlatformPages(resolution.page.gameId, 4).map(
+    (page) => toLocalizedGamerUsernamePlatformLink(page, context.locale),
+  );
+  const canonicalPath = getGamerUsernamePlatformPathByLocale(resolution.page, context.locale);
+
+  const landingTool: ToolDefinition = {
+    ...baseTool,
+    name: localizedContent.title,
+    h1: localizedContent.title,
+    intro: localizedContent.intro,
+    seoTitle: localizedContent.seoTitle,
+    seoDescription: localizedContent.seoDescription,
+    canonicalPath,
+    primaryKeyword: localizedContent.keywords[0] ?? baseTool.primaryKeyword,
+    secondaryKeywords: localizedContent.keywords.slice(1),
+    searchIntent: gamerUsernameSearchIntent[context.locale],
+    contentBlocks: localizedContent.contentBlocks,
+    faq: localizedContent.faq,
+  };
+
+  return (
+    <>
+      <JsonLd
+        data={buildToolWebPageJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          locale: context.locale,
+          keywords: [landingTool.primaryKeyword, ...landingTool.secondaryKeywords],
+        })}
+      />
+
+      <JsonLd
+        data={buildSoftwareApplicationJsonLd({
+          name: landingTool.name,
+          description: landingTool.seoDescription,
+          path: landingTool.canonicalPath,
+          category: 'UtilitiesApplication',
+        })}
+      />
+
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: context.dictionary.common.home, path: localizePath(context.locale, '/') },
+          { name: context.dictionary.common.tools, path: localizePath(context.locale, '/tools') },
+          {
+            name: baseTool.name,
+            path: localizePath(context.locale, '/tools/gamer-username-generator'),
+          },
+          { name: resolution.page.gameName, path: canonicalPath },
+        ])}
+      />
+
+      <JsonLd data={buildFaqJsonLd(landingTool.faq)} />
+
+      <ToolPageShell
+        locale={context.locale}
+        tool={landingTool}
+        relatedTools={relatedTools}
+        toolUi={
+          <GamerUsernameGeneratorTool
+            locale={context.locale}
+            initialGameId={resolution.page.gameId}
+          />
+        }
+        afterToolSection={
+          <GamerUsernamePlatformLinks
+            title={gamerUsernameRelatedCopy[context.locale].title}
+            description={gamerUsernameRelatedCopy[context.locale].description}
+            links={relatedGamePages}
+          />
+        }
+      />
+    </>
+  );
+};
+
 const renderToolAliasLandingPage = (
   aliasPage: ToolAliasPage,
   context: RenderContext,
@@ -1099,6 +1647,22 @@ export function generateStaticParams() {
       params.add(`${locale}:${platformPageSlug}`);
     });
 
+    getSymbolCategoryStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      params.add(`${locale}:${platformPageSlug}`);
+    });
+
+    getMultiplicationTableStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      params.add(`${locale}:${platformPageSlug}`);
+    });
+
+    getKeyboardShortcutsAppStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      params.add(`${locale}:${platformPageSlug}`);
+    });
+
+    getGamerUsernamePlatformStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
+      params.add(`${locale}:${platformPageSlug}`);
+    });
+
     getToolAliasStaticParamsByLocale(locale).forEach(({ platformPageSlug }) => {
       params.add(`${locale}:${platformPageSlug}`);
     });
@@ -1164,6 +1728,54 @@ export async function generateMetadata({ params }: LandingPageProps): Promise<Me
       title: localizedContent.seoTitle,
       description: localizedContent.seoDescription,
       localePaths: getNicknameSymbolPlatformLocalePathMap(landing.resolution.page),
+      keywords: localizedContent.keywords,
+    });
+  }
+
+  if (landing.kind === 'symbol-category') {
+    const localizedContent = getLocalizedSymbolCategoryContent(landing.resolution.page, locale);
+
+    return buildLocalizedMetadata({
+      locale,
+      title: localizedContent.seoTitle,
+      description: localizedContent.seoDescription,
+      localePaths: getSymbolCategoryLocalePathMap(landing.resolution.page),
+      keywords: localizedContent.keywords,
+    });
+  }
+
+  if (landing.kind === 'multiplication-table') {
+    const localizedContent = getLocalizedMultiplicationTableContent(landing.resolution.page, locale);
+
+    return buildLocalizedMetadata({
+      locale,
+      title: localizedContent.seoTitle,
+      description: localizedContent.seoDescription,
+      localePaths: getMultiplicationTableLocalePathMap(landing.resolution.page),
+      keywords: localizedContent.keywords,
+    });
+  }
+
+  if (landing.kind === 'keyboard-shortcuts-app') {
+    const localizedContent = getLocalizedKeyboardShortcutsAppContent(landing.resolution.page, locale);
+
+    return buildLocalizedMetadata({
+      locale,
+      title: localizedContent.seoTitle,
+      description: localizedContent.seoDescription,
+      localePaths: getKeyboardShortcutsAppLocalePathMap(landing.resolution.page),
+      keywords: localizedContent.keywords,
+    });
+  }
+
+  if (landing.kind === 'gamer-username-platform') {
+    const localizedContent = getLocalizedGamerUsernamePlatformContent(landing.resolution.page, locale);
+
+    return buildLocalizedMetadata({
+      locale,
+      title: localizedContent.seoTitle,
+      description: localizedContent.seoDescription,
+      localePaths: getGamerUsernamePlatformLocalePathMap(landing.resolution.page),
       keywords: localizedContent.keywords,
     });
   }
@@ -1266,6 +1878,42 @@ export default async function LandingPage({ params }: LandingPageProps) {
     }
 
     return renderNicknameSymbolLandingPage(landing.resolution, context);
+  }
+
+  if (landing.kind === 'symbol-category') {
+    const canonicalSlug = getSymbolCategorySlugByLocale(landing.resolution.page, locale);
+    if (platformPageSlug !== canonicalSlug) {
+      permanentRedirect(getSymbolCategoryPathByLocale(landing.resolution.page, locale));
+    }
+
+    return renderSymbolCategoryLandingPage(landing.resolution, context);
+  }
+
+  if (landing.kind === 'multiplication-table') {
+    const canonicalSlug = getMultiplicationTableSlugByLocale(landing.resolution.page, locale);
+    if (platformPageSlug !== canonicalSlug) {
+      permanentRedirect(getMultiplicationTablePathByLocale(landing.resolution.page, locale));
+    }
+
+    return renderMultiplicationTableLandingPage(landing.resolution, context);
+  }
+
+  if (landing.kind === 'keyboard-shortcuts-app') {
+    const canonicalSlug = getKeyboardShortcutsAppSlugByLocale(landing.resolution.page, locale);
+    if (platformPageSlug !== canonicalSlug) {
+      permanentRedirect(getKeyboardShortcutsAppPathByLocale(landing.resolution.page, locale));
+    }
+
+    return renderKeyboardShortcutsLandingPage(landing.resolution, context);
+  }
+
+  if (landing.kind === 'gamer-username-platform') {
+    const canonicalSlug = getGamerUsernamePlatformSlugByLocale(landing.resolution.page, locale);
+    if (platformPageSlug !== canonicalSlug) {
+      permanentRedirect(getGamerUsernamePlatformPathByLocale(landing.resolution.page, locale));
+    }
+
+    return renderGamerUsernameLandingPage(landing.resolution, context);
   }
 
   if (!landing.page.sourceLocales.includes(locale)) {

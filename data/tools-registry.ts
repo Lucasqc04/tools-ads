@@ -99,6 +99,10 @@ import {
   invisibleCharacterIntro,
 } from '@/data/content/invisible-character';
 import { getNicknameSymbolGeneratorContent } from '@/data/content/nickname-symbol-generator';
+import { getSymbolsToCopyContent } from '@/data/content/symbols-to-copy';
+import { getMultiplicationTableQuizContent } from '@/data/content/multiplication-table-quiz';
+import { getKeyboardShortcutsContent } from '@/data/content/keyboard-shortcuts';
+import { getGamerUsernameGeneratorContent } from '@/data/content/gamer-username-generator';
 import {
   videoCompressionContentBlocks,
   videoCompressionFaq,
@@ -1462,7 +1466,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/invisible-character',
     faq: invisibleCharacterFaq,
     contentBlocks: invisibleCharacterContentBlocks,
-    relatedToolIds: ['nickname-symbol-generator', 'qr-code-generator', 'password-generator'],
+    relatedToolIds: ['nickname-symbol-generator', 'gamer-username-generator', 'qr-code-generator', 'password-generator'],
   },
   {
     id: 'nickname-symbol-generator',
@@ -1480,7 +1484,79 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/nickname-symbol-generator',
     faq: getNicknameSymbolGeneratorContent('pt-br').faq,
     contentBlocks: getNicknameSymbolGeneratorContent('pt-br').contentBlocks,
-    relatedToolIds: ['invisible-character', 'cs2-crosshair-codes', 'contador-de-caracteres'],
+    relatedToolIds: ['invisible-character', 'cs2-crosshair-codes', 'symbols-to-copy'],
+  },
+  {
+    id: 'symbols-to-copy',
+    slug: 'symbols-to-copy',
+    name: getSymbolsToCopyContent('pt-br').name,
+    shortDescription: getSymbolsToCopyContent('pt-br').shortDescription,
+    category: 'utility',
+    primaryKeyword: getSymbolsToCopyContent('pt-br').primaryKeyword,
+    secondaryKeywords: getSymbolsToCopyContent('pt-br').secondaryKeywords,
+    searchIntent: getSymbolsToCopyContent('pt-br').searchIntent,
+    seoTitle: getSymbolsToCopyContent('pt-br').seoTitle,
+    seoDescription: getSymbolsToCopyContent('pt-br').seoDescription,
+    h1: getSymbolsToCopyContent('pt-br').h1,
+    intro: getSymbolsToCopyContent('pt-br').intro,
+    canonicalPath: '/tools/symbols-to-copy',
+    faq: getSymbolsToCopyContent('pt-br').faq,
+    contentBlocks: getSymbolsToCopyContent('pt-br').contentBlocks,
+    relatedToolIds: ['nickname-symbol-generator', 'invisible-character', 'contador-de-caracteres'],
+  },
+  {
+    id: 'gamer-username-generator',
+    slug: 'gamer-username-generator',
+    name: getGamerUsernameGeneratorContent('pt-br').name,
+    shortDescription: getGamerUsernameGeneratorContent('pt-br').shortDescription,
+    category: 'gaming',
+    primaryKeyword: getGamerUsernameGeneratorContent('pt-br').primaryKeyword,
+    secondaryKeywords: getGamerUsernameGeneratorContent('pt-br').secondaryKeywords,
+    searchIntent: getGamerUsernameGeneratorContent('pt-br').searchIntent,
+    seoTitle: getGamerUsernameGeneratorContent('pt-br').seoTitle,
+    seoDescription: getGamerUsernameGeneratorContent('pt-br').seoDescription,
+    h1: getGamerUsernameGeneratorContent('pt-br').h1,
+    intro: getGamerUsernameGeneratorContent('pt-br').intro,
+    canonicalPath: '/tools/gamer-username-generator',
+    faq: getGamerUsernameGeneratorContent('pt-br').faq,
+    contentBlocks: getGamerUsernameGeneratorContent('pt-br').contentBlocks,
+    relatedToolIds: ['nickname-symbol-generator', 'invisible-character', 'password-generator'],
+  },
+  {
+    id: 'multiplication-table-quiz',
+    slug: 'multiplication-table-quiz',
+    name: getMultiplicationTableQuizContent('pt-br').name,
+    shortDescription: getMultiplicationTableQuizContent('pt-br').shortDescription,
+    category: 'utility',
+    primaryKeyword: getMultiplicationTableQuizContent('pt-br').primaryKeyword,
+    secondaryKeywords: getMultiplicationTableQuizContent('pt-br').secondaryKeywords,
+    searchIntent: getMultiplicationTableQuizContent('pt-br').searchIntent,
+    seoTitle: getMultiplicationTableQuizContent('pt-br').seoTitle,
+    seoDescription: getMultiplicationTableQuizContent('pt-br').seoDescription,
+    h1: getMultiplicationTableQuizContent('pt-br').h1,
+    intro: getMultiplicationTableQuizContent('pt-br').intro,
+    canonicalPath: '/tools/multiplication-table-quiz',
+    faq: getMultiplicationTableQuizContent('pt-br').faq,
+    contentBlocks: getMultiplicationTableQuizContent('pt-br').contentBlocks,
+    relatedToolIds: ['calculadora-juros-compostos', 'sorteador', 'contador-de-caracteres'],
+  },
+  {
+    id: 'keyboard-shortcuts',
+    slug: 'keyboard-shortcuts',
+    name: getKeyboardShortcutsContent('pt-br').name,
+    shortDescription: getKeyboardShortcutsContent('pt-br').shortDescription,
+    category: 'dev',
+    primaryKeyword: getKeyboardShortcutsContent('pt-br').primaryKeyword,
+    secondaryKeywords: getKeyboardShortcutsContent('pt-br').secondaryKeywords,
+    searchIntent: getKeyboardShortcutsContent('pt-br').searchIntent,
+    seoTitle: getKeyboardShortcutsContent('pt-br').seoTitle,
+    seoDescription: getKeyboardShortcutsContent('pt-br').seoDescription,
+    h1: getKeyboardShortcutsContent('pt-br').h1,
+    intro: getKeyboardShortcutsContent('pt-br').intro,
+    canonicalPath: '/tools/keyboard-shortcuts',
+    faq: getKeyboardShortcutsContent('pt-br').faq,
+    contentBlocks: getKeyboardShortcutsContent('pt-br').contentBlocks,
+    relatedToolIds: ['regex-tester', 'json-formatter', 'markdown-editor'],
   },
   {
     id: 'cs2-crosshair-codes',
@@ -1890,6 +1966,46 @@ const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>
 const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition => {
   if (tool.id === 'nickname-symbol-generator') {
     const localized = getNicknameSymbolGeneratorContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'symbols-to-copy') {
+    const localized = getSymbolsToCopyContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'gamer-username-generator') {
+    const localized = getGamerUsernameGeneratorContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'multiplication-table-quiz') {
+    const localized = getMultiplicationTableQuizContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'keyboard-shortcuts') {
+    const localized = getKeyboardShortcutsContent(locale);
 
     return {
       ...tool,

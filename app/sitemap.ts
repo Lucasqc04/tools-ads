@@ -1,6 +1,13 @@
 import type { MetadataRoute } from 'next';
-import { getCryptoConversionStaticParams } from '@/data/crypto-conversion-pages';
-import { getImageConversionStaticParams } from '@/data/image-conversion-pages';
+import {
+  cryptoConversionPages,
+  getCryptoConversionLocalePathMap,
+} from '@/data/crypto-conversion-pages';
+import {
+  getImageConversionLocalePathMap,
+  imageConversionPages,
+  isIndexableImageConversionPage,
+} from '@/data/image-conversion-pages';
 import {
   getInvisiblePlatformLocalePathMap,
   invisiblePlatformPages,
@@ -9,6 +16,22 @@ import {
   getNicknameSymbolPlatformLocalePathMap,
   nicknameSymbolPlatformPages,
 } from '@/data/nickname-symbol-platform-pages';
+import {
+  getSymbolCategoryLocalePathMap,
+  symbolCategoryPages,
+} from '@/data/symbol-category-pages';
+import {
+  getMultiplicationTableLocalePathMap,
+  multiplicationTablePages,
+} from '@/data/multiplication-table-pages';
+import {
+  getKeyboardShortcutsAppLocalePathMap,
+  keyboardShortcutsAppPages,
+} from '@/data/keyboard-shortcuts-app-pages';
+import {
+  getGamerUsernamePlatformLocalePathMap,
+  gamerUsernamePlatformPages,
+} from '@/data/gamer-username-platform-pages';
 import { getGtaSeoLocalePathMap, gtaSeoPages } from '@/data/gta/gta-seo-pages';
 import { getToolAliasStaticParamsByLocale } from '@/data/tool-alias-pages';
 import { getToolLocalePathMap, toolsRegistry } from '@/data/tools-registry';
@@ -104,23 +127,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
   });
 
-  const cryptoConversionRoutes: MetadataRoute.Sitemap = getCryptoConversionStaticParams().flatMap(
-    ({ conversionSlug }) =>
-      createLocalizedEntries(`/tools/crypto-unit-converter/${conversionSlug}`, {
-        lastModified: contentLastModified,
-        changeFrequency: 'weekly',
-        priority: 0.72,
-      }),
-  );
+  const cryptoConversionRoutes: MetadataRoute.Sitemap = cryptoConversionPages.flatMap((page) => {
+    const pathMap = getCryptoConversionLocalePathMap(page);
 
-  const imageConversionRoutes: MetadataRoute.Sitemap = getImageConversionStaticParams().flatMap(
-    ({ conversionSlug }) =>
-      createLocalizedEntries(`/tools/image-converter/${conversionSlug}`, {
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.72,
+      alternates: buildAlternates(pathMap),
+    }));
+  });
+
+  const imageConversionRoutes: MetadataRoute.Sitemap = imageConversionPages
+    .filter(isIndexableImageConversionPage)
+    .flatMap((page) => {
+      const pathMap = getImageConversionLocalePathMap(page);
+
+      return locales.map((locale) => ({
+        url: makeAbsoluteUrl(pathMap[locale]),
         lastModified: contentLastModified,
-        changeFrequency: 'weekly',
+        changeFrequency: 'weekly' as const,
         priority: 0.72,
-      }),
-  );
+        alternates: buildAlternates(pathMap),
+      }));
+    });
 
   const invisibleLandingRoutes: MetadataRoute.Sitemap = invisiblePlatformPages.flatMap((page) => {
     const pathMap = getInvisiblePlatformLocalePathMap(page);
@@ -146,6 +177,54 @@ export default function sitemap(): MetadataRoute.Sitemap {
         alternates: buildAlternates(pathMap),
       }));
     });
+
+  const symbolCategoryRoutes: MetadataRoute.Sitemap = symbolCategoryPages.flatMap((page) => {
+    const pathMap = getSymbolCategoryLocalePathMap(page);
+
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+      alternates: buildAlternates(pathMap),
+    }));
+  });
+
+  const multiplicationTableRoutes: MetadataRoute.Sitemap = multiplicationTablePages.flatMap((page) => {
+    const pathMap = getMultiplicationTableLocalePathMap(page);
+
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+      alternates: buildAlternates(pathMap),
+    }));
+  });
+
+  const keyboardShortcutsAppRoutes: MetadataRoute.Sitemap = keyboardShortcutsAppPages.flatMap((page) => {
+    const pathMap = getKeyboardShortcutsAppLocalePathMap(page);
+
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+      alternates: buildAlternates(pathMap),
+    }));
+  });
+
+  const gamerUsernamePlatformRoutes: MetadataRoute.Sitemap = gamerUsernamePlatformPages.flatMap((page) => {
+    const pathMap = getGamerUsernamePlatformLocalePathMap(page);
+
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.74,
+      alternates: buildAlternates(pathMap),
+    }));
+  });
 
   const toolAliasRoutes: MetadataRoute.Sitemap = locales.flatMap((locale) =>
     getToolAliasStaticParamsByLocale(locale).map(({ platformPageSlug }) => ({
@@ -175,6 +254,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...imageConversionRoutes,
     ...invisibleLandingRoutes,
     ...nicknameSymbolLandingRoutes,
+    ...symbolCategoryRoutes,
+    ...multiplicationTableRoutes,
+    ...keyboardShortcutsAppRoutes,
+    ...gamerUsernamePlatformRoutes,
     ...toolAliasRoutes,
     ...gtaSeoRoutes,
   ]);
