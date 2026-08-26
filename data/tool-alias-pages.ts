@@ -66,6 +66,10 @@ const MAX_ALIASES_PER_LOCALE = 4;
 
 const TOOL_SLUGS_WITH_DEDICATED_LANDING_PAGES = new Set([
   'nickname-symbol-generator',
+  'symbols-to-copy',
+  'multiplication-table-quiz',
+  'keyboard-shortcuts',
+  'gamer-username-generator',
 ]);
 
 const LEGACY_ALIAS_SUFFIXES = [
