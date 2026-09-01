@@ -247,6 +247,83 @@ const contentByLocale: Record<AppLocale, KeyboardShortcutsContent> = {
       },
     ],
   },
+  zh: {
+    name: 'Keyboard Shortcuts Hub',
+    shortDescription:
+      'Keyboard shortcuts for Windows, macOS, VS Code, Excel, Google Sheets, Chrome, GitHub, and Figma with search, categories, and a Windows/Mac toggle.',
+    primaryKeyword: 'keyboard shortcuts',
+    secondaryKeywords: [
+      'excel keyboard shortcuts',
+      'vscode keyboard shortcuts',
+      'windows keyboard shortcuts',
+      'mac keyboard shortcuts',
+      'chrome keyboard shortcuts',
+      'google sheets keyboard shortcuts',
+    ],
+    searchIntent:
+      'People who want to quickly look up keyboard shortcuts for a specific app or system, with a Windows/Mac equivalent when applicable.',
+    seoTitle: 'Keyboard Shortcuts Hub | Windows, Mac, VS Code, Excel and More',
+    seoDescription:
+      'Look up keyboard shortcuts for Windows, macOS, VS Code, Excel, Google Sheets, Chrome, GitHub, and Figma organized by category, with search and a Windows/Mac toggle.',
+    h1: 'Keyboard Shortcuts Hub by App',
+    intro:
+      'Pick an app or system, search by action, and switch between the Windows and Mac shortcut when they differ.',
+    contentBlocks: [
+      {
+        title: 'How to use the shortcuts hub',
+        paragraphs: [
+          'Pick an app or system from the list (Windows, macOS, VS Code, Excel, Google Sheets, Chrome, GitHub, or Figma) to see shortcuts organized by category. Use search to filter by action (e.g. "copy" or "comment"), and when a shortcut differs between systems, switch between Windows and Mac to see the right combination for your keyboard.',
+          'Each row shows the action and its key combination. The list covers the most commonly used shortcuts for everyday work in each tool, focused on real productivity rather than a giant list that\'s hard to scan quickly.',
+        ],
+      },
+      {
+        title: 'Why learn keyboard shortcuts',
+        paragraphs: [
+          'Trading a mouse click for a keyboard shortcut saves seconds on every action, and those seconds add up to minutes over a work day. Shortcuts also reduce interruptions to your train of thought: instead of hunting for a menu button, the action happens without taking your hands off the keyboard.',
+        ],
+        list: [
+          'Start with your operating system\'s basic navigation shortcuts.',
+          'Learn 3 to 5 new shortcuts a week instead of trying to memorize everything at once.',
+          'Use this page\'s search whenever you forget a specific shortcut.',
+          'Check the Mac version when a shortcut depends on the system.',
+        ],
+      },
+      {
+        title: 'Coverage by app',
+        paragraphs: [
+          'The hub covers essential operating system shortcuts (Windows and macOS), code editing (VS Code), spreadsheets (Excel and Google Sheets), the browser (Chrome), version control (GitHub), and interface design (Figma). More apps are added over time.',
+        ],
+      },
+      {
+        title: 'Local processing and privacy',
+        paragraphs: [
+          'Search and navigation between apps run entirely in your browser. No data is sent to a server.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Do the shortcuts work on both Windows and Mac?',
+        answer:
+          'Yes, when an app has a version for both systems you can switch between the Windows and Mac combination.',
+      },
+      {
+        question: 'Which apps are available?',
+        answer:
+          'Windows, macOS, VS Code, Excel, Google Sheets, Chrome, GitHub, and Figma, with more apps being added over time.',
+      },
+      {
+        question: 'Can I search for a specific shortcut?',
+        answer:
+          'Yes. Use the search box inside each app to filter by the action you\'re looking for.',
+      },
+      {
+        question: 'Is it free and does it work on mobile?',
+        answer:
+          'Yes. The tool is free, requires no sign-up, and works normally on mobile browsers for reference.',
+      },
+    ],
+  },
 };
 
 export const getKeyboardShortcutsContent = (locale: AppLocale): KeyboardShortcutsContent =>

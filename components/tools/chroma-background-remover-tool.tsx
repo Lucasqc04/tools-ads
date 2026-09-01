@@ -407,6 +407,87 @@ const uiByLocale: Record<AppLocale, ChromaToolUi> = {
       manual: 'Color manual',
     },
   },
+  zh: {
+    title: 'Chroma key background remover',
+    intro:
+      'Remove magenta, green, white, or custom-color backgrounds and download a transparent PNG at original size.',
+    uploadLabel: 'Image with chroma background',
+    uploadHint:
+      'Use PNG, JPG, JPEG, WEBP, or BMP. Processing stays local in the browser.',
+    acceptedDescription: 'PNG, JPG, JPEG, WEBP, BMP',
+    colorMode: 'Background color',
+    manualColor: 'Custom color',
+    threshold: 'Threshold',
+    thresholdHint:
+      'Increase it to remove more background pixels similar to the selected color.',
+    softness: 'Softness',
+    softnessHint:
+      'Increase it for smoother edges; reduce it for a sharper cut.',
+    despill: 'Despill / smooth edge',
+    despillHint:
+      'Reduces chroma color spill on semi-transparent edges.',
+    generate: 'Generate 3 options',
+    generating: 'Generating...',
+    download: 'Download transparent PNG',
+    downloading: 'Processing original...',
+    clear: 'Clear',
+    viewPreview: 'View preview',
+    sourcePreview: 'Original',
+    resultPreview: 'Selected result',
+    noFile: 'Select an image to start.',
+    noPreview:
+      'Adjust the color and generate options to compare light, balanced, and strong.',
+    cropTitle: 'Crop before removing the background',
+    cropIntro:
+      'Choose free, square, or round crop, resize it from the corners, and move the frame before chroma key.',
+    cropMode: 'Crop shape',
+    cropNone: 'No crop',
+    cropFree: 'Free',
+    cropSquare: 'Square',
+    cropCircle: 'Round',
+    cropSize: 'Size',
+    cropWidth: 'Width',
+    cropHeight: 'Height',
+    cropHorizontal: 'Horizontal',
+    cropVertical: 'Vertical',
+    cropReset: 'Center',
+    cropSourceTitle: 'Framing',
+    cropOutputTitle: 'Current crop',
+    cropPending: 'Crop adjusted. Generate the 3 options to apply it to chroma.',
+    cropDragHint: 'Drag the area to move it. Use the corners to resize.',
+    settingsPending: 'Settings changed. Generate the 3 options before downloading.',
+    selectedFile: 'Selected file',
+    originalSize: 'Original size',
+    previewSize: 'Preview',
+    cropSizeInfo: 'Crop',
+    currentChroma: 'Chroma used',
+    transparentPixels: (value) => `${value}% transparent in preview`,
+    outputNote:
+      'Preview is scaled down for speed. Download runs crop and chroma again on the original file and saves PNG without JPEG recompression.',
+    localNote:
+      'No image is uploaded to a server by default. The background cut runs in your browser.',
+    loadedOk: 'Image loaded. The first 3 options were generated.',
+    previewOk: 'Previews updated. Choose the option that preserves details best.',
+    downloadOk: (fileName) => `${fileName} generated for download.`,
+    genericError: 'Could not process this image.',
+    optionLabels: {
+      light: 'Light',
+      balanced: 'Balanced',
+      strong: 'Strong',
+    },
+    optionDescriptions: {
+      light: 'Preserves hair, texture, and fine details.',
+      balanced: 'Best starting point for most images.',
+      strong: 'Removes more edge halo and leftover background.',
+    },
+    presetLabels: {
+      magenta: 'Magenta #FF00FF',
+      green: 'Green #00FF00',
+      white: 'White #FFFFFF',
+      auto: 'Auto from corners',
+      manual: 'Custom color',
+    },
+  },
 };
 
 const acceptedImageTypes =

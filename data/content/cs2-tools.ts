@@ -94,6 +94,8 @@ const safeWarning: Record<AppLocale, string> = {
     'Official servers can block automation that combines movement or attack actions on one input. This tool uses one-action binds, separate local practice, and safe client-side settings.',
   es:
     'Los servidores oficiales pueden bloquear automatizaciones que combinan movimiento o ataque en una entrada. Esta herramienta usa binds de una sola accion, practica local separada y ajustes cliente seguros.',
+  zh:
+    '官方服务器可能会屏蔽将移动和攻击组合在同一按键上的自动化操作。本工具使用单一动作的绑定、独立的本地训练以及安全的客户端设置。',
 };
 
 const performanceNote: Record<AppLocale, string> = {
@@ -103,6 +105,8 @@ const performanceNote: Record<AppLocale, string> = {
     'These commands help tune FPS caps, telemetry, and visual elements, but real gains depend on your hardware and full game setup.',
   es:
     'Estos comandos ayudan a ajustar limite de FPS, telemetria y elementos visuales, pero la mejora real depende del hardware y de la configuracion completa.',
+  zh:
+    '这些指令有助于调整 FPS 上限、遥测信息和视觉元素,但实际提升效果取决于你的硬件和整体游戏设置。',
 };
 
 export const cs2SafetyAlertByLocale = safeWarning;
@@ -334,6 +338,81 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     autoexecCrosshairPlaceholder:
       'Pega comandos de mira aqui (ej.: cl_crosshairstyle 4, cl_crosshairsize 2)',
   },
+  zh: {
+    searchLabel: '搜索指令',
+    searchPlaceholder: '例如:sv_cheats、noclip、radar、viewmodel',
+    categoryLabel: '分类',
+    categoryAll: '全部分类',
+    safeOnlyLabel: '仅显示竞技模式下安全的指令',
+    localOnlyLabel: '仅显示本地/私人服务器指令',
+    svCheatsLabel: '仅显示需要 sv_cheats 1 的指令',
+    needsValidationLabel: '显示标记为待验证的指令',
+    recommendedLabel: '仅显示本工具推荐的指令',
+    resultsLabel: '条指令',
+    commandLabel: '指令',
+    exampleLabel: '使用示例',
+    copyCommand: '复制指令',
+    copiedCommand: '指令已复制',
+    copyPreset: '复制预设',
+    copiedPreset: '预设已复制',
+    copyCfg: '复制 .cfg',
+    copiedCfg: '.cfg 已复制',
+    downloadCfg: '下载 .cfg',
+    generatedPreviewTitle: '生成预览',
+    safetyTitle: '安全提示',
+    safetyText: safeWarning.zh,
+    warningTitle: '警告',
+    safeBadge: '安全',
+    localBadge: '本地训练',
+    svCheatsBadge: '需要 sv_cheats',
+    cautionBadge: '谨慎',
+    dangerBadge: '不推荐',
+    presetTitle: '现成预设',
+    emptyState: '当前筛选条件下未找到指令。',
+    radarGeneratorTitle: '雷达生成器',
+    hudColorGeneratorTitle: 'HUD 颜色生成器',
+    viewmodelGeneratorTitle: 'Viewmodel 生成器',
+    volumeGeneratorTitle: '音量生成器',
+    fpsGeneratorTitle: 'FPS 生成器',
+    fpsGeneratorHelp:
+      '请在加入服务器前设置 fps_max。自2025年起,CS2 不允许在连接服务器后修改该上限。',
+    telemetryGeneratorTitle: '遥测生成器',
+    telemetryGeneratorHelp:
+      '仅在出现问题时显示指示器,保持画面简洁的同时,依然能察觉卡顿、延迟和丢包。',
+    telemetryFrameLabel: '帧时间 / FPS',
+    telemetryPingLabel: '延迟(Ping)',
+    telemetryNetworkLabel: '丢包或乱序传输',
+    telemetryGraphLabel: '包含网络质量图表',
+    telemetryOffOption: '关闭',
+    telemetryPoorOption: '仅在网络不佳时',
+    telemetryAlwaysOption: '始终显示',
+    bindGeneratorTitle: '安全绑定生成器',
+    bindGeneratorHelp:
+      '为沟通、道具或视角切换生成单一动作的绑定。请选择空闲按键,以免覆盖你的按键布局。',
+    bindKeyLabel: '按键',
+    bindActionLabel: '动作',
+    bindPingAction: '标记位置(ping)',
+    bindClutchAction: '切换残局模式',
+    bindSwitchHandsAction: '切换持枪手',
+    bindHeAction: '选择手雷',
+    bindFlashAction: '选择闪光弹',
+    bindSmokeAction: '选择烟雾弹',
+    bindFireAction: '选择燃烧瓶/火燃道具',
+    autoexecGeneratorTitle: 'Autoexec 生成器',
+    autoexecHelp:
+      '分别生成竞技模式(autoexec.cfg)、本地训练(practice.cfg)和私服娱乐(fun.cfg)的配置文件。',
+    autoexecIncludeRadar: '包含雷达设置',
+    autoexecIncludeHud: '包含 HUD 设置',
+    autoexecIncludeViewmodel: '包含 Viewmodel 设置',
+    autoexecIncludeFps: '包含 FPS 设置',
+    autoexecIncludeAudio: '包含音频设置',
+    autoexecIncludeBinds: '包含简单绑定',
+    autoexecIncludePractice: '包含 practice.cfg',
+    autoexecIncludeFun: '包含 fun.cfg',
+    autoexecCrosshairLabel: '可选的准星设置',
+    autoexecCrosshairPlaceholder:
+      '在此粘贴准星指令(例如:cl_crosshairstyle 4、cl_crosshairsize 2)',
+  },
 };
 
 type ToolContentMode =
@@ -380,14 +459,18 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
             ? 'Comandos de performance sem promessa falsa'
             : locale === 'en'
               ? 'Performance commands without fake promises'
-              : 'Comandos de rendimiento sin promesas falsas',
+              : locale === 'zh'
+                ? '性能相关指令,不做虚假承诺'
+                : 'Comandos de rendimiento sin promesas falsas',
         paragraphs: [
           performanceNote[locale],
           locale === 'pt-br'
             ? 'Use comparacoes consistentes: mesmo mapa, mesma resolucao e mesma situacao. Isso evita conclusao errada sobre ganho de desempenho.'
             : locale === 'en'
               ? 'Use consistent comparisons: same map, same resolution, and same scenario. This avoids false conclusions about performance gains.'
-              : 'Usa comparaciones consistentes: mismo mapa, misma resolucion y misma situacion. Asi evitas conclusiones falsas.',
+              : locale === 'zh'
+                ? '使用一致的对比条件:相同地图、相同分辨率、相同场景,避免对性能提升得出错误结论。'
+                : 'Usa comparaciones consistentes: mismo mapa, misma resolucion y misma situacion. Asi evitas conclusiones falsas.',
         ],
       },
       {
@@ -396,18 +479,24 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
             ? 'Comandos principais para medir e ajustar'
             : locale === 'en'
               ? 'Core commands for measuring and tuning'
-              : 'Comandos clave para medir y ajustar',
+              : locale === 'zh'
+                ? '用于测量和调优的核心指令'
+                : 'Comandos clave para medir y ajustar',
         paragraphs: [
           locale === 'pt-br'
             ? 'fps_max, fps_max_ui, cl_showfps, cq_netgraph e a telemetria do HUD ajudam a montar uma baseline de desempenho. Em builds atuais, defina fps_max antes de entrar em um servidor, porque ele nao pode ser alterado durante a conexao.'
             : locale === 'en'
               ? 'fps_max, fps_max_ui, cl_showfps, cq_netgraph, and HUD telemetry help build a measurable performance baseline. On current builds, set fps_max before joining a server because it cannot be changed while connected.'
-              : 'fps_max, fps_max_ui, cl_showfps, cq_netgraph y la telemetria HUD ayudan a crear una baseline medible. En builds actuales, define fps_max antes de entrar a un servidor porque no se puede cambiar durante la conexion.',
+              : locale === 'zh'
+                ? 'fps_max、fps_max_ui、cl_showfps、cq_netgraph 以及 HUD 遥测信息有助于建立可量化的性能基线。在当前版本中,请在加入服务器前设置好 fps_max,因为连接后无法修改该数值。'
+                : 'fps_max, fps_max_ui, cl_showfps, cq_netgraph y la telemetria HUD ayudan a crear una baseline medible. En builds actuales, define fps_max antes de entrar a un servidor porque no se puede cambiar durante la conexion.',
           locale === 'pt-br'
             ? 'Evite alterar tudo ao mesmo tempo. Mudancas pequenas por etapa facilitam identificar causa de melhora ou piora.'
             : locale === 'en'
               ? 'Avoid changing everything at once. Small step-by-step adjustments make it easier to identify what improved or worsened.'
-              : 'Evita cambiar todo a la vez. Ajustes pequenos por etapas facilitan identificar que mejoro o empeoro.',
+              : locale === 'zh'
+                ? '避免一次性修改所有设置。分步骤进行小幅调整,更容易判断具体是什么带来了改善或下降。'
+                : 'Evita cambiar todo a la vez. Ajustes pequenos por etapas facilitan identificar que mejoro o empeoro.',
         ],
       },
       {
@@ -416,13 +505,17 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
             ? 'Separacao entre competitivo e treino local'
             : locale === 'en'
               ? 'Competitive vs local practice separation'
-              : 'Separacion entre competitivo y practica local',
+              : locale === 'zh'
+                ? '竞技配置与本地训练的区分'
+                : 'Separacion entre competitivo y practica local',
         paragraphs: [
           locale === 'pt-br'
             ? 'Comandos de FPS e HUD podem entrar em config competitiva segura. Comandos de treino local com sv_cheats devem ficar em arquivo separado.'
             : locale === 'en'
               ? 'FPS and HUD commands can be part of safe competitive config. Local sv_cheats practice commands should stay in separate files.'
-              : 'Comandos de FPS y HUD pueden formar parte de config competitiva segura. Comandos locales con sv_cheats deben quedar separados.',
+              : locale === 'zh'
+                ? 'FPS 和 HUD 相关指令可以纳入安全的竞技配置。需要 sv_cheats 的本地训练指令应放在单独的文件中。'
+                : 'Comandos de FPS y HUD pueden formar parte de config competitiva segura. Comandos locales con sv_cheats deben quedar separados.',
           safeWarning[locale],
         ],
       },
@@ -437,18 +530,24 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
             ? 'Mapa de cores da HUD no CS2'
             : locale === 'en'
               ? 'CS2 HUD color map'
-              : 'Mapa de colores HUD en CS2',
+              : locale === 'zh'
+                ? 'CS2 HUD 颜色对照表'
+                : 'Mapa de colores HUD en CS2',
         paragraphs: [
           locale === 'pt-br'
             ? 'A ferramenta traduz cl_hud_color para nomes amigáveis: default, white, light blue, blue, purple, red, orange, yellow, green, aqua e pink.'
             : locale === 'en'
               ? 'This tool maps cl_hud_color values to friendly names: default, white, light blue, blue, purple, red, orange, yellow, green, aqua, and pink.'
-              : 'La herramienta mapea valores de cl_hud_color a nombres amigables: default, white, light blue, blue, purple, red, orange, yellow, green, aqua y pink.',
+              : locale === 'zh'
+                ? '本工具将 cl_hud_color 的数值对应到易懂的名称:default、white、light blue、blue、purple、red、orange、yellow、green、aqua 和 pink。'
+                : 'La herramienta mapea valores de cl_hud_color a nombres amigables: default, white, light blue, blue, purple, red, orange, yellow, green, aqua y pink.',
           locale === 'pt-br'
             ? 'Se algum valor mudar em update, marcamos como validacao para voce testar antes de fixar no autoexec.'
             : locale === 'en'
               ? 'If value behavior changes after updates, we flag it for validation before you lock it into autoexec.'
-              : 'Si algun valor cambia tras updates, lo marcamos para validacion antes de fijarlo en autoexec.',
+              : locale === 'zh'
+                ? '如果某个数值在更新后表现发生变化,我们会标记为待验证,建议先测试再固定写入 autoexec。'
+                : 'Si algun valor cambia tras updates, lo marcamos para validacion antes de fijarlo en autoexec.',
         ],
       },
       {
@@ -457,18 +556,24 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
             ? 'Escolha de cor para leitura competitiva'
             : locale === 'en'
               ? 'Color choice for competitive readability'
-              : 'Eleccion de color para lectura competitiva',
+              : locale === 'zh'
+                ? '为竞技可读性选择颜色'
+                : 'Eleccion de color para lectura competitiva',
         paragraphs: [
           locale === 'pt-br'
             ? 'A melhor cor depende do contraste com mapa e brilho do monitor. O ideal e testar em mapas claros e escuros antes de fechar configuracao.'
             : locale === 'en'
               ? 'Best color depends on map contrast and monitor brightness. Test on bright and dark maps before locking your setup.'
-              : 'El mejor color depende del contraste del mapa y brillo del monitor. Prueba en mapas claros y oscuros antes de fijar configuracion.',
+              : locale === 'zh'
+                ? '最佳颜色取决于与地图的对比度和显示器亮度。建议先在明暗不同的地图上测试,再最终确定配置。'
+                : 'El mejor color depende del contraste del mapa y brillo del monitor. Prueba en mapas claros y oscuros antes de fijar configuracion.',
           locale === 'pt-br'
             ? 'Comando de cor da HUD e client-side e normalmente seguro para competitivo, sem automacao de gameplay.'
             : locale === 'en'
               ? 'HUD color commands are client-side and generally safe for competitive play, with no gameplay automation.'
-              : 'El comando de color HUD es cliente y normalmente seguro para competitivo, sin automatizacion de gameplay.',
+              : locale === 'zh'
+                ? 'HUD 颜色指令属于客户端设置,通常在竞技对局中是安全的,不涉及任何游戏自动化。'
+                : 'El comando de color HUD es cliente y normalmente seguro para competitivo, sin automatizacion de gameplay.',
         ],
       },
     ];
@@ -487,35 +592,45 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
       ? `Como usar ${focus} no CS2`
       : locale === 'en'
         ? `How to use ${focus} in CS2`
-        : `Como usar ${focus} en CS2`;
+        : locale === 'zh'
+          ? `如何在 CS2 中使用${focus}`
+          : `Como usar ${focus} en CS2`;
 
   const flowTitle =
     locale === 'pt-br'
       ? 'Fluxo recomendado de configuracao e treino'
       : locale === 'en'
         ? 'Recommended setup and training flow'
-        : 'Flujo recomendado de configuracion y practica';
+        : locale === 'zh'
+          ? '推荐的配置与训练流程'
+          : 'Flujo recomendado de configuracion y practica';
 
   const safetyTitle =
     locale === 'pt-br'
       ? 'Seguranca, limites e uso competitivo'
       : locale === 'en'
         ? 'Safety, limits, and competitive usage'
-        : 'Seguridad, limites y uso competitivo';
+        : locale === 'zh'
+          ? '安全性、限制与竞技使用'
+          : 'Seguridad, limites y uso competitivo';
 
   const firstParagraph =
     locale === 'pt-br'
       ? `A ferramenta de ${focus} foi criada para encurtar o caminho entre pesquisa e execucao. Em vez de montar comando manualmente, voce escolhe opcoes, copia blocos prontos e testa em segundos.`
       : locale === 'en'
         ? `The ${focus} tool is built to shorten the path from setup to execution. Instead of assembling commands manually, you choose options, copy ready blocks, and test in seconds.`
-        : `La herramienta de ${focus} fue creada para acortar el camino entre busqueda y ejecucion. En lugar de montar comandos manualmente, eliges opciones y copias bloques listos.`;
+        : locale === 'zh'
+          ? `${focus}工具的设计目标是缩短从查找到实际执行之间的路径。你无需手动拼接指令,只需选择选项、复制现成的配置块,几秒内即可测试。`
+          : `La herramienta de ${focus} fue creada para acortar el camino entre busqueda y ejecucion. En lugar de montar comandos manualmente, eliges opciones y copias bloques listos.`;
 
   const secondParagraph =
     locale === 'pt-br'
       ? 'Esse formato melhora consistencia de treino e evita erro de digitacao em momentos de pressa. Tambem facilita repetir rotina entre mapas e comparar resultados.'
       : locale === 'en'
         ? 'This format improves routine consistency and avoids typing mistakes under pressure. It also makes map-to-map repetition and result comparison easier.'
-        : 'Este formato mejora consistencia de rutina y evita errores de escritura en momentos de prisa. Tambien facilita repetir y comparar resultados.';
+        : locale === 'zh'
+          ? '这种方式能提升训练流程的一致性,避免在紧张时刻手误输错指令,也让你更容易在不同地图之间重复流程并比较结果。'
+          : 'Este formato mejora consistencia de rutina y evita errores de escritura en momentos de prisa. Tambien facilita repetir y comparar resultados.';
 
   const flowParagraphA =
     locale === 'pt-br'
@@ -526,9 +641,13 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
         ? isPracticeOrFun
           ? 'Use presets for a quick baseline, then adjust details by objective: smokes, spray, bots, movement, or private fun sessions.'
           : 'Start from a balanced preset, tune in small steps, and validate over several maps before adopting permanently.'
-        : isPracticeOrFun
-          ? 'Usa presets para base rapida y luego ajusta detalles por objetivo: smokes, spray, bots, movimiento o sesion fun privada.'
-          : 'Empieza con preset equilibrado, ajusta en pasos pequenos y valida en varios mapas antes de fijar definitivo.';
+        : locale === 'zh'
+          ? isPracticeOrFun
+            ? '使用预设快速搭建基础配置,再根据具体目标(烟雾弹、压枪、Bot、走位或私服娱乐)调整细节。'
+            : '从一套均衡的预设开始,分小步调整,并在多张地图上验证后再最终确定配置。'
+          : isPracticeOrFun
+            ? 'Usa presets para base rapida y luego ajusta detalles por objetivo: smokes, spray, bots, movimiento o sesion fun privada.'
+            : 'Empieza con preset equilibrado, ajusta en pasos pequenos y valida en varios mapas antes de fijar definitivo.';
 
   const flowParagraphB =
     locale === 'pt-br'
@@ -539,9 +658,13 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
         ? mode === 'autoexec'
           ? 'Keep autoexec.cfg for client-side commands and separate practice.cfg/fun.cfg for local-only commands. This reduces operational risk on official match days.'
           : 'Save your routine in .cfg files once stable. Reapplying with exec reduces friction and keeps practice structured.'
-        : mode === 'autoexec'
-          ? 'Mantén autoexec.cfg para comandos cliente y separa practice.cfg/fun.cfg para comandos locales. Esto reduce riesgo en dias oficiales.'
-          : 'Guarda rutina en archivos .cfg cuando este estable. Reaplicar con exec reduce friccion y mantiene practica organizada.';
+        : locale === 'zh'
+          ? mode === 'autoexec'
+            ? '将客户端指令保留在 autoexec.cfg 中,本地专用指令分别放入 practice.cfg/fun.cfg。这样可以降低正式比赛当天的操作风险。'
+            : '当流程稳定后,将指令保存到 .cfg 文件中。之后用 exec 重新加载可以减少摩擦,让训练保持有条理。'
+          : mode === 'autoexec'
+            ? 'Mantén autoexec.cfg para comandos cliente y separa practice.cfg/fun.cfg para comandos locales. Esto reduce riesgo en dias oficiales.'
+            : 'Guarda rutina en archivos .cfg cuando este estable. Reaplicar con exec reduce friccion y mantiene practica organizada.';
 
   const safetyParagraphA =
     locale === 'pt-br'
@@ -552,9 +675,13 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
         ? mode === 'competitive' || mode === 'tournament'
           ? 'Safe competitive config should avoid local training commands and multi-action automation. Prioritize radar, HUD, viewmodel, audio, FPS, and simple binds.'
           : 'sv_cheats commands should stay in local/private practice. For official competitive play, keep only common client-side adjustments.'
-        : mode === 'competitive' || mode === 'tournament'
-          ? 'Config competitiva segura debe evitar comandos locales y automatizacion multiaccion. Prioriza radar, HUD, viewmodel, audio, FPS y binds simples.'
-          : 'Comandos con sv_cheats deben quedarse en practica local/private. Para competitivo oficial, usa solo ajustes cliente comunes.';
+        : locale === 'zh'
+          ? mode === 'competitive' || mode === 'tournament'
+            ? '安全的竞技配置应避免本地训练指令和多动作自动化操作。优先使用雷达、HUD、viewmodel、音频、FPS 和简单绑定相关设置。'
+            : '带有 sv_cheats 的指令应保留在本地/私人训练中。官方竞技对局只应使用常见的客户端调整。'
+          : mode === 'competitive' || mode === 'tournament'
+            ? 'Config competitiva segura debe evitar comandos locales y automatizacion multiaccion. Prioriza radar, HUD, viewmodel, audio, FPS y binds simples.'
+            : 'Comandos con sv_cheats deben quedarse en practica local/private. Para competitivo oficial, usa solo ajustes cliente comunes.';
 
   return [
     {
@@ -577,11 +704,17 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
                 'Test in small blocks and record what worked.',
                 'Keep one baseline preset so you do not restart from zero.',
               ]
-            : [
-                'Define objetivo de sesion antes de copiar comandos.',
-                'Prueba en bloques pequenos y registra lo que funciono.',
-                'Mantén un preset base para no reiniciar desde cero.',
-              ],
+            : locale === 'zh'
+              ? [
+                  '在复制指令前先明确本次训练的目标。',
+                  '分小段测试并记录哪些设置有效。',
+                  '保留一套基础预设,避免每次从零开始。',
+                ]
+              : [
+                  'Define objetivo de sesion antes de copiar comandos.',
+                  'Prueba en bloques pequenos y registra lo que funciono.',
+                  'Mantén un preset base para no reiniciar desde cero.',
+                ],
     },
     {
       title: safetyTitle,
@@ -591,8 +724,8 @@ const buildContentBlocks = (locale: AppLocale, mode: ToolContentMode, focus: str
 };
 
 const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
-  const q = (pt: string, en: string, es: string) =>
-    locale === 'pt-br' ? pt : locale === 'en' ? en : es;
+  const q = (pt: string, en: string, es: string, zh: string) =>
+    locale === 'pt-br' ? pt : locale === 'en' ? en : locale === 'zh' ? zh : es;
 
   const base: FaqItem[] = [
     {
@@ -600,11 +733,13 @@ const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
         'Como abrir o console no CS2?',
         'How do I open console in CS2?',
         'Como abro la consola en CS2?',
+        '如何在 CS2 中打开控制台?',
       ),
       answer: q(
         'Ative Developer Console nas configuracoes e use a tecla configurada para abrir durante treino ou partida.',
         'Enable Developer Console in settings and use your configured key during practice or matches.',
         'Activa Developer Console en ajustes y usa tu tecla configurada durante practica o partida.',
+        '在设置中启用开发者控制台(Developer Console),然后在训练或对局中使用你设置的按键打开它。',
       ),
     },
     {
@@ -612,11 +747,13 @@ const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
         'Posso usar esses comandos no competitivo oficial?',
         'Can I use these commands in official competitive matches?',
         'Puedo usar estos comandos en competitivo oficial?',
+        '这些指令可以在官方竞技比赛中使用吗?',
       ),
       answer: q(
         'Apenas comandos client-side comuns. Comandos de treino local com sv_cheats devem ficar fora da config competitiva.',
         'Only common client-side commands. Local sv_cheats training commands should stay out of competitive config.',
         'Solo comandos cliente comunes. Comandos locales con sv_cheats deben quedar fuera de la config competitiva.',
+        '只能使用常见的客户端指令。带有 sv_cheats 的本地训练指令不应出现在竞技配置中。',
       ),
     },
   ];
@@ -628,11 +765,13 @@ const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
           'Onde colocar autoexec.cfg, practice.cfg e fun.cfg?',
           'Where should I place autoexec.cfg, practice.cfg, and fun.cfg?',
           'Donde debo colocar autoexec.cfg, practice.cfg y fun.cfg?',
+          'autoexec.cfg、practice.cfg 和 fun.cfg 应该放在哪里?',
         ),
         answer: q(
           'Salve os arquivos na pasta cfg do CS2 e carregue com exec autoexec, exec practice e exec fun conforme o contexto.',
           'Save files in the CS2 cfg folder and run exec autoexec, exec practice, and exec fun depending on context.',
           'Guarda archivos en carpeta cfg de CS2 y ejecuta exec autoexec, exec practice y exec fun segun contexto.',
+          '将文件保存在 CS2 的 cfg 文件夹中,并根据场景使用 exec autoexec、exec practice 和 exec fun 加载。',
         ),
       },
       {
@@ -640,11 +779,13 @@ const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
           'Por que separar arquivos em vez de usar um so?',
           'Why separate files instead of one single file?',
           'Por que separar archivos en lugar de uno solo?',
+          '为什么要分开多个文件,而不是使用一个文件?',
         ),
         answer: q(
           'Separar evita que comando de treino local entre por engano na config de competitivo oficial.',
           'Separation prevents local training commands from leaking into official competitive config by mistake.',
           'Separar evita que comandos de practica local entren por error en config competitiva oficial.',
+          '分开文件可以避免本地训练指令意外混入官方竞技配置中。',
         ),
       },
     );
@@ -656,11 +797,13 @@ const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
         'Como mudar a cor da HUD no CS2?',
         'How do I change HUD color in CS2?',
         'Como cambio color de HUD en CS2?',
+        '如何在 CS2 中修改 HUD 颜色?',
       ),
       answer: q(
         'Use cl_hud_color com o numero da cor desejada e salve no autoexec para manter padrao.',
         'Use cl_hud_color with your desired color value and store it in autoexec for consistency.',
         'Usa cl_hud_color con el valor de color deseado y guardalo en autoexec para mantener consistencia.',
+        '使用 cl_hud_color 加上你想要的颜色数值,并保存到 autoexec 中以保持一致。',
       ),
     });
   }
@@ -671,11 +814,13 @@ const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
         'Esses comandos garantem aumento de FPS?',
         'Do these commands guarantee higher FPS?',
         'Estos comandos garantizan mas FPS?',
+        '这些指令能保证提升 FPS 吗?',
       ),
       answer: q(
         'Nao. Eles ajudam a ajustar comportamento, mas o resultado final depende do hardware e do setup completo.',
         'No. They help tune behavior, but final results depend on hardware and complete setup.',
         'No. Ayudan a ajustar comportamiento, pero el resultado final depende de hardware y setup completo.',
+        '不能。它们有助于调整相关设置,但最终效果取决于硬件和整体配置。',
       ),
     });
   }
@@ -686,6 +831,7 @@ const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
         'Binds de automacao sao recomendados?',
         'Are automation binds recommended?',
         'Se recomiendan binds de automatizacion?',
+        '推荐使用自动化绑定吗?',
       ),
       answer: safeWarning[locale],
     });
@@ -697,11 +843,13 @@ const buildFaq = (locale: AppLocale, mode: ToolContentMode): FaqItem[] => {
         'Como salvar comandos em arquivo .cfg?',
         'How can I save commands into a .cfg file?',
         'Como guardo comandos en archivo .cfg?',
+        '如何将指令保存到 .cfg 文件中?',
       ),
       answer: q(
         'Crie o arquivo na pasta cfg, coloque um comando por linha e execute com exec nome-do-arquivo.',
         'Create the file in the cfg folder, place one command per line, and run it with exec file-name.',
         'Crea el archivo en carpeta cfg, coloca un comando por linea y ejecútalo con exec nombre-del-archivo.',
+        '在 cfg 文件夹中创建文件,每行写一条指令,然后使用 exec 文件名执行。',
       ),
     });
   }
@@ -779,6 +927,27 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'Copia comandos utiles para crear una sesion de practica en CS2 con rondas largas, economia alta, bots y repeticion de utilidades.',
         focus: 'comandos de practica',
       },
+      zh: {
+        name: 'CS2 训练指令',
+        shortDescription:
+          '复制 CS2 训练指令,用于烟雾弹、Bot、回合设置、经济系统和投掷物重复练习。',
+        primaryKeyword: 'cs2 训练指令',
+        secondaryKeywords: [
+          'cs2 训练配置',
+          'cs2 投掷物指令',
+          'cs2 烟雾弹训练',
+          'cs2 bot 指令',
+          'cs2 sv_cheats 指令',
+        ],
+        searchIntent: '希望获得现成 CS2 本地训练指令组合,快速开始训练的玩家。',
+        seoTitle: 'CS2 训练指令 - 投掷物、Bot、烟雾弹训练配置',
+        seoDescription:
+          '复制实用的 CS2 本地训练指令:无限弹药、超长回合、投掷物弹道预览、Bot、穿墙模式以及现成预设。',
+        h1: 'CS2 训练指令',
+        intro:
+          '复制实用指令,搭建包含超长回合、高额经济、Bot、道具重复练习和本地训练流程的 CS2 训练场景。',
+        focus: '训练指令',
+      },
     },
   },
   'cs2-practice-config': {
@@ -846,6 +1015,27 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
         intro:
           'Crea tu config de practica para CS2 con presets listos, copia bloques de comandos y descarga practice.cfg.',
         focus: 'config de practica',
+      },
+      zh: {
+        name: 'CS2 训练配置生成器',
+        shortDescription:
+          '生成用于单人训练、烟雾弹、压枪、Bot 和移动练习的 practice.cfg,支持一键复制和下载。',
+        primaryKeyword: 'cs2 训练配置',
+        secondaryKeywords: [
+          'cs2 practice cfg',
+          'cs2 烟雾弹训练配置',
+          'cs2 投掷物配置',
+          'cs2 exec practice',
+        ],
+        searchIntent:
+          '希望直接获得可运行的 .cfg 文件、而不想手动拼接指令的 CS2 本地训练玩家。',
+        seoTitle: 'CS2 训练配置生成器 - 生成烟雾弹、Bot、压枪 practice.cfg',
+        seoDescription:
+          '生成包含基础训练、投掷物、Bot 和压枪练习预设的 CS2 practice.cfg,一键复制或下载。',
+        h1: 'CS2 训练配置生成器',
+        intro:
+          '使用现成预设搭建你的 CS2 训练配置,复制指令区块,并下载 practice.cfg 用于本地房间。',
+        focus: '训练配置',
       },
     },
   },
@@ -915,6 +1105,26 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'Entrena lineups de granadas en CS2 con trayectoria, repeticion de ultima granada, noclip e impactos para validar cada tiro.',
         focus: 'comandos de granadas',
       },
+      zh: {
+        name: 'CS2 投掷物指令',
+        shortDescription:
+          'CS2 投掷物训练指令,包含弹道预览、重抛、命中标记、穿墙模式和清除投掷物。',
+        primaryKeyword: 'cs2 投掷物指令',
+        secondaryKeywords: [
+          'cs2 投掷物弹道指令',
+          'cs2 重抛投掷物指令',
+          'cs2 烟雾弹训练指令',
+          'sv_rethrow_last_grenade',
+        ],
+        searchIntent: '希望通过快速重置和可视化反馈来反复练习 CS2 投掷物点位的玩家。',
+        seoTitle: 'CS2 投掷物指令 - 弹道、重抛与道具训练',
+        seoDescription:
+          '复制 CS2 投掷物指令,包括弹道预览、sv_rethrow_last_grenade、命中标记、穿墙模式和清除投掷物。',
+        h1: 'CS2 投掷物指令',
+        intro:
+          '使用弹道预览、重抛上一个投掷物、穿墙模式和命中标记等指令,在 CS2 中练习投掷物点位并验证每次尝试。',
+        focus: '投掷物指令',
+      },
     },
   },
   'cs2-smoke-practice-commands': {
@@ -983,6 +1193,26 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'Usa comandos enfocados en smoke para acelerar entrenamiento de lineups en CS2 con rethrow, noclip y trayectoria.',
         focus: 'comandos de smoke',
       },
+      zh: {
+        name: 'CS2 烟雾弹训练指令',
+        shortDescription:
+          '专注烟雾弹训练的 CS2 指令集,包含重抛、穿墙、弹道预览和超长回合重复练习。',
+        primaryKeyword: 'cs2 烟雾弹训练指令',
+        secondaryKeywords: [
+          'cs2 烟雾弹训练',
+          'cs2 烟雾弹点位指令',
+          'cs2 重抛烟雾弹指令',
+          'cs2 道具训练',
+        ],
+        searchIntent: '需要专门的 CS2 烟雾弹训练流程、快速重复并获得可视化弹道反馈的玩家。',
+        seoTitle: 'CS2 烟雾弹训练指令 - 用重抛和弹道练习点位',
+        seoDescription:
+          '复制包含弹道预览、重抛绑定、穿墙移动和超长回合设置的 CS2 烟雾弹训练指令。',
+        h1: 'CS2 烟雾弹训练指令',
+        intro:
+          '使用专注烟雾弹的指令,配合重抛、穿墙模式和弹道可视化,加快 CS2 点位训练速度。',
+        focus: '烟雾弹训练指令',
+      },
     },
   },
   'cs2-bot-commands': {
@@ -1040,6 +1270,20 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
         intro:
           'Configura bots de CS2 para pre-fire, posicionamiento, spray y movimiento con bloques de comandos listos.',
         focus: 'comandos de bots',
+      },
+      zh: {
+        name: 'CS2 Bot 指令',
+        shortDescription:
+          '在 CS2 中添加、冻结、放置和调整 Bot,用于探头、预瞄、压枪和走位训练。',
+        primaryKeyword: 'cs2 bot 指令',
+        secondaryKeywords: ['cs2 如何放置 bot', 'bot_place 指令 cs2', 'bot_stop 1 cs2', 'cs2 bot 训练'],
+        searchIntent: '希望在不依赖真实服务器的情况下,完全控制 CS2 Bot 进行专项训练的玩家。',
+        seoTitle: 'CS2 Bot 指令 - 如何添加、冻结与训练 Bot',
+        seoDescription:
+          '使用 CS2 Bot 指令,如 bot_add_t、bot_add_ct、bot_stop、bot_place、难度预设和重生训练设置。',
+        h1: 'CS2 Bot 指令',
+        intro: '通过实用的指令区块配置 CS2 Bot,用于预瞄、站位、压枪和走位训练。',
+        focus: 'Bot 指令',
       },
     },
   },
@@ -1109,6 +1353,26 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'Configura radar de CS2 para mejorar lectura de rotaciones, espaciado e informacion de companeros en competitivo.',
         focus: 'configuracion de radar',
       },
+      zh: {
+        name: 'CS2 雷达设置生成器',
+        shortDescription:
+          '生成 CS2 雷达指令组合,包含缩放、旋转、居中和队友颜色可见性设置。',
+        primaryKeyword: 'cs2 雷达设置',
+        secondaryKeywords: [
+          'cs2 雷达指令',
+          'cl_radar_scale cs2',
+          'cs2 竞技雷达',
+          'cl_hud_radar_scale cs2',
+        ],
+        searchIntent: '希望优化 CS2 雷达可读性,提升地图意识和团队信息获取的玩家。',
+        seoTitle: 'CS2 雷达设置 - 竞技指令生成器',
+        seoDescription:
+          '调整 cl_radar_scale、cl_hud_radar_scale、cl_radar_rotate 等 CS2 雷达相关指令,做出更好的判断。',
+        h1: 'CS2 雷达设置生成器',
+        intro:
+          '搭建 CS2 雷达设置,在竞技回合中提升绕后意识、间距判断和队友信息获取能力。',
+        focus: '雷达设置',
+      },
     },
   },
   'cs2-hud-commands': {
@@ -1161,6 +1425,20 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
         intro:
           'Ajusta la interfaz de CS2 con comandos de HUD para equilibrar visibilidad, foco y lectura de informacion esencial.',
         focus: 'comandos de HUD',
+      },
+      zh: {
+        name: 'CS2 HUD 指令',
+        shortDescription:
+          '通过缩放、装备显示、击杀信息和颜色选项调整 CS2 HUD,让竞技信息更清晰。',
+        primaryKeyword: 'cs2 hud 指令',
+        secondaryKeywords: ['hud_scaling cs2', 'cl_showloadout cs2', 'cl_hud_color cs2', 'cs2 hud 清爽'],
+        searchIntent: '希望在不丢失关键对局信息的前提下,让 CS2 HUD 更简洁易读的玩家。',
+        seoTitle: 'CS2 HUD 指令 - 缩放、颜色与竞技界面',
+        seoDescription:
+          '复制 CS2 HUD 指令,调整 hud_scaling、cl_showloadout、cl_hud_color,让界面读取更快。',
+        h1: 'CS2 HUD 指令',
+        intro: '使用 HUD 指令调整你的 CS2 界面,在可见性、回合专注度和关键信息清晰度之间取得平衡。',
+        focus: 'HUD 指令',
       },
     },
   },
@@ -1215,6 +1493,20 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'Elige color de HUD por nombre, mira el comando y copia cl_hud_color listo para consola o autoexec.',
         focus: 'color de HUD',
       },
+      zh: {
+        name: 'CS2 HUD 颜色生成器',
+        shortDescription:
+          '通过易懂的名称选择 CS2 HUD 颜色,并生成可直接用于 autoexec 的 cl_hud_color 指令。',
+        primaryKeyword: 'cs2 hud 颜色',
+        secondaryKeywords: ['cl_hud_color cs2', 'cs2 hud 颜色代码', '修改 cs2 hud 颜色', 'cs2 粉色 hud'],
+        searchIntent: '希望快速修改 CS2 HUD 颜色、又不想记住具体数值的玩家。',
+        seoTitle: 'CS2 HUD 颜色生成器 - cl_hud_color 指令',
+        seoDescription: '使用易懂的颜色名称生成 CS2 的 cl_hud_color 指令,并立即复制到你的配置中。',
+        h1: 'CS2 HUD 颜色生成器',
+        intro:
+          '按名称选择 HUD 颜色,查看对应指令,并复制可直接用于控制台或 autoexec 的 cl_hud_color。',
+        focus: 'HUD 颜色',
+      },
     },
   },
   'cs2-viewmodel-generator': {
@@ -1266,6 +1558,26 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
         h1: 'Generador de viewmodel CS2',
         intro:
           'Ajusta FOV y offsets del arma en CS2 con presets listos y copia comando final para mantener consistencia.',
+        focus: 'viewmodel',
+      },
+      zh: {
+        name: 'CS2 Viewmodel 生成器',
+        shortDescription:
+          '通过现成预设调整 CS2 的 viewmodel_fov 和偏移量,并生成可直接复制的最终指令。',
+        primaryKeyword: 'cs2 viewmodel 生成器',
+        secondaryKeywords: [
+          'cs2 viewmodel 设置',
+          'viewmodel_fov 68',
+          'cs2 viewmodel_offset_x',
+          '职业选手 viewmodel cs2',
+        ],
+        searchIntent: '希望调整 CS2 武器模型位置,以获得更好的画面清晰度和一致性的玩家。',
+        seoTitle: 'CS2 Viewmodel 生成器 - FOV、偏移量与现成预设',
+        seoDescription:
+          '使用 viewmodel_fov 和 x/y/z 偏移量,搭配 compact、职业风格、最大可见度等预设,搭建你的 CS2 viewmodel。',
+        h1: 'CS2 Viewmodel 生成器',
+        intro:
+          '使用现成预设调整 CS2 武器 FOV 和偏移量,然后复制最终指令,保持训练与竞技中的一致性。',
         focus: 'viewmodel',
       },
     },
@@ -1321,6 +1633,20 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'Prueba comandos de limite de FPS y telemetria en CS2 para equilibrar fluidez, estabilidad y visibilidad.',
         focus: 'comandos de FPS',
       },
+      zh: {
+        name: 'CS2 FPS 指令',
+        shortDescription:
+          '通过现成指令调整 CS2 的 FPS 上限、遥测信息和视觉元素,可直接复制测试。',
+        primaryKeyword: 'cs2 fps 指令',
+        secondaryKeywords: ['cs2 最佳性能指令', 'fps_max cs2', 'cl_showfps cs2', 'cs2 遥测指令'],
+        searchIntent: '希望在不轻信"保证提升 FPS"说法的前提下,实用地调整 CS2 性能指令的玩家。',
+        seoTitle: 'CS2 FPS 指令 - 上限、遥测与性能调优',
+        seoDescription:
+          '复制 CS2 FPS 相关指令,如 fps_max、cl_showfps、cq_netgraph 和视觉开关,在你的硬件上测试性能。',
+        h1: 'CS2 FPS 指令',
+        intro: '测试 CS2 的 FPS 上限和遥测相关指令,在对局和训练中平衡流畅度、稳定性与可见性。',
+        focus: 'FPS 指令',
+      },
     },
   },
   'cs2-autoexec-generator': {
@@ -1372,6 +1698,21 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
         h1: 'Generador de autoexec CS2',
         intro:
           'Selecciona bloques de comandos y genera archivos separados para autoexec competitivo, practica local y comandos fun de servidor privado.',
+        focus: 'autoexec',
+      },
+      zh: {
+        name: 'CS2 Autoexec 生成器',
+        shortDescription:
+          '分别生成包含雷达、HUD、viewmodel、FPS、音频和简单绑定的 autoexec.cfg、practice.cfg 和 fun.cfg。',
+        primaryKeyword: 'cs2 autoexec 生成器',
+        secondaryKeywords: ['cs2 autoexec', 'cs2 practice cfg', 'cs2 fun cfg', 'cs2 安全配置生成器'],
+        searchIntent: '希望按用途(竞技、训练、私服娱乐)分别整理结构化 CS2 配置文件的玩家。',
+        seoTitle: 'CS2 Autoexec 生成器 - autoexec.cfg、practice.cfg 和 fun.cfg',
+        seoDescription:
+          '按用途分别生成 CS2 配置文件:竞技用 autoexec、本地训练用 practice cfg,以及私服娱乐用 fun cfg。',
+        h1: 'CS2 Autoexec 生成器',
+        intro:
+          '选择指令区块,分别生成用于竞技 autoexec、本地训练和私服娱乐指令的独立文件。',
         focus: 'autoexec',
       },
     },
@@ -1427,6 +1768,21 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'Monta una config competitiva segura en CS2 enfocada en radar legible, HUD clara, viewmodel consistente y binds simples.',
         focus: 'config competitiva',
       },
+      zh: {
+        name: 'CS2 竞技配置',
+        shortDescription:
+          '搭建安全的 CS2 竞技配置,包含雷达、viewmodel、HUD、FPS 和简单绑定,不含训练专用指令。',
+        primaryKeyword: 'cs2 竞技配置',
+        secondaryKeywords: ['cs2 安全配置', 'cs2 安全绑定', 'cs2 竞技雷达', 'cs2 竞技 viewmodel'],
+        searchIntent: '希望获得不含风险自动化或本地专用指令的 CS2 竞技配置基础的玩家。',
+        seoTitle: 'CS2 竞技配置 - 雷达、Viewmodel、HUD 与安全绑定',
+        seoDescription:
+          '使用常见客户端指令生成安全的 CS2 竞技配置,不含 sv_cheats、穿墙或风险自动化操作。',
+        h1: 'CS2 竞技配置',
+        intro:
+          '搭建安全的 CS2 竞技配置,专注于雷达可读性、HUD 清晰度、一致的 viewmodel 和简单绑定。',
+        focus: '竞技配置',
+      },
     },
   },
   'cs2-tournament-safe-config': {
@@ -1480,6 +1836,25 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'Monta una config simple y segura para competitivo en CS2 sin comandos de practica local, sin sv_cheats y sin automatizacion riesgosa.',
         focus: 'config de torneo',
       },
+      zh: {
+        name: 'CS2 赛事安全配置',
+        shortDescription: '使用常见客户端指令搭建赛事安全的 CS2 配置,不包含本地训练模块。',
+        primaryKeyword: 'cs2 赛事安全配置',
+        secondaryKeywords: [
+          'cs2 安全赛事配置',
+          'cs2 竞技安全配置',
+          'cs2 安全绑定',
+          'cs2 赛事 autoexec',
+        ],
+        searchIntent: '需要一份干净的赛事配置、不含本地专用指令或风险自动化的玩家。',
+        seoTitle: 'CS2 赛事安全配置 - 官方竞技安全设置',
+        seoDescription:
+          '创建包含雷达、HUD、viewmodel 和简单绑定的赛事安全 CS2 配置,不含 sv_cheats 或风险自动化。',
+        h1: 'CS2 赛事安全配置',
+        intro:
+          '搭建简单且安全的 CS2 赛事配置,不含本地训练指令、不依赖 sv_cheats,也不含风险自动化操作。',
+        focus: '赛事安全配置',
+      },
     },
   },
   'cs2-fun-commands': {
@@ -1532,6 +1907,21 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
         intro:
           'Prueba comandos divertidos de CS2 en entorno local/private con avisos claros sobre lo que no debe ir a competitivo oficial.',
         focus: 'comandos divertidos',
+      },
+      zh: {
+        name: 'CS2 娱乐指令',
+        shortDescription:
+          '适用于 CS2 私服的娱乐指令,包含重力调整、连跳、穿墙、重生和本地实验。',
+        primaryKeyword: 'cs2 娱乐指令',
+        secondaryKeywords: ['cs2 sv_cheats 指令', 'cs2 私服指令', 'cs2 重力指令', 'cs2 本地连跳'],
+        searchIntent: '希望在本地/私人服务器中体验 CS2 娱乐指令、且不影响竞技对局的玩家。',
+        seoTitle: 'CS2 娱乐指令 - 私服、重力与连跳',
+        seoDescription:
+          '复制适用于私服的 CS2 娱乐指令,包含 sv_cheats、穿墙、重力、重生,以及标注清楚的本地实验性设置。',
+        h1: 'CS2 私服娱乐指令',
+        intro:
+          '在本地/私人服务器中体验 CS2 娱乐指令,并附有明确提示,说明哪些内容不应用于官方竞技对局。',
+        focus: '娱乐指令',
       },
     },
   },

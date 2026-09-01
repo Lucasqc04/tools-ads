@@ -606,6 +606,24 @@ const labelsByLocale: Record<AppLocale, UiLabels> = {
     width: 'Ancho', height: 'Alto', padding: 'Padding', weight: 'Peso', size: 'Tamaño',
     style: 'Estilo', duration: 'Duración', glassHint: 'El glassmorphism se ve mejor con un fondo colorido detrás.',
   },
+  zh: {
+    categories: {
+      presets: 'Presets', shadow: 'Shadow', radius: 'Border Radius', gradient: 'Gradient',
+      glass: 'Glassmorphism', border: 'Border', text: 'Text', spacing: 'Size',
+      transform: 'Transform', filters: 'Filters', animation: 'Animation',
+    },
+    elements: { card: 'Card', button: 'Button', input: 'Input', badge: 'Badge', hero: 'Hero', toast: 'Toast' },
+    backgrounds: { solid: 'Solid', gradient: 'Gradient', dots: 'Dots', blobs: 'Blobs', dark: 'Dark', checkerboard: 'Checkerboard', image: 'Image' },
+    codeTab: { css: 'CSS', html: 'HTML + CSS', tailwind: 'Tailwind', variables: 'Variables' },
+    copy: 'Copy', copied: 'Copied!', reset: 'Reset all', resetSection: 'Reset section', addLayer: 'Add layer',
+    removeLayer: 'Remove', enabled: 'Enabled', linked: 'Linked', unlinked: 'Individual',
+    previewTitle: 'Card Title', previewText: 'Sample text to test contrast, blur, background and shadow.',
+    previewButton: 'Example Button', codeTitle: 'Generated CSS code', element: 'Element',
+    background: 'Background', angle: 'Angle', inset: 'Inset', offsetX: 'Offset X', offsetY: 'Offset Y',
+    blur: 'Blur', spread: 'Spread', color: 'Color', opacity: 'Opacity', all: 'All',
+    width: 'Width', height: 'Height', padding: 'Padding', weight: 'Weight', size: 'Size',
+    style: 'Style', duration: 'Duration', glassHint: 'Glassmorphism looks better with a colorful background behind.',
+  },
 };
 
 // ---------- HELPERS ----------

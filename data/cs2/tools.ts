@@ -38,6 +38,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'comandos-de-treino-cs2',
       en: 'cs2-practice-commands',
       es: 'comandos-de-practica-cs2',
+      zh: 'cs2-practice-commands',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -47,6 +48,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'config-de-treino-cs2',
       en: 'cs2-practice-config',
       es: 'config-de-practica-cs2',
+      zh: 'cs2-practice-config',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -56,6 +58,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'comandos-granadas-cs2',
       en: 'cs2-grenade-practice-commands',
       es: 'comandos-granadas-cs2',
+      zh: 'cs2-grenade-practice-commands',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -65,6 +68,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'comandos-smoke-cs2',
       en: 'cs2-smoke-practice-commands',
       es: 'comandos-smoke-cs2',
+      zh: 'cs2-smoke-practice-commands',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -74,6 +78,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'comandos-bot-cs2',
       en: 'cs2-bot-commands',
       es: 'comandos-bots-cs2',
+      zh: 'cs2-bot-commands',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -83,6 +88,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'configuracao-radar-cs2',
       en: 'cs2-radar-settings',
       es: 'configuracion-radar-cs2',
+      zh: 'cs2-radar-settings',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -92,6 +98,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'comandos-hud-cs2',
       en: 'cs2-hud-commands',
       es: 'comandos-hud-cs2',
+      zh: 'cs2-hud-commands',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -101,6 +108,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'mudar-cor-hud-cs2',
       en: 'cs2-hud-color',
       es: 'color-hud-cs2',
+      zh: 'cs2-hud-color',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -110,6 +118,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'gerador-viewmodel-cs2',
       en: 'cs2-viewmodel-generator',
       es: 'generador-viewmodel-cs2',
+      zh: 'cs2-viewmodel-generator',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -119,6 +128,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'comandos-fps-cs2',
       en: 'cs2-fps-commands',
       es: 'comandos-fps-cs2',
+      zh: 'cs2-fps-commands',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -128,6 +138,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'gerador-autoexec-cs2',
       en: 'cs2-autoexec-generator',
       es: 'generador-autoexec-cs2',
+      zh: 'cs2-autoexec-generator',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -137,6 +148,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'config-competitiva-cs2',
       en: 'cs2-competitive-config',
       es: 'config-competitiva-cs2',
+      zh: 'cs2-competitive-config',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -146,6 +158,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'config-campeonato-cs2',
       en: 'cs2-tournament-safe-config',
       es: 'config-torneo-cs2',
+      zh: 'cs2-tournament-safe-config',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -155,6 +168,7 @@ export const cs2ToolConfigs: Cs2ToolConfig[] = [
       'pt-br': 'comandos-divertidos-cs2',
       en: 'cs2-fun-commands',
       es: 'comandos-divertidos-cs2',
+      zh: 'cs2-fun-commands',
     },
     softwareCategory: 'UtilitiesApplication',
   },
@@ -167,6 +181,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Treino',
       en: 'Practice',
       es: 'Practica',
+      zh: '训练',
     },
   },
   {
@@ -175,6 +190,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Practice.cfg',
       en: 'Practice.cfg',
       es: 'Practice.cfg',
+      zh: 'Practice.cfg',
     },
   },
   {
@@ -183,6 +199,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Granadas',
       en: 'Grenades',
       es: 'Granadas',
+      zh: '投掷物',
     },
   },
   {
@@ -191,6 +208,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Smokes',
       en: 'Smokes',
       es: 'Smokes',
+      zh: 'Smokes',
     },
   },
   {
@@ -199,6 +217,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Bots',
       en: 'Bots',
       es: 'Bots',
+      zh: 'Bots',
     },
   },
   {
@@ -207,6 +226,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Radar',
       en: 'Radar',
       es: 'Radar',
+      zh: 'Radar',
     },
   },
   {
@@ -215,6 +235,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'HUD',
       en: 'HUD',
       es: 'HUD',
+      zh: 'HUD',
     },
   },
   {
@@ -223,6 +244,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Cor HUD',
       en: 'HUD color',
       es: 'Color HUD',
+      zh: 'HUD 颜色',
     },
   },
   {
@@ -231,6 +253,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Viewmodel',
       en: 'Viewmodel',
       es: 'Viewmodel',
+      zh: 'Viewmodel',
     },
   },
   {
@@ -239,6 +262,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'FPS',
       en: 'FPS',
       es: 'FPS',
+      zh: 'FPS',
     },
   },
   {
@@ -247,6 +271,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Autoexec',
       en: 'Autoexec',
       es: 'Autoexec',
+      zh: 'Autoexec',
     },
   },
   {
@@ -255,6 +280,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Competitivo',
       en: 'Competitive',
       es: 'Competitivo',
+      zh: '竞技',
     },
   },
   {
@@ -263,6 +289,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Campeonato',
       en: 'Tournament',
       es: 'Torneo',
+      zh: '赛事',
     },
   },
   {
@@ -271,6 +298,7 @@ export const cs2ToolNavigationItems: Cs2ToolNavItem[] = [
       'pt-br': 'Fun',
       en: 'Fun',
       es: 'Fun',
+      zh: 'Fun',
     },
   },
 ];
@@ -314,6 +342,7 @@ export const getCs2ToolLocalePathMap = (id: Cs2ToolId): Record<AppLocale, string
   'pt-br': getCs2ToolPathForLocale(id, 'pt-br'),
   en: getCs2ToolPathForLocale(id, 'en'),
   es: getCs2ToolPathForLocale(id, 'es'),
+  zh: getCs2ToolPathForLocale(id, 'zh'),
 });
 
 export const getCs2ToolCanonicalBasePathByLocale = (
@@ -322,4 +351,5 @@ export const getCs2ToolCanonicalBasePathByLocale = (
   'pt-br': getCs2ToolBasePathForLocale(id, 'pt-br'),
   en: getCs2ToolBasePathForLocale(id, 'en'),
   es: getCs2ToolBasePathForLocale(id, 'es'),
+  zh: getCs2ToolBasePathForLocale(id, 'zh'),
 });

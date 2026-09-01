@@ -264,6 +264,77 @@ const contentByLocale: Record<AppLocale, ColorConverterLocaleContent> = {
       { question: '¿Cómo elegir un color de texto con buen contraste?', answer: 'Usa la sección de contraste. Calcula la relación de contraste e indica si la combinación cumple los criterios WCAG de legibilidad.' },
     ],
   },
+  zh: {
+    name: 'HEX, RGB & HSL Color Converter',
+    shortDescription:
+      'Convert colors between HEX, RGB, HSL, HSV, CMYK and other formats, see live preview, copy CSS code and compare contrast.',
+    primaryKeyword: 'hex rgb hsl color converter online',
+    secondaryKeywords: [
+      'hex to rgb',
+      'rgb to hex',
+      'hex to hsl',
+      'hsl to hex',
+      'rgb to hsl',
+      'color converter',
+      'rgba converter',
+      'tailwind color scale',
+      'contrast checker',
+      'css color tool',
+    ],
+    searchIntent:
+      'Developers and designers who need to convert colors between HEX, RGB, HSL and other formats with preview and ready CSS code.',
+    seoTitle: 'HEX, RGB, HSL Color Converter Online | CSS Color Tool',
+    seoDescription:
+      'Convert colors between HEX, RGB, HSL, HSV and CMYK online. Live preview, contrast check, Tailwind scale and ready-to-copy CSS code.',
+    h1: 'HEX, RGB, HSL, HSV & CMYK Color Converter Online',
+    intro:
+      'Convert colors between HEX, RGB, HSL, HSV, CMYK and other formats, see live preview, copy CSS code and compare contrast between colors.',
+    contentBlocks: [
+      {
+        title: 'Color converter with preview and multiple formats',
+        paragraphs: [
+          'This tool automatically converts colors between the most common formats used in CSS, design, frontend and branding. Simply enter a color in any format and all equivalents appear instantly.',
+          'Beyond pure conversion, you can compare contrast between colors, generate Tailwind-style shade scales, find complementary, analogous and triadic colors, and copy ready-to-use CSS code.',
+        ],
+      },
+      {
+        title: 'Supported formats and when to use each',
+        paragraphs: [
+          'HEX is the most common format in CSS and design. RGB is native to monitors and useful for programmatic manipulation. HSL makes intuitive adjustments to hue, saturation and lightness easier. HSV is used in editing software like Photoshop. CMYK is meant for print.',
+          'The tool converts between all these formats and also shows the closest CSS color name and approximate Tailwind class when available.',
+        ],
+        list: [
+          'HEX: #7c3aed — standard format in CSS and design tools.',
+          'RGB: rgb(124, 58, 237) — native model for digital screens.',
+          'HSL: hsl(262, 83%, 58%) — ideal for adjusting hue and saturation.',
+          'HSV: hsv(262, 75%, 93%) — used in image editing software.',
+          'CMYK: cmyk(47%, 75%, 0%, 7%) — approximation for print.',
+        ],
+      },
+      {
+        title: 'Contrast and accessibility',
+        paragraphs: [
+          'The contrast section lets you check if text/background color combinations meet readability criteria. The calculation follows the relative luminance formula used in WCAG guidelines.',
+          'The tool automatically suggests whether you should use light or dark text on the chosen color, making UI and accessibility decisions easier.',
+        ],
+      },
+      {
+        title: 'Privacy and local processing',
+        paragraphs: [
+          'All conversion happens locally in the browser. No color, data or image is sent to any server. You can use the tool offline after loading the page.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'What is a HEX color?', answer: 'HEX is a hexadecimal color representation used in CSS and design. It starts with # followed by 6 characters (or 3 abbreviated). Example: #7c3aed represents a vibrant purple.' },
+      { question: 'What is the difference between RGB and HSL?', answer: 'RGB defines color by red, green and blue (screen model). HSL defines by hue, saturation and lightness, being more intuitive for visual adjustments.' },
+      { question: 'Can I copy the color in CSS?', answer: 'Yes. Each format has an individual copy button. You can also copy as a CSS variable or copy all formats at once.' },
+      { question: 'Does the tool work on mobile?', answer: 'Yes. The interface is fully responsive and works on any device with a modern browser.' },
+      { question: 'Is color data sent to a server?', answer: 'No. All processing is local in the browser. No data leaves your device.' },
+      { question: 'Is the CMYK conversion exact?', answer: 'No. RGB to CMYK conversion is a mathematical approximation. For exact print results, consult the equipment ICC profile.' },
+      { question: 'How to choose text color with good contrast?', answer: 'Use the contrast section. It calculates the contrast ratio and indicates if the combination meets WCAG criteria for readability.' },
+    ],
+  },
 };
 
 export function getColorConverterContent(locale: AppLocale): ColorConverterLocaleContent {

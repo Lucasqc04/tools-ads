@@ -39,6 +39,7 @@ const localizedSearchIntent: Record<AppLocale, string> = {
     'Pessoas que querem converter entre múltiplos formatos de imagem e PDF com rapidez, sem cadastro e direto no navegador.',
   en: 'People who need fast in-browser conversion across many image and PDF formats with no sign-up.',
   es: 'Personas que necesitan convertir entre muchos formatos de imagen y PDF rápido en el navegador y sin registro.',
+  zh: 'People who need fast in-browser conversion across many image and PDF formats with no sign-up.',
 };
 
 const conversionSectionByLocale: Record<
@@ -59,6 +60,11 @@ const conversionSectionByLocale: Record<
     title: 'Otras conversiones relacionadas',
     description:
       'Abre pares de formatos cercanos para completar otras conversiones sin rehacer el flujo.',
+  },
+  zh: {
+    title: 'Related conversion pages',
+    description:
+      'Open nearby format pairs to complete other conversions without rebuilding your workflow.',
   },
 };
 

@@ -89,6 +89,25 @@ const uiByLocale: Record<AppLocale, ToolUiCopy> = {
     parsedAsPhone: 'Detectado como numero internacional.',
     parsedAsUsername: 'Detectado como @usuario.',
   },
+  zh: {
+    localNote: 'Local in-browser generation. No sign-up and no mandatory backend upload.',
+    targetLabel: 'Phone number or @username',
+    targetPlaceholder: 'Ex.: 15551234567 or @myprofile',
+    messageLabel: 'Prefilled message',
+    messagePlaceholder: 'Hi! I would like to know more about... ',
+    generate: 'Generate links',
+    clear: 'Clear',
+    copied: 'Copied',
+    copy: 'Copy',
+    open: 'Open link',
+    whatsappTitle: 'WhatsApp link',
+    telegramTitle: 'Telegram link',
+    resultEmpty: 'Fill the fields and click generate.',
+    invalidTarget: 'Enter a valid phone number or @username with at least 3 chars.',
+    whatsappNeedsPhone: 'WhatsApp requires phone number with country code. @username works only on Telegram.',
+    parsedAsPhone: 'Detected as international phone number.',
+    parsedAsUsername: 'Detected as @username.',
+  },
 };
 
 type LinkResultCardProps = {

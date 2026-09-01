@@ -306,6 +306,100 @@ const contentByLocale: Record<AppLocale, CssGeneratorLocaleContent> = {
       },
     ],
   },
+  zh: {
+    name: 'Visual CSS Generator',
+    shortDescription:
+      'Create gradients, shadows, borders, border-radius, glassmorphism, filters and animations with sliders and copy the CSS code.',
+    primaryKeyword: 'visual css generator online',
+    secondaryKeywords: [
+      'css gradient generator',
+      'css shadow generator',
+      'border-radius generator',
+      'glassmorphism generator',
+      'box-shadow generator',
+      'css button generator',
+      'neumorphism generator',
+      'css card generator',
+    ],
+    searchIntent:
+      'Developers and designers who need to create CSS effects visually without memorizing properties and values.',
+    seoTitle: 'Visual CSS Generator Online | Gradient, Shadow, Glass, Radius',
+    seoDescription:
+      'Create CSS visually with sliders: gradients, box-shadow, border-radius, glassmorphism, filters, transforms and animations. Live preview and ready-to-copy code.',
+    h1: 'Visual CSS Generator with Live Preview',
+    intro:
+      'Create gradients, shadows, borders, border-radius, glassmorphism, filters, transforms and CSS animations visually with sliders and copy the ready-to-use code.',
+    contentBlocks: [
+      {
+        title: 'Visual CSS generator with real-time preview',
+        paragraphs: [
+          'This tool lets you create complex CSS effects without memorizing properties or values. Just adjust the sliders and see the result live in the preview panel.',
+          'All popular effects are available: box-shadow with multiple layers, advanced border-radius with elliptical syntax, linear, radial and conic gradients, glassmorphism with backdrop-filter, gradient borders, 3D transforms, image filters and CSS animations.',
+        ],
+      },
+      {
+        title: 'How to use the visual CSS generator',
+        paragraphs: [
+          'Choose a category in the left panel (shadow, gradient, border-radius, glassmorphism, borders, text, transforms, filters or animations). Each category offers specific sliders to adjust CSS properties.',
+          'The preview on the right updates in real time as you move the sliders. You can change the element type (card, button, input, badge) and the preview background to test different scenarios.',
+          'When satisfied with the result, copy the generated CSS code with one click. The code is available in pure CSS, HTML + CSS, approximate Tailwind and CSS variables.',
+        ],
+        list: [
+          'Adjust shadows with multiple layers and light direction.',
+          'Create organic border-radius with advanced syntax.',
+          'Generate gradients with multiple colors and custom angle.',
+          'Configure glassmorphism with blur, saturation and translucent border.',
+          'Apply 3D transforms, filters and animations with presets.',
+        ],
+      },
+      {
+        title: 'Ready-made presets to start quickly',
+        paragraphs: [
+          'The tool offers dozens of visual presets to get you started without any configuration. Cards with soft shadows, gradient buttons, glassmorphism effects, neumorphism and neon are available with one click.',
+          'Each preset can be customized afterwards. Load a preset as a starting point and adjust the sliders to your needs.',
+        ],
+      },
+      {
+        title: 'Privacy and compatibility',
+        paragraphs: [
+          'All processing happens locally in the browser. No data is sent to any server. You can use the tool offline after loading the page.',
+          'The generated CSS is compatible with all modern browsers. For properties like backdrop-filter, the -webkit- prefix is automatically included for Safari support.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I copy the generated CSS and use it in my project?',
+        answer:
+          'Yes. The generated CSS code is 100% functional and can be copied directly to any web project, React, Next.js, Vue or plain HTML.',
+      },
+      {
+        question: 'Does glassmorphism work in all browsers?',
+        answer:
+          'Backdrop-filter works in modern browsers (Chrome, Firefox, Safari, Edge). The -webkit-backdrop-filter prefix is automatically included for Safari.',
+      },
+      {
+        question: 'Can I generate Tailwind code?',
+        answer:
+          'Yes. The tool generates an approximation in Tailwind CSS classes. Not all CSS properties have an exact Tailwind equivalent, but the most common values are converted.',
+      },
+      {
+        question: 'Does the tool save my styles?',
+        answer:
+          'Yes. You can save presets in the browser via localStorage and export/import configurations in JSON to share or backup.',
+      },
+      {
+        question: 'Does it work on mobile?',
+        answer:
+          'Yes. The interface is responsive and adapted for smaller screens. On mobile, the preview appears first and controls are in tabs below.',
+      },
+      {
+        question: 'Do I need to install anything or create an account?',
+        answer:
+          'No. The tool works directly in the browser, no installation, no sign-up, and no data is sent.',
+      },
+    ],
+  },
 };
 
 export function getCssGeneratorContent(locale: AppLocale): CssGeneratorLocaleContent {

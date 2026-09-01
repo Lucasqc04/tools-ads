@@ -107,6 +107,26 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     noResults: 'No hay categorías para esa búsqueda.',
     privacy: '🔒 Todo ocurre localmente en tu navegador. Nada se envía a un servidor.',
   },
+  zh: {
+    searchPlaceholder: '搜索分类(例如:箭头、爱心、数学)',
+    format: '复制格式',
+    formatRaw: '文本',
+    formatHtml: 'HTML',
+    formatCodepoint: '编码点',
+    sequenceMode: '组合序列',
+    sequenceModeOn: '已开启',
+    sequenceModeOff: '已关闭',
+    sequencePlaceholder: '点击符号,在此组合你的序列',
+    copySequence: '复制序列',
+    clearSequence: '清空',
+    copied: '已复制!',
+    favorites: '收藏',
+    favoritesEmpty: '点击符号上的星标即可收藏。',
+    recent: '最近复制',
+    recentEmpty: '你最近复制的符号会显示在这里。',
+    noResults: '没有找到匹配该搜索的分类。',
+    privacy: '🔒 所有操作都在你的浏览器本地完成,不会发送到服务器。',
+  },
 };
 
 const formatOptions: Array<{ value: CopyFormat; labelKey: keyof UiCopy }> = [

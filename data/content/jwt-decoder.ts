@@ -136,6 +136,46 @@ const contentByLocale: Record<AppLocale, JwtDecoderLocaleContent> = {
       { question: 'Funciona en celular?', answer: 'Si. La interfaz es responsiva.' },
     ],
   },
+  zh: {
+    name: 'JWT Decoder Online',
+    shortDescription: 'Decode JWT and inspect header, payload, and signature with readable JSON, claim highlights, and timestamp conversion.',
+    primaryKeyword: 'jwt decoder online',
+    secondaryKeywords: ['decode jwt', 'jwt payload decoder', 'jwt token inspector', 'jwt exp claim reader', 'jwt debug tool'],
+    searchIntent: 'Developers who need to inspect JWT tokens for authentication, API, and session debugging.',
+    seoTitle: 'JWT Decoder Online | Header, Payload, Signature',
+    seoDescription: 'Paste a JWT and inspect header, payload, signature, and common claims like exp, iat, nbf, iss, aud, and sub.',
+    h1: 'JWT Decoder Online for Header and Payload Inspection',
+    intro: 'Quickly decode JWT tokens in-browser and inspect claims with readable JSON and friendly validation messages.',
+    contentBlocks: [
+      {
+        title: 'What this JWT decoder does',
+        paragraphs: [
+          'JWT contains three dot-separated parts: header, payload, and signature. This page separates those parts and formats the first two into readable JSON.',
+          'It is useful for API troubleshooting, auth testing, and integration checks when you need to inspect token content fast.',
+        ],
+      },
+      {
+        title: 'Readable dates for exp, iat, and nbf',
+        paragraphs: [
+          'Many JWT claims store timestamps in Unix format. We convert those values to local and UTC date strings so you can validate timing quickly.',
+          'We also highlight common claims such as iss, aud, sub, and role to improve manual verification during debugging.',
+        ],
+      },
+      {
+        title: 'Limitations and security note',
+        paragraphs: [
+          'Decoding is not signature verification. A decoded JWT is not automatically trustworthy. Always verify signatures in your backend or trusted environment.',
+          'Processing runs locally in your browser by default, which helps privacy during quick token inspection.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Does this tool verify JWT signature?', answer: 'No. It only decodes and displays token parts. Signature verification must be done elsewhere.' },
+      { question: 'Can I check token expiration?', answer: 'Yes. If exp is present, the tool shows readable date and expiration status.' },
+      { question: 'Is token data sent to a server?', answer: 'No by default. Decoding runs in your browser.' },
+      { question: 'Can I use it on mobile?', answer: 'Yes. The interface is responsive and mobile friendly.' },
+    ],
+  },
 };
 
 export const getJwtDecoderContent = (locale: AppLocale): JwtDecoderLocaleContent =>

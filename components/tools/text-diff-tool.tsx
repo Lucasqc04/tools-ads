@@ -128,6 +128,33 @@ const uiByLocale: Record<AppLocale, Ui> = {
     options: 'Opciones de comparacion',
     noResult: 'Pega ambos textos y ejecuta comparar para generar el diff.',
   },
+  zh: {
+    intro:
+      'Compare two text versions with diff by character, word, line, paragraph, or list. Fully local in-browser.',
+    textA: 'Original text',
+    textB: 'New text',
+    compare: 'Compare texts',
+    clear: 'Clear',
+    swap: 'Swap sides',
+    copyReport: 'Copy report',
+    copyFinal: 'Copy final text',
+    copied: 'Copied',
+    exportTxt: 'Export TXT',
+    exportJson: 'Export JSON',
+    mode: 'Comparison mode',
+    similarity: 'Similarity',
+    added: 'Additions',
+    removed: 'Removals',
+    changedLines: 'Changed lines',
+    diffSize: 'Size difference',
+    summary: 'Executive summary',
+    sideBySide: 'Side-by-side diff',
+    inline: 'Inline diff',
+    changes: 'Changes list',
+    listMode: 'List comparison',
+    options: 'Comparison options',
+    noResult: 'Paste both texts and run compare to generate diff.',
+  },
 };
 
 const modes: Array<{ value: DiffMode; label: string }> = [

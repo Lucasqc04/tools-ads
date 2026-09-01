@@ -108,6 +108,29 @@ const uiByLocale: Record<AppLocale, CpfUi> = {
     localProcessingNote:
       'La generación se realiza localmente en tu navegador. Ningún CPF se envía al servidor.',
   },
+  zh: {
+    title: 'Valid CPF generator',
+    intro: 'Generate valid CPF numbers for testing, with or without punctuation output.',
+    quantityLabel: 'CPF amount',
+    quantityHint: 'Choose from 1 to 100 numbers per generation.',
+    formatLabel: 'Output format',
+    formatWith: 'With punctuation',
+    formatWithout: 'Without punctuation',
+    generate: 'Generate valid CPFs',
+    regenerate: 'Generate again',
+    copyAll: 'Copy all',
+    copiedAll: 'All copied',
+    clear: 'Clear',
+    resultTitle: 'Output',
+    emptyState: 'No CPF generated yet. Click generate to create a valid list.',
+    copiedItem: 'Copied',
+    copyItem: 'Copy',
+    generatedCount: (count) => `${count} valid CPF(s) generated.`,
+    invalidQuantity: 'Enter a quantity between 1 and 100.',
+    copyError: 'Could not copy right now. Please try again.',
+    localProcessingNote:
+      'Generation runs locally in your browser. No CPF value is sent to a server.',
+  },
 };
 
 const parseQuantity = (value: string): number | null => {

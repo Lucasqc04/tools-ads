@@ -262,6 +262,88 @@ const contentByLocale: Record<AppLocale, GamerUsernameGeneratorContent> = {
       },
     ],
   },
+  zh: {
+    name: 'Gamer Username Generator',
+    shortDescription:
+      'Generate random usernames for Fortnite, Free Fire, Roblox, Valorant, and other games with classic, leet speak, or symbol-decorated styles.',
+    primaryKeyword: 'gamer username generator',
+    secondaryKeywords: [
+      'free fire name generator',
+      'fortnite username generator',
+      'random gaming name generator',
+      'random gamertag generator',
+      'roblox username generator',
+      'cool gamer name generator',
+    ],
+    searchIntent:
+      'Players who want to quickly generate a creative, game-specific username without having to think of one from scratch.',
+    seoTitle: 'Gamer Username Generator Free | Fortnite, Free Fire, Roblox and More',
+    seoDescription:
+      'Generate random gaming usernames with classic, leet speak, or symbol-decorated styles. Reroll as many times as you want, favorite the best ones, and copy with one click.',
+    h1: 'Gamer Username Generator with Styles and Favorites',
+    intro:
+      'Roll random usernames for your favorite game, pick a style (classic, leet speak, or symbols), and copy the result with one click.',
+    contentBlocks: [
+      {
+        title: 'How to generate a gaming username',
+        paragraphs: [
+          'Pick a game (or leave it blank for a generic name), a style, and whether to include a number at the end. Click generate to roll a word combination, or keep clicking to see new options until you find one you like. Favorite the names you like best to compare later.',
+          'The classic style combines an adjective and a noun (e.g. "ShadowWolf"). The leet speak style swaps some letters for numbers (like "Sh4d0wW0lf"). The symbols style adds a decorative symbol at the start and end of the name.',
+        ],
+      },
+      {
+        title: 'Game-aware naming',
+        paragraphs: [
+          'Each game has its own word bank: Valorant uses tactical terms, Minecraft uses building and mining terms, Free Fire and PUBG Mobile use battle royale terms, and so on. This keeps the rolled name in tune with the chosen game\'s world instead of a generic combination.',
+        ],
+        list: [
+          'Reroll a few times until you find a name that sounds right.',
+          'Pair the leet speak style with a competitive game like Valorant or CS2.',
+          'Use the symbols style for names that stand out more.',
+          'Favorite your best results to compare later.',
+        ],
+      },
+      {
+        title: 'Name availability in the game',
+        paragraphs: [
+          'The tool generates word combinations and does not check whether a name is already taken in the chosen game. After picking a name, confirm directly in the game\'s sign-up or profile settings whether it\'s available.',
+        ],
+      },
+      {
+        title: 'Local processing and privacy',
+        paragraphs: [
+          'All name generation runs locally in your browser. Favorites are saved only on your own device, and no data is sent to a server.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Does the generator check if the name is available in the game?',
+        answer:
+          'No. It generates word combinations locally; final availability depends on the game and your account.',
+      },
+      {
+        question: 'Can I pick a game to make the name more thematic?',
+        answer:
+          'Yes. Each game has its own word bank that keeps the rolled name in tune with that game\'s world.',
+      },
+      {
+        question: 'What is the leet speak style?',
+        answer:
+          'It replaces some letters with visually similar numbers (a→4, e→3, i→1, o→0, s→5, t→7), a style commonly used in gaming usernames.',
+      },
+      {
+        question: 'Are my favorites saved?',
+        answer:
+          'Yes. Favorited names are saved locally in your browser and stay available on your next visit.',
+      },
+      {
+        question: 'Is it free and does it work on mobile?',
+        answer:
+          'Yes. The tool is free, requires no sign-up, and works normally on mobile browsers.',
+      },
+    ],
+  },
 };
 
 export const getGamerUsernameGeneratorContent = (

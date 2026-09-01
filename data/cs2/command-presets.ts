@@ -17,6 +17,7 @@ export type Cs2CommandPreset = {
     'pt-br': { title: string; description: string };
     en: { title: string; description: string };
     es: { title: string; description: string };
+    zh: { title: string; description: string };
   };
 };
 
@@ -54,6 +55,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         title: 'Practica basica',
         description:
           'Preset rapido para practica local con rondas largas, dinero alto y flujo de repeticion.',
+      },
+      zh: {
+        title: '基础训练',
+        description: '快速开启本地训练:高额金钱、超长时间、投掷物道具与即时重开。',
       },
     },
   },
@@ -95,6 +100,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         description:
           'Preset para lineups con trayectoria, impactos, rethrow y noclip para repetir mas rapido.',
       },
+      zh: {
+        title: '投掷物训练',
+        description: '专注点位练习,包含弹道预览、命中标记、重抛绑定和穿墙模式,便于快速迭代。',
+      },
     },
   },
   {
@@ -128,6 +137,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         description:
           'Preset corto para smokes en local con trayectoria, rethrow y movimiento libre.',
       },
+      zh: {
+        title: '烟雾弹训练',
+        description: '轻量级本地烟雾弹训练预设,包含弹道轨迹、重抛和自由移动。',
+      },
     },
   },
   {
@@ -157,6 +170,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         title: 'Practica de spray',
         description:
           'Muestra impactos de bala con municion infinita para mejorar control de recoil.',
+      },
+      zh: {
+        title: '压枪训练',
+        description: '配合无限弹药显示弹着点,便于校准后坐力和压枪控制。',
       },
     },
   },
@@ -190,6 +207,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         description:
           'Configura bots estaticos para practicar pre-fire, peek y reposicionamiento.',
       },
+      zh: {
+        title: 'Bot 训练',
+        description: '配置静态 Bot,在可控场景下练习预瞄、探头和站位调整。',
+      },
     },
   },
   {
@@ -220,6 +241,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         description:
           'Preset de radar para lectura rapida de posiciones en partidas oficiales.',
       },
+      zh: {
+        title: '竞技雷达',
+        description: '专注雷达的预设,便于在正式比赛中快速读图和做出决策。',
+      },
     },
   },
   {
@@ -247,6 +272,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         title: 'Viewmodel limpio',
         description:
           'Preset limpio para mejorar visibilidad sin perder referencia del arma.',
+      },
+      zh: {
+        title: '简洁 Viewmodel',
+        description: '简洁的视角预设,在扩大视野的同时保留必要的武器反馈信息。',
       },
     },
   },
@@ -278,6 +307,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         title: 'FPS y telemetria',
         description:
           'Preset para ajustar limite de FPS y telemetria basica sin prometer mejora fija.',
+      },
+      zh: {
+        title: 'FPS 与遥测',
+        description: '用于调整 FPS 上限并显示基础遥测信息的预设,不承诺固定的性能提升。',
       },
     },
   },
@@ -323,6 +356,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         description:
           'Preset sin sv_cheats y sin automatizaciones riesgosas, enfocado en comandos cliente.',
       },
+      zh: {
+        title: '安全竞技配置',
+        description: '不使用 sv_cheats、不含风险自动化操作的基础配置,专注于常见客户端指令。',
+      },
     },
   },
   {
@@ -352,6 +389,11 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         title: 'Binds seguros de comunicacion y utilitarios',
         description:
           'Atajos de una sola accion para ping, clutch, mano y granadas. Cambia las teclas antes de copiar para no sobrescribir tu layout.',
+      },
+      zh: {
+        title: '安全的沟通与道具绑定',
+        description:
+          '用于标记、残局模式、切手和道具的单动作快捷键。复制前请先调整按键,以免覆盖你自己的按键布局。',
       },
     },
   },
@@ -388,6 +430,10 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
         title: 'Comandos divertidos para servidor privado',
         description:
           'Preset fun para lobby privado/local con gravedad, respawn y pruebas de ritmo.',
+      },
+      zh: {
+        title: '私服娱乐指令',
+        description: '适用于私人/本地房间的娱乐预设,包含重力、重生和时间倍率等实验性设置。',
       },
     },
   },

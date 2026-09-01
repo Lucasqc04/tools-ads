@@ -65,6 +65,7 @@ const pageMaps: Record<AppLocale, Map<string, KeyboardShortcutsAppPage>> = {
   'pt-br': new Map(keyboardShortcutsAppPages.map((page) => [page.slugPtBr, page])),
   en: new Map(keyboardShortcutsAppPages.map((page) => [page.slugEn, page])),
   es: new Map(keyboardShortcutsAppPages.map((page) => [page.slugEs, page])),
+  zh: new Map(keyboardShortcutsAppPages.map((page) => [page.slugEn, page])),
 };
 
 export const getKeyboardShortcutsAppResolutionBySlug = (
@@ -106,6 +107,7 @@ export const getKeyboardShortcutsAppLocalePathMap = (
   'pt-br': getKeyboardShortcutsAppPathByLocale(page, 'pt-br'),
   en: getKeyboardShortcutsAppPathByLocale(page, 'en'),
   es: getKeyboardShortcutsAppPathByLocale(page, 'es'),
+  zh: getKeyboardShortcutsAppPathByLocale(page, 'en'),
 });
 
 const buildKeywords = (locale: AppLocale, app: ShortcutApp): string[] => {
@@ -309,6 +311,12 @@ const buildFallbackContent = (locale: AppLocale): LocalizedKeyboardShortcutsAppC
       intro: 'Consulta atajos de teclado por aplicación.',
       seoTitle: 'Central de Atajos de Teclado',
       seoDescription: 'Consulta atajos de teclado organizados por aplicación.',
+    },
+    zh: {
+      title: 'Keyboard Shortcuts Hub',
+      intro: 'Look up keyboard shortcuts by app.',
+      seoTitle: 'Keyboard Shortcuts Hub',
+      seoDescription: 'Look up keyboard shortcuts organized by app.',
     },
   }[locale];
 

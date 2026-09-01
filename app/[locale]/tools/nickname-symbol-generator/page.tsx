@@ -47,6 +47,10 @@ const platformSectionCopy: Record<AppLocale, { title: string; description: strin
     description:
       'Abre una version dedicada con el juego, los marcos y las recomendaciones preparados.',
   },
+  zh: {
+    title: '按游戏分类的符号与预设',
+    description: '打开专属版本,已为你准备好对应游戏、推荐边框和实用建议。',
+  },
 };
 
 export async function generateMetadata({

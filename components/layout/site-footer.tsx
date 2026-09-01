@@ -16,6 +16,7 @@ export function SiteFooter({ locale = 'pt-br' }: Readonly<SiteFooterProps>) {
     'pt-br': 'Sugestoes e melhorias',
     en: 'Suggestions and improvements',
     es: 'Sugerencias y mejoras',
+    zh: '建议与反馈',
   }[locale];
 
   return (

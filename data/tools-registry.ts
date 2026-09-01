@@ -1938,6 +1938,7 @@ export const getToolLocalePathMap = (
   'pt-br': getToolCanonicalPathByLocale(tool, 'pt-br'),
   en: getToolCanonicalPathByLocale(tool, 'en'),
   es: getToolCanonicalPathByLocale(tool, 'es'),
+  zh: getToolCanonicalPathByLocale(tool, 'zh'),
 });
 
 type LocalizableToolId =

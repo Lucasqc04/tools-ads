@@ -136,6 +136,46 @@ const contentByLocale: Record<AppLocale, UrlEncoderDecoderLocaleContent> = {
       { question: 'Se procesa localmente?', answer: 'Si. Todo corre en el navegador.' },
     ],
   },
+  zh: {
+    name: 'URL Encoder and Decoder',
+    shortDescription: 'Encode and decode URLs and query params with support for special characters and fast copy actions.',
+    primaryKeyword: 'url encoder decoder online',
+    secondaryKeywords: ['encode url', 'decode url', 'query param encoder', 'decode query string', 'utm url encoding'],
+    searchIntent: 'Developers, analysts, and marketers handling links, redirects, and URL parameters.',
+    seoTitle: 'URL Encoder and Decoder Online | Encode/Decode URL and Params',
+    seoDescription: 'Encode or decode full URLs and parameters. Includes query parser, editable params, and URL rebuild workflow.',
+    h1: 'URL Encoder and Decoder Online',
+    intro: 'Encode and decode links safely for query params, APIs, redirects, and campaign URLs.',
+    contentBlocks: [
+      {
+        title: 'Why URL encoding matters',
+        paragraphs: [
+          'URL encoding ensures spaces and special characters are transmitted safely in links and request parameters.',
+          'Decoding helps inspect incoming URLs, debug integrations, and read values clearly.',
+        ],
+      },
+      {
+        title: 'Query parameter editing',
+        paragraphs: [
+          'You can parse query strings into key/value rows, edit them, and rebuild a final URL.',
+          'This is useful for UTM setup, redirect links, and API parameter checks.',
+        ],
+      },
+      {
+        title: 'Practical limitations',
+        paragraphs: [
+          'Use full URL encoding and parameter encoding in the correct context to avoid malformed links.',
+          'Always validate final output before publishing links in production workflows.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'What is the difference between encodeURI and encodeURIComponent?', answer: 'encodeURI is for full URLs, encodeURIComponent is for individual parameter values.' },
+      { question: 'Can I parse full query strings?', answer: 'Yes. Paste a full URL and extract/edit parameters.' },
+      { question: 'Can it detect already encoded content?', answer: 'Yes. It can show a hint when content looks encoded.' },
+      { question: 'Is processing local?', answer: 'Yes. It runs in-browser.' },
+    ],
+  },
 };
 
 export const getUrlEncoderDecoderContent = (locale: AppLocale): UrlEncoderDecoderLocaleContent =>

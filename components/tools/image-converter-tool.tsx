@@ -407,6 +407,78 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
       document: 'Documentos',
     },
   },
+  zh: {
+    title: 'Image and PDF Converter',
+    description:
+      'Convert between 20+ image formats and PDF for free, with no sign-up and local browser processing.',
+    fromFormat: 'Source format',
+    toFormat: 'Target format',
+    sourceFile: 'Source file',
+    qualityLabel: 'Quality',
+    pdfPageLimitLabel: 'PDF pages to convert',
+    pdfPageLimitHint: 'One image will be generated per converted page.',
+    pdfMetaLoading: 'Reading total PDF page count...',
+    pdfMetaSummary: (totalPages, generatedPages) =>
+      `PDF has ${totalPages} page(s). This setup will generate ${generatedPages} image(s).`,
+    loadedFile: 'Selected file',
+    sourcePreviewTitle: 'Source preview',
+    resultPreviewTitle: 'Output preview',
+    pdfResultMessage: 'PDF generated successfully. Use download to save the file.',
+    outputSupportHint:
+      'Some professional formats depend on browser local encoding support.',
+    outputSupportReady: 'Target is compatible with the local engine in this version.',
+    outputSupportUnavailable:
+      'Target is not yet available in this local engine. Choose another format.',
+    convert: 'Convert',
+    converting: 'Converting...',
+    reset: 'Reset',
+    download: 'Download',
+    viewImage: 'View image',
+    downloadAll: 'Download all pages',
+    convertedSingleTitle: 'Conversion completed',
+    convertedMultiTitle: 'Converted pages',
+    multiResultSummary: (generated, total) =>
+      `${generated} image(s) generated from ${total} PDF page(s).`,
+    noFileHint: 'Select a file to start.',
+    genericError: 'Could not complete conversion.',
+    partialPagesNotice: (converted, total) =>
+      `${converted} of ${total} pages were converted. Increase the page limit to process more.`,
+    invalidFileForFormat: (formatLabel) =>
+      `File is not compatible with ${formatLabel}. Select a valid file for the chosen source format.`,
+    unsupportedOutput: (formatLabel) =>
+      `${formatLabel} is not available in the local conversion engine yet.`,
+    formatLabels: {
+      png: 'PNG',
+      jpeg: 'JPEG (JPG)',
+      webp: 'WEBP',
+      avif: 'AVIF',
+      bmp: 'BMP',
+      tiff: 'TIFF',
+      ico: 'ICO',
+      gif: 'GIF',
+      svg: 'SVG',
+      heic: 'HEIC',
+      heif: 'HEIF',
+      tga: 'TGA',
+      dds: 'DDS',
+      hdr: 'HDR',
+      exr: 'EXR',
+      psd: 'PSD',
+      raw: 'RAW',
+      cr2: 'CR2',
+      nef: 'NEF',
+      arw: 'ARW',
+      pdf: 'PDF',
+    },
+    formatGroupLabels: {
+      web: 'Web Formats',
+      desktop: 'Desktop Formats',
+      mobile: 'Mobile Formats',
+      pro: 'Professional Formats',
+      raw: 'RAW Formats',
+      document: 'Documents',
+    },
+  },
 };
 
 const getOutputFormats = (fromFormat: ImageFormatId): ImageFormatId[] =>

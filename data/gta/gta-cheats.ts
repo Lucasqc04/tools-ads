@@ -50,12 +50,14 @@ export type GtaCheatEntry = {
     'pt-br': string;
     en: string;
     es: string;
+    zh: string;
   };
   codes: GtaCheatCodes;
   keywords: {
     'pt-br': string[];
     en: string[];
     es: string[];
+    zh: string[];
   };
   note?: string;
   needsValidation?: boolean;
@@ -72,48 +74,71 @@ export const gtaGameNames: Record<GtaGameId, Record<AppLocale, string>> = {
     'pt-br': 'GTA San Andreas',
     en: 'GTA San Andreas',
     es: 'GTA San Andreas',
+    zh: 'GTA San Andreas',
   },
   'gta-v': {
     'pt-br': 'GTA V',
     en: 'GTA V',
     es: 'GTA V',
+    zh: 'GTA V',
   },
   'gta-iv': {
     'pt-br': 'GTA IV',
     en: 'GTA IV',
     es: 'GTA IV',
+    zh: 'GTA IV',
   },
   'gta-iii': {
     'pt-br': 'GTA III',
     en: 'GTA III',
     es: 'GTA III',
+    zh: 'GTA III',
   },
   'gta-vice-city': {
     'pt-br': 'GTA Vice City',
     en: 'GTA Vice City',
     es: 'GTA Vice City',
+    zh: 'GTA Vice City',
   },
 };
 
 export const gtaCategoryNames: Record<GtaCheatCategory, Record<AppLocale, string>> = {
-  armas: { 'pt-br': 'Armas', en: 'Weapons', es: 'Armas' },
-  'vida-armadura': { 'pt-br': 'Vida e armadura', en: 'Health and armor', es: 'Vida y armadura' },
-  policia: { 'pt-br': 'Polícia', en: 'Police', es: 'Policía' },
-  veiculos: { 'pt-br': 'Veículos', en: 'Vehicles', es: 'Vehículos' },
-  'spawn-veiculos': { 'pt-br': 'Spawn de veículos', en: 'Vehicle spawns', es: 'Generar vehículos' },
-  clima: { 'pt-br': 'Clima', en: 'Weather', es: 'Clima' },
-  mundo: { 'pt-br': 'Mundo', en: 'World', es: 'Mundo' },
-  npc: { 'pt-br': 'NPCs e pedestres', en: 'NPCs and pedestrians', es: 'NPCs y peatones' },
-  skins: { 'pt-br': 'Skins/personagens', en: 'Skins/characters', es: 'Skins/personajes' },
-  tema: { 'pt-br': 'Temas', en: 'Themes', es: 'Temas' },
-  movimento: { 'pt-br': 'Movimento', en: 'Movement', es: 'Movimiento' },
-  combate: { 'pt-br': 'Combate', en: 'Combat', es: 'Combate' },
-  dinheiro: { 'pt-br': 'Dinheiro', en: 'Money', es: 'Dinero' },
-  habilidade: { 'pt-br': 'Habilidades', en: 'Skills', es: 'Habilidades' },
-  equipamento: { 'pt-br': 'Equipamentos', en: 'Equipment', es: 'Equipamiento' },
-  player: { 'pt-br': 'Player', en: 'Player', es: 'Jugador' },
-  musica: { 'pt-br': 'Música/rádio', en: 'Music/radio', es: 'Música/radio' },
-  episodes: { 'pt-br': 'Episodes/DLC', en: 'Episodes/DLC', es: 'Episodes/DLC' },
+  armas: { 'pt-br': 'Armas', en: 'Weapons', es: 'Armas',
+  zh: 'Weapons', },
+  'vida-armadura': { 'pt-br': 'Vida e armadura', en: 'Health and armor', es: 'Vida y armadura',
+  zh: 'Health and armor', },
+  policia: { 'pt-br': 'Polícia', en: 'Police', es: 'Policía',
+  zh: 'Police', },
+  veiculos: { 'pt-br': 'Veículos', en: 'Vehicles', es: 'Vehículos',
+  zh: 'Vehicles', },
+  'spawn-veiculos': { 'pt-br': 'Spawn de veículos', en: 'Vehicle spawns', es: 'Generar vehículos',
+  zh: 'Vehicle spawns', },
+  clima: { 'pt-br': 'Clima', en: 'Weather', es: 'Clima',
+  zh: 'Weather', },
+  mundo: { 'pt-br': 'Mundo', en: 'World', es: 'Mundo',
+  zh: 'World', },
+  npc: { 'pt-br': 'NPCs e pedestres', en: 'NPCs and pedestrians', es: 'NPCs y peatones',
+  zh: 'NPCs and pedestrians', },
+  skins: { 'pt-br': 'Skins/personagens', en: 'Skins/characters', es: 'Skins/personajes',
+  zh: 'Skins/characters', },
+  tema: { 'pt-br': 'Temas', en: 'Themes', es: 'Temas',
+  zh: 'Themes', },
+  movimento: { 'pt-br': 'Movimento', en: 'Movement', es: 'Movimiento',
+  zh: 'Movement', },
+  combate: { 'pt-br': 'Combate', en: 'Combat', es: 'Combate',
+  zh: 'Combat', },
+  dinheiro: { 'pt-br': 'Dinheiro', en: 'Money', es: 'Dinero',
+  zh: 'Money', },
+  habilidade: { 'pt-br': 'Habilidades', en: 'Skills', es: 'Habilidades',
+  zh: 'Skills', },
+  equipamento: { 'pt-br': 'Equipamentos', en: 'Equipment', es: 'Equipamiento',
+  zh: 'Equipment', },
+  player: { 'pt-br': 'Player', en: 'Player', es: 'Jugador',
+  zh: 'Player', },
+  musica: { 'pt-br': 'Música/rádio', en: 'Music/radio', es: 'Música/radio',
+  zh: 'Music/radio', },
+  episodes: { 'pt-br': 'Episodes/DLC', en: 'Episodes/DLC', es: 'Episodes/DLC',
+  zh: 'Episodes/DLC', },
 };
 
 export const gtaCheats: GtaCheatEntry[] = 
@@ -125,7 +150,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Vida, armadura e $250.000",
       "en": "Health, armor and $250,000",
-      "es": "Vida, armadura y $250,000"
+      "es": "Vida, armadura y $250,000",
+      zh: "Health, armor and $250,000",
     },
     "codes": {
       "pcPhrase": "INEEDSOMEHELP",
@@ -159,7 +185,16 @@ export const gtaCheats: GtaCheatEntry[] =
         "Vida, armadura y $250,000",
         "INEEDSOMEHELP",
         "HESOYAM"
-      ]
+      ],
+      zh: [
+        "health",
+        "armor",
+        "money",
+        "heal",
+        "Health, armor and $250,000",
+        "INEEDSOMEHELP",
+        "HESOYAM"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -180,7 +215,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas set 1",
       "en": "Weapon set 1",
-      "es": "Armas set 1"
+      "es": "Armas set 1",
+      zh: "Weapon set 1",
     },
     "codes": {
       "pcPhrase": "THUGSARMOURY",
@@ -209,7 +245,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Armas set 1",
         "THUGSARMOURY",
         "LXGIWYL"
-      ]
+      ],
+      zh: [
+        "weapons",
+        "guns",
+        "ammo",
+        "Weapon set 1",
+        "THUGSARMOURY",
+        "LXGIWYL"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -230,7 +274,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas set 2",
       "en": "Weapon set 2",
-      "es": "Armas set 2"
+      "es": "Armas set 2",
+      zh: "Weapon set 2",
     },
     "codes": {
       "pcPhrase": "PROFESSIONALSKIT",
@@ -257,7 +302,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Armas set 2",
         "PROFESSIONALSKIT",
         "KJKSZPJ"
-      ]
+      ],
+      zh: [
+        "weapons",
+        "professional",
+        "Weapon set 2",
+        "PROFESSIONALSKIT",
+        "KJKSZPJ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -278,7 +330,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas set 3",
       "en": "Weapon set 3",
-      "es": "Armas set 3"
+      "es": "Armas set 3",
+      zh: "Weapon set 3",
     },
     "codes": {
       "pcPhrase": "NUTTERSTOYS",
@@ -303,7 +356,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Armas set 3",
         "NUTTERSTOYS",
         "UZUMYMW"
-      ]
+      ],
+      zh: [
+        "heavy weapons",
+        "Weapon set 3",
+        "NUTTERSTOYS",
+        "UZUMYMW"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -324,7 +383,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Munição infinita / sem recarregar",
       "en": "Infinite ammo / no reload",
-      "es": "Munición infinita / sin recargar"
+      "es": "Munición infinita / sin recargar",
+      zh: "Infinite ammo / no reload",
     },
     "codes": {
       "pcPhrase": "FULLCLIP",
@@ -354,7 +414,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Munición infinita / sin recargar",
         "FULLCLIP",
         "WANRLTW"
-      ]
+      ],
+      zh: [
+        "ammo",
+        "infinite",
+        "no reload",
+        "Infinite ammo / no reload",
+        "FULLCLIP",
+        "WANRLTW"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -375,7 +443,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Efeito adrenalina",
       "en": "Adrenaline effect",
-      "es": "Efecto adrenalina"
+      "es": "Efecto adrenalina",
+      zh: "Adrenaline effect",
     },
     "codes": {
       "pcPhrase": "TAKEACHILLPILL",
@@ -402,7 +471,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Efecto adrenalina",
         "TAKEACHILLPILL",
         "MUNASEF"
-      ]
+      ],
+      zh: [
+        "adrenaline",
+        "slow motion",
+        "Adrenaline effect",
+        "TAKEACHILLPILL",
+        "MUNASEF"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -423,7 +499,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Super pulo",
       "en": "Super jump",
-      "es": "Super salto"
+      "es": "Super salto",
+      zh: "Super jump",
     },
     "codes": {
       "pcPhrase": "KANGAROO",
@@ -448,7 +525,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Super salto",
         "KANGAROO",
         "LFGMHAL"
-      ]
+      ],
+      zh: [
+        "jump",
+        "Super jump",
+        "KANGAROO",
+        "LFGMHAL"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -469,7 +552,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Suicídio",
       "en": "Commit suicide",
-      "es": "Suicidio"
+      "es": "Suicidio",
+      zh: "Commit suicide",
     },
     "codes": {
       "pcPhrase": "GOODBYECRUELWORLD",
@@ -496,7 +580,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Suicidio",
         "GOODBYECRUELWORLD",
         "SZCMAWO"
-      ]
+      ],
+      zh: [
+        "suicide",
+        "die",
+        "Commit suicide",
+        "GOODBYECRUELWORLD",
+        "SZCMAWO"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -517,7 +608,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Mira completa dentro de veículos",
       "en": "Full weapon aiming in vehicles",
-      "es": "Apuntado completo en vehículos"
+      "es": "Apuntado completo en vehículos",
+      zh: "Full weapon aiming in vehicles",
     },
     "codes": {
       "pcPhrase": "IWANNADRIVEBY",
@@ -547,7 +639,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Apuntado completo en vehículos",
         "IWANNADRIVEBY",
         "OUIQDMW"
-      ]
+      ],
+      zh: [
+        "vehicle",
+        "aim",
+        "driveby",
+        "Full weapon aiming in vehicles",
+        "IWANNADRIVEBY",
+        "OUIQDMW"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -568,7 +668,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Habilidade hitman com todas as armas",
       "en": "Hitman skill rating with all weapons",
-      "es": "Habilidad hitman con todas las armas"
+      "es": "Habilidad hitman con todas las armas",
+      zh: "Hitman skill rating with all weapons",
     },
     "codes": {
       "pcPhrase": "PROFESSIONALKILLER",
@@ -596,7 +697,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Habilidad hitman con todas las armas",
         "PROFESSIONALKILLER",
         "NCSGDAG"
-      ]
+      ],
+      zh: [
+        "hitman",
+        "weapon skill",
+        "Hitman skill rating with all weapons",
+        "PROFESSIONALKILLER",
+        "NCSGDAG"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -617,7 +725,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Fôlego infinito",
       "en": "Infinite lung capacity",
-      "es": "Capacidad pulmonar infinita"
+      "es": "Capacidad pulmonar infinita",
+      zh: "Infinite lung capacity",
     },
     "codes": {
       "pcPhrase": "MANFROMATLANTIS",
@@ -646,7 +755,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Capacidad pulmonar infinita",
         "MANFROMATLANTIS",
         "CVWKXAM"
-      ]
+      ],
+      zh: [
+        "lung",
+        "oxygen",
+        "swim",
+        "Infinite lung capacity",
+        "MANFROMATLANTIS",
+        "CVWKXAM"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -667,7 +784,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Habilidade máxima de direção",
       "en": "Maximum driving skill",
-      "es": "Habilidad máxima de conducción"
+      "es": "Habilidad máxima de conducción",
+      zh: "Maximum driving skill",
     },
     "codes": {
       "pcPhrase": "NATURALTALENT",
@@ -695,7 +813,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Habilidad máxima de conducción",
         "NATURALTALENT",
         "VQIMAHA"
-      ]
+      ],
+      zh: [
+        "driving",
+        "skill",
+        "Maximum driving skill",
+        "NATURALTALENT",
+        "VQIMAHA"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -716,7 +841,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Gordura máxima",
       "en": "Maximum fat",
-      "es": "Grasa máxima"
+      "es": "Grasa máxima",
+      zh: "Maximum fat",
     },
     "codes": {
       "pcPhrase": "WHOATEALLTHEPIES",
@@ -741,7 +867,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Grasa máxima",
         "WHOATEALLTHEPIES",
         "BTCDBCB"
-      ]
+      ],
+      zh: [
+        "fat",
+        "Maximum fat",
+        "WHOATEALLTHEPIES",
+        "BTCDBCB"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -762,7 +894,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Músculo máximo",
       "en": "Maximum muscle",
-      "es": "Músculo máximo"
+      "es": "Músculo máximo",
+      zh: "Maximum muscle",
     },
     "codes": {
       "pcPhrase": "BUFFMEUP",
@@ -789,7 +922,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Músculo máximo",
         "BUFFMEUP",
         "JYSDSOD"
-      ]
+      ],
+      zh: [
+        "muscle",
+        "strong",
+        "Maximum muscle",
+        "BUFFMEUP",
+        "JYSDSOD"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -810,7 +950,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Respeito máximo",
       "en": "Maximum respect",
-      "es": "Respeto máximo"
+      "es": "Respeto máximo",
+      zh: "Maximum respect",
     },
     "codes": {
       "pcPhrase": "WORSHIPME",
@@ -834,7 +975,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Respeto máximo",
         "WORSHIPME",
         "OGXSDAG"
-      ]
+      ],
+      zh: [
+        "respect",
+        "Maximum respect",
+        "WORSHIPME",
+        "OGXSDAG"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -855,7 +1002,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Sex appeal máximo",
       "en": "Maximum sex appeal",
-      "es": "Atractivo máximo"
+      "es": "Atractivo máximo",
+      zh: "Maximum sex appeal",
     },
     "codes": {
       "pcPhrase": "HELLOLADIES",
@@ -880,7 +1028,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Atractivo máximo",
         "HELLOLADIES",
         "EHIBXQS"
-      ]
+      ],
+      zh: [
+        "sex appeal",
+        "Maximum sex appeal",
+        "HELLOLADIES",
+        "EHIBXQS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -901,7 +1055,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Stamina máxima",
       "en": "Maximum stamina",
-      "es": "Resistencia máxima"
+      "es": "Resistencia máxima",
+      zh: "Maximum stamina",
     },
     "codes": {
       "pcPhrase": "ICANGOALLNIGHT",
@@ -928,7 +1083,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Resistencia máxima",
         "ICANGOALLNIGHT",
         "VKYPQCF"
-      ]
+      ],
+      zh: [
+        "stamina",
+        "run",
+        "Maximum stamina",
+        "ICANGOALLNIGHT",
+        "VKYPQCF"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -949,7 +1111,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Nunca sentir fome",
       "en": "Never hungry",
-      "es": "Nunca tener hambre"
+      "es": "Nunca tener hambre",
+      zh: "Never hungry",
     },
     "codes": {
       "pcPhrase": "IAMNEVERHUNGRY",
@@ -976,7 +1139,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Nunca tener hambre",
         "IAMNEVERHUNGRY",
         "AEDUWNV"
-      ]
+      ],
+      zh: [
+        "hungry",
+        "food",
+        "Never hungry",
+        "IAMNEVERHUNGRY",
+        "AEDUWNV"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -997,7 +1167,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Jetpack",
       "en": "Jetpack",
-      "es": "Jetpack"
+      "es": "Jetpack",
+      zh: "Jetpack",
     },
     "codes": {
       "pcPhrase": "ROCKETMAN",
@@ -1024,7 +1195,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Jetpack",
         "ROCKETMAN",
         "YECGAA"
-      ]
+      ],
+      zh: [
+        "jetpack",
+        "fly",
+        "Jetpack",
+        "ROCKETMAN",
+        "YECGAA"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1045,7 +1223,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Paraquedas",
       "en": "Parachute",
-      "es": "Paracaídas"
+      "es": "Paracaídas",
+      zh: "Parachute",
     },
     "codes": {
       "pcPhrase": "LETSGOBASEJUMPING",
@@ -1069,7 +1248,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Paracaídas",
         "LETSGOBASEJUMPING",
         "AIYPWZQP"
-      ]
+      ],
+      zh: [
+        "parachute",
+        "Parachute",
+        "LETSGOBASEJUMPING",
+        "AIYPWZQP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1090,7 +1275,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Quase invulnerável a tiros e fogo",
       "en": "Immune to guns and fire",
-      "es": "Inmune a balas y fuego"
+      "es": "Inmune a balas y fuego",
+      zh: "Immune to guns and fire",
     },
     "codes": {
       "pcPhrase": "NOONECANHURTME",
@@ -1121,7 +1307,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Inmune a balas y fuego",
         "NOONECANHURTME",
         "BAGUVIX"
-      ]
+      ],
+      zh: [
+        "invincible",
+        "guns",
+        "fire",
+        "Immune to guns and fire",
+        "NOONECANHURTME",
+        "BAGUVIX"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1142,7 +1336,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Soco super forte",
       "en": "Super punch",
-      "es": "Súper puñetazo"
+      "es": "Súper puñetazo",
+      zh: "Super punch",
     },
     "codes": {
       "pcPhrase": "STINGLIKEABEE",
@@ -1169,7 +1364,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Súper puñetazo",
         "STINGLIKEABEE",
         "IAVENJQ"
-      ]
+      ],
+      zh: [
+        "punch",
+        "melee",
+        "Super punch",
+        "STINGLIKEABEE",
+        "IAVENJQ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1190,7 +1392,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Zerar gordura e músculo",
       "en": "Zero fat and muscle",
-      "es": "Cero grasa y músculo"
+      "es": "Cero grasa y músculo",
+      zh: "Zero fat and muscle",
     },
     "codes": {
       "pcPhrase": "LEANANDMEAN",
@@ -1217,7 +1420,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Cero grasa y músculo",
         "LEANANDMEAN",
         "KVGYZQK"
-      ]
+      ],
+      zh: [
+        "skinny",
+        "zero fat",
+        "Zero fat and muscle",
+        "LEANANDMEAN",
+        "KVGYZQK"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1238,7 +1448,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "6 estrelas de procurado",
       "en": "Six-star wanted level",
-      "es": "Seis estrellas de búsqueda"
+      "es": "Seis estrellas de búsqueda",
+      zh: "Six-star wanted level",
     },
     "codes": {
       "pcPhrase": "BRINGITON",
@@ -1267,7 +1478,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Seis estrellas de búsqueda",
         "BRINGITON",
         "LJSPQK"
-      ]
+      ],
+      zh: [
+        "police",
+        "six stars",
+        "wanted",
+        "Six-star wanted level",
+        "BRINGITON",
+        "LJSPQK"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1288,7 +1507,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Remover procurado",
       "en": "Remove wanted level",
-      "es": "Quitar búsqueda"
+      "es": "Quitar búsqueda",
+      zh: "Remove wanted level",
     },
     "codes": {
       "pcPhrase": "TURNDOWNTHEHEAT",
@@ -1314,7 +1534,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Quitar búsqueda",
         "TURNDOWNTHEHEAT",
         "ASNAEB"
-      ]
+      ],
+      zh: [
+        "remove wanted",
+        "police",
+        "Remove wanted level",
+        "TURNDOWNTHEHEAT",
+        "ASNAEB"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1335,7 +1562,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Aumentar procurado em 2 estrelas",
       "en": "Raise wanted level by two",
-      "es": "Subir búsqueda en dos estrellas"
+      "es": "Subir búsqueda en dos estrellas",
+      zh: "Raise wanted level by two",
     },
     "codes": {
       "pcPhrase": "TURNUPTHEHEAT",
@@ -1360,7 +1588,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Subir búsqueda en dos estrellas",
         "TURNUPTHEHEAT",
         "OSRBLHH"
-      ]
+      ],
+      zh: [
+        "raise wanted",
+        "Raise wanted level by two",
+        "TURNUPTHEHEAT",
+        "OSRBLHH"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1381,7 +1615,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Travar nível de procurado",
       "en": "Lock wanted level",
-      "es": "Bloquear nivel de búsqueda"
+      "es": "Bloquear nivel de búsqueda",
+      zh: "Lock wanted level",
     },
     "codes": {
       "pcPhrase": "IDOASIPLEASE",
@@ -1407,7 +1642,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Bloquear nivel de búsqueda",
         "IDOASIPLEASE",
         "AEZAKMI"
-      ]
+      ],
+      zh: [
+        "lock wanted",
+        "never wanted",
+        "Lock wanted level",
+        "IDOASIPLEASE",
+        "AEZAKMI"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1428,7 +1670,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Todos os carros com nitro",
       "en": "All cars have nitro",
-      "es": "Todos los coches con nitro"
+      "es": "Todos los coches con nitro",
+      zh: "All cars have nitro",
     },
     "codes": {
       "pcPhrase": "SPEEDFREAK",
@@ -1455,7 +1698,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Todos los coches con nitro",
         "SPEEDFREAK",
         "COXEFGU"
-      ]
+      ],
+      zh: [
+        "cars",
+        "nitro",
+        "All cars have nitro",
+        "SPEEDFREAK",
+        "COXEFGU"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1476,7 +1726,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Super pulo com bicicletas",
       "en": "Super jump on bikes",
-      "es": "Súper salto en bicicletas"
+      "es": "Súper salto en bicicletas",
+      zh: "Super jump on bikes",
     },
     "codes": {
       "pcPhrase": "CJPHONEHOME",
@@ -1505,7 +1756,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Súper salto en bicicletas",
         "CJPHONEHOME",
         "JHJOECW"
-      ]
+      ],
+      zh: [
+        "bike",
+        "bicycle",
+        "jump",
+        "Super jump on bikes",
+        "CJPHONEHOME",
+        "JHJOECW"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1526,7 +1785,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Barcos voam",
       "en": "Boats can fly",
-      "es": "Barcos vuelan"
+      "es": "Barcos vuelan",
+      zh: "Boats can fly",
     },
     "codes": {
       "pcPhrase": "FLYINGFISH",
@@ -1553,7 +1813,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Barcos vuelan",
         "FLYINGFISH",
         "AFSNMSMW"
-      ]
+      ],
+      zh: [
+        "boat",
+        "fly",
+        "Boats can fly",
+        "FLYINGFISH",
+        "AFSNMSMW"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1574,7 +1841,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros voam",
       "en": "Cars can fly",
-      "es": "Coches vuelan"
+      "es": "Coches vuelan",
+      zh: "Cars can fly",
     },
     "codes": {
       "pcPhrase": "CHITTYCHITTYBANGBANG",
@@ -1601,7 +1869,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Coches vuelan",
         "CHITTYCHITTYBANGBANG",
         "RIPAZHA"
-      ]
+      ],
+      zh: [
+        "cars",
+        "flying",
+        "Cars can fly",
+        "CHITTYCHITTYBANGBANG",
+        "RIPAZHA"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1622,7 +1897,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Seu carro fica invencível",
       "en": "Your car is invincible",
-      "es": "Tu coche es invencible"
+      "es": "Tu coche es invencible",
+      zh: "Your car is invincible",
     },
     "codes": {
       "pcPhrase": "TOUCHMYCARYOUDIE",
@@ -1649,7 +1925,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tu coche es invencible",
         "TOUCHMYCARYOUDIE",
         "JCNRUAD"
-      ]
+      ],
+      zh: [
+        "car",
+        "invincible",
+        "Your car is invincible",
+        "TOUCHMYCARYOUDIE",
+        "JCNRUAD"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1670,7 +1953,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros flutuam quando batem",
       "en": "Cars float away when hit",
-      "es": "Coches flotan al chocar"
+      "es": "Coches flotan al chocar",
+      zh: "Cars float away when hit",
     },
     "codes": {
       "pcPhrase": "BUBBLECARS",
@@ -1699,7 +1983,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Coches flotan al chocar",
         "BUBBLECARS",
         "BSXSGGC"
-      ]
+      ],
+      zh: [
+        "cars",
+        "float",
+        "hit",
+        "Cars float away when hit",
+        "BUBBLECARS",
+        "BSXSGGC"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1720,7 +2012,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Explodir todos os carros",
       "en": "Destroy all cars",
-      "es": "Destruir todos los coches"
+      "es": "Destruir todos los coches",
+      zh: "Destroy all cars",
     },
     "codes": {
       "pcPhrase": "ALLCARSGOBOOM",
@@ -1749,7 +2042,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Destruir todos los coches",
         "ALLCARSGOBOOM",
         "CPKTNWT"
-      ]
+      ],
+      zh: [
+        "cars",
+        "explode",
+        "destroy",
+        "Destroy all cars",
+        "ALLCARSGOBOOM",
+        "CPKTNWT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1770,7 +2071,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros invisíveis",
       "en": "Invisible cars",
-      "es": "Coches invisibles"
+      "es": "Coches invisibles",
+      zh: "Invisible cars",
     },
     "codes": {
       "pcPhrase": "WHEELSONLYPLEASE",
@@ -1795,7 +2097,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Coches invisibles",
         "WHEELSONLYPLEASE",
         "XICWMD"
-      ]
+      ],
+      zh: [
+        "invisible cars",
+        "Invisible cars",
+        "WHEELSONLYPLEASE",
+        "XICWMD"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1816,7 +2124,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Direção perfeita",
       "en": "Perfect handling",
-      "es": "Conducción perfecta"
+      "es": "Conducción perfecta",
+      zh: "Perfect handling",
     },
     "codes": {
       "pcPhrase": "STICKLIKEGLUE",
@@ -1844,7 +2153,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Conducción perfecta",
         "STICKLIKEGLUE",
         "PGGOMOY"
-      ]
+      ],
+      zh: [
+        "handling",
+        "cars",
+        "Perfect handling",
+        "STICKLIKEGLUE",
+        "PGGOMOY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1865,7 +2181,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Bloodring Banger",
       "en": "Spawn Bloodring Banger",
-      "es": "Generar Bloodring Banger"
+      "es": "Generar Bloodring Banger",
+      zh: "Spawn Bloodring Banger",
     },
     "codes": {
       "pcPhrase": "OLDSPEEDDEMON",
@@ -1892,7 +2209,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Bloodring Banger",
         "OLDSPEEDDEMON",
         "CQZIJMB"
-      ]
+      ],
+      zh: [
+        "car",
+        "bloodring",
+        "Spawn Bloodring Banger",
+        "OLDSPEEDDEMON",
+        "CQZIJMB"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1913,7 +2237,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Caddy",
       "en": "Spawn Caddy",
-      "es": "Generar Caddy"
+      "es": "Generar Caddy",
+      zh: "Spawn Caddy",
     },
     "codes": {
       "pcPhrase": "18HOLES",
@@ -1941,7 +2266,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Caddy",
         "18HOLES",
         "RZHSUEW"
-      ]
+      ],
+      zh: [
+        "golf",
+        "caddy",
+        "Spawn Caddy",
+        "18HOLES",
+        "RZHSUEW"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -1962,7 +2294,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Dozer",
       "en": "Spawn Dozer",
-      "es": "Generar Dozer"
+      "es": "Generar Dozer",
+      zh: "Spawn Dozer",
     },
     "codes": {
       "pcPhrase": "ITSALLBULL",
@@ -1989,7 +2322,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Dozer",
         "ITSALLBULL",
         "EEGCYXT"
-      ]
+      ],
+      zh: [
+        "dozer",
+        "tractor",
+        "Spawn Dozer",
+        "ITSALLBULL",
+        "EEGCYXT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2010,7 +2350,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Hotring Racer 1",
       "en": "Spawn Hotring Racer 1",
-      "es": "Generar Hotring Racer 1"
+      "es": "Generar Hotring Racer 1",
+      zh: "Spawn Hotring Racer 1",
     },
     "codes": {
       "pcPhrase": "VROCKPOKEY",
@@ -2039,7 +2380,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Hotring Racer 1",
         "VROCKPOKEY",
         "PDNEJOH"
-      ]
+      ],
+      zh: [
+        "race car",
+        "hotring",
+        "Spawn Hotring Racer 1",
+        "VROCKPOKEY",
+        "PDNEJOH"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2060,7 +2408,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Hotring Racer 2",
       "en": "Spawn Hotring Racer 2",
-      "es": "Generar Hotring Racer 2"
+      "es": "Generar Hotring Racer 2",
+      zh: "Spawn Hotring Racer 2",
     },
     "codes": {
       "pcPhrase": "JUSTTRYANDSTOPME",
@@ -2089,7 +2438,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Hotring Racer 2",
         "JUSTTRYANDSTOPME",
         "VPJTQWV"
-      ]
+      ],
+      zh: [
+        "race car",
+        "hotring",
+        "Spawn Hotring Racer 2",
+        "JUSTTRYANDSTOPME",
+        "VPJTQWV"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2110,7 +2466,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Monster Truck",
       "en": "Spawn Monster Truck",
-      "es": "Generar Monster Truck"
+      "es": "Generar Monster Truck",
+      zh: "Spawn Monster Truck",
     },
     "codes": {
       "pcPhrase": "MONSTERMASH",
@@ -2135,7 +2492,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Monster Truck",
         "MONSTERMASH",
         "AGBDLCID"
-      ]
+      ],
+      zh: [
+        "monster truck",
+        "Spawn Monster Truck",
+        "MONSTERMASH",
+        "AGBDLCID"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2156,7 +2519,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Quadbike",
       "en": "Spawn Quadbike",
-      "es": "Generar quad"
+      "es": "Generar quad",
+      zh: "Spawn Quadbike",
     },
     "codes": {
       "pcPhrase": "FOURWHEELFUN",
@@ -2182,7 +2546,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar quad",
         "FOURWHEELFUN",
         "AKJJYGLC"
-      ]
+      ],
+      zh: [
+        "quadbike",
+        "quad",
+        "Spawn Quadbike",
+        "FOURWHEELFUN",
+        "AKJJYGLC"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2203,7 +2574,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Hunter helicóptero",
       "en": "Spawn Hunter helicopter",
-      "es": "Generar helicóptero Hunter"
+      "es": "Generar helicóptero Hunter",
+      zh: "Spawn Hunter helicopter",
     },
     "codes": {
       "pcPhrase": "OHDUDE"
@@ -2226,7 +2598,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "hunter",
         "Generar helicóptero Hunter",
         "OHDUDE"
-      ]
+      ],
+      zh: [
+        "helicopter",
+        "hunter",
+        "Spawn Hunter helicopter",
+        "OHDUDE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2247,7 +2625,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Hydra jato",
       "en": "Spawn Hydra jet",
-      "es": "Generar jet Hydra"
+      "es": "Generar jet Hydra",
+      zh: "Spawn Hydra jet",
     },
     "codes": {
       "pcPhrase": "JUMPJET"
@@ -2273,7 +2652,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "hydra",
         "Generar jet Hydra",
         "JUMPJET"
-      ]
+      ],
+      zh: [
+        "jet",
+        "plane",
+        "hydra",
+        "Spawn Hydra jet",
+        "JUMPJET"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2294,7 +2680,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Rancher",
       "en": "Spawn Rancher",
-      "es": "Generar Rancher"
+      "es": "Generar Rancher",
+      zh: "Spawn Rancher",
     },
     "codes": {
       "pcPhrase": "DOUGHNUTHANDICAP",
@@ -2321,7 +2708,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Rancher",
         "DOUGHNUTHANDICAP",
         "JQNTDMH"
-      ]
+      ],
+      zh: [
+        "car",
+        "rancher",
+        "Spawn Rancher",
+        "DOUGHNUTHANDICAP",
+        "JQNTDMH"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2342,7 +2736,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Rhino tanque",
       "en": "Spawn Rhino tank",
-      "es": "Generar tanque Rhino"
+      "es": "Generar tanque Rhino",
+      zh: "Spawn Rhino tank",
     },
     "codes": {
       "pcPhrase": "TIMETOKICKASS",
@@ -2369,7 +2764,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar tanque Rhino",
         "TIMETOKICKASS",
         "AIWPRTON"
-      ]
+      ],
+      zh: [
+        "tank",
+        "rhino",
+        "Spawn Rhino tank",
+        "TIMETOKICKASS",
+        "AIWPRTON"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2390,7 +2792,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Romero",
       "en": "Spawn Romero",
-      "es": "Generar Romero"
+      "es": "Generar Romero",
+      zh: "Spawn Romero",
     },
     "codes": {
       "pcPhrase": "WHERESTHEFUNERAL",
@@ -2418,7 +2821,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Romero",
         "WHERESTHEFUNERAL",
         "AQTBCODX"
-      ]
+      ],
+      zh: [
+        "hearse",
+        "romero",
+        "Spawn Romero",
+        "WHERESTHEFUNERAL",
+        "AQTBCODX"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2439,7 +2849,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Stretch limusine",
       "en": "Spawn Stretch limo",
-      "es": "Generar limusina Stretch"
+      "es": "Generar limusina Stretch",
+      zh: "Spawn Stretch limo",
     },
     "codes": {
       "pcPhrase": "CELEBRITYSTATUS",
@@ -2465,7 +2876,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar limusina Stretch",
         "CELEBRITYSTATUS",
         "KRIJEBR"
-      ]
+      ],
+      zh: [
+        "limo",
+        "limousine",
+        "Spawn Stretch limo",
+        "CELEBRITYSTATUS",
+        "KRIJEBR"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2486,7 +2904,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Stuntplane",
       "en": "Spawn Stuntplane",
-      "es": "Generar avión acrobático"
+      "es": "Generar avión acrobático",
+      zh: "Spawn Stuntplane",
     },
     "codes": {
       "pcPhrase": "FLYINGTOSTUNT",
@@ -2513,7 +2932,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar avión acrobático",
         "FLYINGTOSTUNT",
         "URKQSRK"
-      ]
+      ],
+      zh: [
+        "plane",
+        "stunt",
+        "Spawn Stuntplane",
+        "FLYINGTOSTUNT",
+        "URKQSRK"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2534,7 +2960,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Tanker",
       "en": "Spawn Tanker",
-      "es": "Generar camión cisterna"
+      "es": "Generar camión cisterna",
+      zh: "Spawn Tanker",
     },
     "codes": {
       "pcPhrase": "HITTHEROADJACK",
@@ -2561,7 +2988,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar camión cisterna",
         "HITTHEROADJACK",
         "AMOMHRER"
-      ]
+      ],
+      zh: [
+        "truck",
+        "tanker",
+        "Spawn Tanker",
+        "HITTHEROADJACK",
+        "AMOMHRER"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2582,7 +3016,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Trashmaster",
       "en": "Spawn Trashmaster",
-      "es": "Generar camión de basura"
+      "es": "Generar camión de basura",
+      zh: "Spawn Trashmaster",
     },
     "codes": {
       "pcPhrase": "TRUEGRIME",
@@ -2608,7 +3043,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar camión de basura",
         "TRUEGRIME",
         "UBHYZHQ"
-      ]
+      ],
+      zh: [
+        "garbage truck",
+        "Spawn Trashmaster",
+        "TRUEGRIME",
+        "UBHYZHQ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2629,7 +3070,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Vortex hovercraft",
       "en": "Spawn Vortex hovercraft",
-      "es": "Generar Vortex hovercraft"
+      "es": "Generar Vortex hovercraft",
+      zh: "Spawn Vortex hovercraft",
     },
     "codes": {
       "pcPhrase": "IWANTTOHOVER",
@@ -2657,7 +3099,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Vortex hovercraft",
         "IWANTTOHOVER",
         "KGGGDKP"
-      ]
+      ],
+      zh: [
+        "vortex",
+        "hovercraft",
+        "Spawn Vortex hovercraft",
+        "IWANTTOHOVER",
+        "KGGGDKP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2678,7 +3127,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Gangues em todo lugar",
       "en": "Gang members everywhere",
-      "es": "Pandilleros por todos lados"
+      "es": "Pandilleros por todos lados",
+      zh: "Gang members everywhere",
     },
     "codes": {
       "pcPhrase": "ONLYHOMIESALLOWED",
@@ -2708,7 +3158,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Pandilleros por todos lados",
         "ONLYHOMIESALLOWED",
         "MROEMZH"
-      ]
+      ],
+      zh: [
+        "gangue",
+        "npc",
+        "rua",
+        "Gang members everywhere",
+        "ONLYHOMIESALLOWED",
+        "MROEMZH"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2729,7 +3187,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Gangues dominam as ruas",
       "en": "Gangs rule the streets",
-      "es": "Pandillas dominan las calles"
+      "es": "Pandillas dominan las calles",
+      zh: "Gangs rule the streets",
     },
     "codes": {
       "pcPhrase": "BETTERSTAYINDOORS",
@@ -2756,7 +3215,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Pandillas dominan las calles",
         "BETTERSTAYINDOORS",
         "BIFBUZZ"
-      ]
+      ],
+      zh: [
+        "gangue",
+        "rua",
+        "Gangs rule the streets",
+        "BETTERSTAYINDOORS",
+        "BIFBUZZ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2777,7 +3243,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Recrutar qualquer pessoa com lança-foguetes",
       "en": "Recruit anyone with rocket launcher",
-      "es": "Reclutar a cualquiera con lanzacohetes"
+      "es": "Reclutar a cualquiera con lanzacohetes",
+      zh: "Recruit anyone with rocket launcher",
     },
     "codes": {
       "pcPhrase": "ROCKETMAYHEM",
@@ -2804,7 +3271,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Reclutar a cualquiera con lanzacohetes",
         "ROCKETMAYHEM",
         "ZSOXFSQ"
-      ]
+      ],
+      zh: [
+        "recrutar",
+        "lança foguete",
+        "Recruit anyone with rocket launcher",
+        "ROCKETMAYHEM",
+        "ZSOXFSQ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2825,7 +3299,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Recrutar qualquer pessoa com AK-47",
       "en": "Recruit anyone with AK-47",
-      "es": "Reclutar a cualquiera con AK-47"
+      "es": "Reclutar a cualquiera con AK-47",
+      zh: "Recruit anyone with AK-47",
     },
     "codes": {
       "pcPhrase": "NOONECANSTOPUS",
@@ -2852,7 +3327,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Reclutar a cualquiera con AK-47",
         "NOONECANSTOPUS",
         "BMTPWHR"
-      ]
+      ],
+      zh: [
+        "recrutar",
+        "ak",
+        "Recruit anyone with AK-47",
+        "NOONECANSTOPUS",
+        "BMTPWHR"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2873,7 +3355,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Recrutar qualquer pessoa com pistola",
       "en": "Recruit anyone with pistol",
-      "es": "Reclutar a cualquiera con pistola"
+      "es": "Reclutar a cualquiera con pistola",
+      zh: "Recruit anyone with pistol",
     },
     "codes": {
       "pcPhrase": "WANNABEINMYGANG",
@@ -2900,7 +3383,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Reclutar a cualquiera con pistola",
         "WANNABEINMYGANG",
         "SJMAHPE"
-      ]
+      ],
+      zh: [
+        "recrutar",
+        "pistola",
+        "Recruit anyone with pistol",
+        "WANNABEINMYGANG",
+        "SJMAHPE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2921,7 +3411,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Pedestres caóticos",
       "en": "Pedestrian chaos",
-      "es": "Caos de peatones"
+      "es": "Caos de peatones",
+      zh: "Pedestrian chaos",
     },
     "codes": {
       "pcPhrase": "ROUGHNEIGHBOURHOOD",
@@ -2948,7 +3439,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Caos de peatones",
         "ROUGHNEIGHBOURHOOD",
         "AJLOJYQY"
-      ]
+      ],
+      zh: [
+        "pedestre",
+        "caos",
+        "Pedestrian chaos",
+        "ROUGHNEIGHBOURHOOD",
+        "AJLOJYQY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -2969,7 +3467,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Pedestres viram Elvis",
       "en": "Pedestrians are Elvis",
-      "es": "Peatones son Elvis"
+      "es": "Peatones son Elvis",
+      zh: "Pedestrians are Elvis",
     },
     "codes": {
       "pcPhrase": "BLUESUEDESHOES",
@@ -2996,7 +3495,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Peatones son Elvis",
         "BLUESUEDESHOES",
         "ASBHGRB"
-      ]
+      ],
+      zh: [
+        "elvis",
+        "tema",
+        "Pedestrians are Elvis",
+        "BLUESUEDESHOES",
+        "ASBHGRB"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3017,7 +3523,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Riot de pedestres",
       "en": "Pedestrian riot",
-      "es": "Disturbios de peatones"
+      "es": "Disturbios de peatones",
+      zh: "Pedestrian riot",
     },
     "codes": {
       "pcPhrase": "STATEOFEMERGENCY",
@@ -3047,7 +3554,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Disturbios de peatones",
         "STATEOFEMERGENCY",
         "IOJUFZN"
-      ]
+      ],
+      zh: [
+        "riot",
+        "caos",
+        "pedestre",
+        "Pedestrian riot",
+        "STATEOFEMERGENCY",
+        "IOJUFZN"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3068,7 +3583,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Pedestres atacam você",
       "en": "Pedestrians attack you",
-      "es": "Peatones te atacan"
+      "es": "Peatones te atacan",
+      zh: "Pedestrians attack you",
     },
     "codes": {
       "pcPhrase": "STOPPICKINGONME",
@@ -3095,7 +3611,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Peatones te atacan",
         "STOPPICKINGONME",
         "BAGOWPG"
-      ]
+      ],
+      zh: [
+        "pedestre",
+        "atacar",
+        "Pedestrians attack you",
+        "STOPPICKINGONME",
+        "BAGOWPG"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3116,7 +3639,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Pedestres atacam você com armas",
       "en": "Pedestrians attack you with guns",
-      "es": "Peatones te atacan con armas"
+      "es": "Peatones te atacan con armas",
+      zh: "Pedestrians attack you with guns",
     },
     "codes": {
       "pcPhrase": "ATTACKOFTHEVILLAGEPEOPLE",
@@ -3143,7 +3667,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Peatones te atacan con armas",
         "ATTACKOFTHEVILLAGEPEOPLE",
         "BGLUAWML"
-      ]
+      ],
+      zh: [
+        "pedestre",
+        "armas",
+        "Pedestrians attack you with guns",
+        "ATTACKOFTHEVILLAGEPEOPLE",
+        "BGLUAWML"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3164,7 +3695,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Pedestres têm armas",
       "en": "Pedestrians have weapons",
-      "es": "Peatones con armas"
+      "es": "Peatones con armas",
+      zh: "Pedestrians have weapons",
     },
     "codes": {
       "pcPhrase": "SURROUNDEDBYNUTTERS",
@@ -3191,7 +3723,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Peatones con armas",
         "SURROUNDEDBYNUTTERS",
         "FOOOXFT"
-      ]
+      ],
+      zh: [
+        "pedestre",
+        "armas",
+        "Pedestrians have weapons",
+        "SURROUNDEDBYNUTTERS",
+        "FOOOXFT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3212,7 +3751,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tema praia",
       "en": "Beach theme",
-      "es": "Tema playa"
+      "es": "Tema playa",
+      zh: "Beach theme",
     },
     "codes": {
       "pcPhrase": "LIFESABEACH",
@@ -3239,7 +3779,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tema playa",
         "LIFESABEACH",
         "CIKGCGX"
-      ]
+      ],
+      zh: [
+        "praia",
+        "biquíni",
+        "Beach theme",
+        "LIFESABEACH",
+        "CIKGCGX"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3260,7 +3807,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tema carnaval/funhouse",
       "en": "Carnival theme",
-      "es": "Tema carnaval"
+      "es": "Tema carnaval",
+      zh: "Carnival theme",
     },
     "codes": {
       "pcPhrase": "CRAZYTOWN",
@@ -3287,7 +3835,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tema carnaval",
         "CRAZYTOWN",
         "PRIEBJ"
-      ]
+      ],
+      zh: [
+        "carnaval",
+        "tema",
+        "Carnival theme",
+        "CRAZYTOWN",
+        "PRIEBJ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3308,7 +3863,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tema gimp",
       "en": "Gimp theme",
-      "es": "Tema gimp"
+      "es": "Tema gimp",
+      zh: "Gimp theme",
     },
     "codes": {
       "pcPhrase": "LOVECONQUERSALL",
@@ -3335,7 +3891,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tema gimp",
         "LOVECONQUERSALL",
         "BEKKNQV"
-      ]
+      ],
+      zh: [
+        "gimp",
+        "tema",
+        "Gimp theme",
+        "LOVECONQUERSALL",
+        "BEKKNQV"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3356,7 +3919,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tema rural",
       "en": "Rural theme",
-      "es": "Tema rural"
+      "es": "Tema rural",
+      zh: "Rural theme",
     },
     "codes": {
       "pcPhrase": "HICKSVILLE",
@@ -3383,7 +3947,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tema rural",
         "HICKSVILLE",
         "FVTMNBZ"
-      ]
+      ],
+      zh: [
+        "rural",
+        "campo",
+        "Rural theme",
+        "HICKSVILLE",
+        "FVTMNBZ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3404,7 +3975,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tema ninja/triad",
       "en": "Triad theme",
-      "es": "Tema ninja/triada"
+      "es": "Tema ninja/triada",
+      zh: "Triad theme",
     },
     "codes": {
       "pcPhrase": "NINJATOWN",
@@ -3431,7 +4003,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tema ninja/triada",
         "NINJATOWN",
         "AFPHULTL"
-      ]
+      ],
+      zh: [
+        "ninja",
+        "triad",
+        "Triad theme",
+        "NINJATOWN",
+        "AFPHULTL"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3452,7 +4031,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Poucos carros e pedestres",
       "en": "Traffic and pedestrians rarely spawn",
-      "es": "Poco tráfico y peatones"
+      "es": "Poco tráfico y peatones",
+      zh: "Traffic and pedestrians rarely spawn",
     },
     "codes": {
       "pcPhrase": "GHOSTTOWN",
@@ -3479,7 +4059,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Poco tráfico y peatones",
         "GHOSTTOWN",
         "THGLOJ"
-      ]
+      ],
+      zh: [
+        "cidade vazia",
+        "sem trânsito",
+        "Traffic and pedestrians rarely spawn",
+        "GHOSTTOWN",
+        "THGLOJ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3500,7 +4087,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Motoristas agressivos",
       "en": "Aggressive drivers",
-      "es": "Conductores agresivos"
+      "es": "Conductores agresivos",
+      zh: "Aggressive drivers",
     },
     "codes": {
       "pcPhrase": "ALLDRIVERSARECRIMINALS",
@@ -3527,7 +4115,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Conductores agresivos",
         "ALLDRIVERSARECRIMINALS",
         "YLTEICZ"
-      ]
+      ],
+      zh: [
+        "trânsito",
+        "motoristas",
+        "Aggressive drivers",
+        "ALLDRIVERSARECRIMINALS",
+        "YLTEICZ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3548,7 +4143,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Semáforos verdes",
       "en": "All green lights",
-      "es": "Semáforos verdes"
+      "es": "Semáforos verdes",
+      zh: "All green lights",
     },
     "codes": {
       "pcPhrase": "DONTTRYANDSTOPME",
@@ -3575,7 +4171,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Semáforos verdes",
         "DONTTRYANDSTOPME",
         "ZEIIVG"
-      ]
+      ],
+      zh: [
+        "semaforo",
+        "verde",
+        "All green lights",
+        "DONTTRYANDSTOPME",
+        "ZEIIVG"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3596,7 +4199,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros pretos",
       "en": "Black cars",
-      "es": "Coches negros"
+      "es": "Coches negros",
+      zh: "Black cars",
     },
     "codes": {
       "pcPhrase": "SOLONGASITSBLACK",
@@ -3623,7 +4227,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Coches negros",
         "SOLONGASITSBLACK",
         "IOWDLAC"
-      ]
+      ],
+      zh: [
+        "carro",
+        "preto",
+        "Black cars",
+        "SOLONGASITSBLACK",
+        "IOWDLAC"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3644,7 +4255,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros rosa",
       "en": "Pink cars",
-      "es": "Coches rosas"
+      "es": "Coches rosas",
+      zh: "Pink cars",
     },
     "codes": {
       "pcPhrase": "PINKISTHENEWCOOL",
@@ -3671,7 +4283,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Coches rosas",
         "PINKISTHENEWCOOL",
         "LLQPFBN"
-      ]
+      ],
+      zh: [
+        "carro",
+        "rosa",
+        "Pink cars",
+        "PINKISTHENEWCOOL",
+        "LLQPFBN"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3692,7 +4311,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tráfego com carros simples",
       "en": "Cheap cars",
-      "es": "Tráfico con coches simples"
+      "es": "Tráfico con coches simples",
+      zh: "Cheap cars",
     },
     "codes": {
       "pcPhrase": "EVERYONEISPOOR",
@@ -3722,7 +4342,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tráfico con coches simples",
         "EVERYONEISPOOR",
         "BGKGTJH"
-      ]
+      ],
+      zh: [
+        "carro",
+        "pobre",
+        "barato",
+        "Cheap cars",
+        "EVERYONEISPOOR",
+        "BGKGTJH"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3743,7 +4371,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tráfego com carros esportivos",
       "en": "Sports cars",
-      "es": "Tráfico con coches deportivos"
+      "es": "Tráfico con coches deportivos",
+      zh: "Sports cars",
     },
     "codes": {
       "pcPhrase": "EVERYONEISRICH",
@@ -3773,7 +4402,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tráfico con coches deportivos",
         "EVERYONEISRICH",
         "GUSNDHE"
-      ]
+      ],
+      zh: [
+        "carro",
+        "esportivo",
+        "rico",
+        "Sports cars",
+        "EVERYONEISRICH",
+        "GUSNDHE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3794,7 +4431,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Gameplay lento",
       "en": "Decrease game speed",
-      "es": "Juego lento"
+      "es": "Juego lento",
+      zh: "Decrease game speed",
     },
     "codes": {
       "pcPhrase": "SLOWITDOWN",
@@ -3821,7 +4459,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Juego lento",
         "SLOWITDOWN",
         "LIYOAAY"
-      ]
+      ],
+      zh: [
+        "lento",
+        "velocidade",
+        "Decrease game speed",
+        "SLOWITDOWN",
+        "LIYOAAY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3842,7 +4487,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Gameplay rápido",
       "en": "Increase game speed",
-      "es": "Juego rápido"
+      "es": "Juego rápido",
+      zh: "Increase game speed",
     },
     "codes": {
       "pcPhrase": "SPEEDITUP",
@@ -3869,7 +4515,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Juego rápido",
         "SPEEDITUP",
         "PPGWJHT"
-      ]
+      ],
+      zh: [
+        "rápido",
+        "velocidade",
+        "Increase game speed",
+        "SPEEDITUP",
+        "PPGWJHT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3890,7 +4543,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempo passa mais rápido",
       "en": "Time moves faster",
-      "es": "El tiempo pasa más rápido"
+      "es": "El tiempo pasa más rápido",
+      zh: "Time moves faster",
     },
     "codes": {
       "pcPhrase": "TIMEJUSTFLIESBY",
@@ -3917,7 +4571,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "El tiempo pasa más rápido",
         "TIMEJUSTFLIESBY",
         "YSOHNUL"
-      ]
+      ],
+      zh: [
+        "tempo",
+        "relógio",
+        "Time moves faster",
+        "TIMEJUSTFLIESBY",
+        "YSOHNUL"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3938,7 +4599,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempo travado às 21h / céu laranja",
       "en": "Time locked to 9pm",
-      "es": "Hora fija a las 21h"
+      "es": "Hora fija a las 21h",
+      zh: "Time locked to 9pm",
     },
     "codes": {
       "pcPhrase": "DONTBRINGONTHENIGHT",
@@ -3968,7 +4630,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Hora fija a las 21h",
         "DONTBRINGONTHENIGHT",
         "OFVIAC"
-      ]
+      ],
+      zh: [
+        "tempo",
+        "noite",
+        "céu laranja",
+        "Time locked to 9pm",
+        "DONTBRINGONTHENIGHT",
+        "OFVIAC"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -3989,7 +4659,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempo travado à meia-noite",
       "en": "Time locked to midnight",
-      "es": "Hora fija a medianoche"
+      "es": "Hora fija a medianoche",
+      zh: "Time locked to midnight",
     },
     "codes": {
       "pcPhrase": "NIGHTPROWLER",
@@ -4016,7 +4687,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Hora fija a medianoche",
         "NIGHTPROWLER",
         "XJVSNAJ"
-      ]
+      ],
+      zh: [
+        "meia noite",
+        "noite",
+        "Time locked to midnight",
+        "NIGHTPROWLER",
+        "XJVSNAJ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4037,7 +4715,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Clima nublado",
       "en": "Cloudy weather",
-      "es": "Clima nublado"
+      "es": "Clima nublado",
+      zh: "Cloudy weather",
     },
     "codes": {
       "pcPhrase": "DULLDULLDAY",
@@ -4064,7 +4743,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Clima nublado",
         "DULLDULLDAY",
         "ALNSFMZO"
-      ]
+      ],
+      zh: [
+        "clima",
+        "nublado",
+        "Cloudy weather",
+        "DULLDULLDAY",
+        "ALNSFMZO"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4085,7 +4771,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Neblina",
       "en": "Foggy weather",
-      "es": "Niebla"
+      "es": "Niebla",
+      zh: "Foggy weather",
     },
     "codes": {
       "pcPhrase": "CANTSEEWHEREIMGOING",
@@ -4112,7 +4799,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Niebla",
         "CANTSEEWHEREIMGOING",
         "CFVFGMJ"
-      ]
+      ],
+      zh: [
+        "clima",
+        "neblina",
+        "Foggy weather",
+        "CANTSEEWHEREIMGOING",
+        "CFVFGMJ"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4133,7 +4827,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Chuva",
       "en": "Rainy weather",
-      "es": "Lluvia"
+      "es": "Lluvia",
+      zh: "Rainy weather",
     },
     "codes": {
       "pcPhrase": "STAYINANDWATCHTV",
@@ -4160,7 +4855,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Lluvia",
         "STAYINANDWATCHTV",
         "AUIFRVQS"
-      ]
+      ],
+      zh: [
+        "clima",
+        "chuva",
+        "Rainy weather",
+        "STAYINANDWATCHTV",
+        "AUIFRVQS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4181,7 +4883,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempestade de areia",
       "en": "Spawn sandstorm",
-      "es": "Tormenta de arena"
+      "es": "Tormenta de arena",
+      zh: "Spawn sandstorm",
     },
     "codes": {
       "pcPhrase": "SANDINMYEARS",
@@ -4208,7 +4911,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tormenta de arena",
         "SANDINMYEARS",
         "CWJXUOC"
-      ]
+      ],
+      zh: [
+        "clima",
+        "areia",
+        "Spawn sandstorm",
+        "SANDINMYEARS",
+        "CWJXUOC"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4229,7 +4939,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempestade",
       "en": "Stormy weather",
-      "es": "Tormenta"
+      "es": "Tormenta",
+      zh: "Stormy weather",
     },
     "codes": {
       "pcPhrase": "SCOTTISHSUMMER",
@@ -4256,7 +4967,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Tormenta",
         "SCOTTISHSUMMER",
         "MGHXYRM"
-      ]
+      ],
+      zh: [
+        "clima",
+        "tempestade",
+        "Stormy weather",
+        "SCOTTISHSUMMER",
+        "MGHXYRM"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4277,7 +4995,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Muito sol",
       "en": "Very sunny weather",
-      "es": "Muy soleado"
+      "es": "Muy soleado",
+      zh: "Very sunny weather",
     },
     "codes": {
       "pcPhrase": "TOODAMNHOT",
@@ -4304,7 +5023,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Muy soleado",
         "TOODAMNHOT",
         "ICIKPYH"
-      ]
+      ],
+      zh: [
+        "clima",
+        "sol",
+        "Very sunny weather",
+        "TOODAMNHOT",
+        "ICIKPYH"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4325,7 +5051,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Clima ensolarado",
       "en": "Sunny weather",
-      "es": "Clima soleado"
+      "es": "Clima soleado",
+      zh: "Sunny weather",
     },
     "codes": {
       "pcPhrase": "PLEASANTLYWARM",
@@ -4352,7 +5079,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Clima soleado",
         "PLEASANTLYWARM",
         "AFZLLQLL"
-      ]
+      ],
+      zh: [
+        "clima",
+        "sol",
+        "Sunny weather",
+        "PLEASANTLYWARM",
+        "AFZLLQLL"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4373,7 +5107,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Suicídio",
       "en": "Suicide",
-      "es": "Suicidio"
+      "es": "Suicidio",
+      zh: "Suicide",
     },
     "codes": {
       "pc": "ICANTTAKEITANYMORE"
@@ -4396,7 +5131,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "suicidio",
         "Suicidio",
         "ICANTTAKEITANYMORE"
-      ]
+      ],
+      zh: [
+        "morrer",
+        "suicidio",
+        "Suicide",
+        "ICANTTAKEITANYMORE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4417,7 +5158,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Atrair mulheres",
       "en": "Ladies' man",
-      "es": "Atraer mujeres"
+      "es": "Atraer mujeres",
+      zh: "Ladies' man",
     },
     "codes": {
       "pc": "FANNYMAGNET"
@@ -4440,7 +5182,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "atrair",
         "Atraer mujeres",
         "FANNYMAGNET"
-      ]
+      ],
+      zh: [
+        "mulheres",
+        "atrair",
+        "Ladies' man",
+        "FANNYMAGNET"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4461,7 +5209,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armadura completa",
       "en": "Full armor",
-      "es": "Armadura completa"
+      "es": "Armadura completa",
+      zh: "Full armor",
     },
     "codes": {
       "pc": "PRECIOUSPROTECTION"
@@ -4484,7 +5233,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "colete",
         "Armadura completa",
         "PRECIOUSPROTECTION"
-      ]
+      ],
+      zh: [
+        "armadura",
+        "colete",
+        "Full armor",
+        "PRECIOUSPROTECTION"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4505,7 +5260,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Vida completa",
       "en": "Full health",
-      "es": "Vida completa"
+      "es": "Vida completa",
+      zh: "Full health",
     },
     "codes": {
       "pc": "ASPIRINE"
@@ -4528,7 +5284,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "cura",
         "Vida completa",
         "ASPIRINE"
-      ]
+      ],
+      zh: [
+        "vida",
+        "cura",
+        "Full health",
+        "ASPIRINE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4549,7 +5311,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas básicas",
       "en": "Basic weapons",
-      "es": "Armas básicas"
+      "es": "Armas básicas",
+      zh: "Basic weapons",
     },
     "codes": {
       "pc": "THUGSTOOLS"
@@ -4572,7 +5335,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "leve",
         "Armas básicas",
         "THUGSTOOLS"
-      ]
+      ],
+      zh: [
+        "armas",
+        "leve",
+        "Basic weapons",
+        "THUGSTOOLS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4593,7 +5362,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas médias",
       "en": "Intermediate weapons",
-      "es": "Armas intermedias"
+      "es": "Armas intermedias",
+      zh: "Intermediate weapons",
     },
     "codes": {
       "pc": "PROFESSIONALTOOLS"
@@ -4616,7 +5386,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "media",
         "Armas intermedias",
         "PROFESSIONALTOOLS"
-      ]
+      ],
+      zh: [
+        "armas",
+        "media",
+        "Intermediate weapons",
+        "PROFESSIONALTOOLS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4637,7 +5413,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas pesadas",
       "en": "Advanced weapons",
-      "es": "Armas pesadas"
+      "es": "Armas pesadas",
+      zh: "Advanced weapons",
     },
     "codes": {
       "pc": "NUTTERTOOLS"
@@ -4660,7 +5437,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "pesadas",
         "Armas pesadas",
         "NUTTERTOOLS"
-      ]
+      ],
+      zh: [
+        "armas",
+        "pesadas",
+        "Advanced weapons",
+        "NUTTERTOOLS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4681,7 +5464,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Todos semáforos verdes",
       "en": "All traffic lights green",
-      "es": "Todos los semáforos verdes"
+      "es": "Todos los semáforos verdes",
+      zh: "All traffic lights green",
     },
     "codes": {
       "pc": "GREENLIGHT"
@@ -4707,7 +5491,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "trânsito",
         "Todos los semáforos verdes",
         "GREENLIGHT"
-      ]
+      ],
+      zh: [
+        "semaforo",
+        "verde",
+        "trânsito",
+        "All traffic lights green",
+        "GREENLIGHT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4728,7 +5519,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros andam na água",
       "en": "Amphibious cars",
-      "es": "Coches anfibios"
+      "es": "Coches anfibios",
+      zh: "Amphibious cars",
     },
     "codes": {
       "pc": "SEAWAYS"
@@ -4751,7 +5543,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "água",
         "Coches anfibios",
         "SEAWAYS"
-      ]
+      ],
+      zh: [
+        "carro",
+        "água",
+        "Amphibious cars",
+        "SEAWAYS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4772,7 +5570,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Rodas grandes",
       "en": "Big wheels",
-      "es": "Ruedas grandes"
+      "es": "Ruedas grandes",
+      zh: "Big wheels",
     },
     "codes": {
       "pc": "LOADSOFLITTLETHINGS"
@@ -4795,7 +5594,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "roda",
         "Ruedas grandes",
         "LOADSOFLITTLETHINGS"
-      ]
+      ],
+      zh: [
+        "carro",
+        "roda",
+        "Big wheels",
+        "LOADSOFLITTLETHINGS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4816,7 +5621,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros pretos",
       "en": "Black cars",
-      "es": "Coches negros"
+      "es": "Coches negros",
+      zh: "Black cars",
     },
     "codes": {
       "pc": "IWANTITPAINTEDBLACK"
@@ -4839,7 +5645,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "preto",
         "Coches negros",
         "IWANTITPAINTEDBLACK"
-      ]
+      ],
+      zh: [
+        "carro",
+        "preto",
+        "Black cars",
+        "IWANTITPAINTEDBLACK"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4860,7 +5672,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Barcos voam",
       "en": "Flying boats",
-      "es": "Barcos vuelan"
+      "es": "Barcos vuelan",
+      zh: "Flying boats",
     },
     "codes": {
       "pc": "AIRSHIP"
@@ -4883,7 +5696,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "voar",
         "Barcos vuelan",
         "AIRSHIP"
-      ]
+      ],
+      zh: [
+        "barco",
+        "voar",
+        "Flying boats",
+        "AIRSHIP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4904,7 +5723,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros voam",
       "en": "Flying vehicles",
-      "es": "Vehículos vuelan"
+      "es": "Vehículos vuelan",
+      zh: "Flying vehicles",
     },
     "codes": {
       "pc": "COMEFLYWITHME"
@@ -4927,7 +5747,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "voar",
         "Vehículos vuelan",
         "COMEFLYWITHME"
-      ]
+      ],
+      zh: [
+        "carro",
+        "voar",
+        "Flying vehicles",
+        "COMEFLYWITHME"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4948,7 +5774,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Direção melhorada",
       "en": "Handling buff",
-      "es": "Conducción mejorada"
+      "es": "Conducción mejorada",
+      zh: "Handling buff",
     },
     "codes": {
       "pc": "GRIPISEVERYTHING"
@@ -4974,7 +5801,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "dirigir",
         "Conducción mejorada",
         "GRIPISEVERYTHING"
-      ]
+      ],
+      zh: [
+        "carro",
+        "controle",
+        "dirigir",
+        "Handling buff",
+        "GRIPISEVERYTHING"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -4995,7 +5829,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros invisíveis",
       "en": "Invisible cars",
-      "es": "Coches invisibles"
+      "es": "Coches invisibles",
+      zh: "Invisible cars",
     },
     "codes": {
       "pc": "WHEELSAREALLINEED"
@@ -5018,7 +5853,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "invisível",
         "Coches invisibles",
         "WHEELSAREALLINEED"
-      ]
+      ],
+      zh: [
+        "carro",
+        "invisível",
+        "Invisible cars",
+        "WHEELSAREALLINEED"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5039,7 +5880,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Explodir veículos próximos",
       "en": "Nearby vehicles explode",
-      "es": "Explotar vehículos cercanos"
+      "es": "Explotar vehículos cercanos",
+      zh: "Nearby vehicles explode",
     },
     "codes": {
       "pc": "BIGBANG"
@@ -5062,7 +5904,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "explodir",
         "Explotar vehículos cercanos",
         "BIGBANG"
-      ]
+      ],
+      zh: [
+        "carro",
+        "explodir",
+        "Nearby vehicles explode",
+        "BIGBANG"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5083,7 +5931,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros rosa",
       "en": "Pink cars",
-      "es": "Coches rosas"
+      "es": "Coches rosas",
+      zh: "Pink cars",
     },
     "codes": {
       "pc": "AHAIRDRESSERSCAR"
@@ -5106,7 +5955,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "rosa",
         "Coches rosas",
         "AHAIRDRESSERSCAR"
-      ]
+      ],
+      zh: [
+        "carro",
+        "rosa",
+        "Pink cars",
+        "AHAIRDRESSERSCAR"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5127,7 +5982,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Motoristas agressivos",
       "en": "Road rage",
-      "es": "Conductores agresivos"
+      "es": "Conductores agresivos",
+      zh: "Road rage",
     },
     "codes": {
       "pc": "MIAMITRAFFIC"
@@ -5153,7 +6009,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "agressivo",
         "Conductores agresivos",
         "MIAMITRAFFIC"
-      ]
+      ],
+      zh: [
+        "trânsito",
+        "motorista",
+        "agressivo",
+        "Road rage",
+        "MIAMITRAFFIC"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5174,7 +6037,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Bloodring Banger alternativo",
       "en": "Spawn alt Bloodring Banger",
-      "es": "Generar Bloodring Banger alternativo"
+      "es": "Generar Bloodring Banger alternativo",
+      zh: "Spawn alt Bloodring Banger",
     },
     "codes": {
       "pc": "GETTHEREQUICKLY"
@@ -5197,7 +6061,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "bloodring",
         "Generar Bloodring Banger alternativo",
         "GETTHEREQUICKLY"
-      ]
+      ],
+      zh: [
+        "carro",
+        "bloodring",
+        "Spawn alt Bloodring Banger",
+        "GETTHEREQUICKLY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5218,7 +6088,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Hotring Racer alternativo",
       "en": "Spawn alt Hotring Racer",
-      "es": "Generar Hotring Racer alternativo"
+      "es": "Generar Hotring Racer alternativo",
+      zh: "Spawn alt Hotring Racer",
     },
     "codes": {
       "pc": "GETTHEREAMAZINGLYFAST"
@@ -5244,7 +6115,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "corrida",
         "Generar Hotring Racer alternativo",
         "GETTHEREAMAZINGLYFAST"
-      ]
+      ],
+      zh: [
+        "carro",
+        "hotring",
+        "corrida",
+        "Spawn alt Hotring Racer",
+        "GETTHEREAMAZINGLYFAST"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5265,7 +6143,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Bloodring Banger",
       "en": "Spawn Bloodring Banger",
-      "es": "Generar Bloodring Banger"
+      "es": "Generar Bloodring Banger",
+      zh: "Spawn Bloodring Banger",
     },
     "codes": {
       "pc": "TRAVELINSTYLE"
@@ -5288,7 +6167,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "bloodring",
         "Generar Bloodring Banger",
         "TRAVELINSTYLE"
-      ]
+      ],
+      zh: [
+        "carro",
+        "bloodring",
+        "Spawn Bloodring Banger",
+        "TRAVELINSTYLE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5309,7 +6194,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Caddie",
       "en": "Spawn Caddie",
-      "es": "Generar Caddie"
+      "es": "Generar Caddie",
+      zh: "Spawn Caddie",
     },
     "codes": {
       "pc": "BETTERTHANWALKING"
@@ -5332,7 +6218,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "golf",
         "Generar Caddie",
         "BETTERTHANWALKING"
-      ]
+      ],
+      zh: [
+        "caddy",
+        "golf",
+        "Spawn Caddie",
+        "BETTERTHANWALKING"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5353,7 +6245,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Romero's Hearse",
       "en": "Spawn hearse",
-      "es": "Generar coche fúnebre"
+      "es": "Generar coche fúnebre",
+      zh: "Spawn hearse",
     },
     "codes": {
       "pc": "THELASTRIDE"
@@ -5376,7 +6269,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "funerária",
         "Generar coche fúnebre",
         "THELASTRIDE"
-      ]
+      ],
+      zh: [
+        "carro",
+        "funerária",
+        "Spawn hearse",
+        "THELASTRIDE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5397,7 +6296,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Hotring Racer",
       "en": "Spawn Hotring Racer",
-      "es": "Generar Hotring Racer"
+      "es": "Generar Hotring Racer",
+      zh: "Spawn Hotring Racer",
     },
     "codes": {
       "pc": "GETTHEREVERYFASTINDEED"
@@ -5423,7 +6323,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "hotring",
         "Generar Hotring Racer",
         "GETTHEREVERYFASTINDEED"
-      ]
+      ],
+      zh: [
+        "carro",
+        "corrida",
+        "hotring",
+        "Spawn Hotring Racer",
+        "GETTHEREVERYFASTINDEED"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5444,7 +6351,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Love Fist Limo",
       "en": "Spawn limo",
-      "es": "Generar limusina"
+      "es": "Generar limusina",
+      zh: "Spawn limo",
     },
     "codes": {
       "pc": "ROCKANDROLLCAR"
@@ -5467,7 +6375,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "limo",
         "Generar limusina",
         "ROCKANDROLLCAR"
-      ]
+      ],
+      zh: [
+        "limusine",
+        "limo",
+        "Spawn limo",
+        "ROCKANDROLLCAR"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5488,7 +6402,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Sabre Turbo",
       "en": "Spawn Sabre Turbo",
-      "es": "Generar Sabre Turbo"
+      "es": "Generar Sabre Turbo",
+      zh: "Spawn Sabre Turbo",
     },
     "codes": {
       "pc": "GETTHEREFAST"
@@ -5514,7 +6429,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "turbo",
         "Generar Sabre Turbo",
         "GETTHEREFAST"
-      ]
+      ],
+      zh: [
+        "carro",
+        "sabre",
+        "turbo",
+        "Spawn Sabre Turbo",
+        "GETTHEREFAST"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5535,7 +6457,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Rhino tanque",
       "en": "Spawn tank",
-      "es": "Generar tanque"
+      "es": "Generar tanque",
+      zh: "Spawn tank",
     },
     "codes": {
       "pc": "PANZER"
@@ -5558,7 +6481,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "rhino",
         "Generar tanque",
         "PANZER"
-      ]
+      ],
+      zh: [
+        "tanque",
+        "rhino",
+        "Spawn tank",
+        "PANZER"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5579,7 +6508,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Trashmaster",
       "en": "Spawn Trashmaster",
-      "es": "Generar camión de basura"
+      "es": "Generar camión de basura",
+      zh: "Spawn Trashmaster",
     },
     "codes": {
       "pc": "RUBBISHCAR"
@@ -5602,7 +6532,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "lixo",
         "Generar camión de basura",
         "RUBBISHCAR"
-      ]
+      ],
+      zh: [
+        "caminhão",
+        "lixo",
+        "Spawn Trashmaster",
+        "RUBBISHCAR"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5623,7 +6559,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Aumentar procurado em 2 estrelas",
       "en": "Increase wanted level by two",
-      "es": "Subir búsqueda en dos estrellas"
+      "es": "Subir búsqueda en dos estrellas",
+      zh: "Increase wanted level by two",
     },
     "codes": {
       "pc": "YOUWONTTAKEMEALIVE"
@@ -5649,7 +6586,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "procurado",
         "Subir búsqueda en dos estrellas",
         "YOUWONTTAKEMEALIVE"
-      ]
+      ],
+      zh: [
+        "polícia",
+        "estrela",
+        "procurado",
+        "Increase wanted level by two",
+        "YOUWONTTAKEMEALIVE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5670,7 +6614,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Zerar procurado",
       "en": "Lower wanted level to zero",
-      "es": "Quitar búsqueda"
+      "es": "Quitar búsqueda",
+      zh: "Lower wanted level to zero",
     },
     "codes": {
       "pc": "LEAVEMEALONE"
@@ -5693,7 +6638,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "tirar estrela",
         "Quitar búsqueda",
         "LEAVEMEALONE"
-      ]
+      ],
+      zh: [
+        "polícia",
+        "tirar estrela",
+        "Lower wanted level to zero",
+        "LEAVEMEALONE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5714,7 +6665,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Mulheres pedestres armadas",
       "en": "Armed female pedestrians",
-      "es": "Peatones mujeres armadas"
+      "es": "Peatones mujeres armadas",
+      zh: "Armed female pedestrians",
     },
     "codes": {
       "pc": "CHICKSWITHGUNS"
@@ -5740,7 +6692,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "armas",
         "Peatones mujeres armadas",
         "CHICKSWITHGUNS"
-      ]
+      ],
+      zh: [
+        "mulheres",
+        "pedestres",
+        "armas",
+        "Armed female pedestrians",
+        "CHICKSWITHGUNS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5761,7 +6720,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Pedestres armados",
       "en": "Armed pedestrians",
-      "es": "Peatones armados"
+      "es": "Peatones armados",
+      zh: "Armed pedestrians",
     },
     "codes": {
       "pc": "OURGODGIVENRIGHTTOBEARARMS"
@@ -5784,7 +6744,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "armas",
         "Peatones armados",
         "OURGODGIVENRIGHTTOBEARARMS"
-      ]
+      ],
+      zh: [
+        "pedestres",
+        "armas",
+        "Armed pedestrians",
+        "OURGODGIVENRIGHTTOBEARARMS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5805,7 +6771,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Pedestres hostis",
       "en": "Hostile pedestrians",
-      "es": "Peatones hostiles"
+      "es": "Peatones hostiles",
+      zh: "Hostile pedestrians",
     },
     "codes": {
       "pc": "NOBODYLIKESME"
@@ -5831,7 +6798,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "atacar",
         "Peatones hostiles",
         "NOBODYLIKESME"
-      ]
+      ],
+      zh: [
+        "pedestres",
+        "hostil",
+        "atacar",
+        "Hostile pedestrians",
+        "NOBODYLIKESME"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5852,7 +6826,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Riot / caos de pedestres",
       "en": "Riot",
-      "es": "Disturbios"
+      "es": "Disturbios",
+      zh: "Riot",
     },
     "codes": {
       "pc": "FIGHTFIGHTFIGHT"
@@ -5878,7 +6853,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "pedestres",
         "Disturbios",
         "FIGHTFIGHTFIGHT"
-      ]
+      ],
+      zh: [
+        "riot",
+        "caos",
+        "pedestres",
+        "Riot",
+        "FIGHTFIGHTFIGHT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5899,7 +6881,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Clima nublado",
       "en": "Cloudy weather",
-      "es": "Clima nublado"
+      "es": "Clima nublado",
+      zh: "Cloudy weather",
     },
     "codes": {
       "pc": "APLEASANTDAY"
@@ -5922,7 +6905,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "nublado",
         "Clima nublado",
         "APLEASANTDAY"
-      ]
+      ],
+      zh: [
+        "clima",
+        "nublado",
+        "Cloudy weather",
+        "APLEASANTDAY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5943,7 +6932,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Neblina",
       "en": "Foggy weather",
-      "es": "Niebla"
+      "es": "Niebla",
+      zh: "Foggy weather",
     },
     "codes": {
       "pc": "CANTSEEATHING"
@@ -5966,7 +6956,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "neblina",
         "Niebla",
         "CANTSEEATHING"
-      ]
+      ],
+      zh: [
+        "clima",
+        "neblina",
+        "Foggy weather",
+        "CANTSEEATHING"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -5987,7 +6983,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempo passa rápido",
       "en": "Quick clock",
-      "es": "Reloj rápido"
+      "es": "Reloj rápido",
+      zh: "Quick clock",
     },
     "codes": {
       "pc": "LIFEISPASSINGMEBY"
@@ -6010,7 +7007,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "relógio",
         "Reloj rápido",
         "LIFEISPASSINGMEBY"
-      ]
+      ],
+      zh: [
+        "tempo",
+        "relógio",
+        "Quick clock",
+        "LIFEISPASSINGMEBY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6031,7 +7034,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Chuva",
       "en": "Rainy weather",
-      "es": "Lluvia"
+      "es": "Lluvia",
+      zh: "Rainy weather",
     },
     "codes": {
       "pc": "CATSANDDOGS"
@@ -6054,7 +7058,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "chuva",
         "Lluvia",
         "CATSANDDOGS"
-      ]
+      ],
+      zh: [
+        "clima",
+        "chuva",
+        "Rainy weather",
+        "CATSANDDOGS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6075,7 +7085,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Gameplay lento",
       "en": "Slow down gameplay",
-      "es": "Juego lento"
+      "es": "Juego lento",
+      zh: "Slow down gameplay",
     },
     "codes": {
       "pc": "BOOOOOORING"
@@ -6098,7 +7109,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "velocidade",
         "Juego lento",
         "BOOOOOORING"
-      ]
+      ],
+      zh: [
+        "lento",
+        "velocidade",
+        "Slow down gameplay",
+        "BOOOOOORING"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6119,7 +7136,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Gameplay rápido",
       "en": "Speed up gameplay",
-      "es": "Juego rápido"
+      "es": "Juego rápido",
+      zh: "Speed up gameplay",
     },
     "codes": {
       "pc": "ONSPEED"
@@ -6142,7 +7160,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "velocidade",
         "Juego rápido",
         "ONSPEED"
-      ]
+      ],
+      zh: [
+        "rápido",
+        "velocidade",
+        "Speed up gameplay",
+        "ONSPEED"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6163,7 +7187,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Clima ensolarado",
       "en": "Sunny weather",
-      "es": "Clima soleado"
+      "es": "Clima soleado",
+      zh: "Sunny weather",
     },
     "codes": {
       "pc": "ALOVELYDAY"
@@ -6186,7 +7211,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "sol",
         "Clima soleado",
         "ALOVELYDAY"
-      ]
+      ],
+      zh: [
+        "clima",
+        "sol",
+        "Sunny weather",
+        "ALOVELYDAY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6207,7 +7238,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Muito nublado",
       "en": "Very cloudy weather",
-      "es": "Muy nublado"
+      "es": "Muy nublado",
+      zh: "Very cloudy weather",
     },
     "codes": {
       "pc": "ABITDRIEG"
@@ -6230,7 +7262,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "nublado",
         "Muy nublado",
         "ABITDRIEG"
-      ]
+      ],
+      zh: [
+        "clima",
+        "nublado",
+        "Very cloudy weather",
+        "ABITDRIEG"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6251,7 +7289,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Candy Suxxx",
       "en": "Candy Suxxx skin",
-      "es": "Skin Candy Suxxx"
+      "es": "Skin Candy Suxxx",
+      zh: "Candy Suxxx skin",
     },
     "codes": {
       "pc": "IWANTBIGTITS"
@@ -6274,7 +7313,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Candy Suxxx",
         "IWANTBIGTITS"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Candy Suxxx skin",
+        "IWANTBIGTITS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6295,7 +7340,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Dick",
       "en": "Dick skin",
-      "es": "Skin Dick"
+      "es": "Skin Dick",
+      zh: "Dick skin",
     },
     "codes": {
       "pc": "WELOVEOURDICK"
@@ -6318,7 +7364,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Dick",
         "WELOVEOURDICK"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Dick skin",
+        "WELOVEOURDICK"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6339,7 +7391,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Hilary",
       "en": "Hilary skin",
-      "es": "Skin Hilary"
+      "es": "Skin Hilary",
+      zh: "Hilary skin",
     },
     "codes": {
       "pc": "ILOOKLIKEHILARY"
@@ -6362,7 +7415,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Hilary",
         "ILOOKLIKEHILARY"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Hilary skin",
+        "ILOOKLIKEHILARY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6383,7 +7442,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Jezz",
       "en": "Jezz skin",
-      "es": "Skin Jezz"
+      "es": "Skin Jezz",
+      zh: "Jezz skin",
     },
     "codes": {
       "pc": "ROCKANDROLLMAN"
@@ -6406,7 +7466,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Jezz",
         "ROCKANDROLLMAN"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Jezz skin",
+        "ROCKANDROLLMAN"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6427,7 +7493,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Ken Rosenberg",
       "en": "Ken skin",
-      "es": "Skin Ken"
+      "es": "Skin Ken",
+      zh: "Ken skin",
     },
     "codes": {
       "pc": "MYSONISALAWYER"
@@ -6450,7 +7517,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Ken",
         "MYSONISALAWYER"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Ken skin",
+        "MYSONISALAWYER"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6471,7 +7544,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Lance",
       "en": "Lance skin",
-      "es": "Skin Lance"
+      "es": "Skin Lance",
+      zh: "Lance skin",
     },
     "codes": {
       "pc": "LOOKLIKELANCE"
@@ -6494,7 +7568,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Lance",
         "LOOKLIKELANCE"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Lance skin",
+        "LOOKLIKELANCE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6515,7 +7595,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Mercedes",
       "en": "Mercedes skin",
-      "es": "Skin Mercedes"
+      "es": "Skin Mercedes",
+      zh: "Mercedes skin",
     },
     "codes": {
       "pc": "FOXYLITTLETHING"
@@ -6538,7 +7619,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Mercedes",
         "FOXYLITTLETHING"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Mercedes skin",
+        "FOXYLITTLETHING"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6559,7 +7646,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Phil",
       "en": "Phil skin",
-      "es": "Skin Phil"
+      "es": "Skin Phil",
+      zh: "Phil skin",
     },
     "codes": {
       "pc": "ONEARMEDBANDIT"
@@ -6582,7 +7670,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Phil",
         "ONEARMEDBANDIT"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Phil skin",
+        "ONEARMEDBANDIT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6603,7 +7697,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin pedestre aleatório",
       "en": "Pedestrian skin",
-      "es": "Skin peatón"
+      "es": "Skin peatón",
+      zh: "Pedestrian skin",
     },
     "codes": {
       "pc": "STILLLIKEDRESSINGUP"
@@ -6626,7 +7721,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "pedestre",
         "Skin peatón",
         "STILLLIKEDRESSINGUP"
-      ]
+      ],
+      zh: [
+        "skin",
+        "pedestre",
+        "Pedestrian skin",
+        "STILLLIKEDRESSINGUP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6647,7 +7748,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Ricardo Diaz",
       "en": "Ricardo skin",
-      "es": "Skin Ricardo"
+      "es": "Skin Ricardo",
+      zh: "Ricardo skin",
     },
     "codes": {
       "pc": "CHEATSHAVEBEENCRACKED"
@@ -6670,7 +7772,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Ricardo",
         "CHEATSHAVEBEENCRACKED"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Ricardo skin",
+        "CHEATSHAVEBEENCRACKED"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6691,7 +7799,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skin Sonny Forelli",
       "en": "Sonny skin",
-      "es": "Skin Sonny"
+      "es": "Skin Sonny",
+      zh: "Sonny skin",
     },
     "codes": {
       "pc": "IDONTHAVETHEMONEYSONNY"
@@ -6714,7 +7823,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "personagem",
         "Skin Sonny",
         "IDONTHAVETHEMONEYSONNY"
-      ]
+      ],
+      zh: [
+        "skin",
+        "personagem",
+        "Sonny skin",
+        "IDONTHAVETHEMONEYSONNY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6735,7 +7850,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Braços/pernas grossos",
       "en": "Thick arms/legs",
-      "es": "Brazos/piernas gruesos"
+      "es": "Brazos/piernas gruesos",
+      zh: "Thick arms/legs",
     },
     "codes": {
       "pc": "DEEPFRIEDMARSBARS"
@@ -6758,7 +7874,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "gordo",
         "Brazos/piernas gruesos",
         "DEEPFRIEDMARSBARS"
-      ]
+      ],
+      zh: [
+        "corpo",
+        "gordo",
+        "Thick arms/legs",
+        "DEEPFRIEDMARSBARS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6779,7 +7901,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Braços/pernas finos",
       "en": "Thin arms/legs",
-      "es": "Brazos/piernas delgados"
+      "es": "Brazos/piernas delgados",
+      zh: "Thin arms/legs",
     },
     "codes": {
       "pc": "PROGRAMMER"
@@ -6802,7 +7925,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "magro",
         "Brazos/piernas delgados",
         "PROGRAMMER"
-      ]
+      ],
+      zh: [
+        "corpo",
+        "magro",
+        "Thin arms/legs",
+        "PROGRAMMER"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6823,7 +7952,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Fumar cigarro",
       "en": "Smoke a cigarette",
-      "es": "Fumar cigarrillo"
+      "es": "Fumar cigarrillo",
+      zh: "Smoke a cigarette",
     },
     "codes": {
       "pc": "CERTAINDEATH"
@@ -6846,7 +7976,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "fumar",
         "Fumar cigarrillo",
         "CERTAINDEATH"
-      ]
+      ],
+      zh: [
+        "cigarro",
+        "fumar",
+        "Smoke a cigarette",
+        "CERTAINDEATH"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6867,7 +8003,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Pedestres entram no seu carro",
       "en": "Make pedestrians enter your car",
-      "es": "Peatones entran en tu coche"
+      "es": "Peatones entran en tu coche",
+      zh: "Make pedestrians enter your car",
     },
     "codes": {
       "pc": "HOPINGIRL"
@@ -6890,7 +8027,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "carro",
         "Peatones entran en tu coche",
         "HOPINGIRL"
-      ]
+      ],
+      zh: [
+        "pedestre",
+        "carro",
+        "Make pedestrians enter your car",
+        "HOPINGIRL"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6911,7 +8054,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Todas as armas",
       "en": "All weapons",
-      "es": "Todas las armas"
+      "es": "Todas las armas",
+      zh: "All weapons",
     },
     "codes": {
       "pc": "GUNSGUNSGUNS"
@@ -6931,7 +8075,12 @@ export const gtaCheats: GtaCheatEntry[] =
         "armas",
         "Todas las armas",
         "GUNSGUNSGUNS"
-      ]
+      ],
+      zh: [
+        "armas",
+        "All weapons",
+        "GUNSGUNSGUNS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6952,7 +8101,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Dinheiro",
       "en": "Money",
-      "es": "Dinero"
+      "es": "Dinero",
+      zh: "Money",
     },
     "codes": {
       "pc": "IFIWEREARICHMAN"
@@ -6975,7 +8125,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "grana",
         "Dinero",
         "IFIWEREARICHMAN"
-      ]
+      ],
+      zh: [
+        "dinheiro",
+        "grana",
+        "Money",
+        "IFIWEREARICHMAN"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -6996,7 +8152,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Vida completa",
       "en": "Full health",
-      "es": "Vida completa"
+      "es": "Vida completa",
+      zh: "Full health",
     },
     "codes": {
       "pc": "GESUNDHEIT"
@@ -7019,7 +8176,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "cura",
         "Vida completa",
         "GESUNDHEIT"
-      ]
+      ],
+      zh: [
+        "vida",
+        "cura",
+        "Full health",
+        "GESUNDHEIT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7040,7 +8203,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Aumentar procurado",
       "en": "More police",
-      "es": "Más policía"
+      "es": "Más policía",
+      zh: "More police",
     },
     "codes": {
       "pc": "MOREPOLICEPLEASE"
@@ -7063,7 +8227,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "procurado",
         "Más policía",
         "MOREPOLICEPLEASE"
-      ]
+      ],
+      zh: [
+        "policia",
+        "procurado",
+        "More police",
+        "MOREPOLICEPLEASE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7084,7 +8254,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Remover procurado",
       "en": "No police",
-      "es": "Sin policía"
+      "es": "Sin policía",
+      zh: "No police",
     },
     "codes": {
       "pc": "NOPOLICEPLEASE"
@@ -7107,7 +8278,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "tirar estrela",
         "Sin policía",
         "NOPOLICEPLEASE"
-      ]
+      ],
+      zh: [
+        "policia",
+        "tirar estrela",
+        "No police",
+        "NOPOLICEPLEASE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7128,7 +8305,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn tanque",
       "en": "Spawn tank",
-      "es": "Generar tanque"
+      "es": "Generar tanque",
+      zh: "Spawn tank",
     },
     "codes": {
       "pc": "GIVEUSATANK"
@@ -7151,7 +8329,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "rhino",
         "Generar tanque",
         "GIVEUSATANK"
-      ]
+      ],
+      zh: [
+        "tanque",
+        "rhino",
+        "Spawn tank",
+        "GIVEUSATANK"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7172,7 +8356,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Explodir todos os carros",
       "en": "All cars explode",
-      "es": "Todos los coches explotan"
+      "es": "Todos los coches explotan",
+      zh: "All cars explode",
     },
     "codes": {
       "pc": "BANGBANGBANG"
@@ -7195,7 +8380,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "explodir",
         "Todos los coches explotan",
         "BANGBANGBANG"
-      ]
+      ],
+      zh: [
+        "carro",
+        "explodir",
+        "All cars explode",
+        "BANGBANGBANG"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7216,7 +8407,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Trocar roupa/personagem",
       "en": "Change outfit",
-      "es": "Cambiar ropa/personaje"
+      "es": "Cambiar ropa/personaje",
+      zh: "Change outfit",
     },
     "codes": {
       "pc": "ILIKEDRESSINGUP"
@@ -7239,7 +8431,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "roupa",
         "Cambiar ropa/personaje",
         "ILIKEDRESSINGUP"
-      ]
+      ],
+      zh: [
+        "skin",
+        "roupa",
+        "Change outfit",
+        "ILIKEDRESSINGUP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7260,7 +8458,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Todo mundo fica louco",
       "en": "Everyone goes mad",
-      "es": "Todos se vuelven locos"
+      "es": "Todos se vuelven locos",
+      zh: "Everyone goes mad",
     },
     "codes": {
       "pc": "ITSALLGOINGMAAAD"
@@ -7283,7 +8482,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "caos",
         "Todos se vuelven locos",
         "ITSALLGOINGMAAAD"
-      ]
+      ],
+      zh: [
+        "pedestre",
+        "caos",
+        "Everyone goes mad",
+        "ITSALLGOINGMAAAD"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7304,7 +8509,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Todos odeiam você",
       "en": "Everyone hates you",
-      "es": "Todos te odian"
+      "es": "Todos te odian",
+      zh: "Everyone hates you",
     },
     "codes": {
       "pc": "NOBODYLIKESME"
@@ -7327,7 +8533,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "atacar",
         "Todos te odian",
         "NOBODYLIKESME"
-      ]
+      ],
+      zh: [
+        "pedestre",
+        "atacar",
+        "Everyone hates you",
+        "NOBODYLIKESME"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7348,7 +8560,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Todos têm armas",
       "en": "Everyone has weapons",
-      "es": "Todos tienen armas"
+      "es": "Todos tienen armas",
+      zh: "Everyone has weapons",
     },
     "codes": {
       "pc": "WEAPONSFORALL"
@@ -7371,7 +8584,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "armas",
         "Todos tienen armas",
         "WEAPONSFORALL"
-      ]
+      ],
+      zh: [
+        "pedestre",
+        "armas",
+        "Everyone has weapons",
+        "WEAPONSFORALL"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7392,7 +8611,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempo rápido",
       "en": "Speed up time",
-      "es": "Acelerar tiempo"
+      "es": "Acelerar tiempo",
+      zh: "Speed up time",
     },
     "codes": {
       "pc": "TIMEFLIESWHENYOU"
@@ -7415,7 +8635,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "rápido",
         "Acelerar tiempo",
         "TIMEFLIESWHENYOU"
-      ]
+      ],
+      zh: [
+        "tempo",
+        "rápido",
+        "Speed up time",
+        "TIMEFLIESWHENYOU"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7436,7 +8662,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempo lento",
       "en": "Slow down time",
-      "es": "Ralentizar tiempo"
+      "es": "Ralentizar tiempo",
+      zh: "Slow down time",
     },
     "codes": {
       "pc": "BOOOOORING"
@@ -7459,7 +8686,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "lento",
         "Ralentizar tiempo",
         "BOOOOORING"
-      ]
+      ],
+      zh: [
+        "tempo",
+        "lento",
+        "Slow down time",
+        "BOOOOORING"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7480,7 +8713,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armadura completa",
       "en": "Full armor",
-      "es": "Armadura completa"
+      "es": "Armadura completa",
+      zh: "Full armor",
     },
     "codes": {
       "pc": "TURTOISE"
@@ -7503,7 +8737,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "colete",
         "Armadura completa",
         "TURTOISE"
-      ]
+      ],
+      zh: [
+        "armadura",
+        "colete",
+        "Full armor",
+        "TURTOISE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7525,7 +8765,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Clima limpo",
       "en": "Clear weather",
-      "es": "Clima despejado"
+      "es": "Clima despejado",
+      zh: "Clear weather",
     },
     "codes": {
       "pc": "SKINCANCERFORME"
@@ -7548,7 +8789,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "sol",
         "Clima despejado",
         "SKINCANCERFORME"
-      ]
+      ],
+      zh: [
+        "clima",
+        "sol",
+        "Clear weather",
+        "SKINCANCERFORME"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7569,7 +8816,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Chuva",
       "en": "Rain",
-      "es": "Lluvia"
+      "es": "Lluvia",
+      zh: "Rain",
     },
     "codes": {
       "pc": "ILIKESCOTLAND"
@@ -7592,7 +8840,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "chuva",
         "Lluvia",
         "ILIKESCOTLAND"
-      ]
+      ],
+      zh: [
+        "clima",
+        "chuva",
+        "Rain",
+        "ILIKESCOTLAND"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7613,7 +8867,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Tempestade",
       "en": "Thunderstorm",
-      "es": "Tormenta"
+      "es": "Tormenta",
+      zh: "Thunderstorm",
     },
     "codes": {
       "pc": "ILOVESCOTLAND"
@@ -7636,7 +8891,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "tempestade",
         "Tormenta",
         "ILOVESCOTLAND"
-      ]
+      ],
+      zh: [
+        "clima",
+        "tempestade",
+        "Thunderstorm",
+        "ILOVESCOTLAND"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7657,7 +8918,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Neblina",
       "en": "Fog",
-      "es": "Niebla"
+      "es": "Niebla",
+      zh: "Fog",
     },
     "codes": {
       "pc": "PEASOUP"
@@ -7680,7 +8942,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "neblina",
         "Niebla",
         "PEASOUP"
-      ]
+      ],
+      zh: [
+        "clima",
+        "neblina",
+        "Fog",
+        "PEASOUP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7701,7 +8969,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Clima muda rápido",
       "en": "Fast weather cycling",
-      "es": "Clima cambia rápido"
+      "es": "Clima cambia rápido",
+      zh: "Fast weather cycling",
     },
     "codes": {
       "pc": "MADWEATHER"
@@ -7724,7 +8993,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "rápido",
         "Clima cambia rápido",
         "MADWEATHER"
-      ]
+      ],
+      zh: [
+        "clima",
+        "rápido",
+        "Fast weather cycling",
+        "MADWEATHER"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7745,7 +9020,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros invisíveis",
       "en": "Invisible cars",
-      "es": "Coches invisibles"
+      "es": "Coches invisibles",
+      zh: "Invisible cars",
     },
     "codes": {
       "pc": "ANICESETOFWHEELS"
@@ -7768,7 +9044,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "invisivel",
         "Coches invisibles",
         "ANICESETOFWHEELS"
-      ]
+      ],
+      zh: [
+        "carro",
+        "invisivel",
+        "Invisible cars",
+        "ANICESETOFWHEELS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7789,7 +9071,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros voam",
       "en": "Flying cars",
-      "es": "Coches vuelan"
+      "es": "Coches vuelan",
+      zh: "Flying cars",
     },
     "codes": {
       "pc": "CHITTYCHITTYBB"
@@ -7812,7 +9095,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "voar",
         "Coches vuelan",
         "CHITTYCHITTYBB"
-      ]
+      ],
+      zh: [
+        "carro",
+        "voar",
+        "Flying cars",
+        "CHITTYCHITTYBB"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7833,7 +9122,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Direção melhorada",
       "en": "Great steering",
-      "es": "Mejor conducción"
+      "es": "Mejor conducción",
+      zh: "Great steering",
     },
     "codes": {
       "pc": "CORNERSLIKEMAD"
@@ -7856,7 +9146,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "direção",
         "Mejor conducción",
         "CORNERSLIKEMAD"
-      ]
+      ],
+      zh: [
+        "carro",
+        "direção",
+        "Great steering",
+        "CORNERSLIKEMAD"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7877,7 +9173,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Membros destacáveis",
       "en": "Detachable limbs",
-      "es": "Extremidades desprendibles"
+      "es": "Extremidades desprendibles",
+      zh: "Detachable limbs",
     },
     "codes": {
       "pc": "NASTYLIMBSCHEAT"
@@ -7900,7 +9197,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "gore",
         "Extremidades desprendibles",
         "NASTYLIMBSCHEAT"
-      ]
+      ],
+      zh: [
+        "membros",
+        "gore",
+        "Detachable limbs",
+        "NASTYLIMBSCHEAT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7922,7 +9225,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Vida, armadura e munição",
       "en": "Health, armor and ammo",
-      "es": "Vida, armadura y munición"
+      "es": "Vida, armadura y munición",
+      zh: "Health, armor and ammo",
     },
     "codes": {
       "phone": "482-555-0100"
@@ -7948,7 +9252,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "munição",
         "Vida, armadura y munición",
         "482-555-0100"
-      ]
+      ],
+      zh: [
+        "vida",
+        "armadura",
+        "munição",
+        "Health, armor and ammo",
+        "482-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -7969,7 +9280,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Vida e armadura",
       "en": "Health and armor",
-      "es": "Vida y armadura"
+      "es": "Vida y armadura",
+      zh: "Health and armor",
     },
     "codes": {
       "phone": "362-555-0100"
@@ -7992,7 +9304,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "armadura",
         "Vida y armadura",
         "362-555-0100"
-      ]
+      ],
+      zh: [
+        "vida",
+        "armadura",
+        "Health and armor",
+        "362-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8013,7 +9331,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas pacote 1",
       "en": "Weapons pack 1",
-      "es": "Armas paquete 1"
+      "es": "Armas paquete 1",
+      zh: "Weapons pack 1",
     },
     "codes": {
       "phone": "486-555-0150"
@@ -8033,7 +9352,12 @@ export const gtaCheats: GtaCheatEntry[] =
         "armas",
         "Armas paquete 1",
         "486-555-0150"
-      ]
+      ],
+      zh: [
+        "armas",
+        "Weapons pack 1",
+        "486-555-0150"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8054,7 +9378,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas pacote 2",
       "en": "Weapons pack 2",
-      "es": "Armas paquete 2"
+      "es": "Armas paquete 2",
+      zh: "Weapons pack 2",
     },
     "codes": {
       "phone": "486-555-0100"
@@ -8074,7 +9399,12 @@ export const gtaCheats: GtaCheatEntry[] =
         "armas",
         "Armas paquete 2",
         "486-555-0100"
-      ]
+      ],
+      zh: [
+        "armas",
+        "Weapons pack 2",
+        "486-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8095,7 +9425,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Remover procurado",
       "en": "Remove wanted level",
-      "es": "Quitar búsqueda"
+      "es": "Quitar búsqueda",
+      zh: "Remove wanted level",
     },
     "codes": {
       "phone": "267-555-0100"
@@ -8118,7 +9449,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "tirar estrela",
         "Quitar búsqueda",
         "267-555-0100"
-      ]
+      ],
+      zh: [
+        "polícia",
+        "tirar estrela",
+        "Remove wanted level",
+        "267-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8139,7 +9476,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Aumentar procurado",
       "en": "Raise wanted level",
-      "es": "Subir búsqueda"
+      "es": "Subir búsqueda",
+      zh: "Raise wanted level",
     },
     "codes": {
       "phone": "267-555-0150"
@@ -8162,7 +9500,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "estrela",
         "Subir búsqueda",
         "267-555-0150"
-      ]
+      ],
+      zh: [
+        "polícia",
+        "estrela",
+        "Raise wanted level",
+        "267-555-0150"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8183,7 +9527,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Mudar clima e hora",
       "en": "Change weather/time",
-      "es": "Cambiar clima/hora"
+      "es": "Cambiar clima/hora",
+      zh: "Change weather/time",
     },
     "codes": {
       "phone": "468-555-0100"
@@ -8206,7 +9551,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "hora",
         "Cambiar clima/hora",
         "468-555-0100"
-      ]
+      ],
+      zh: [
+        "clima",
+        "hora",
+        "Change weather/time",
+        "468-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8227,7 +9578,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Informação da música",
       "en": "Song information",
-      "es": "Información de canción"
+      "es": "Información de canción",
+      zh: "Song information",
     },
     "codes": {
       "phone": "948-555-0100"
@@ -8250,7 +9602,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "rádio",
         "Información de canción",
         "948-555-0100"
-      ]
+      ],
+      zh: [
+        "música",
+        "rádio",
+        "Song information",
+        "948-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8271,7 +9629,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Annihilator helicóptero",
       "en": "Spawn Annihilator helicopter",
-      "es": "Generar helicóptero Annihilator"
+      "es": "Generar helicóptero Annihilator",
+      zh: "Spawn Annihilator helicopter",
     },
     "codes": {
       "phone": "359-555-0100"
@@ -8294,7 +9653,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "annihilator",
         "Generar helicóptero Annihilator",
         "359-555-0100"
-      ]
+      ],
+      zh: [
+        "helicóptero",
+        "annihilator",
+        "Spawn Annihilator helicopter",
+        "359-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8315,7 +9680,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Jetmax barco",
       "en": "Spawn Jetmax boat",
-      "es": "Generar barco Jetmax"
+      "es": "Generar barco Jetmax",
+      zh: "Spawn Jetmax boat",
     },
     "codes": {
       "phone": "938-555-0100"
@@ -8338,7 +9704,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "jetmax",
         "Generar barco Jetmax",
         "938-555-0100"
-      ]
+      ],
+      zh: [
+        "barco",
+        "jetmax",
+        "Spawn Jetmax boat",
+        "938-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8359,7 +9731,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn NRG-900 moto",
       "en": "Spawn NRG-900 bike",
-      "es": "Generar moto NRG-900"
+      "es": "Generar moto NRG-900",
+      zh: "Spawn NRG-900 bike",
     },
     "codes": {
       "phone": "625-555-0100"
@@ -8382,7 +9755,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "nrg",
         "Generar moto NRG-900",
         "625-555-0100"
-      ]
+      ],
+      zh: [
+        "moto",
+        "nrg",
+        "Spawn NRG-900 bike",
+        "625-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8403,7 +9782,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Sanchez moto",
       "en": "Spawn Sanchez bike",
-      "es": "Generar moto Sanchez"
+      "es": "Generar moto Sanchez",
+      zh: "Spawn Sanchez bike",
     },
     "codes": {
       "phone": "625-555-0150"
@@ -8426,7 +9806,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "sanchez",
         "Generar moto Sanchez",
         "625-555-0150"
-      ]
+      ],
+      zh: [
+        "moto",
+        "sanchez",
+        "Spawn Sanchez bike",
+        "625-555-0150"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8447,7 +9833,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Cognoscenti",
       "en": "Spawn Cognoscenti",
-      "es": "Generar Cognoscenti"
+      "es": "Generar Cognoscenti",
+      zh: "Spawn Cognoscenti",
     },
     "codes": {
       "phone": "227-555-0142"
@@ -8470,7 +9857,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "cognoscenti",
         "Generar Cognoscenti",
         "227-555-0142"
-      ]
+      ],
+      zh: [
+        "carro",
+        "cognoscenti",
+        "Spawn Cognoscenti",
+        "227-555-0142"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8491,7 +9884,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Comet",
       "en": "Spawn Comet",
-      "es": "Generar Comet"
+      "es": "Generar Comet",
+      zh: "Spawn Comet",
     },
     "codes": {
       "phone": "227-555-0175"
@@ -8514,7 +9908,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "comet",
         "Generar Comet",
         "227-555-0175"
-      ]
+      ],
+      zh: [
+        "carro",
+        "comet",
+        "Spawn Comet",
+        "227-555-0175"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8535,7 +9935,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn SuperGT",
       "en": "Spawn SuperGT",
-      "es": "Generar SuperGT"
+      "es": "Generar SuperGT",
+      zh: "Spawn SuperGT",
     },
     "codes": {
       "phone": "227-555-0168"
@@ -8558,7 +9959,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "supergt",
         "Generar SuperGT",
         "227-555-0168"
-      ]
+      ],
+      zh: [
+        "carro",
+        "supergt",
+        "Spawn SuperGT",
+        "227-555-0168"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8579,7 +9986,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Turismo",
       "en": "Spawn Turismo",
-      "es": "Generar Turismo"
+      "es": "Generar Turismo",
+      zh: "Spawn Turismo",
     },
     "codes": {
       "phone": "227-555-0147"
@@ -8602,7 +10010,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "turismo",
         "Generar Turismo",
         "227-555-0147"
-      ]
+      ],
+      zh: [
+        "carro",
+        "turismo",
+        "Spawn Turismo",
+        "227-555-0147"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8623,7 +10037,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn FIB Buffalo",
       "en": "Spawn FIB Buffalo",
-      "es": "Generar FIB Buffalo"
+      "es": "Generar FIB Buffalo",
+      zh: "Spawn FIB Buffalo",
     },
     "codes": {
       "phone": "227-555-0100"
@@ -8649,7 +10064,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "fib",
         "Generar FIB Buffalo",
         "227-555-0100"
-      ]
+      ],
+      zh: [
+        "carro",
+        "polícia",
+        "fib",
+        "Spawn FIB Buffalo",
+        "227-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8670,7 +10092,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Burrito (Episodes)",
       "en": "Spawn Burrito (Episodes)",
-      "es": "Generar Burrito (Episodes)"
+      "es": "Generar Burrito (Episodes)",
+      zh: "Spawn Burrito (Episodes)",
     },
     "codes": {
       "phone": "826-555-0150"
@@ -8696,7 +10119,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar Burrito (Episodes)",
         "826-555-0150"
-      ]
+      ],
+      zh: [
+        "van",
+        "burrito",
+        "episodes",
+        "Spawn Burrito (Episodes)",
+        "826-555-0150"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8718,7 +10148,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Double T (Episodes)",
       "en": "Spawn Double T (Episodes)",
-      "es": "Generar Double T (Episodes)"
+      "es": "Generar Double T (Episodes)",
+      zh: "Spawn Double T (Episodes)",
     },
     "codes": {
       "phone": "245-555-0125"
@@ -8744,7 +10175,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar Double T (Episodes)",
         "245-555-0125"
-      ]
+      ],
+      zh: [
+        "moto",
+        "double t",
+        "episodes",
+        "Spawn Double T (Episodes)",
+        "245-555-0125"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8766,7 +10204,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Hakuchou (Episodes)",
       "en": "Spawn Hakuchou (Episodes)",
-      "es": "Generar Hakuchou (Episodes)"
+      "es": "Generar Hakuchou (Episodes)",
+      zh: "Spawn Hakuchou (Episodes)",
     },
     "codes": {
       "phone": "245-555-0199"
@@ -8792,7 +10231,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar Hakuchou (Episodes)",
         "245-555-0199"
-      ]
+      ],
+      zh: [
+        "moto",
+        "hakuchou",
+        "episodes",
+        "Spawn Hakuchou (Episodes)",
+        "245-555-0199"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8814,7 +10260,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Hexer (Episodes)",
       "en": "Spawn Hexer (Episodes)",
-      "es": "Generar Hexer (Episodes)"
+      "es": "Generar Hexer (Episodes)",
+      zh: "Spawn Hexer (Episodes)",
     },
     "codes": {
       "phone": "245-555-0150"
@@ -8840,7 +10287,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar Hexer (Episodes)",
         "245-555-0150"
-      ]
+      ],
+      zh: [
+        "moto",
+        "hexer",
+        "episodes",
+        "Spawn Hexer (Episodes)",
+        "245-555-0150"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8862,7 +10316,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Innovation (Episodes)",
       "en": "Spawn Innovation (Episodes)",
-      "es": "Generar Innovation (Episodes)"
+      "es": "Generar Innovation (Episodes)",
+      zh: "Spawn Innovation (Episodes)",
     },
     "codes": {
       "phone": "245-555-0100"
@@ -8888,7 +10343,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar Innovation (Episodes)",
         "245-555-0100"
-      ]
+      ],
+      zh: [
+        "moto",
+        "innovation",
+        "episodes",
+        "Spawn Innovation (Episodes)",
+        "245-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8910,7 +10372,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Slamvan (Episodes)",
       "en": "Spawn Slamvan (Episodes)",
-      "es": "Generar Slamvan (Episodes)"
+      "es": "Generar Slamvan (Episodes)",
+      zh: "Spawn Slamvan (Episodes)",
     },
     "codes": {
       "phone": "826-555-0100"
@@ -8936,7 +10399,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar Slamvan (Episodes)",
         "826-555-0100"
-      ]
+      ],
+      zh: [
+        "carro",
+        "slamvan",
+        "episodes",
+        "Spawn Slamvan (Episodes)",
+        "826-555-0100"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -8958,7 +10428,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Bullet GT (TBoGT)",
       "en": "Spawn Bullet GT (TBoGT)",
-      "es": "Generar Bullet GT (TBoGT)"
+      "es": "Generar Bullet GT (TBoGT)",
+      zh: "Spawn Bullet GT (TBoGT)",
     },
     "codes": {
       "phone": "227-555-9666"
@@ -8984,7 +10455,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar Bullet GT (TBoGT)",
         "227-555-9666"
-      ]
+      ],
+      zh: [
+        "carro",
+        "bullet gt",
+        "episodes",
+        "Spawn Bullet GT (TBoGT)",
+        "227-555-9666"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9006,7 +10484,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn APC tanque (TBoGT)",
       "en": "Spawn APC tank (TBoGT)",
-      "es": "Generar tanque APC (TBoGT)"
+      "es": "Generar tanque APC (TBoGT)",
+      zh: "Spawn APC tank (TBoGT)",
     },
     "codes": {
       "phone": "272-555-8265"
@@ -9032,7 +10511,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar tanque APC (TBoGT)",
         "272-555-8265"
-      ]
+      ],
+      zh: [
+        "tanque",
+        "apc",
+        "episodes",
+        "Spawn APC tank (TBoGT)",
+        "272-555-8265"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9054,7 +10540,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Soco explosivo do Luis (TBoGT)",
       "en": "Luis explosive punches (TBoGT)",
-      "es": "Puñetazos explosivos de Luis (TBoGT)"
+      "es": "Puñetazos explosivos de Luis (TBoGT)",
+      zh: "Luis explosive punches (TBoGT)",
     },
     "codes": {
       "phone": "276-555-2666"
@@ -9080,7 +10567,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Puñetazos explosivos de Luis (TBoGT)",
         "276-555-2666"
-      ]
+      ],
+      zh: [
+        "soco",
+        "explosivo",
+        "episodes",
+        "Luis explosive punches (TBoGT)",
+        "276-555-2666"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9102,7 +10596,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Buzzard helicóptero (TBoGT)",
       "en": "Spawn Buzzard helicopter (TBoGT)",
-      "es": "Generar helicóptero Buzzard (TBoGT)"
+      "es": "Generar helicóptero Buzzard (TBoGT)",
+      zh: "Spawn Buzzard helicopter (TBoGT)",
     },
     "codes": {
       "phone": "359-555-2899"
@@ -9128,7 +10623,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar helicóptero Buzzard (TBoGT)",
         "359-555-2899"
-      ]
+      ],
+      zh: [
+        "helicóptero",
+        "buzzard",
+        "episodes",
+        "Spawn Buzzard helicopter (TBoGT)",
+        "359-555-2899"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9150,7 +10652,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Paraquedas (TBoGT)",
       "en": "Parachute (TBoGT)",
-      "es": "Paracaídas (TBoGT)"
+      "es": "Paracaídas (TBoGT)",
+      zh: "Parachute (TBoGT)",
     },
     "codes": {
       "phone": "359-555-7272"
@@ -9173,7 +10676,13 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Paracaídas (TBoGT)",
         "359-555-7272"
-      ]
+      ],
+      zh: [
+        "paraquedas",
+        "episodes",
+        "Parachute (TBoGT)",
+        "359-555-7272"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9195,7 +10704,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Balas explosivas de sniper (TBoGT)",
       "en": "Explosive sniper rounds (TBoGT)",
-      "es": "Balas explosivas de francotirador (TBoGT)"
+      "es": "Balas explosivas de francotirador (TBoGT)",
+      zh: "Explosive sniper rounds (TBoGT)",
     },
     "codes": {
       "phone": "486-555-2526"
@@ -9221,7 +10731,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Balas explosivas de francotirador (TBoGT)",
         "486-555-2526"
-      ]
+      ],
+      zh: [
+        "sniper",
+        "explosivo",
+        "episodes",
+        "Explosive sniper rounds (TBoGT)",
+        "486-555-2526"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9243,7 +10760,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Akuma moto (TBoGT)",
       "en": "Spawn Akuma bike (TBoGT)",
-      "es": "Generar moto Akuma (TBoGT)"
+      "es": "Generar moto Akuma (TBoGT)",
+      zh: "Spawn Akuma bike (TBoGT)",
     },
     "codes": {
       "phone": "625-555-0200"
@@ -9269,7 +10787,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar moto Akuma (TBoGT)",
         "625-555-0200"
-      ]
+      ],
+      zh: [
+        "moto",
+        "akuma",
+        "episodes",
+        "Spawn Akuma bike (TBoGT)",
+        "625-555-0200"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9291,7 +10816,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Vader moto (TBoGT)",
       "en": "Spawn Vader bike (TBoGT)",
-      "es": "Generar moto Vader (TBoGT)"
+      "es": "Generar moto Vader (TBoGT)",
+      zh: "Spawn Vader bike (TBoGT)",
     },
     "codes": {
       "phone": "625-555-3273"
@@ -9317,7 +10843,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar moto Vader (TBoGT)",
         "625-555-3273"
-      ]
+      ],
+      zh: [
+        "moto",
+        "vader",
+        "episodes",
+        "Spawn Vader bike (TBoGT)",
+        "625-555-3273"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9339,7 +10872,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Floater barco (TBoGT)",
       "en": "Spawn Floater boat (TBoGT)",
-      "es": "Generar barco Floater (TBoGT)"
+      "es": "Generar barco Floater (TBoGT)",
+      zh: "Spawn Floater boat (TBoGT)",
     },
     "codes": {
       "phone": "938-555-0150"
@@ -9365,7 +10899,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "episodes",
         "Generar barco Floater (TBoGT)",
         "938-555-0150"
-      ]
+      ],
+      zh: [
+        "barco",
+        "floater",
+        "episodes",
+        "Spawn Floater boat (TBoGT)",
+        "938-555-0150"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9387,7 +10928,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Invencibilidade por 5 minutos",
       "en": "Invincibility for 5 minutes",
-      "es": "Invencibilidad por 5 minutos"
+      "es": "Invencibilidad por 5 minutos",
+      zh: "Invincibility for 5 minutes",
     },
     "codes": {
       "pc": "PAINKILLER",
@@ -9417,7 +10959,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Invencibilidad por 5 minutos",
         "PAINKILLER",
         "1-999-724-654-5537 / 1-999-PAINKILLER"
-      ]
+      ],
+      zh: [
+        "vida",
+        "invencível",
+        "god mode",
+        "Invincibility for 5 minutes",
+        "PAINKILLER",
+        "1-999-724-654-5537 / 1-999-PAINKILLER"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9439,7 +10989,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Vida e armadura no máximo",
       "en": "Max health and armor",
-      "es": "Vida y armadura al máximo"
+      "es": "Vida y armadura al máximo",
+      zh: "Max health and armor",
     },
     "codes": {
       "pc": "TURTLE",
@@ -9469,7 +11020,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Vida y armadura al máximo",
         "TURTLE",
         "1-999-887-853 / 1-999-TURTLE"
-      ]
+      ],
+      zh: [
+        "vida",
+        "armadura",
+        "cura",
+        "Max health and armor",
+        "TURTLE",
+        "1-999-887-853 / 1-999-TURTLE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9490,7 +11049,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Recarregar habilidade especial",
       "en": "Recharge special ability",
-      "es": "Recargar habilidad especial"
+      "es": "Recargar habilidad especial",
+      zh: "Recharge special ability",
     },
     "codes": {
       "pc": "POWERUP",
@@ -9517,7 +11077,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Recargar habilidad especial",
         "POWERUP",
         "1-999-769-3787 / 1-999-POWERUP"
-      ]
+      ],
+      zh: [
+        "habilidade",
+        "especial",
+        "Recharge special ability",
+        "POWERUP",
+        "1-999-769-3787 / 1-999-POWERUP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9538,7 +11105,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Armas e munição",
       "en": "Weapons and ammo",
-      "es": "Armas y munición"
+      "es": "Armas y munición",
+      zh: "Weapons and ammo",
     },
     "codes": {
       "pc": "TOOLUP",
@@ -9568,7 +11136,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Armas y munición",
         "TOOLUP",
         "1-999-866-587 / 1-999-TOOLUP"
-      ]
+      ],
+      zh: [
+        "arma",
+        "armas",
+        "munição",
+        "Weapons and ammo",
+        "TOOLUP",
+        "1-999-866-587 / 1-999-TOOLUP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9589,7 +11165,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Aumentar procurado",
       "en": "Raise wanted level",
-      "es": "Subir búsqueda"
+      "es": "Subir búsqueda",
+      zh: "Raise wanted level",
     },
     "codes": {
       "pc": "FUGITIVE",
@@ -9616,7 +11193,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Subir búsqueda",
         "FUGITIVE",
         "1-999-3844-8483 / 1-999-FUGITIVE"
-      ]
+      ],
+      zh: [
+        "polícia",
+        "estrela",
+        "Raise wanted level",
+        "FUGITIVE",
+        "1-999-3844-8483 / 1-999-FUGITIVE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9637,7 +11221,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Diminuir procurado",
       "en": "Lower wanted level",
-      "es": "Bajar búsqueda"
+      "es": "Bajar búsqueda",
+      zh: "Lower wanted level",
     },
     "codes": {
       "pc": "LAWYERUP",
@@ -9664,7 +11249,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Bajar búsqueda",
         "LAWYERUP",
         "1-999-5299-3787 / 1-999-LAWYERUP"
-      ]
+      ],
+      zh: [
+        "polícia",
+        "tirar estrela",
+        "Lower wanted level",
+        "LAWYERUP",
+        "1-999-5299-3787 / 1-999-LAWYERUP"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9685,7 +11277,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Munição explosiva",
       "en": "Explosive ammo",
-      "es": "Munición explosiva"
+      "es": "Munición explosiva",
+      zh: "Explosive ammo",
     },
     "codes": {
       "pc": "HIGHEX",
@@ -9712,7 +11305,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Munición explosiva",
         "HIGHEX",
         "1-999-444-439 / 1-999-HIGHEX"
-      ]
+      ],
+      zh: [
+        "munição",
+        "explosiva",
+        "Explosive ammo",
+        "HIGHEX",
+        "1-999-444-439 / 1-999-HIGHEX"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9733,7 +11333,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Ataques corpo a corpo explosivos",
       "en": "Explosive melee attacks",
-      "es": "Ataques cuerpo a cuerpo explosivos"
+      "es": "Ataques cuerpo a cuerpo explosivos",
+      zh: "Explosive melee attacks",
     },
     "codes": {
       "pc": "HOTHANDS",
@@ -9763,7 +11364,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Ataques cuerpo a cuerpo explosivos",
         "HOTHANDS",
         "1-999-4684-2637 / 1-999-HOTHANDS"
-      ]
+      ],
+      zh: [
+        "soco",
+        "explosivo",
+        "melee",
+        "Explosive melee attacks",
+        "HOTHANDS",
+        "1-999-4684-2637 / 1-999-HOTHANDS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9784,7 +11393,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Balas incendiárias",
       "en": "Flaming bullets",
-      "es": "Balas incendiarias"
+      "es": "Balas incendiarias",
+      zh: "Flaming bullets",
     },
     "codes": {
       "pc": "INCENDIARY",
@@ -9814,7 +11424,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Balas incendiarias",
         "INCENDIARY",
         "1-999-462-363-4279 / 1-999-INCENDIARY"
-      ]
+      ],
+      zh: [
+        "fogo",
+        "bala",
+        "incendiária",
+        "Flaming bullets",
+        "INCENDIARY",
+        "1-999-462-363-4279 / 1-999-INCENDIARY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9835,7 +11453,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Mira em câmera lenta",
       "en": "Slow motion aim",
-      "es": "Apuntado en cámara lenta"
+      "es": "Apuntado en cámara lenta",
+      zh: "Slow motion aim",
     },
     "codes": {
       "pc": "DEADEYE",
@@ -9862,7 +11481,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Apuntado en cámara lenta",
         "DEADEYE",
         "1-999-332-3393 / 1-999-DEADEYE"
-      ]
+      ],
+      zh: [
+        "mira",
+        "câmera lenta",
+        "Slow motion aim",
+        "DEADEYE",
+        "1-999-332-3393 / 1-999-DEADEYE"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9883,7 +11509,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Modo bêbado",
       "en": "Drunk mode",
-      "es": "Modo borracho"
+      "es": "Modo borracho",
+      zh: "Drunk mode",
     },
     "codes": {
       "pc": "LIQUOR",
@@ -9910,7 +11537,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Modo borracho",
         "LIQUOR",
         "1-999-547-861 / 1-999-LIQUOR"
-      ]
+      ],
+      zh: [
+        "bêbado",
+        "fun",
+        "Drunk mode",
+        "LIQUOR",
+        "1-999-547-861 / 1-999-LIQUOR"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9931,7 +11565,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Correr mais rápido",
       "en": "Fast run",
-      "es": "Correr más rápido"
+      "es": "Correr más rápido",
+      zh: "Fast run",
     },
     "codes": {
       "pc": "CATCHME",
@@ -9958,7 +11593,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Correr más rápido",
         "CATCHME",
         "1-999-228-8463 / 1-999-CATCHME"
-      ]
+      ],
+      zh: [
+        "correr",
+        "velocidade",
+        "Fast run",
+        "CATCHME",
+        "1-999-228-8463 / 1-999-CATCHME"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -9979,7 +11621,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Nadar mais rápido",
       "en": "Fast swim",
-      "es": "Nadar más rápido"
+      "es": "Nadar más rápido",
+      zh: "Fast swim",
     },
     "codes": {
       "pc": "GOTGILLS",
@@ -10006,7 +11649,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Nadar más rápido",
         "GOTGILLS",
         "1-999-468-44557 / 1-999-GOTGILLS"
-      ]
+      ],
+      zh: [
+        "nadar",
+        "água",
+        "Fast swim",
+        "GOTGILLS",
+        "1-999-468-44557 / 1-999-GOTGILLS"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10027,7 +11677,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Super pulo",
       "en": "Super jump",
-      "es": "Súper salto"
+      "es": "Súper salto",
+      zh: "Super jump",
     },
     "codes": {
       "pc": "HOPTOIT",
@@ -10054,7 +11705,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Súper salto",
         "HOPTOIT",
         "1-999-467-8648 / 1-999-HOPTOIT"
-      ]
+      ],
+      zh: [
+        "pulo",
+        "salto",
+        "Super jump",
+        "HOPTOIT",
+        "1-999-467-8648 / 1-999-HOPTOIT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10075,7 +11733,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Gravidade lunar",
       "en": "Moon gravity",
-      "es": "Gravedad lunar"
+      "es": "Gravedad lunar",
+      zh: "Moon gravity",
     },
     "codes": {
       "pc": "FLOATER",
@@ -10102,7 +11761,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Gravedad lunar",
         "FLOATER",
         "1-999-356-2837 / 1-999-FLOATER"
-      ]
+      ],
+      zh: [
+        "gravidade",
+        "lua",
+        "Moon gravity",
+        "FLOATER",
+        "1-999-356-2837 / 1-999-FLOATER"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10123,7 +11789,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Skyfall / cair do céu",
       "en": "Skyfall",
-      "es": "Caer del cielo"
+      "es": "Caer del cielo",
+      zh: "Skyfall",
     },
     "codes": {
       "pc": "SKYFALL",
@@ -10150,7 +11817,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Caer del cielo",
         "SKYFALL",
         "1-999-759-3255 / 1-999-SKYFALL"
-      ]
+      ],
+      zh: [
+        "cair do céu",
+        "skyfall",
+        "Skyfall",
+        "SKYFALL",
+        "1-999-759-3255 / 1-999-SKYFALL"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10171,7 +11845,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Mudar clima",
       "en": "Change weather",
-      "es": "Cambiar clima"
+      "es": "Cambiar clima",
+      zh: "Change weather",
     },
     "codes": {
       "pc": "MAKEITRAIN",
@@ -10198,7 +11873,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Cambiar clima",
         "MAKEITRAIN",
         "1-999-625-348-7246 / 1-999-MAKEITRAIN"
-      ]
+      ],
+      zh: [
+        "clima",
+        "chuva",
+        "Change weather",
+        "MAKEITRAIN",
+        "1-999-625-348-7246 / 1-999-MAKEITRAIN"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10219,7 +11901,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Carros derrapam",
       "en": "Slippery cars",
-      "es": "Coches resbaladizos"
+      "es": "Coches resbaladizos",
+      zh: "Slippery cars",
     },
     "codes": {
       "pc": "SNOWDAY",
@@ -10249,7 +11932,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Coches resbaladizos",
         "SNOWDAY",
         "1-999-766-9329 / 1-999-SNOWDAY"
-      ]
+      ],
+      zh: [
+        "carro",
+        "gelo",
+        "derrapar",
+        "Slippery cars",
+        "SNOWDAY",
+        "1-999-766-9329 / 1-999-SNOWDAY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10270,7 +11961,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Câmera lenta",
       "en": "Slow motion",
-      "es": "Cámara lenta"
+      "es": "Cámara lenta",
+      zh: "Slow motion",
     },
     "codes": {
       "pc": "SLOWMO",
@@ -10297,7 +11989,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Cámara lenta",
         "SLOWMO",
         "1-999-756-966 / 1-999-SLOWMO"
-      ]
+      ],
+      zh: [
+        "câmera lenta",
+        "tempo",
+        "Slow motion",
+        "SLOWMO",
+        "1-999-756-966 / 1-999-SLOWMO"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10318,7 +12017,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Modo diretor",
       "en": "Director mode",
-      "es": "Modo director"
+      "es": "Modo director",
+      zh: "Director mode",
     },
     "codes": {
       "pc": "JRTALENT",
@@ -10345,7 +12045,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Modo director",
         "JRTALENT",
         "1-999-578-25368 / 1-999-JRTALENT"
-      ]
+      ],
+      zh: [
+        "diretor",
+        "modo diretor",
+        "Director mode",
+        "JRTALENT",
+        "1-999-578-25368 / 1-999-JRTALENT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10366,7 +12073,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Black cellphone",
       "en": "Black cellphone",
-      "es": "Teléfono negro"
+      "es": "Teléfono negro",
+      zh: "Black cellphone",
     },
     "codes": {
       "phone": "1-999-367-3767"
@@ -10392,7 +12100,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "black cellphone",
         "Teléfono negro",
         "1-999-367-3767"
-      ]
+      ],
+      zh: [
+        "celular",
+        "explosão",
+        "black cellphone",
+        "Black cellphone",
+        "1-999-367-3767"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10414,7 +12129,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn BMX",
       "en": "Spawn BMX",
-      "es": "Generar BMX"
+      "es": "Generar BMX",
+      zh: "Spawn BMX",
     },
     "codes": {
       "pc": "BANDIT",
@@ -10444,7 +12160,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar BMX",
         "BANDIT",
         "1-999-226-348 / 1-999-BANDIT"
-      ]
+      ],
+      zh: [
+        "bicicleta",
+        "bike",
+        "bmx",
+        "Spawn BMX",
+        "BANDIT",
+        "1-999-226-348 / 1-999-BANDIT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10465,7 +12189,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Buzzard helicóptero",
       "en": "Spawn Buzzard helicopter",
-      "es": "Generar helicóptero Buzzard"
+      "es": "Generar helicóptero Buzzard",
+      zh: "Spawn Buzzard helicopter",
     },
     "codes": {
       "pc": "BUZZOFF",
@@ -10492,7 +12217,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar helicóptero Buzzard",
         "BUZZOFF",
         "1-999-289-9633 / 1-999-BUZZOFF"
-      ]
+      ],
+      zh: [
+        "helicóptero",
+        "buzzard",
+        "Spawn Buzzard helicopter",
+        "BUZZOFF",
+        "1-999-289-9633 / 1-999-BUZZOFF"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10513,7 +12245,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Caddy",
       "en": "Spawn Caddy",
-      "es": "Generar Caddy"
+      "es": "Generar Caddy",
+      zh: "Spawn Caddy",
     },
     "codes": {
       "pc": "HOLEIN1",
@@ -10540,7 +12273,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Caddy",
         "HOLEIN1",
         "1-999-4653-46-1 / 1-999-HOLEIN1"
-      ]
+      ],
+      zh: [
+        "golf",
+        "caddy",
+        "Spawn Caddy",
+        "HOLEIN1",
+        "1-999-4653-46-1 / 1-999-HOLEIN1"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10561,7 +12301,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Comet",
       "en": "Spawn Comet",
-      "es": "Generar Comet"
+      "es": "Generar Comet",
+      zh: "Spawn Comet",
     },
     "codes": {
       "pc": "COMET",
@@ -10591,7 +12332,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Comet",
         "COMET",
         "1-999-266-38 / 1-999-COMET"
-      ]
+      ],
+      zh: [
+        "carro",
+        "comet",
+        "esportivo",
+        "Spawn Comet",
+        "COMET",
+        "1-999-266-38 / 1-999-COMET"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10612,7 +12361,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Duster avião",
       "en": "Spawn Duster plane",
-      "es": "Generar avión Duster"
+      "es": "Generar avión Duster",
+      zh: "Spawn Duster plane",
     },
     "codes": {
       "pc": "FLYSPRAY",
@@ -10639,7 +12389,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar avión Duster",
         "FLYSPRAY",
         "1-999-359-77729 / 1-999-FLYSPRAY"
-      ]
+      ],
+      zh: [
+        "avião",
+        "duster",
+        "Spawn Duster plane",
+        "FLYSPRAY",
+        "1-999-359-77729 / 1-999-FLYSPRAY"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10660,7 +12417,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn limousine",
       "en": "Spawn limo",
-      "es": "Generar limusina"
+      "es": "Generar limusina",
+      zh: "Spawn limo",
     },
     "codes": {
       "pc": "VINEWOOD",
@@ -10687,7 +12445,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar limusina",
         "VINEWOOD",
         "1-999-846-39663 / 1-999-VINEWOOD"
-      ]
+      ],
+      zh: [
+        "limusine",
+        "limo",
+        "Spawn limo",
+        "VINEWOOD",
+        "1-999-846-39663 / 1-999-VINEWOOD"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10708,7 +12473,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn PCJ-600 moto",
       "en": "Spawn PCJ-600 bike",
-      "es": "Generar moto PCJ-600"
+      "es": "Generar moto PCJ-600",
+      zh: "Spawn PCJ-600 bike",
     },
     "codes": {
       "pc": "ROCKET",
@@ -10735,7 +12501,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar moto PCJ-600",
         "ROCKET",
         "1-999-762-538 / 1-999-ROCKET"
-      ]
+      ],
+      zh: [
+        "moto",
+        "pcj",
+        "Spawn PCJ-600 bike",
+        "ROCKET",
+        "1-999-762-538 / 1-999-ROCKET"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10756,7 +12529,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Rapid GT",
       "en": "Spawn Rapid GT",
-      "es": "Generar Rapid GT"
+      "es": "Generar Rapid GT",
+      zh: "Spawn Rapid GT",
     },
     "codes": {
       "pc": "RAPIDGT",
@@ -10786,7 +12560,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Rapid GT",
         "RAPIDGT",
         "1-999-727-4348 / 1-999-RAPIDGT"
-      ]
+      ],
+      zh: [
+        "carro",
+        "esportivo",
+        "rapid gt",
+        "Spawn Rapid GT",
+        "RAPIDGT",
+        "1-999-727-4348 / 1-999-RAPIDGT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10807,7 +12589,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Sanchez moto",
       "en": "Spawn Sanchez dirt bike",
-      "es": "Generar moto Sanchez"
+      "es": "Generar moto Sanchez",
+      zh: "Spawn Sanchez dirt bike",
     },
     "codes": {
       "pc": "OFFROAD",
@@ -10837,7 +12620,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar moto Sanchez",
         "OFFROAD",
         "1-999-633-7623 / 1-999-OFFROAD"
-      ]
+      ],
+      zh: [
+        "moto",
+        "sanchez",
+        "offroad",
+        "Spawn Sanchez dirt bike",
+        "OFFROAD",
+        "1-999-633-7623 / 1-999-OFFROAD"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10858,7 +12649,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Stunt Plane",
       "en": "Spawn Stunt Plane",
-      "es": "Generar avión acrobático"
+      "es": "Generar avión acrobático",
+      zh: "Spawn Stunt Plane",
     },
     "codes": {
       "pc": "BARNSTORM",
@@ -10885,7 +12677,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar avión acrobático",
         "BARNSTORM",
         "1-999-227-678-676 / 1-999-BARNSTORM"
-      ]
+      ],
+      zh: [
+        "avião",
+        "stunt",
+        "Spawn Stunt Plane",
+        "BARNSTORM",
+        "1-999-227-678-676 / 1-999-BARNSTORM"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10906,7 +12705,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Trashmaster",
       "en": "Spawn Trashmaster",
-      "es": "Generar camión de basura"
+      "es": "Generar camión de basura",
+      zh: "Spawn Trashmaster",
     },
     "codes": {
       "pc": "TRASHED",
@@ -10933,7 +12733,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar camión de basura",
         "TRASHED",
         "1-999-872-7433 / 1-999-TRASHED"
-      ]
+      ],
+      zh: [
+        "caminhão",
+        "lixo",
+        "Spawn Trashmaster",
+        "TRASHED",
+        "1-999-872-7433 / 1-999-TRASHED"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -10954,7 +12761,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Duke O'Death",
       "en": "Spawn Duke O'Death",
-      "es": "Generar Duke O'Death"
+      "es": "Generar Duke O'Death",
+      zh: "Spawn Duke O'Death",
     },
     "codes": {
       "pc": "DEATHCAR",
@@ -10984,7 +12792,15 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar Duke O'Death",
         "DEATHCAR",
         "1-999-3328-4227 / 1-999-DEATHCAR"
-      ]
+      ],
+      zh: [
+        "carro",
+        "duke",
+        "deathcar",
+        "Spawn Duke O'Death",
+        "DEATHCAR",
+        "1-999-3328-4227 / 1-999-DEATHCAR"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -11006,7 +12822,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Dodo avião",
       "en": "Spawn Dodo plane",
-      "es": "Generar avión Dodo"
+      "es": "Generar avión Dodo",
+      zh: "Spawn Dodo plane",
     },
     "codes": {
       "pc": "EXTINCT",
@@ -11033,7 +12850,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar avión Dodo",
         "EXTINCT",
         "1-999-398-4628 / 1-999-EXTINCT"
-      ]
+      ],
+      zh: [
+        "avião",
+        "dodo",
+        "Spawn Dodo plane",
+        "EXTINCT",
+        "1-999-398-4628 / 1-999-EXTINCT"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,
@@ -11055,7 +12879,8 @@ export const gtaCheats: GtaCheatEntry[] =
     "names": {
       "pt-br": "Spawn Kraken submarino",
       "en": "Spawn Kraken submarine",
-      "es": "Generar submarino Kraken"
+      "es": "Generar submarino Kraken",
+      zh: "Spawn Kraken submarine",
     },
     "codes": {
       "pc": "BUBBLES",
@@ -11082,7 +12907,14 @@ export const gtaCheats: GtaCheatEntry[] =
         "Generar submarino Kraken",
         "BUBBLES",
         "1-999-282-2537 / 1-999-BUBBLES"
-      ]
+      ],
+      zh: [
+        "submarino",
+        "kraken",
+        "Spawn Kraken submarine",
+        "BUBBLES",
+        "1-999-282-2537 / 1-999-BUBBLES"
+      ],
     },
     "support": {
       "singlePlayerOnly": true,

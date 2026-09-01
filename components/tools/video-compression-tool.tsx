@@ -180,6 +180,43 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     downloadButton: 'Descargar',
     genericError: 'No fue posible comprimir este video.',
   },
+  zh: {
+    title: 'Online video compressor',
+    intro:
+      'Compress multiple videos directly in your browser, control compression level, and preview before download.',
+    filesLabel: 'Videos to compress',
+    filesHint:
+      'Batch upload is supported. Processing is local and may take longer for large files.',
+    compressionLevelLabel: 'Compression level',
+    compressionLevelHint:
+      'Higher levels usually reduce size more, with stronger quality and resolution impact.',
+    compressionLevelBadge: (value) => `${value}%`,
+    compressAll: 'Compress all',
+    compressingAll: 'Compressing...',
+    clearAll: 'Clear list',
+    downloadAll: 'Download all',
+    sourcePreview: 'Original',
+    resultPreview: 'Compressed',
+    waitingCompression: 'Waiting for compression.',
+    processing: 'Processing...',
+    noFilesHint: 'Add videos to start compression.',
+    estimatedSizeLabel: 'Estimated',
+    currentSizeLabel: 'Current size',
+    finalSizeLabel: 'Final size',
+    durationLabel: 'Duration',
+    resolutionLabel: 'Resolution',
+    savingsLabel: (value) => `Savings: ${value.toFixed(1)}%`,
+    ffmpegWarmupNote:
+      'On first run, the compression engine may download assets and start slower.',
+    processingLocalNote:
+      'Videos are processed locally in your browser. No automatic server upload is performed by default.',
+    done: 'Done',
+    pending: 'Pending',
+    error: 'Error',
+    compressButton: 'Compress',
+    downloadButton: 'Download',
+    genericError: 'Could not compress this video.',
+  },
 };
 
 const acceptedVideoTypes =

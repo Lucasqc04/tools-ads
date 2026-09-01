@@ -8,7 +8,7 @@ import {
 import { localizePath, type AppLocale } from '@/lib/i18n/config';
 import type { ContentBlock, FaqItem } from '@/types/content';
 
-export type InvisiblePlatformSlugVariant = 'ptBr' | 'en' | 'es';
+export type InvisiblePlatformSlugVariant = 'ptBr' | 'en' | 'es' | 'zh';
 
 export type InvisiblePlatformPage = {
   slug: string;
@@ -22,9 +22,11 @@ export type InvisiblePlatformPage = {
   slugPtBr: string;
   slugEn: string;
   slugEs: string;
+  slugZh: string;
   pathPtBr: string;
   pathEn: string;
   pathEs: string;
+  pathZh: string;
 };
 
 export type LocalizedInvisiblePlatformContent = {
@@ -51,10 +53,13 @@ const toEnSlug = (platformSlug: string): string => `invisible-character-${platfo
 
 const toEsSlug = (platformSlug: string): string => `caracter-invisible-${platformSlug}`;
 
+const toZhSlug = (platformSlug: string): string => `invisible-character-${platformSlug}`;
+
 const buildPage = (platform: InvisiblePlatform): InvisiblePlatformPage => {
   const slugPtBr = toPtBrSlug(platform.slug);
   const slugEn = toEnSlug(platform.slug);
   const slugEs = toEsSlug(platform.slug);
+  const slugZh = toZhSlug(platform.slug);
 
   return {
     slug: slugPtBr,
@@ -68,9 +73,11 @@ const buildPage = (platform: InvisiblePlatform): InvisiblePlatformPage => {
     slugPtBr,
     slugEn,
     slugEs,
+    slugZh,
     pathPtBr: `/${slugPtBr}`,
     pathEn: `/${slugEn}`,
     pathEs: `/${slugEs}`,
+    pathZh: `/${slugZh}`,
   };
 };
 
@@ -85,6 +92,8 @@ const ptBrSlugMap = new Map(
 const enSlugMap = new Map(invisiblePlatformPages.map((page) => [page.slugEn, page]));
 
 const esSlugMap = new Map(invisiblePlatformPages.map((page) => [page.slugEs, page]));
+
+const zhSlugMap = new Map(invisiblePlatformPages.map((page) => [page.slugZh, page]));
 
 export const getInvisiblePlatformResolutionBySlug = (
   slug: string,
@@ -102,6 +111,11 @@ export const getInvisiblePlatformResolutionBySlug = (
   const es = esSlugMap.get(slug);
   if (es) {
     return { page: es, variant: 'es' };
+  }
+
+  const zh = zhSlugMap.get(slug);
+  if (zh) {
+    return { page: zh, variant: 'zh' };
   }
 
   return undefined;
@@ -123,6 +137,10 @@ export const getInvisiblePlatformPathByVariant = (
     return page.pathEs;
   }
 
+  if (variant === 'zh') {
+    return page.pathZh;
+  }
+
   return page.pathPtBr;
 };
 
@@ -135,6 +153,10 @@ export const getPreferredInvisiblePlatformSlugVariant = (
 
   if (locale === 'es') {
     return 'es';
+  }
+
+  if (locale === 'zh') {
+    return 'zh';
   }
 
   return 'ptBr';
@@ -154,6 +176,10 @@ export const getInvisiblePlatformSlugByLocale = (
     return page.slugEs;
   }
 
+  if (variant === 'zh') {
+    return page.slugZh;
+  }
+
   return page.slugPtBr;
 };
 
@@ -167,6 +193,7 @@ export const getInvisiblePlatformLocalePathMap = (
 ): Record<AppLocale, string> => ({
   'pt-br': getInvisiblePlatformPathByLocale(page, 'pt-br'),
   en: getInvisiblePlatformPathByLocale(page, 'en'),
+  zh: getInvisiblePlatformPathByLocale(page, 'zh'),
   es: getInvisiblePlatformPathByLocale(page, 'es'),
 });
 
@@ -182,6 +209,10 @@ const categoryLabelByLocale: Record<AppLocale, Record<InvisiblePlatform['categor
   es: {
     game: 'Juego online',
     social: 'Red social',
+  },
+  zh: {
+    game: '在线游戏',
+    social: '社交平台',
   },
 };
 
@@ -208,6 +239,16 @@ const buildKeywords = (
       `nombre invisible ${platform.name.toLowerCase()}`,
       'letra invisible copiar',
       'caracter invisible para juegos',
+    ];
+  }
+
+  if (locale === 'zh') {
+    return [
+      ...localizedHints,
+      `${platform.name} 隐藏字符`,
+      `${platform.name} 隐藏昵称`,
+      '空白字符复制',
+      '隐藏字符生成器',
     ];
   }
 
@@ -295,6 +336,38 @@ const buildContentBlocks = (
     ];
   }
 
+  if (locale === 'zh') {
+    return [
+      {
+        title: `${platform.name} 隐藏字符怎么用最有效`,
+        paragraphs: [
+          `${platform.name} 对用户名和显示名称有自己的一套验证规则,结果可能因账号地区、账号年限、防作弊策略和游戏版本而不同。`,
+          `当前兼容情况:${compatibilityLabel}。建议先尝试的组合:${recommendedLabel}。`,
+        ],
+      },
+      {
+        title: '如何安全测试后再确定昵称',
+        paragraphs: [
+          `本页面已针对${categoryLabel}场景优化。先使用推荐组合,如果验证失败,可以尝试下方20个现成的隐藏字符变体。`,
+          platformHint,
+        ],
+        list: [
+          '复制一个现成的隐藏字符组合。',
+          '在昵称前面、后面、中间或完全替代昵称,生成不同的变体。',
+          '粘贴到目标资料字段中并进行验证。',
+          '如果被拦截,更换另一种组合再次尝试。',
+        ],
+      },
+      {
+        title: '为什么这个页面比普通列表更实用',
+        paragraphs: [
+          '这里不只是提供一个空白字符,而是结合了针对具体游戏或平台的建议、昵称生成器、Unicode 字符表以及隐藏字符检测工具。',
+          '你可以用检测工具查看文本中是否包含隐藏的 Unicode 字符,并在保存昵称前先复制一份清理后的版本。',
+        ],
+      },
+    ];
+  }
+
   return [
     {
       title: `Caractere invisivel para ${platform.name}: o que tende a funcionar`,
@@ -372,6 +445,28 @@ const buildFaq = (locale: AppLocale, platform: InvisiblePlatform): FaqItem[] => 
     ];
   }
 
+  if (locale === 'zh') {
+    return [
+      {
+        question: `隐藏昵称在 ${platform.name} 上有效吗?`,
+        answer: `是否有效取决于当前的验证规则。${platform.name} 的兼容程度为:${compatibilityLabelByLocale.zh[platform.compatibility]}。`,
+      },
+      {
+        question: '为什么单个隐藏字符会失败,而多个组合却能通过?',
+        answer:
+          '很多验证机制要求昵称达到最小长度,或者会拦截特定的 Unicode 字符。尝试多个现成的组合通常能提高通过率。',
+      },
+      {
+        question: '这个工具免费吗?',
+        answer: '是的,复制、生成和测试隐藏字符完全免费,无需注册。',
+      },
+      {
+        question: '我输入的内容会发送到服务器吗?',
+        answer: '默认不会。字符的生成和检测都在你的浏览器本地完成。',
+      },
+    ];
+  }
+
   return [
     {
       question: `Nome invisivel funciona no ${platform.name}?`,
@@ -423,6 +518,18 @@ const buildFallbackLocalizedContent = (
     };
   }
 
+  if (locale === 'zh') {
+    return {
+      title: '隐藏字符生成器',
+      intro: '为游戏和社交平台复制或生成隐藏文本。',
+      seoTitle: '隐藏字符复制粘贴',
+      seoDescription: '为游戏和社交应用生成多种 Unicode 隐藏字符模式的隐藏名称。',
+      keywords: [],
+      contentBlocks: [],
+      faq: [],
+    };
+  }
+
   return {
     title: 'Gerador de Caractere Invisivel',
     intro: 'Copie e gere texto invisivel para jogos e redes sociais.',
@@ -463,6 +570,18 @@ const buildLocalizedContentForPlatform = (
       keywords,
       contentBlocks: buildContentBlocks('es', platform),
       faq: buildFaq('es', platform),
+    };
+  }
+
+  if (locale === 'zh') {
+    return {
+      title: `${platform.name} 隐藏字符(复制粘贴)`,
+      intro: `为 ${platform.name} 复制或生成隐藏昵称,提供20个现成变体、Unicode 选项、检测工具和兼容性测试流程。`,
+      seoTitle: `${platform.name} 隐藏字符 | 复制粘贴`,
+      seoDescription: `复制适用于 ${platform.name} 的隐藏字符,生成20个昵称变体,查看 Unicode 字符,并测试可能通过验证的组合。当前兼容情况:${compatibilityLabel}。`,
+      keywords,
+      contentBlocks: buildContentBlocks('zh', platform),
+      faq: buildFaq('zh', platform),
     };
   }
 

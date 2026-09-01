@@ -52,6 +52,14 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     noResults: 'No hay atajos para esa búsqueda.',
     privacy: '🔒 Todo ocurre localmente en tu navegador. Nada se envía a un servidor.',
   },
+  zh: {
+    searchPlaceholder: 'Search a shortcut by action (e.g. copy, comment)',
+    os: 'OS',
+    windows: 'Windows',
+    mac: 'Mac',
+    noResults: 'No shortcut matches that search.',
+    privacy: '🔒 Everything runs locally in your browser. Nothing is sent to a server.',
+  },
 };
 
 export function KeyboardShortcutsTool({

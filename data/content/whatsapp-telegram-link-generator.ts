@@ -226,6 +226,76 @@ const contentByLocale: Record<AppLocale, WhatsAppTelegramLinkLocaleContent> = {
       },
     ],
   },
+  zh: {
+    name: 'WhatsApp and Telegram Link Generator with Prefilled Message',
+    shortDescription:
+      'Create WhatsApp and Telegram links with prefilled text using phone number or @username, with fast copy actions.',
+    primaryKeyword: 'whatsapp link generator with message',
+    secondaryKeywords: [
+      'create wa.me link with text',
+      'telegram link with prefilled message',
+      'whatsapp click to chat generator',
+      't.me message link generator',
+      'chat link generator online',
+    ],
+    searchIntent:
+      'Users who need ready-to-share chat links for WhatsApp and Telegram with prefilled message context.',
+    seoTitle: 'WhatsApp and Telegram Link Generator with Prefilled Message',
+    seoDescription:
+      'Generate WhatsApp and Telegram links with ready text. Enter phone number or @username, customize the message, and copy instantly.',
+    h1: 'WhatsApp and Telegram Link Generator with Ready Message',
+    intro:
+      'Enter a phone number or @username, write your message, and generate chat links that open with prefilled text.',
+    contentBlocks: [
+      {
+        title: 'How prefilled chat links work',
+        paragraphs: [
+          'The tool builds official chat URLs with encoded text, so users open the conversation with the message already prepared.',
+          'WhatsApp links require a phone number. Telegram links can use a public @username or an international phone number.',
+        ],
+      },
+      {
+        title: 'High-impact usage scenarios',
+        paragraphs: [
+          'Use these links in CTA buttons, social bios, paid traffic pages, CRM templates, and support signatures.',
+          'Prefilled text reduces friction and helps the user send the first message with the right context.',
+        ],
+        list: [
+          'Click-to-chat button on landing pages.',
+          'Telegram support shortcut in docs and help centers.',
+          'Campaign links with short qualification message.',
+          'Sales triage message for inbound leads.',
+        ],
+      },
+      {
+        title: 'Practical limits and validation',
+        paragraphs: [
+          'WhatsApp does not support @username in wa.me format. Use full international number with country code.',
+          'For Telegram, @username links are usually more stable when available on the profile.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Can I use @username on WhatsApp?',
+        answer:
+          'No. WhatsApp links support only phone numbers in the wa.me format.',
+      },
+      {
+        question: 'Does Telegram support both @username and phone number?',
+        answer:
+          'Yes. You can build links with either format, depending on what is available.',
+      },
+      {
+        question: 'Is this tool free?',
+        answer: 'Yes. You can use it for free without sign-up.',
+      },
+      {
+        question: 'Is the message processed locally?',
+        answer: 'Yes. Link generation runs in your browser by default.',
+      },
+    ],
+  },
 };
 
 export const getWhatsAppTelegramLinkContent = (

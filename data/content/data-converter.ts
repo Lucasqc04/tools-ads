@@ -253,6 +253,85 @@ const contentByLocale: Record<AppLocale, DataConverterLocaleContent> = {
       },
     ],
   },
+  zh: {
+    name: 'JSON, SQL, XLSX, CSV, and TSV Converter',
+    shortDescription:
+      'Convert tabular data between JSON, SQL INSERT, XLSX, CSV, and TSV with paste, upload, auto-detection, and local processing.',
+    primaryKeyword: 'json csv xlsx converter online',
+    secondaryKeywords: [
+      'json to csv converter',
+      'csv to json converter',
+      'xlsx to json online',
+      'sql insert to csv',
+      'csv to sql insert',
+      'tsv to xlsx',
+    ],
+    searchIntent:
+      'Users, analysts, and developers who need to transform tabular data between spreadsheet, API, and database formats without installing software.',
+    seoTitle: 'JSON, CSV, XLSX, TSV, and SQL Converter Online',
+    seoDescription:
+      'Paste or upload data to convert JSON, SQL INSERT, XLSX, CSV, and TSV in-browser with auto-detection, preview, copy, and download.',
+    h1: 'JSON, SQL, XLSX, CSV, and TSV Converter Online',
+    intro:
+      'Paste clipboard data or upload a file to convert tables between JSON, SQL INSERT, XLSX, CSV, and TSV directly in your browser.',
+    contentBlocks: [
+      {
+        title: 'A single flow for tabular data conversion',
+        paragraphs: [
+          'This converter covers common tabular data formats used across APIs, spreadsheets, exports, logs, and database fixtures. It accepts pasted text and uploaded files, including TXT files that are detected by content.',
+          'The tool normalizes input into a table preview first. That lets you inspect columns and rows before copying text output or downloading a spreadsheet file.',
+        ],
+      },
+      {
+        title: 'When each output format makes sense',
+        paragraphs: [
+          'JSON is useful for APIs and scripts. CSV and TSV are lightweight exchange formats for tables and logs. XLSX is practical for Excel and spreadsheet workflows. SQL INSERT is helpful for small seed datasets, fixtures, and quick database tests.',
+          'Object arrays become table columns, INSERT statements become rows, and XLSX input reads the first worksheet so the conversion remains predictable.',
+        ],
+        list: [
+          'JSON to CSV for opening API payloads in spreadsheet tools.',
+          'CSV to JSON for scripts, test data, and import jobs.',
+          'XLSX to TSV for clean copy-paste into internal tools.',
+          'SQL INSERT to CSV for reviewing seed data as a table.',
+          'CSV or TSV to SQL INSERT for quick database fixtures.',
+        ],
+      },
+      {
+        title: 'Privacy, detection, and practical limits',
+        paragraphs: [
+          'Main processing runs locally in the browser. Pasted content and selected files do not need to be uploaded to a backend for detection, preview, or text export.',
+          'Automatic detection handles valid JSON, SQL INSERT, CSV, and TSV. Very large XLSX files can still use significant memory, so splitting huge datasets is better on mobile devices.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Which formats can I convert?',
+        answer:
+          'You can convert between JSON, SQL INSERT, XLSX, CSV, and TSV. TXT uploads are accepted as text input and auto-detected.',
+      },
+      {
+        question: 'Can I paste from the clipboard?',
+        answer:
+          'Yes. You can paste directly into the text area or use the paste button when your browser allows clipboard access.',
+      },
+      {
+        question: 'Are XLSX files uploaded to a server?',
+        answer:
+          'No by default. Reading the first sheet and exporting XLSX run locally in your browser.',
+      },
+      {
+        question: 'How does SQL output work?',
+        answer:
+          'The converter generates INSERT INTO statements. If header row is enabled, the first row becomes column names.',
+      },
+      {
+        question: 'Does it work on mobile?',
+        answer:
+          'Yes. Wide previews scroll inside the tool so the page itself avoids horizontal scrolling.',
+      },
+    ],
+  },
 };
 
 export const dataConverterIntro = contentByLocale['pt-br'].intro;

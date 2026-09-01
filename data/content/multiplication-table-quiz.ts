@@ -262,6 +262,88 @@ const contentByLocale: Record<AppLocale, MultiplicationTableQuizContent> = {
       },
     ],
   },
+  zh: {
+    name: 'Multiplication Table Quiz',
+    shortDescription:
+      'Look up the times table from 1 to 12, practice with an adjustable-difficulty quiz, timer, saved best score, and a printable worksheet.',
+    primaryKeyword: 'multiplication table quiz',
+    secondaryKeywords: [
+      'times table online',
+      'times table practice',
+      'multiplication quiz',
+      'multiplication game',
+      'multiplication worksheet printable',
+      'times table chart',
+    ],
+    searchIntent:
+      'Students, parents, and teachers who want to look up the times table and practice multiplication with a timed quiz and mistake tracking.',
+    seoTitle: 'Multiplication Table Quiz Online | Free Times Table Practice',
+    seoDescription:
+      'Look up the times table from 1 to 12 and practice with a timed quiz across 3 difficulty levels. See your saved best score, most frequent mistakes, and print a worksheet.',
+    h1: 'Multiplication Table Quiz: Look Up and Practice Times Tables Online',
+    intro:
+      'View the full times table for any number, practice with a timed quiz across 3 levels, and print a blank practice worksheet.',
+    contentBlocks: [
+      {
+        title: 'How to use the times table and quiz',
+        paragraphs: [
+          'Pick a number from 1 to 12 to see its full times table, from 1x through 12x, with the result of each multiplication. To practice, switch to quiz mode, choose a difficulty (easy: numbers up to 5, medium: up to 10, hard: up to 12), and answer 10 questions in a row as fast as possible.',
+          'At the end of the quiz you see your score, total time, and — if you beat your previous best for that difficulty — it gets saved in your browser for next time. Questions you got wrong are tracked in a "most frequent mistakes" list so you know exactly what to review.',
+        ],
+      },
+      {
+        title: 'Why practice with a timed quiz',
+        paragraphs: [
+          'Memorizing the times table gets easier with repetition and immediate feedback: answering quickly and seeing right away whether you got it right helps the result stick. The timer creates a healthy push to train speed as well as accuracy, which is exactly what timed school tests and worksheets require.',
+        ],
+        list: [
+          'Start with the easy level (up to 5x) before moving up.',
+          'Repeat the quiz for the same number a few times in a row.',
+          'Use the most-frequent-mistakes list to review before your next attempt.',
+          'Print the worksheet to practice away from a screen.',
+        ],
+      },
+      {
+        title: 'Printable practice worksheet',
+        paragraphs: [
+          'From a number\'s times table view, use the print button to generate a blank worksheet for that number (e.g. 7 x 1 = ___, 7 x 2 = ___, through 7 x 12 = ___), ready for a student to fill in on paper. It\'s a simple way to practice away from a screen or reinforce the material at home.',
+        ],
+      },
+      {
+        title: 'Local processing and privacy',
+        paragraphs: [
+          'The quiz, timer, saved best score, and mistakes list all run entirely in your browser. No answer or score is sent to a server.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'How high does the times table go?',
+        answer:
+          'The tool shows the times table from 1 to 12 for any number you choose, covering the most common school curriculum range.',
+      },
+      {
+        question: 'How does quiz difficulty work?',
+        answer:
+          'Easy draws numbers up to 5, medium up to 10, and hard up to 12. Each round has 10 timed questions.',
+      },
+      {
+        question: 'Is my best score saved?',
+        answer:
+          'Yes. The best result (highest accuracy, then lowest time) for each difficulty is saved locally in your browser.',
+      },
+      {
+        question: 'Can I print a practice worksheet?',
+        answer:
+          'Yes. From a number\'s times table view, use the print button to generate a blank worksheet for that number.',
+      },
+      {
+        question: 'Is it free and does it work on mobile?',
+        answer:
+          'Yes. The tool is free, requires no sign-up, and works normally on mobile browsers.',
+      },
+    ],
+  },
 };
 
 export const getMultiplicationTableQuizContent = (

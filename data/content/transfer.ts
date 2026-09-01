@@ -258,6 +258,82 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       },
     ],
   },
+  zh: {
+    name: 'Transfer Between Devices',
+    shortDescription:
+      'Transfer text, links, Pix payloads, JSON, commands, and files between phone and desktop with QR Code and WebRTC P2P in the browser.',
+    primaryKeyword: 'transfer files between phone and pc with qr code',
+    secondaryKeywords: [
+      'transfer text by qr code',
+      'browser device to device transfer',
+      'send file from phone to pc without cable',
+      'webrtc datachannel transfer tool',
+      'copy links from phone to desktop',
+      'p2p file transfer in browser',
+      'qr code text transfer online',
+      'web transfer between devices',
+    ],
+    searchIntent:
+      'Users who want quick QR transfer for short content and a browser-based P2P path for larger files or text between two devices.',
+    seoTitle: 'Transfer Between Phone and PC with QR Code and P2P',
+    seoDescription:
+      'Send short text by QR Code or connect two browsers with WebRTC P2P for larger files and text. No sign-up, no login, local-first workflow.',
+    h1: 'Transfer Text and Files Between Phone and PC with QR Code and P2P',
+    intro:
+      'Use a fast QR mode for links and short text, or pair two browsers with WebRTC to send larger files and longer text directly between devices.',
+    contentBlocks: [
+      {
+        title: 'Two modes for two different jobs',
+        paragraphs: [
+          'The simple mode is designed for short payloads such as links, temporary passwords, Pix payloads, crypto addresses, terminal commands, and compact JSON. The QR itself carries the content or a client-side URL fragment.',
+          'The advanced mode handles larger text and files. It uses QR codes only for the initial handshake and then moves the main payload through a WebRTC DataChannel.',
+        ],
+      },
+      {
+        title: 'When the QR mode is the best choice',
+        paragraphs: [
+          'If you only need to move something small from one screen to another, QR is the fastest option. It avoids account creation, avoids manual typing, and works well on mobile and desktop.',
+          'When content grows beyond practical QR limits, the tool can split it into multiple parts, but larger payloads are usually better served by the P2P mode.',
+        ],
+      },
+      {
+        title: 'How the WebRTC transfer works',
+        paragraphs: [
+          'One device creates a WebRTC offer, the other responds with an answer, and both browsers open a direct data channel. Files are sent in chunks so the receiving browser can reconstruct them safely.',
+          'This implementation can use STUN for route discovery, but it does not include a TURN relay. That keeps the tool closer to direct transfer, while also meaning some restrictive networks may fail to connect.',
+        ],
+      },
+      {
+        title: 'Privacy and practical limits',
+        paragraphs: [
+          'Short-text QR processing stays local in the browser. In P2P mode, the main payload travels through the browser data channel after manual pairing. Network topology still matters, and direct connectivity is not guaranteed on every firewall or NAT setup.',
+          'QR capacity is also finite. If a payload becomes too large, splitting or switching to P2P is the correct fallback.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Does this tool upload my content to a server?',
+        answer:
+          'Short QR mode is processed locally in the browser. In P2P mode, the main payload goes through WebRTC between the devices. Optional STUN may be used for route discovery, but there is no TURN relay in this implementation.',
+      },
+      {
+        question: 'Do I need an account or app?',
+        answer:
+          'No. The tool is designed to work directly in the browser with no sign-up and no dedicated app.',
+      },
+      {
+        question: 'Can I scan the QR from inside the website?',
+        answer:
+          'Yes. On compatible browsers you can use the camera directly on the page or import a QR image. On many phones the image picker can also open the system camera.',
+      },
+      {
+        question: 'Why can the P2P connection fail?',
+        answer:
+          'Because this build relies on direct WebRTC connectivity with optional STUN and no TURN relay. Restrictive corporate networks, hard NAT, or aggressive firewalls may block the session.',
+      },
+    ],
+  },
 };
 
 export const getTransferContent = (locale: AppLocale): TransferLocaleContent =>

@@ -81,6 +81,24 @@ const uiByLocale: Record<AppLocale, JsonFormatterUi> = {
       invalidFallback: 'JSON inválido. Revisa la sintaxis e inténtalo de nuevo.',
     },
   },
+  zh: {
+    title: 'JSON Formatter and Minifier',
+    intro:
+      'Paste JSON, validate syntax, format with indentation, or minify for compact payloads.',
+    textareaLabel: 'JSON input',
+    textareaPlaceholder: '{"product":"Tool","active":true}',
+    format: 'Format',
+    minify: 'Minify',
+    copy: 'Copy output',
+    copied: 'Copied',
+    clear: 'Clear',
+    resultLabel: 'Output',
+    messages: {
+      emptyInput: 'Paste valid JSON before formatting.',
+      invalidPrefix: 'Invalid JSON:',
+      invalidFallback: 'Invalid JSON. Review syntax and try again.',
+    },
+  },
 };
 
 export function JsonFormatterTool({ locale = 'pt-br' }: JsonFormatterToolProps) {

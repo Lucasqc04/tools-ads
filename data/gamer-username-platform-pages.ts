@@ -60,6 +60,7 @@ const pageMaps: Record<AppLocale, Map<string, GamerUsernamePlatformPage>> = {
   'pt-br': new Map(gamerUsernamePlatformPages.map((page) => [page.slugPtBr, page])),
   en: new Map(gamerUsernamePlatformPages.map((page) => [page.slugEn, page])),
   es: new Map(gamerUsernamePlatformPages.map((page) => [page.slugEs, page])),
+  zh: new Map(gamerUsernamePlatformPages.map((page) => [page.slugEn, page])),
 };
 
 export const getGamerUsernamePlatformResolutionBySlug = (
@@ -101,6 +102,7 @@ export const getGamerUsernamePlatformLocalePathMap = (
   'pt-br': getGamerUsernamePlatformPathByLocale(page, 'pt-br'),
   en: getGamerUsernamePlatformPathByLocale(page, 'en'),
   es: getGamerUsernamePlatformPathByLocale(page, 'es'),
+  zh: getGamerUsernamePlatformPathByLocale(page, 'en'),
 });
 
 const buildKeywords = (locale: AppLocale, gameName: string): string[] => {
@@ -300,6 +302,12 @@ const buildFallbackContent = (locale: AppLocale): LocalizedGamerUsernamePlatform
       intro: 'Genera un nombre aleatorio para tu juego.',
       seoTitle: 'Generador de Nombre para Juegos',
       seoDescription: 'Genera nombres aleatorios listos para copiar.',
+    },
+    zh: {
+      title: 'Gamer Username Generator',
+      intro: 'Generate a random username for your game.',
+      seoTitle: 'Gamer Username Generator',
+      seoDescription: 'Generate random usernames ready to copy.',
     },
   }[locale];
 

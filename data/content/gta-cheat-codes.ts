@@ -201,6 +201,60 @@ const uiByLocale: Record<AppLocale, GtaCheatsUiCopy> = {
       switch: 'Switch',
     },
   },
+  zh: {
+    searchLabel: 'Search cheat code',
+    searchPlaceholder: 'e.g. tank, helicopter, police, health, weapons, weather',
+    gameLabel: 'Game',
+    categoryLabel: 'Category',
+    platformLabel: 'Platform',
+    gameAll: 'All games',
+    categoryAll: 'All categories',
+    platformAll: 'All platforms',
+    copyButton: 'Copy code',
+    copiedButton: 'Copied',
+    resultCount: 'result(s)',
+    noResults: 'No cheat codes found for the selected filters.',
+    warningTitle: 'Usage warning',
+    warningBody:
+      'Cheats are for single-player/story mode. They can disable achievements/trophies in-session and do not work in GTA Online.',
+    noteLabel: 'Note',
+    needsValidationLabel: 'Validation recommended',
+    categoryValues: {
+      armas: 'Weapons',
+      'vida-armadura': 'Health/Armor',
+      policia: 'Police',
+      veiculos: 'Vehicles',
+      'spawn-veiculos': 'Vehicle spawn',
+      clima: 'Weather',
+      mundo: 'World',
+      npc: 'NPC/Pedestrians',
+      skins: 'Skins',
+      tema: 'Theme',
+      movimento: 'Movement',
+      combate: 'Combat',
+      dinheiro: 'Money',
+      habilidade: 'Ability',
+      equipamento: 'Equipment',
+      player: 'Player',
+      musica: 'Music',
+      episodes: 'Episodes',
+    },
+    gameValues: {
+      'gta-san-andreas': 'GTA San Andreas',
+      'gta-v': 'GTA V',
+      'gta-iv': 'GTA IV',
+      'gta-iii': 'GTA III',
+      'gta-vice-city': 'GTA Vice City',
+    },
+    platformValues: {
+      all: 'All',
+      pc: 'PC',
+      phone: 'Phone',
+      playstation: 'PlayStation',
+      xbox: 'Xbox',
+      switch: 'Switch',
+    },
+  },
 };
 
 const contentByLocale: Record<AppLocale, GtaCheatsLocaleContent> = {
@@ -414,6 +468,75 @@ const contentByLocale: Record<AppLocale, GtaCheatsLocaleContent> = {
       },
     ],
     ui: uiByLocale.es,
+  },
+  zh: {
+    name: 'GTA Cheat Codes (San Andreas, V, IV, III, Vice City)',
+    shortDescription:
+      'Search and copy GTA cheats by game, category, and platform with multilingual smart matching.',
+    primaryKeyword: 'gta cheat codes',
+    secondaryKeywords: [
+      'gta san andreas cheats',
+      'gta 5 cheat codes',
+      'gta iv cheats',
+      'gta tank cheat',
+      'gta weapon cheats',
+    ],
+    searchIntent:
+      'Players who want fast cheat lookup by game and intent terms such as car, tank, helicopter, police, health, and weapons.',
+    seoTitle: 'GTA Cheat Codes: San Andreas, GTA 5, GTA 4, GTA 3, Vice City',
+    seoDescription:
+      'Copy GTA cheat codes with smart search, game/category/platform filters, and clear single-player compatibility warnings.',
+    h1: 'GTA cheat codes by game, category, and platform',
+    intro:
+      'Find cheats for GTA San Andreas, GTA V, GTA IV, GTA III, and GTA Vice City. Filter by category, search with intent terms, and copy the exact code quickly.',
+    contentBlocks: [
+      {
+        title: 'A practical GTA cheat search workflow',
+        paragraphs: [
+          'The tool is designed for real search behavior. Players usually type intent words like tank, helicopter, police, health, weather, or bike rather than official cheat names.',
+          'Instead of forcing one giant list, the interface lets you filter by game, category, and platform first, then run a smart query across multilingual keywords.',
+        ],
+      },
+      {
+        title: 'Single-player scope and achievement warning',
+        paragraphs: [
+          'These cheats are for single-player/story mode. In many cases, enabling cheats can disable achievements or trophies for the current session.',
+          'Keep a manual save before testing chaos-heavy or vehicle spawn chains so your main progression remains clean.',
+        ],
+        list: [
+          'No GTA Online support.',
+          'Session achievements/trophies may be affected.',
+          'Some codes vary by edition/remaster.',
+        ],
+      },
+      {
+        title: 'Multilingual search and synonym expansion',
+        paragraphs: [
+          'The search normalizes accents and matches Portuguese, English, and Spanish terms in one index. It also expands synonyms like car/carro/coche and tank/tanque/rhino.',
+          'This reduces false negatives when players search in mixed language terms or with shorthand words.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Do these cheats work in GTA Online?',
+        answer: 'No. The tool is focused on single-player/story mode only.',
+      },
+      {
+        question: 'Can cheat usage disable achievements?',
+        answer:
+          'Yes, often for the current play session. Create a manual save before using cheats.',
+      },
+      {
+        question: 'Can I search for terms like tank or helicopter?',
+        answer: 'Yes. Smart matching includes multilingual synonyms and intent-based lookup.',
+      },
+      {
+        question: 'Which games are included?',
+        answer: 'GTA San Andreas, GTA V, GTA IV, GTA III, and GTA Vice City.',
+      },
+    ],
+    ui: uiByLocale.en,
   },
 };
 

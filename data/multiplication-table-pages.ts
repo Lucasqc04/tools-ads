@@ -55,6 +55,7 @@ const pageMaps: Record<AppLocale, Map<string, MultiplicationTablePage>> = {
   'pt-br': new Map(multiplicationTablePages.map((page) => [page.slugPtBr, page])),
   en: new Map(multiplicationTablePages.map((page) => [page.slugEn, page])),
   es: new Map(multiplicationTablePages.map((page) => [page.slugEs, page])),
+  zh: new Map(multiplicationTablePages.map((page) => [page.slugEn, page])),
 };
 
 export const getMultiplicationTableResolutionBySlug = (
@@ -96,6 +97,7 @@ export const getMultiplicationTableLocalePathMap = (
   'pt-br': getMultiplicationTablePathByLocale(page, 'pt-br'),
   en: getMultiplicationTablePathByLocale(page, 'en'),
   es: getMultiplicationTablePathByLocale(page, 'es'),
+  zh: getMultiplicationTablePathByLocale(page, 'en'),
 });
 
 const buildKeywords = (locale: AppLocale, n: number): string[] => {
@@ -318,6 +320,12 @@ const buildFallbackContent = (locale: AppLocale): LocalizedMultiplicationTableCo
       intro: 'Consulta la tabla de multiplicar y practica.',
       seoTitle: 'Tabla de Multiplicar con Quiz',
       seoDescription: 'Consulta la tabla de multiplicar y practica con un quiz.',
+    },
+    zh: {
+      title: 'Multiplication Table Quiz',
+      intro: 'Look up the times table and practice multiplication.',
+      seoTitle: 'Multiplication Table Quiz',
+      seoDescription: 'Look up the times table and practice with a timed quiz.',
     },
   }[locale];
 

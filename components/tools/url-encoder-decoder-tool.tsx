@@ -81,6 +81,20 @@ const uiByLocale: Record<AppLocale, UrlUi> = {
     rebuildUrl: 'Reconstruir URL final',
     examplesTitle: 'Ejemplos listos',
   },
+  zh: {
+    localNote: 'Local encode/decode in browser. No login and no mandatory backend.',
+    sourceLabel: 'Original text or URL',
+    encodedHint: 'Input appears to be already encoded.',
+    encodeError: 'Failed to encode.',
+    decodeError: 'Failed to decode input.',
+    copied: 'Copied',
+    copyResult: 'Copy result',
+    swap: 'Swap source/result',
+    clear: 'Clear',
+    queryParamsTitle: 'Query params',
+    rebuildUrl: 'Rebuild URL',
+    examplesTitle: 'Ready examples',
+  },
 };
 
 const examples = [

@@ -47,6 +47,11 @@ const aliasSectionByLocale: Record<AppLocale, { title: string; description: stri
     description:
       'Atajos ligeros para variaciones de busqueda sobre CSV, ubicados al final para mantener enfoque.',
   },
+  zh: {
+    title: 'Related CSV search recommendations',
+    description:
+      'Light shortcuts for CSV search variations, kept at the bottom to preserve focus on the tool.',
+  },
 };
 
 export async function generateMetadata({

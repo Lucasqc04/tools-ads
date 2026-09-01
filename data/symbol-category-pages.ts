@@ -13,6 +13,7 @@ export type SymbolCategoryPage = {
   slugPtBr: string;
   slugEn: string;
   slugEs: string;
+  slugZh: string;
 };
 
 export type SymbolCategoryResolution = {
@@ -48,6 +49,9 @@ const toEnSlug = (category: SymbolCategory): string =>
 const toEsSlug = (category: SymbolCategory): string =>
   `simbolos-de-${category.slugWordByLocale.es}`;
 
+const toZhSlug = (category: SymbolCategory): string =>
+  `${category.slugWordByLocale.en}-symbols`;
+
 const buildPage = (category: SymbolCategory): SymbolCategoryPage => ({
   categoryId: category.id,
   categoryLabel: category.labelByLocale['pt-br'],
@@ -55,6 +59,7 @@ const buildPage = (category: SymbolCategory): SymbolCategoryPage => ({
   slugPtBr: toPtBrSlug(category),
   slugEn: toEnSlug(category),
   slugEs: toEsSlug(category),
+  slugZh: toZhSlug(category),
 });
 
 export const symbolCategoryPages: SymbolCategoryPage[] = symbolCategories.map(buildPage);
@@ -63,12 +68,13 @@ const pageMaps: Record<AppLocale, Map<string, SymbolCategoryPage>> = {
   'pt-br': new Map(symbolCategoryPages.map((page) => [page.slugPtBr, page])),
   en: new Map(symbolCategoryPages.map((page) => [page.slugEn, page])),
   es: new Map(symbolCategoryPages.map((page) => [page.slugEs, page])),
+  zh: new Map(symbolCategoryPages.map((page) => [page.slugZh, page])),
 };
 
 export const getSymbolCategoryResolutionBySlug = (
   slug: string,
 ): SymbolCategoryResolution | undefined => {
-  for (const sourceLocale of ['pt-br', 'en', 'es'] as const) {
+  for (const sourceLocale of ['pt-br', 'en', 'es', 'zh'] as const) {
     const page = pageMaps[sourceLocale].get(slug);
     if (page) {
       return { page, sourceLocale };
@@ -90,6 +96,10 @@ export const getSymbolCategorySlugByLocale = (
     return page.slugEs;
   }
 
+  if (locale === 'zh') {
+    return page.slugZh;
+  }
+
   return page.slugPtBr;
 };
 
@@ -104,6 +114,7 @@ export const getSymbolCategoryLocalePathMap = (
   'pt-br': getSymbolCategoryPathByLocale(page, 'pt-br'),
   en: getSymbolCategoryPathByLocale(page, 'en'),
   es: getSymbolCategoryPathByLocale(page, 'es'),
+  zh: getSymbolCategoryPathByLocale(page, 'zh'),
 });
 
 const toEnglishPhrase = (word: string): string =>
@@ -132,6 +143,16 @@ const buildKeywords = (locale: AppLocale, category: SymbolCategory): string[] =>
       `simbolo de ${word} para copiar`,
       `copiar y pegar simbolos de ${word}`,
       'simbolos para copiar y pegar',
+    ];
+  }
+
+  if (locale === 'zh') {
+    return [
+      `${word} 符号`,
+      `${word} 符号复制粘贴`,
+      `复制 ${word} 符号`,
+      `${word} 符号大全`,
+      '可复制符号大全',
     ];
   }
 
@@ -222,6 +243,42 @@ const buildContentBlocks = (locale: AppLocale, category: SymbolCategory): Conten
     ];
   }
 
+  if (locale === 'zh') {
+    return [
+      {
+        title: `可直接复制的${label}符号`,
+        paragraphs: [
+          `本页面会打开符号目录,并已默认选中「${label}」分类,包含 ${sampleSymbols} 等字符。点击任意符号即可立即复制,也可以使用顶部的搜索框查找其他分类。`,
+          '切换格式按钮可以复制原始字符、HTML 实体或 Unicode 编码点,还可以使用组合序列功能,将多个符号合并成一个字符串后一次性复制。',
+        ],
+      },
+      {
+        title: `${label}符号可以用在哪里`,
+        paragraphs: [
+          `${label}符号是普通的 Unicode 文本,因此适用于任何支持文本的地方:社交媒体简介和帖子、用户名、电子表格、演示文稿、文档,以及网站源代码。`,
+        ],
+        list: [
+          '点击一次即可复制单个符号。',
+          '在复制前先组合多个符号形成一个序列。',
+          '保存收藏,方便下次快速使用。',
+          '切换为 HTML 实体格式,用于网站代码。',
+        ],
+      },
+      {
+        title: '字体与设备兼容性',
+        paragraphs: [
+          `大多数${label}符号都属于标准 Unicode 字符集,在现代浏览器、手机和应用中显示效果一致。少数不常见的字符可能会因当前字体而显示不同——如果某个符号显示不正常,可以尝试同一分类中相近的替代符号。`,
+        ],
+      },
+      {
+        title: '本地处理,保护隐私',
+        paragraphs: [
+          '搜索、收藏、历史记录和复制操作都在你的浏览器本地完成。输入的文字或选中的符号都不会发送到服务器。',
+        ],
+      },
+    ];
+  }
+
   return [
     {
       title: `Símbolos de ${label.toLowerCase()} prontos para copiar`,
@@ -304,6 +361,27 @@ const buildFaq = (locale: AppLocale, category: SymbolCategory): FaqItem[] => {
     ];
   }
 
+  if (locale === 'zh') {
+    return [
+      {
+        question: `如何复制${label}符号?`,
+        answer: `在「${label}」分类中点击你想要的符号,它会自动复制到剪贴板。`,
+      },
+      {
+        question: '可以一次复制多个符号吗?',
+        answer: '可以。开启组合序列功能,按顺序点击符号,然后复制完整的序列。',
+      },
+      {
+        question: '可以复制 HTML 实体而不是字符本身吗?',
+        answer: '可以。使用格式切换按钮,在原始字符、HTML 实体和 Unicode 编码点之间切换。',
+      },
+      {
+        question: '我的数据会被发送到服务器吗?',
+        answer: '不会。搜索、收藏、历史记录和复制操作都在你的浏览器本地完成。',
+      },
+    ];
+  }
+
   return [
     {
       question: `Como copio um símbolo de ${label.toLowerCase()}?`,
@@ -343,6 +421,12 @@ const buildFallbackContent = (locale: AppLocale): LocalizedSymbolCategoryContent
       intro: 'Copia símbolos Unicode organizados por categoría.',
       seoTitle: 'Símbolos para Copiar y Pegar',
       seoDescription: 'Copia símbolos Unicode listos para pegar donde quieras.',
+    },
+    zh: {
+      title: '可复制符号大全',
+      intro: '按分类浏览并复制 Unicode 符号。',
+      seoTitle: '可复制符号大全',
+      seoDescription: '复制现成的 Unicode 符号,随时粘贴到任何地方。',
     },
   }[locale];
 
@@ -387,6 +471,18 @@ export const getLocalizedSymbolCategoryContent = (
     };
   }
 
+  if (locale === 'zh') {
+    return {
+      title: `${label}符号 - 复制粘贴`,
+      intro: `浏览并复制${label}符号,支持搜索、组合序列、收藏,并可复制为文本、HTML 实体或编码点。`,
+      seoTitle: `${label}符号 | 复制粘贴`,
+      seoDescription: `复制现成的${label}符号。支持搜索、组合序列、保存收藏,并可在文本、HTML 实体和编码点格式之间切换。`,
+      keywords,
+      contentBlocks: buildContentBlocks(locale, category),
+      faq: buildFaq(locale, category),
+    };
+  }
+
   return {
     title: `Símbolos de ${label} para Copiar e Colar`,
     intro: `Explore e copie símbolos de ${label.toLowerCase()} com busca, montador de sequência, favoritos e cópia como texto, entidade HTML ou codepoint.`,
@@ -414,7 +510,9 @@ export const toLocalizedSymbolCategoryLink = (
         ? `Browse and copy ${label.toLowerCase()} symbols.`
         : locale === 'es'
           ? `Explora y copia símbolos de ${label.toLowerCase()}.`
-          : `Explore e copie símbolos de ${label.toLowerCase()}.`,
+          : locale === 'zh'
+            ? `浏览并复制${label}符号。`
+            : `Explore e copie símbolos de ${label.toLowerCase()}.`,
   };
 };
 

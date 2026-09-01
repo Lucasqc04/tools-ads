@@ -420,6 +420,7 @@ export const getCryptoConversionLocalePathMap = (
   'pt-br': getCryptoConversionPathByLocale(page, 'pt-br'),
   en: getCryptoConversionPathByLocale(page, 'en'),
   es: getCryptoConversionPathByLocale(page, 'es'),
+  zh: getCryptoConversionPathByLocale(page, 'en'),
 });
 
 const buildLocalizedContentBlocks = (

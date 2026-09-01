@@ -136,6 +136,46 @@ const contentByLocale: Record<AppLocale, UnixTimestampLocaleContent> = {
       { question: 'Funciona localmente?', answer: 'Si. Corre en el navegador.' },
     ],
   },
+  zh: {
+    name: 'Unix Timestamp Converter',
+    shortDescription: 'Convert Unix timestamp to readable date and date to timestamp in seconds and milliseconds with UTC/local output.',
+    primaryKeyword: 'unix timestamp converter online',
+    secondaryKeywords: ['timestamp to date', 'date to timestamp', 'epoch converter', 'seconds milliseconds timestamp', 'jwt exp converter'],
+    searchIntent: 'Developers and analysts converting timestamps from APIs, logs, JWT, and databases.',
+    seoTitle: 'Unix Timestamp Converter Online | Date, UTC, Seconds, Milliseconds',
+    seoDescription: 'Convert epoch timestamps to local/UTC date and reverse convert date/time to Unix seconds and milliseconds.',
+    h1: 'Unix Timestamp Converter Online',
+    intro: 'Convert timestamps both ways with automatic seconds/ms detection, UTC/local formatting, and relative time insight.',
+    contentBlocks: [
+      {
+        title: 'Why Unix timestamps matter',
+        paragraphs: [
+          'Unix timestamp stores time as elapsed seconds since 1970-01-01 UTC. It is widely used in APIs, logs, webhooks, and auth systems.',
+          'This page helps you quickly inspect and convert timestamps for debugging and operational tasks.',
+        ],
+      },
+      {
+        title: 'Seconds vs milliseconds',
+        paragraphs: [
+          'A common bug source is mixing seconds and milliseconds. The converter auto-detects input and displays both forms.',
+          'You also get local date, UTC date, and past/future context to interpret values confidently.',
+        ],
+      },
+      {
+        title: 'Practical use cases',
+        paragraphs: [
+          'Use it for JWT exp/iat checks, API payload validation, database records, and event timeline analysis.',
+          'Timezone awareness is still important because systems may display local and UTC values differently.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Can it detect seconds vs milliseconds?', answer: 'Yes. Detection is automatic and both values are shown.' },
+      { question: 'Can I convert date/time back to timestamp?', answer: 'Yes. Use the reverse conversion section.' },
+      { question: 'Does it show UTC and local time?', answer: 'Yes. Both are displayed.' },
+      { question: 'Is conversion local?', answer: 'Yes. It runs in your browser.' },
+    ],
+  },
 };
 
 export const getUnixTimestampContent = (locale: AppLocale): UnixTimestampLocaleContent =>

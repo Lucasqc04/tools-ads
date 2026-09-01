@@ -60,6 +60,7 @@ const buildLocalePathMap = (path: string): Record<AppLocale, string> => ({
   'pt-br': localizePath('pt-br', path),
   en: localizePath('en', path),
   es: localizePath('es', path),
+  zh: localizePath('zh', path),
 });
 
 const createLocalizedEntries = (

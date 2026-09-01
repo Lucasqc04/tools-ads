@@ -21,6 +21,7 @@ const localeTagByAppLocale: Record<AppLocale, string> = {
   'pt-br': 'pt-BR',
   en: 'en-US',
   es: 'es-ES',
+  zh: 'zh-CN',
 };
 
 type Cs2CrosshairCodesToolProps = {

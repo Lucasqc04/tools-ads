@@ -15,6 +15,7 @@ export type NicknameSymbolPlatformPage = {
   slugPtBr: string;
   slugEn: string;
   slugEs: string;
+  slugZh: string;
 };
 
 export type NicknameSymbolPlatformResolution = {
@@ -47,6 +48,8 @@ const toEnSlug = (platformSlug: string): string => `${platformSlug}-name-symbols
 const toEsSlug = (platformSlug: string): string =>
   `simbolos-para-nombre-${platformSlug}`;
 
+const toZhSlug = (platformSlug: string): string => `${platformSlug}-name-symbols`;
+
 const buildPage = (platform: NicknameSymbolPlatform): NicknameSymbolPlatformPage => ({
   platformId: platform.id,
   platformSlug: platform.slug,
@@ -55,6 +58,7 @@ const buildPage = (platform: NicknameSymbolPlatform): NicknameSymbolPlatformPage
   slugPtBr: toPtBrSlug(platform.slug),
   slugEn: toEnSlug(platform.slug),
   slugEs: toEsSlug(platform.slug),
+  slugZh: toZhSlug(platform.slug),
 });
 
 export const nicknameSymbolPlatformPages: NicknameSymbolPlatformPage[] =
@@ -64,12 +68,13 @@ const pageMaps: Record<AppLocale, Map<string, NicknameSymbolPlatformPage>> = {
   'pt-br': new Map(nicknameSymbolPlatformPages.map((page) => [page.slugPtBr, page])),
   en: new Map(nicknameSymbolPlatformPages.map((page) => [page.slugEn, page])),
   es: new Map(nicknameSymbolPlatformPages.map((page) => [page.slugEs, page])),
+  zh: new Map(nicknameSymbolPlatformPages.map((page) => [page.slugZh, page])),
 };
 
 export const getNicknameSymbolPlatformResolutionBySlug = (
   slug: string,
 ): NicknameSymbolPlatformResolution | undefined => {
-  for (const sourceLocale of ['pt-br', 'en', 'es'] as const) {
+  for (const sourceLocale of ['pt-br', 'en', 'es', 'zh'] as const) {
     const page = pageMaps[sourceLocale].get(slug);
     if (page) {
       return { page, sourceLocale };
@@ -91,6 +96,10 @@ export const getNicknameSymbolPlatformSlugByLocale = (
     return page.slugEs;
   }
 
+  if (locale === 'zh') {
+    return page.slugZh;
+  }
+
   return page.slugPtBr;
 };
 
@@ -105,6 +114,7 @@ export const getNicknameSymbolPlatformLocalePathMap = (
   'pt-br': getNicknameSymbolPlatformPathByLocale(page, 'pt-br'),
   en: getNicknameSymbolPlatformPathByLocale(page, 'en'),
   es: getNicknameSymbolPlatformPathByLocale(page, 'es'),
+  zh: getNicknameSymbolPlatformPathByLocale(page, 'zh'),
 });
 
 const buildKeywords = (
@@ -130,6 +140,16 @@ const buildKeywords = (
       `generador de nickname ${name}`,
       `nombre gamer con simbolos ${name}`,
       'generador de simbolos para juegos',
+    ];
+  }
+
+  if (locale === 'zh') {
+    return [
+      `${name} 名字符号`,
+      `${name} 符号复制粘贴`,
+      `${name} 昵称生成器`,
+      `${name} 名字符号大全`,
+      '游戏昵称符号生成器',
     ];
   }
 
@@ -238,6 +258,45 @@ const buildContentBlocks = (
     ];
   }
 
+  if (locale === 'zh') {
+    return [
+      {
+        title: `${platform.name} 名字符号实时预览`,
+        paragraphs: [
+          `这个版本会打开游戏符号生成器,并已默认选中 ${platform.name}。输入一个基础名字,先对比推荐的边框:${frames}。${guidance}`,
+          `${context} 将光标放在名字中的任意位置,使用符号键盘自由组合,或者将左右边框与某种 Unicode 字体风格搭配。如果结果显得过于拥挤,现成列表中也提供更简短的备选方案。`,
+        ],
+      },
+      {
+        title: `如何为 ${platform.name} 打造清晰易读的昵称`,
+        paragraphs: [
+          '从一个简短的基础名字开始,每次只添加一种装饰。对比原始字母与小型大写或其他 Unicode 风格,再检查最终的字符总数。简短的文字符号通常比叠加多个表情符号或复杂边框更容易辨认。',
+          `复制完成的名字,粘贴到 ${platform.name} 真实的资料字段中测试后再确认修改。如果平台拒绝该名字或显示空白方框,可以改回原始字母样式、去掉边框的一侧,或选择更简约的预设。`,
+        ],
+        list: [
+          '输入一个具体的基础昵称,而不是随机生成一个身份。',
+          '先尝试平台预设,再分别自定义左右两侧。',
+          '在其他玩家能看到名字的地方检查可读性。',
+          '在保存修改前先保留一个纯文字的备份版本。',
+        ],
+      },
+      {
+        title: 'Unicode 支持为何会发生变化',
+        paragraphs: [
+          `生成结果是由 Unicode 字符组成的文本,而非图片。${platform.name}、其关联账号系统、设备以及当前使用的字体,都可能影响某个字形是否被接受和正确显示。在浏览器中可见的符号,进入游戏后仍可能变成方块或消失。`,
+          '因此,生成器提供的每个平台预设都只是一个实用的起点,而非保证。验证规则和字体可能会随更新而变化,最终的确认必须在游戏内完成。',
+        ],
+      },
+      {
+        title: '本地私密生成',
+        paragraphs: [
+          '名字、字体转换、符号选择、预览和变体列表都在你的浏览器本地生成。无需连接账号,也无需强制注册。',
+          `这是一个独立工具,与 ${platform.name} 及其发行商没有任何关联,也无法预订或检测名字是否可用。请遵守游戏社区规则,避免以误导性的方式冒充他人。`,
+        ],
+      },
+    ];
+  }
+
   return [
     {
       title: `Simbolos para nickname de ${platform.name} com preview`,
@@ -322,6 +381,27 @@ const buildFaq = (
     ];
   }
 
+  if (locale === 'zh') {
+    return [
+      {
+        question: `哪些符号在 ${platform.name} 的名字中可以使用?`,
+        answer: `${platform.guidanceByLocale.zh} 先从推荐的简短边框开始尝试,并在游戏内验证结果。`,
+      },
+      {
+        question: `这个生成器能检测 ${platform.name} 的名字是否可用吗?`,
+        answer: '不能。它只在本地创建变体,名字是否可用以及能否被接受取决于平台和你的账号。',
+      },
+      {
+        question: '为什么某个符号会显示为方框?',
+        answer: '当前游戏或设备的字体可能不包含该 Unicode 字形。可以尝试原始字母样式或更简单的文字符号。',
+      },
+      {
+        question: '输入的名字会被上传吗?',
+        answer: '不会。默认情况下,生成器和预览都在你的浏览器本地运行。',
+      },
+    ];
+  }
+
   return [
     {
       question: `Quais simbolos funcionam no nome de ${platform.name}?`,
@@ -364,6 +444,12 @@ const buildFallbackContent = (
       seoTitle: 'Generador de Simbolos para Nombres',
       seoDescription: 'Crea nombres gamer con simbolos Unicode listos para copiar.',
     },
+    zh: {
+      title: '游戏昵称符号生成器',
+      intro: '使用 Unicode 符号和边框创建游戏昵称。',
+      seoTitle: '游戏昵称符号生成器',
+      seoDescription: '使用现成的 Unicode 符号创建游戏昵称,一键复制。',
+    },
   }[locale];
 
   return { ...fallback, keywords: [], contentBlocks: [], faq: [] };
@@ -404,6 +490,18 @@ export const getLocalizedNicknameSymbolPlatformContent = (
     };
   }
 
+  if (locale === 'zh') {
+    return {
+      title: `${platform.name} 名字符号生成器`,
+      intro: `使用 Unicode 符号、推荐边框、多种字体风格、实时预览和现成变体创建 ${platform.name} 的名字。`,
+      seoTitle: `${platform.name} 名字符号 | 生成器与复制粘贴`,
+      seoDescription: `使用符号、边框和 Unicode 字体生成 ${platform.name} 的名字。预览字符数量,复制现成的昵称,并测试针对游戏优化的预设。`,
+      keywords,
+      contentBlocks: buildContentBlocks(locale, platform),
+      faq: buildFaq(locale, platform),
+    };
+  }
+
   return {
     title: `Simbolos para Nickname de ${platform.name}`,
     intro: `Crie nomes de ${platform.name} com simbolos Unicode, molduras recomendadas, letras estilizadas, preview e variacoes prontas para copiar.`,
@@ -431,7 +529,9 @@ export const toLocalizedNicknameSymbolPlatformLink = (
         ? 'Open the game preset.'
         : locale === 'es'
           ? 'Abre el preset del juego.'
-          : 'Abra o preset do jogo.'),
+          : locale === 'zh'
+            ? '打开该游戏的预设。'
+            : 'Abra o preset do jogo.'),
   };
 };
 

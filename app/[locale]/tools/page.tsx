@@ -53,6 +53,15 @@ const categoryLabels = {
     dev: 'Dev',
     documents: 'Documentos y Media',
   },
+  zh: {
+    all: '全部分类',
+    technical: '技术工具',
+    gaming: '游戏工具',
+    utility: '实用工具',
+    crypto: '加密货币',
+    dev: '开发工具',
+    documents: '文档与媒体',
+  },
 } satisfies Record<string, Record<ToolCategoryFilter, string>>;
 
 const gameLabels = {
@@ -74,6 +83,12 @@ const gameLabels = {
     gta: 'GTA',
     other: 'Otros juegos',
   },
+  zh: {
+    all: '全部游戏',
+    cs2: 'Counter-Strike 2',
+    gta: 'GTA',
+    other: '其他游戏',
+  },
 } satisfies Record<string, Record<ToolGameFilter, string>>;
 
 const sectionLabels = {
@@ -91,6 +106,11 @@ const sectionLabels = {
     technical: 'Herramientas tecnicas',
     gaming: 'Herramientas de juegos',
     utility: 'Herramientas utilitarias',
+  },
+  zh: {
+    technical: '技术工具',
+    gaming: '游戏工具',
+    utility: '实用工具',
   },
 } satisfies Record<string, { technical: string; gaming: string; utility: string }>;
 

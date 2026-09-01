@@ -339,6 +339,10 @@ const buildToolAliasPages = (): ToolAliasPage[] => {
           byLocale.es ??
           getLocalizedToolBySlug('es', tool.slug)?.primaryKeyword ??
           pickKeywordForLocale('es', byLocale, slug),
+        zh:
+          byLocale.zh ??
+          getLocalizedToolBySlug('zh', tool.slug)?.primaryKeyword ??
+          pickKeywordForLocale('zh', byLocale, slug),
       };
 
       const basePage: ToolAliasPage = {
@@ -456,6 +460,8 @@ const aliasIntroByLocale: Record<AppLocale, (keyword: string, toolName: string) 
     `Dedicated variation for ${keyword}. Use ${toolName} with the full workflow from the main tool, with no sign-up and no login.`,
   es: (keyword, toolName) =>
     `Variacion dedicada para ${keyword}. Usa ${toolName} con el flujo completo de la herramienta principal, sin registro y sin login.`,
+  zh: (keyword, toolName) =>
+    `专为${keyword}打造的页面。使用${toolName},体验与主工具完全相同的完整流程,无需注册,无需登录。`,
 };
 
 const aliasSearchIntentByLocale: Record<
@@ -468,6 +474,7 @@ const aliasSearchIntentByLocale: Record<
     `Users searching for ${keyword} and expecting to complete the task quickly with ${toolName}.`,
   es: (keyword, toolName) =>
     `Usuarios que buscan ${keyword} y esperan resolver la tarea rapido con ${toolName}.`,
+  zh: (keyword, toolName) => `搜索${keyword}并希望通过${toolName}快速完成任务的用户。`,
 };
 
 const aliasSeoDescriptionByLocale: Record<
@@ -480,6 +487,8 @@ const aliasSeoDescriptionByLocale: Record<
     `Use ${toolName} for ${keyword} online, free, with no sign-up, no login, and fast in-browser execution.`,
   es: (keyword, toolName) =>
     `Usa ${toolName} para ${keyword} online, gratis, sin registro, sin login y con ejecucion rapida en el navegador.`,
+  zh: (keyword, toolName) =>
+    `使用${toolName}在线完成${keyword},免费、无需注册、无需登录,直接在浏览器中快速运行。`,
 };
 
 export const getLocalizedToolAliasContent = (

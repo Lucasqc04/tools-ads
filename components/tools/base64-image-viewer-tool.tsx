@@ -163,6 +163,46 @@ const uiByLocale: Record<AppLocale, ViewerUi> = {
       tga: 'TGA',
     },
   },
+  zh: {
+    title: 'Base64 image viewer',
+    intro:
+      'Paste Base64 and preview the image instantly. Then download it in multiple formats.',
+    inputLabel: 'Image Base64',
+    inputPlaceholder: 'Paste a data URL or raw image Base64 here',
+    fallbackMimeLabel: 'Fallback MIME for raw Base64',
+    fallbackMimeHint:
+      'When content has no data:image prefix, this type is used for image rendering.',
+    outputFormatLabel: 'Download format',
+    outputFormatOriginal: 'Original decoded file',
+    viewImage: 'View image',
+    previewTitle: 'Image preview',
+    previewEmpty: 'Paste a valid Base64 string to preview image here.',
+    clear: 'Clear',
+    download: 'Download image',
+    downloading: 'Downloading...',
+    localNote:
+      'Decoding and preview run locally in your browser. Base64 input is not sent to a server by default.',
+    invalidPrefix: 'Error:',
+    mimeTypes: [
+      { value: 'image/png', label: 'PNG (image/png)' },
+      { value: 'image/jpeg', label: 'JPEG (image/jpeg)' },
+      { value: 'image/webp', label: 'WEBP (image/webp)' },
+      { value: 'image/gif', label: 'GIF (image/gif)' },
+      { value: 'image/svg+xml', label: 'SVG (image/svg+xml)' },
+    ],
+    formatLabels: {
+      png: 'PNG',
+      jpeg: 'JPEG',
+      webp: 'WEBP',
+      avif: 'AVIF',
+      gif: 'GIF',
+      bmp: 'BMP',
+      tiff: 'TIFF',
+      ico: 'ICO',
+      svg: 'SVG',
+      tga: 'TGA',
+    },
+  },
 };
 
 export function Base64ImageViewerTool({ locale = 'pt-br' }: Base64ImageViewerToolProps) {

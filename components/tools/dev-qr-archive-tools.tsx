@@ -117,6 +117,20 @@ const scannerUi = {
     empty: 'El contenido decodificado aparece aqui.',
     copied: 'Copiado.',
   },
+  zh: {
+    title: 'QR Code scanner and decoder',
+    intro: 'Read QR Codes from camera or image, copy content, and export the result.',
+    image: 'Image with QR Code',
+    startCamera: 'Open camera',
+    stopCamera: 'Stop camera',
+    scanImage: 'Scan image',
+    copy: 'Copy result',
+    exportTxt: 'TXT',
+    exportJson: 'JSON',
+    result: 'Result',
+    empty: 'Decoded content appears here.',
+    copied: 'Copied.',
+  },
 } satisfies Record<AppLocale, Record<string, string>>;
 
 export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLocale }>) {
@@ -340,6 +354,33 @@ const payloadUi = {
     openQrCustomizer: 'Abrir Generador de QR Code',
     copied: 'Copiado.',
   },
+  zh: {
+    title: 'Wi-Fi, vCard, and event QR generator',
+    intro: 'Build standard QR payloads for Wi-Fi, vCard contacts, and ICS calendar events.',
+    mode: 'Type',
+    wifi: 'Wi-Fi',
+    vcard: 'vCard',
+    event: 'Event',
+    ssid: 'Network name (SSID)',
+    password: 'Password',
+    noPassword: 'No password',
+    hiddenSsid: 'Hidden SSID',
+    name: 'Name',
+    company: 'Company',
+    phone: 'Phone',
+    email: 'Email',
+    url: 'URL',
+    summary: 'Title',
+    location: 'Location',
+    generate: 'Generate QR',
+    copyPayload: 'Copy payload',
+    downloadPng: 'PNG',
+    downloadSvg: 'SVG',
+    payload: 'Payload',
+    qrCustomizerTip: 'Tip: to customize the QR Code with logo, colors, corners, and formats, copy the payload and open the QR Code Generator.',
+    openQrCustomizer: 'Open QR Code Generator',
+    copied: 'Copied.',
+  },
 } satisfies Record<AppLocale, Record<string, string>>;
 
 type QrPayloadMode = 'wifi' | 'vcard' | 'event';
@@ -526,6 +567,16 @@ const jsonUi = {
     copied: 'Copiado.',
     invalid: 'JSON invalido.',
   },
+  zh: {
+    title: 'JSON to TypeScript, Zod, and JSON Schema',
+    intro: 'Paste real JSON and generate TypeScript types, Zod schema, and JSON Schema exports.',
+    root: 'Root name',
+    generate: 'Generate code',
+    copy: 'Copy tab',
+    exportAll: 'Export ZIP',
+    copied: 'Copied.',
+    invalid: 'Invalid JSON.',
+  },
 } satisfies Record<AppLocale, Record<string, string>>;
 
 export function JsonTypeSchemaGeneratorTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLocale }>) {
@@ -642,6 +693,17 @@ const cronUi = {
     next: 'Proximas ejecuciones',
     localized: 'Traduccion en espanol',
     copied: 'Copiado.',
+  },
+  zh: {
+    title: 'Cron generator and explainer',
+    intro: 'Build cron expressions, read a human explanation, and preview next runs with timezone.',
+    expression: 'Expression',
+    timezone: 'Timezone',
+    explain: 'Explain',
+    copy: 'Copy',
+    next: 'Next runs',
+    localized: 'Localized explanation',
+    copied: 'Copied.',
   },
 } satisfies Record<AppLocale, Record<string, string>>;
 
@@ -776,6 +838,21 @@ const archiveUi = {
     directory: 'Seleccionar carpeta',
     selectedFiles: 'archivos seleccionados',
     ready: 'Operacion concluida.',
+  },
+  zh: {
+    title: 'Gzip, Deflate, and password ZIP',
+    intro: 'Compress/decompress files with gzip/deflate and package files or folders into optionally encrypted ZIP.',
+    files: 'Files',
+    password: 'ZIP password (optional)',
+    gzip: 'Gzip',
+    gunzip: 'Decompress gzip',
+    deflate: 'Deflate',
+    inflate: 'Inflate',
+    zip: 'Create ZIP',
+    unzip: 'Extract ZIP',
+    directory: 'Select folder',
+    selectedFiles: 'selected files',
+    ready: 'Operation finished.',
   },
 } satisfies Record<AppLocale, Record<string, string>>;
 
@@ -961,6 +1038,17 @@ const sqlUi = {
     dialect: 'Dialecto',
     keywordCase: 'Keywords',
     copied: 'Copiado.',
+  },
+  zh: {
+    title: 'SQL Formatter and Minifier',
+    intro: 'Format SQL by dialect, normalize keyword case, minify, and export queries.',
+    format: 'Format SQL',
+    minify: 'Minify',
+    copy: 'Copy output',
+    exportSql: 'Export .sql',
+    dialect: 'Dialect',
+    keywordCase: 'Keywords',
+    copied: 'Copied.',
   },
 } satisfies Record<AppLocale, Record<string, string>>;
 

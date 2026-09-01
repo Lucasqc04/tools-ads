@@ -16,6 +16,7 @@ export const gtaToolSlugByLocale: Record<AppLocale, string> = {
   'pt-br': 'codigos-gta',
   en: 'gta-cheat-codes',
   es: 'codigos-gta',
+  zh: 'gta-cheat-codes',
 };
 
 export const gtaToolRouteSlugs = ['codigos-gta', 'gta-cheat-codes'] as const;
@@ -29,6 +30,7 @@ const gamePages: GtaSeoPage[] = [
       'pt-br': 'codigos-gta-san-andreas',
       en: 'gta-san-andreas-cheats',
       es: 'codigos-gta-san-andreas',
+      zh: 'gta-san-andreas-cheats',
     },
   },
   {
@@ -39,6 +41,7 @@ const gamePages: GtaSeoPage[] = [
       'pt-br': 'codigos-gta-5',
       en: 'gta-5-cheat-codes',
       es: 'codigos-gta-5',
+      zh: 'gta-5-cheat-codes',
     },
   },
   {
@@ -49,6 +52,7 @@ const gamePages: GtaSeoPage[] = [
       'pt-br': 'codigos-gta-4',
       en: 'gta-4-cheats',
       es: 'codigos-gta-4',
+      zh: 'gta-4-cheats',
     },
   },
   {
@@ -59,6 +63,7 @@ const gamePages: GtaSeoPage[] = [
       'pt-br': 'codigos-gta-3',
       en: 'gta-3-cheats',
       es: 'codigos-gta-3',
+      zh: 'gta-3-cheats',
     },
   },
   {
@@ -69,6 +74,7 @@ const gamePages: GtaSeoPage[] = [
       'pt-br': 'codigos-gta-vice-city',
       en: 'gta-vice-city-cheats',
       es: 'codigos-gta-vice-city',
+      zh: 'gta-vice-city-cheats',
     },
   },
 ];
@@ -82,6 +88,7 @@ const intentPages: GtaSeoPage[] = [
       'pt-br': 'codigos-carros-gta',
       en: 'gta-car-cheats',
       es: 'codigos-coches-gta',
+      zh: 'gta-car-cheats',
     },
   },
   {
@@ -92,6 +99,7 @@ const intentPages: GtaSeoPage[] = [
       'pt-br': 'codigos-armas-gta',
       en: 'gta-weapon-cheats',
       es: 'codigos-armas-gta',
+      zh: 'gta-weapon-cheats',
     },
   },
   {
@@ -102,6 +110,7 @@ const intentPages: GtaSeoPage[] = [
       'pt-br': 'codigos-policia-gta',
       en: 'gta-police-cheats',
       es: 'codigos-policia-gta',
+      zh: 'gta-police-cheats',
     },
   },
   {
@@ -112,6 +121,7 @@ const intentPages: GtaSeoPage[] = [
       'pt-br': 'codigos-tanque-gta',
       en: 'gta-tank-cheats',
       es: 'codigos-tanque-gta',
+      zh: 'gta-tank-cheats',
     },
   },
   {
@@ -122,6 +132,7 @@ const intentPages: GtaSeoPage[] = [
       'pt-br': 'codigos-helicoptero-gta',
       en: 'gta-helicopter-cheats',
       es: 'codigos-helicoptero-gta',
+      zh: 'gta-helicopter-cheats',
     },
   },
   {
@@ -132,6 +143,7 @@ const intentPages: GtaSeoPage[] = [
       'pt-br': 'codigos-clima-gta',
       en: 'gta-weather-cheats',
       es: 'codigos-clima-gta',
+      zh: 'gta-weather-cheats',
     },
   },
   {
@@ -142,6 +154,7 @@ const intentPages: GtaSeoPage[] = [
       'pt-br': 'codigos-vida-gta',
       en: 'gta-health-cheats',
       es: 'codigos-vida-gta',
+      zh: 'gta-health-cheats',
     },
   },
   {
@@ -152,6 +165,7 @@ const intentPages: GtaSeoPage[] = [
       'pt-br': 'codigos-dinheiro-gta',
       en: 'gta-money-cheats',
       es: 'codigos-dinero-gta',
+      zh: 'gta-money-cheats',
     },
   },
 ];
@@ -174,6 +188,7 @@ export const getGtaToolLocalePathMap = (): Record<AppLocale, string> => ({
   'pt-br': getGtaToolPathForLocale('pt-br'),
   en: getGtaToolPathForLocale('en'),
   es: getGtaToolPathForLocale('es'),
+  zh: getGtaToolPathForLocale('en'),
 });
 
 export const getGtaSeoPageBySlug = (slug: string): GtaSeoPage | undefined => bySlug.get(slug);
@@ -185,6 +200,7 @@ export const getGtaSeoLocalePathMap = (page: GtaSeoPage): Record<AppLocale, stri
   'pt-br': getGtaSeoPathByLocale(page, 'pt-br'),
   en: getGtaSeoPathByLocale(page, 'en'),
   es: getGtaSeoPathByLocale(page, 'es'),
+  zh: getGtaSeoPathByLocale(page, 'en'),
 });
 
 export const getGtaSeoStaticParamsByLocale = (
@@ -254,6 +270,26 @@ const categoryLabelByLocale: Record<AppLocale, Record<GtaCheatCategory, string>>
     equipamento: 'equipo',
     player: 'jugador',
     musica: 'musica',
+    episodes: 'episodes',
+  },
+  zh: {
+    armas: 'weapons',
+    'vida-armadura': 'health and armor',
+    policia: 'police and wanted',
+    veiculos: 'vehicles',
+    'spawn-veiculos': 'vehicle spawns',
+    clima: 'weather',
+    mundo: 'world effects',
+    npc: 'NPC and pedestrian cheats',
+    skins: 'skins and character',
+    tema: 'themes',
+    movimento: 'movement',
+    combate: 'combat',
+    dinheiro: 'money',
+    habilidade: 'abilities',
+    equipamento: 'equipment',
+    player: 'player',
+    musica: 'music',
     episodes: 'episodes',
   },
 };

@@ -1329,6 +1329,10 @@ const genderLabelsByLocale: Record<AppLocale, Record<FakeGender, string>> = {
     male: 'Masculino',
     female: 'Femenino',
   },
+  zh: {
+    male: 'Male',
+    female: 'Female',
+  },
 };
 
 const zodiacByLocale: Record<AppLocale, Record<string, string>> = {
@@ -1374,6 +1378,20 @@ const zodiacByLocale: Record<AppLocale, Record<string, string>> = {
     Aquario: 'Acuario',
     Peixes: 'Piscis',
   },
+  zh: {
+    Aries: 'Aries',
+    Touro: 'Taurus',
+    Gemeos: 'Gemini',
+    Cancer: 'Cancer',
+    Leao: 'Leo',
+    Virgem: 'Virgo',
+    Libra: 'Libra',
+    Escorpiao: 'Scorpio',
+    Sagitario: 'Sagittarius',
+    Capricornio: 'Capricorn',
+    Aquario: 'Aquarius',
+    Peixes: 'Pisces',
+  },
 };
 
 const favoriteColorByLocale: Record<AppLocale, Record<string, string>> = {
@@ -1418,6 +1436,20 @@ const favoriteColorByLocale: Record<AppLocale, Record<string, string>> = {
     Turquesa: 'Turquesa',
     Rosa: 'Rosa',
     Marrom: 'Marron',
+  },
+  zh: {
+    Azul: 'Blue',
+    Verde: 'Green',
+    Vermelho: 'Red',
+    Preto: 'Black',
+    Branco: 'White',
+    Cinza: 'Gray',
+    Laranja: 'Orange',
+    Amarelo: 'Yellow',
+    Roxo: 'Purple',
+    Turquesa: 'Turquoise',
+    Rosa: 'Pink',
+    Marrom: 'Brown',
   },
 };
 
@@ -1489,6 +1521,29 @@ const fieldLabelMapByLocale: Record<AppLocale, Record<LocalizedFieldId, string>>
     weightKg: 'Peso',
     favoriteColor: 'Color favorito',
     cep: 'Codigo postal',
+    ddd: 'DDD',
+  },
+  zh: {
+    fullName: 'Full name',
+    gender: 'Gender',
+    age: 'Age',
+    birthDate: 'Birth date',
+    zodiacSign: 'Zodiac sign',
+    cpf: 'CPF',
+    rg: 'RG',
+    email: 'Email',
+    mobilePhone: 'Mobile phone',
+    landlinePhone: 'Landline phone',
+    state: 'State/City',
+    address: 'Address',
+    motherName: 'Mother name',
+    fatherName: 'Father name',
+    password: 'Password',
+    bloodType: 'Blood type',
+    heightCm: 'Height',
+    weightKg: 'Weight',
+    favoriteColor: 'Favorite color',
+    cep: 'ZIP code',
     ddd: 'DDD',
   },
 };
@@ -1594,6 +1649,7 @@ export const buildFakePeopleOutput = (
     'pt-br': 'Pessoa',
     en: 'Person',
     es: 'Persona',
+    zh: 'Person',
   };
 
   const text = normalized

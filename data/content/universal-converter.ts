@@ -243,6 +243,75 @@ const contentByLocale: Record<AppLocale, UniversalConverterLocaleContent> = {
       { question: 'Funciona en celular?', answer: 'Si. La interfaz es responsiva y mobile-first.' },
     ],
   },
+  zh: {
+    name: 'Universal Converter for Text, Codes, Hashes, Ciphers, and Bases',
+    shortDescription:
+      'Single conversion hub for text, numbers, hashes, ciphers, and technical formats with validation, presets, batch mode, and local processing.',
+    primaryKeyword: 'universal text code hash cipher base converter',
+    secondaryKeywords: [
+      'universal converter online',
+      'text to binary',
+      'binary to text',
+      'text to sha256',
+      'text to md5',
+      'base converter',
+      'caesar cipher decoder',
+      'text to morse',
+      'url encode decode',
+    ],
+    searchIntent:
+      'Technical users and students looking for a single conversion hub with valid mappings and clear input validation.',
+    seoTitle: 'Universal Converter for Text, Code, Hash, and Ciphers Online',
+    seoDescription:
+      'Convert text, numbers, hashes, classic ciphers, and numeric bases in one place with presets, search, and local browser processing.',
+    h1: 'Universal Converter for Text, Code, Hash, and Ciphers',
+    intro:
+      'Paste any text, number, or code, choose source and target format, and get fast validated output with copy actions.',
+    contentBlocks: [
+      {
+        title: 'A practical conversion hub',
+        paragraphs: [
+          'This tool is built on a valid conversion matrix instead of fake all-to-all promises. Only meaningful and technically valid paths are enabled.',
+          'You can convert text, numeric bases, classic ciphers, hashes, and developer-friendly encodings in one clean interface.',
+        ],
+      },
+      {
+        title: 'Conversion vs encoding vs cipher vs hash',
+        paragraphs: [
+          'Conversion changes representation between compatible values. Encoding prepares data for transport. Classic ciphers transform text for educational workflows.',
+          'Hashes such as SHA-256 and MD5 are one-way fingerprints. They are intentionally not reversible.',
+        ],
+      },
+      {
+        title: 'Presets, multi-output, and batch mode',
+        paragraphs: [
+          'Presets let you generate multiple outputs at once, such as all hashes for a single input.',
+          'Batch mode converts line by line, which is useful for logs, fixture generation, and repetitive technical tasks.',
+        ],
+      },
+      {
+        title: 'Detection and pipeline',
+        paragraphs: [
+          'Input detection suggests likely formats like binary, hex, Morse, URL encoded, and hash-like strings without forcing automatic changes.',
+          'Pipeline mode supports chained conversions with intermediate steps for advanced workflows.',
+        ],
+      },
+      {
+        title: 'Privacy and limits',
+        paragraphs: [
+          'Whenever possible, processing is done in-browser. Some educational ciphers are not modern security solutions.',
+          'Dedicated tools remain available for specific domains to avoid weak duplicated experiences.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Is processing local?', answer: 'Yes, whenever algorithm support is available in-browser.' },
+      { question: 'Can I convert everything to everything?', answer: 'No. Only valid conversion pairs are enabled.' },
+      { question: 'Why can not SHA-256 be reversed?', answer: 'Hashes are one-way by design and not direct reversible transforms.' },
+      { question: 'Can I convert multiple values at once?', answer: 'Yes. Batch mode supports line-by-line conversion.' },
+      { question: 'Does it work on mobile?', answer: 'Yes. The interface is mobile-first and responsive.' },
+    ],
+  },
 };
 
 export const getUniversalConverterContent = (

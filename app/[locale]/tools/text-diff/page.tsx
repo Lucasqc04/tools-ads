@@ -36,6 +36,10 @@ const aliasSectionByLocale: Record<AppLocale, { title: string; description: stri
     title: 'Recomendaciones de busqueda relacionadas',
     description: 'Atajos para intenciones relacionadas como diff online, comparar listas y contratos.',
   },
+  zh: {
+    title: 'Related search recommendations',
+    description: 'Shortcuts for related intents such as online diff, list compare, and contract compare.',
+  },
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

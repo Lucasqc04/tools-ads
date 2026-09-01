@@ -50,6 +50,11 @@ const conversionSectionByLocale: Record<
     description:
       'Atajos listos entre más de 20 formatos, incluyendo PNG a JPEG, HEIC a JPG, TIFF a PNG y PDF a imagen.',
   },
+  zh: {
+    title: 'Popular image and PDF conversions',
+    description:
+      'Ready shortcuts across 20+ formats, including PNG to JPEG, HEIC to JPG, TIFF to PNG, and PDF to image.',
+  },
 };
 
 export async function generateMetadata({

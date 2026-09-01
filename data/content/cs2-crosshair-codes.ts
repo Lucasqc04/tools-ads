@@ -398,10 +398,127 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
   },
 };
 
+const zhContent: Cs2CrosshairCodesLocaleContent = {
+  name: 'CS2 职业选手准星代码',
+  shortDescription:
+    '浏览职业选手的 CS2 和 CS:GO 准星代码,按战队/国家/位置筛选,一键复制。',
+  primaryKeyword: 'cs2 准星代码',
+  secondaryKeywords: [
+    'csgo 准星代码',
+    'cs2 职业选手准星',
+    '最佳 cs2 准星代码',
+    'yuurih 准星代码',
+    'donk 准星代码',
+  ],
+  searchIntent:
+    '希望快速复制职业选手准星代码并根据自己打法调整的 Counter-Strike 玩家。',
+  seoTitle: '职业选手 CS2 准星代码 | 复制 CSGO 准星代码',
+  seoDescription:
+    '查找并复制职业选手的 CS2/CS:GO 准星代码,按位置、战队和国家筛选,几秒内导入你的准星。',
+  h1: '职业选手的 CS2 与 CS:GO 准星代码',
+  intro:
+    '复制 Counter-Strike 2 职业选手的准星代码,按玩家姓名搜索,按战队/国家/位置筛选,并直接在游戏中导入。',
+  contentBlocks: [
+    {
+      title: '如何高效使用这个 CS2 准星数据库',
+      paragraphs: [
+        '本页面专为速度而设计。你无需在过时的截图之间来回切换,只需按玩家姓名搜索、按位置筛选,并在同一张卡片中复制准星代码。',
+        '很多玩家仍然习惯搜索 CS:GO 相关的准星词汇,这很正常。导入格式仍然沿用 CSGO 风格的代码,所以这类旧有搜索习惯在当前的 CS2 搜索中依然常见。',
+        '导入之后,请根据你的显示器和分辨率调整粗细、大小和颜色等细节。职业选手的代码是一个不错的起点,但最终的准星应该符合你自己的视觉舒适度。',
+      ],
+    },
+    {
+      title: '什么时候复制职业选手准星真的有用',
+      paragraphs: [
+        '当你想减少反复试错的时间时,复制职业选手的配置会很有帮助。你可以从一套经过高水平竞技验证的基础配置出发,再进行细节微调。',
+        '在更换位置、地图或画面设置时也很有用。例如 AWP 手和进攻型步枪手在高压回合中往往偏好不同的视觉辨识度。',
+      ],
+      list: [
+        '在最终确定前,先在多张地图上测试每个准星。',
+        '不要每场比赛都更换准星,以免破坏肌肉记忆的一致性。',
+        '将你喜欢的预设保存到配置文件中,方便快速切换。',
+      ],
+    },
+    {
+      title: '重要限制与更新说明',
+      paragraphs: [
+        '职业选手可能因为赛程、更换显示器或个人偏好而频繁调整设置。因此每张卡片都会显示最后检查日期和信息可信度。',
+        '当某个代码尚未被完全验证时,我们会将其标记为中等或较低可信度。这类信息请当作初步参考,并结合其他可靠来源加以确认。',
+        '准星代码有助于提升清晰度,但实际的瞄准表现仍然取决于走位、准星预瞄习惯、压枪控制和高压下的判断力。',
+      ],
+    },
+    {
+      title: '隐私与快速使用体验',
+      paragraphs: [
+        '搜索、筛选和复制操作都在你的浏览器中完成。你无需注册账号即可使用本工具。',
+        '页面设计轻量,在手机和电脑上都能快速打开,方便你复制代码、进入 CS2 并继续训练,不会有多余的操作阻碍。',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: '如何在 CS2 中导入准星代码?',
+      answer:
+        '打开 Counter-Strike 2,进入 Settings > Game > Crosshair,选择导入/分享选项,粘贴 CSGO 风格的代码并应用。',
+    },
+    {
+      question: '这些代码也适用于搜索 CS:GO 准星的玩家吗?',
+      answer: '是的。尽管当前游戏是 CS2,代码格式依然兼容已知的 CSGO 准星风格。',
+    },
+    {
+      question: '职业选手的准星设置会经常变化吗?',
+      answer: '会的。职业选手的设置可能随时间调整,请始终查看每张卡片上显示的最后更新日期和可信度。',
+    },
+    {
+      question: '复制职业选手的代码会立刻提升我的瞄准水平吗?',
+      answer: '不会立刻提升。它能帮你从一个不错的基础开始,但真正的进步来自系统训练和扎实的基本功。',
+    },
+    {
+      question: '这个工具免费吗?',
+      answer: '是的,完全免费,且无需注册账号。',
+    },
+  ],
+  ui: {
+    searchLabel: '搜索选手',
+    searchPlaceholder: '例如:yuurih、donk、ZywOo',
+    countryLabel: '国家',
+    countryAll: '全部国家',
+    teamLabel: '战队',
+    teamAll: '全部战队',
+    roleLabel: '位置',
+    roleAll: '全部位置',
+    withCodeOnly: '仅显示已确认准星代码的选手',
+    resultCount: '位选手',
+    emptyState: '当前筛选条件下未找到选手。',
+    copyCode: '复制代码',
+    copiedCode: '代码已复制',
+    noCode: '该准星代码尚未得到充分确认。',
+    importTitle: '如何在 CS2 中导入',
+    importSteps: [
+      '打开 CS2 并进入 Settings。',
+      '进入 Game > Crosshair。',
+      '点击 Share or Import。',
+      '粘贴代码并确认。',
+    ],
+    updatedLabel: '最后检查时间',
+    confidenceLabel: '可信度',
+    confidenceValues: {
+      high: '高',
+      medium: '中',
+      low: '低',
+    },
+    cautionTitle: '重要提示',
+    cautionText:
+      '职业选手可能会随时间调整设置。当有新的可靠信息出现时,我们会更新此页面。',
+    sourceLabel: '来源',
+  },
+};
+
 const contentByLocale: Record<AppLocale, Cs2CrosshairCodesLocaleContent> = {
   'pt-br': ptBrContent,
   en: enContent,
   es: esContent,
+  zh: zhContent,
 };
 
 export const getCs2CrosshairCodesContent = (

@@ -117,6 +117,31 @@ const uiByLocale: Record<AppLocale, PasswordUi> = {
       'La contrasena se genera localmente en tu navegador y no se envia al servidor por defecto.',
     copyError: 'No fue posible copiar ahora. Intentalo de nuevo.',
   },
+  zh: {
+    title: 'Strong password generator',
+    intro: 'Create secure passwords automatically with full length and character control.',
+    lengthLabel: 'Password length',
+    lengthHint:
+      'No fixed limit in this field. Very large lengths may take longer depending on your device.',
+    sliderLabel: 'Quick slider control (1 to 200)',
+    sliderHint:
+      'Use the slider for quick changes. For values above 200, use the numeric input.',
+    usedCharsTitle: 'Used characters',
+    uppercase: 'Uppercase letters',
+    lowercase: 'Lowercase letters',
+    numbers: 'Numbers',
+    symbols: 'Symbols',
+    generatedPasswordTitle: 'Generated password',
+    emptyPassword: 'Select at least one character type to generate a password.',
+    noneOptionError: 'Select at least one character option.',
+    copy: 'Copy',
+    copied: 'Copied',
+    regenerate: 'Regenerate',
+    clear: 'Clear',
+    processingNote:
+      'The password is generated locally in your browser and is not sent to a server by default.',
+    copyError: 'Could not copy right now. Please try again.',
+  },
 };
 
 const parseLength = (rawValue: string): number => {

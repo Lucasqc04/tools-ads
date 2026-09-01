@@ -290,6 +290,56 @@ const uiByLocale: Record<AppLocale, HtmlViewerUi> = {
     themeLight: 'Claro',
     themeDark: 'Oscuro',
   },
+  zh: {
+    title: 'HTML Editor with Live Preview, CSS, JS, and Console',
+    intro:
+      'Edit HTML, CSS, and JavaScript with syntax highlighting, line numbers, sandbox preview, captured console, and one-click .html export.',
+    editorTitle: 'Editor',
+    htmlLabel: 'HTML',
+    cssLabel: 'CSS',
+    jsLabel: 'JavaScript',
+    htmlPlaceholder: '<main><h1>Hello world</h1></main>',
+    cssPlaceholder: 'body { font-family: sans-serif; }',
+    jsPlaceholder: "console.log('Preview ready');",
+    run: 'Run',
+    autoRun: 'Auto-run',
+    format: 'Format',
+    clear: 'Clear',
+    copyDocument: 'Copy final HTML',
+    copied: 'Copied',
+    download: 'Download .html',
+    templatesLabel: 'Quick template',
+    templatesHint: 'Start from a template and adjust the code in the editor.',
+    filesLabel: 'Import files',
+    filesHint: 'Load .html, .css, and .js files to populate the editor.',
+    htmlEntryLabel: 'Main HTML',
+    unsupportedFilesWarning:
+      'Some files were ignored because their extension is not supported. Use .html, .css, or .js only.',
+    noHtmlFileWarning:
+      'No HTML file was found. Include at least one .html file to build the preview.',
+    fileReadError: 'Could not read one or more selected files. Please try again.',
+    loadedFilesTitle: 'Loaded files',
+    previewTitle: 'Preview',
+    previewHint: 'The iframe runs CSS and JS in a sandbox and forwards logs to the console below.',
+    desktop: 'Desktop',
+    tablet: 'Tablet',
+    mobile: 'Mobile',
+    fullscreen: 'Fullscreen',
+    editorFullscreen: 'Editor fullscreen',
+    exitFullscreen: 'Exit fullscreen',
+    openNewTab: 'New tab',
+    consoleTitle: 'Console',
+    consoleHint: 'Logs, warnings, errors, and rejected promises appear here.',
+    clearConsole: 'Clear console',
+    emptyConsole: 'No logs yet. Run the preview or use console.log in JS.',
+    issuesTitle: 'Checks',
+    noIssues: 'No simple issues found.',
+    securityHint:
+      'Security tip: run trusted code only. Scripts execute inside the sandboxed preview.',
+    emptyPreviewHint: 'Add HTML content to render preview.',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+  },
 };
 
 const templateLabels: Record<AppLocale, Record<TemplateId, Pick<HtmlTemplate, 'label' | 'description'>>> = {
@@ -316,6 +366,14 @@ const templateLabels: Record<AppLocale, Record<TemplateId, Pick<HtmlTemplate, 'l
     form: { label: 'Formulario', description: 'Formulario con validacion JavaScript simple.' },
     table: { label: 'Tabla responsiva', description: 'Tabla con estilos y ordenacion basica.' },
     blank: { label: 'En blanco', description: 'Empieza desde cero.' },
+  },
+  zh: {
+    starter: { label: 'Starter component', description: 'Simple page with a button and interaction.' },
+    landing: { label: 'Landing section', description: 'Hero with CTA, benefits, and proof card.' },
+    email: { label: 'HTML email', description: 'Email-friendly table structure.' },
+    form: { label: 'Form demo', description: 'Form with simple JavaScript validation.' },
+    table: { label: 'Responsive table', description: 'Styled table with basic sorting.' },
+    blank: { label: 'Blank', description: 'Start from zero.' },
   },
 };
 
@@ -895,6 +953,7 @@ form?.addEventListener('submit', (event) => {
 });`,
     },
   },
+  zh: templateCode,
 };
 
 const getTemplates = (locale: AppLocale): HtmlTemplate[] =>

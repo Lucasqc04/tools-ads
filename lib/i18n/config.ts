@@ -1,4 +1,4 @@
-export const locales = ['pt-br', 'en', 'es'] as const;
+export const locales = ['pt-br', 'en', 'es', 'zh'] as const;
 
 export type AppLocale = (typeof locales)[number];
 
@@ -34,6 +34,12 @@ export const localeMetadata: Record<
     openGraphLocale: 'es_ES',
     label: 'Español',
   },
+  zh: {
+    htmlLang: 'zh-CN',
+    hreflang: 'zh',
+    openGraphLocale: 'zh_CN',
+    label: '中文',
+  },
 };
 
 export const isValidLocale = (value: string): value is AppLocale =>
@@ -52,6 +58,10 @@ export const normalizeLocaleToken = (value: string): AppLocale | null => {
 
   if (normalized.startsWith('en')) {
     return 'en';
+  }
+
+  if (normalized.startsWith('zh')) {
+    return 'zh';
   }
 
   return null;
@@ -127,4 +137,5 @@ export const buildLocalePathMap = (
   'pt-br': localizePath('pt-br', path),
   en: localizePath('en', path),
   es: localizePath('es', path),
+  zh: localizePath('zh', path),
 });

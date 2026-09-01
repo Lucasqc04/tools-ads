@@ -263,6 +263,84 @@ const contentByLocale: Record<AppLocale, LightningDecoderLocaleContent> = {
       },
     ],
   },
+  zh: {
+    name: 'Lightning Decoder',
+    shortDescription:
+      'Decode Lightning Address, LNURL, BOLT11 and BOLT12 with color-coded fields, export JSON/TXT and generate QR Code in PNG/SVG, all locally in your browser.',
+    primaryKeyword: 'lightning decoder bolt11 lnurl online',
+    secondaryKeywords: [
+      'lightning network decoder',
+      'bolt11 invoice decoder',
+      'bolt12 offer decoder',
+      'lnurl decoder',
+      'lightning address decoder',
+      'lightning invoice parser',
+      'bitcoin lightning tools',
+      'lightning qr code generator',
+      'decode bolt11 online',
+      'decode lnurl online',
+    ],
+    searchIntent:
+      'Users and developers needing to decode Lightning payloads (BOLT11, BOLT12, LNURL, Lightning Address) with technical output and export options.',
+    seoTitle: 'Lightning Decoder Online | BOLT11, BOLT12, LNURL and Lightning Address',
+    seoDescription:
+      'Decode BOLT11, BOLT12, LNURL and Lightning Address with color-coded fields, export JSON/TXT and generate QR Code. 100% browser-local processing.',
+    h1: 'Lightning Decoder Online with QR Code and Exports',
+    intro:
+      'Decode Lightning Address, LNURL, BOLT11 and BOLT12 with color-coded fields, export JSON/TXT and generate QR Code in PNG/SVG, all locally in your browser.',
+    contentBlocks: [
+      {
+        title: 'What this Lightning Decoder does',
+        paragraphs: [
+          'This tool analyzes Lightning Network strings and displays structured technical details. You can paste BOLT11 invoices, BOLT12 offers, LNURL values, and Lightning Addresses.',
+          'Fields are grouped by category (header, payment, timing, routing, security) to make troubleshooting and verification faster.',
+        ],
+      },
+      {
+        title: 'Supported formats',
+        paragraphs: [
+          'BOLT11: network, millisatoshi amount, timestamps, expiry, tags, signature, and raw details.',
+          'BOLT12: structural bech32 decode with local payload rendering in text/hex.',
+          'LNURL: bech32 decode to URL/payload for payment and auth inspection.',
+          'Lightning Address: user@domain breakdown plus computed LNURLp endpoint.',
+        ],
+      },
+      {
+        title: 'Privacy and safety notes',
+        paragraphs: [
+          'Processing is local in your browser. Payloads are not sent to backend by default.',
+          'A valid decode does not replace wallet-level safety checks. Always verify recipient and amount before paying.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Which Lightning formats are supported?',
+        answer:
+          'Lightning Address, LNURL, BOLT11 and BOLT12 are supported in a single decode input.',
+      },
+      {
+        question: 'Can I generate a QR Code after decoding?',
+        answer:
+          'Yes. The QR tab generates from normalized payload and exports PNG or SVG.',
+      },
+      {
+        question: 'Is decoding done locally?',
+        answer:
+          'Yes. The tool runs in-browser and does not upload payloads by default.',
+      },
+      {
+        question: 'Does this validate cryptographic signatures?',
+        answer:
+          'This page focuses on structural decoding. Use dedicated verification in your backend/wallet for full cryptographic checks.',
+      },
+      {
+        question: 'Can I export raw details?',
+        answer:
+          'Yes. You can copy or download TXT and JSON output.',
+      },
+    ],
+  },
 };
 
 export function getLightningDecoderContent(locale: AppLocale): LightningDecoderLocaleContent {

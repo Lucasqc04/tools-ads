@@ -136,6 +136,46 @@ const contentByLocale: Record<AppLocale, UuidNanoIdLocaleContent> = {
       { question: 'Se genera localmente?', answer: 'Si. Todo corre en el navegador.' },
     ],
   },
+  zh: {
+    name: 'UUID, ULID, KSUID, CUID2, and NanoID Generator',
+    shortDescription: 'Generate UUID v1-v7, NanoID, ULID, KSUID, CUID2, and ObjectId in batches with quick export.',
+    primaryKeyword: 'uuid ulid ksuid cuid2 and nanoid generator online',
+    secondaryKeywords: ['uuid v7 generator', 'uuid all versions', 'generate nanoid', 'generate ulid', 'generate ksuid'],
+    searchIntent: 'Developers generating unique IDs for APIs, databases, logs, events, and test data.',
+    seoTitle: 'UUID v1-v7, ULID, KSUID, CUID2, and NanoID Generator Online',
+    seoDescription: 'Generate IDs with UUID all versions, NanoID, ULID, KSUID, CUID2, and ObjectId. Export to TXT and CSV.',
+    h1: 'UUID, ULID, KSUID, CUID2, and NanoID Generator Online',
+    intro: 'Create unique identifiers in-browser for development, testing, mocks, APIs, and database records.',
+    contentBlocks: [
+      {
+        title: 'Multiple ID standards in one place',
+        paragraphs: [
+          'You can generate UUID v1, v3, v4, v5, v6, and v7, plus NanoID, ULID, KSUID, CUID2, and Mongo-style ObjectId.',
+          'This gives flexibility for API design, database keys, event streams, and reproducible deterministic identifiers.',
+        ],
+      },
+      {
+        title: 'Typical use cases',
+        paragraphs: [
+          'Use UUID v7 for modern time-ordered UUIDs, v3/v5 for deterministic namespace-based IDs, and ULID/KSUID for sortable token-like identifiers.',
+          'Batch generation saves time when preparing fixtures, seeds, and mock API responses.',
+        ],
+      },
+      {
+        title: 'Local processing and limits',
+        paragraphs: [
+          'ID generation runs locally in your browser using secure random APIs.',
+          'Very short IDs or tiny alphabets can increase collision risk in high volume environments.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Which ID types can I generate here?', answer: 'UUID v1-v7, NanoID, ULID, KSUID, CUID2, and ObjectId.' },
+      { question: 'Can I generate many IDs at once?', answer: 'Yes. Set quantity and generate in batches.' },
+      { question: 'Can I customize NanoID alphabet?', answer: 'Yes. You can define your own alphabet.' },
+      { question: 'Is generation local?', answer: 'Yes. Processing happens in-browser.' },
+    ],
+  },
 };
 
 export const getUuidNanoIdContent = (locale: AppLocale): UuidNanoIdLocaleContent =>

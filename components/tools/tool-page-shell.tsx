@@ -6,6 +6,7 @@ import { ContentBlocks } from '@/components/shared/content-blocks';
 import { Faq } from '@/components/shared/faq';
 import { RelatedTools } from '@/components/shared/related-tools';
 import { TrustNote } from '@/components/shared/trust-note';
+import { ZhTranslationNotice } from '@/components/shared/zh-translation-notice';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
 import {
   getRelatedToolAliasPages,
@@ -59,6 +60,10 @@ export function ToolPageShell({
       title: 'Tareas especificas con esta herramienta',
       description: 'Atajos para usos frecuentes con el mismo flujo completo.',
     },
+    zh: {
+      title: '使用该工具的具体任务',
+      description: '针对常见用途的快捷入口,使用相同的完整流程。',
+    },
   };
 
   return (
@@ -78,6 +83,8 @@ export function ToolPageShell({
       </header>
 
       <div className="mt-8">
+        <ZhTranslationNotice locale={locale} toolId={tool.id} />
+
         {beforeToolSection ? <div className="mb-8">{beforeToolSection}</div> : null}
 
         <main className="space-y-8">

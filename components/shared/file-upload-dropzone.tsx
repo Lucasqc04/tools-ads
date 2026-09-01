@@ -105,6 +105,27 @@ const uiByLocale: Record<AppLocale, DropzoneUi> = {
     dropMoreHere: 'Suelta para agregar',
     removeFile: (name) => `Quitar ${name}`,
   },
+  zh: {
+    dropFilesHere: (target) => `将${target}拖放到这里...`,
+    dragFilesHere: (target) => `将${target}拖放到这里`,
+    tapToSelect: '或点击选择文件',
+    acceptedPrefix: '支持格式:',
+    selectedFilesTitle: (count) => `已选择的文件(${count})`,
+    rejectedFilesTitle: '被拒绝的文件:',
+    singleFile: '单个文件',
+    multipleFiles: '多个文件',
+    maxPrefix: '最大',
+    anyFiles: '个文件',
+    images: '图片',
+    videos: '视频',
+    documents: '文档',
+    compactOpenLabel: '展开完整上传区域',
+    compactCloseLabel: '收起完整上传区域',
+    compactHint: '点击展开拖放上传区域',
+    addMoreHint: '点击或拖拽以添加更多文件',
+    dropMoreHere: '拖放以添加',
+    removeFile: (name) => `移除 ${name}`,
+  },
 };
 
 const DEFAULT_MAX_SIZE = 100 * 1024 * 1024;

@@ -136,6 +136,46 @@ const contentByLocale: Record<AppLocale, RemoveAccentsLocaleContent> = {
       { question: 'Se procesa localmente?', answer: 'Si. Todo corre en el navegador.' },
     ],
   },
+  zh: {
+    name: 'Remove Accents from Text',
+    shortDescription: 'Remove accents and special characters for URLs, filenames, spreadsheets, and normalized identifiers.',
+    primaryKeyword: 'remove accents from text online',
+    secondaryKeywords: ['remove diacritics', 'text normalization', 'strip accents', 'slug text cleaner', 'normalize unicode text'],
+    searchIntent: 'Users and developers normalizing text for technical systems and compatibility.',
+    seoTitle: 'Remove Accents from Text Online | Normalize Special Characters',
+    seoDescription: 'Convert accented text into normalized output with case options, symbol cleanup, emoji removal, and slug-style mode.',
+    h1: 'Remove Accents from Text Online',
+    intro: 'Normalize accented text for technical usage, clean identifiers, and safer URL/file workflows.',
+    contentBlocks: [
+      {
+        title: 'Why accent removal is useful',
+        paragraphs: [
+          'Many systems work better with plain ASCII-like identifiers. Removing diacritics improves compatibility in URLs, filenames, and legacy pipelines.',
+          'This tool quickly converts accented strings while preserving practical readability.',
+        ],
+      },
+      {
+        title: 'Cleanup controls',
+        paragraphs: [
+          'Choose lowercase/uppercase, remove punctuation and symbols, strip emojis, and normalize spacing.',
+          'You can also output slug-friendly text for routing and IDs.',
+        ],
+      },
+      {
+        title: 'Important limitation',
+        paragraphs: [
+          'Accent removal is not translation. It normalizes characters but does not change language semantics.',
+          'Some scripts may require custom transliteration rules depending on target systems.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Does it also remove cedilla-like characters?', answer: 'Yes. Common accented variants are normalized.' },
+      { question: 'Can I keep multi-line text?', answer: 'Yes. Multi-line content is supported.' },
+      { question: 'Can it generate slug-like output?', answer: 'Yes. Slug mode is available.' },
+      { question: 'Is processing local?', answer: 'Yes. Everything runs in-browser.' },
+    ],
+  },
 };
 
 export const getRemoveAccentsContent = (locale: AppLocale): RemoveAccentsLocaleContent =>

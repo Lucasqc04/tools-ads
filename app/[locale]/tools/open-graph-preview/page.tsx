@@ -36,6 +36,10 @@ const aliasSectionByLocale: Record<AppLocale, { title: string; description: stri
     title: 'Recomendaciones de busqueda relacionadas',
     description: 'Atajos para preview de WhatsApp, Twitter Card y generador de meta tags.',
   },
+  zh: {
+    title: 'Related search recommendations',
+    description: 'Shortcuts for WhatsApp preview, Twitter Card preview, and meta tag generator intents.',
+  },
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

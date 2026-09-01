@@ -93,6 +93,29 @@ const cryptoConverterUi = {
         'La conversión incluye unidad off-chain (Lightning). Es útil para contexto técnico, no para liquidación on-chain directa.',
     },
   },
+  zh: {
+    asset: 'Asset',
+    value: 'Amount',
+    valuePlaceholder: 'Example: 0.015',
+    precision: 'Asset precision:',
+    decimalsLabel: 'decimal places',
+    baseUnitSuffix: 'as base unit',
+    sourceUnit: 'Source unit',
+    targetUnit: 'Target unit',
+    invert: 'Invert',
+    result: 'Result',
+    copied: 'Copied',
+    copyResult: 'Copy result',
+    source: 'Source:',
+    target: 'Target:',
+    conversionMessages: {
+      invalidNumber: 'Enter a valid number to convert.',
+      invalidUnits: 'Select valid units for the chosen asset.',
+      truncated: 'Result is very long. Display truncated after 18 decimal places.',
+      offchain:
+        'This conversion includes an off-chain unit (Lightning). Useful for technical context, not direct on-chain settlement.',
+    },
+  },
 } as const;
 
 export function CryptoUnitConverterTool({

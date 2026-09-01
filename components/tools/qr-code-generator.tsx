@@ -322,6 +322,55 @@ const qrUi = {
     viewImage: 'Ver imagen',
     removeLogo: 'Quitar logo',
   },
+  zh: {
+    loadEngineError: 'Failed to load QR Code engine.',
+    loadEngineWithReason: 'Failed to load QR Code engine:',
+    missingContent: 'Enter content to generate the QR Code.',
+    generateFileError: 'Could not generate the QR Code file.',
+    invalidLogo: 'Select a valid image file for the logo.',
+    logoApplied: 'Logo applied to the QR Code.',
+    logoLoadError: 'Failed to load logo image.',
+    genericActionError: 'Could not complete this action.',
+    downloadSuccessPrefix: 'File',
+    downloadSuccessSuffix: 'downloaded.',
+    pdfTitle: 'QR Code generated locally',
+    pdfSuccess: 'PDF downloaded successfully.',
+    copySuccess: 'Image copied to clipboard.',
+    contentLabel: 'QR Code content',
+    contentPlaceholder: 'Paste text, URL, payment payload, or any content',
+    contentNote:
+      'Free tool with no sign-up. The QR is generated locally in your browser.',
+    previewTitle: 'Preview and export',
+    previewDescription: 'Preview the result and download in your preferred format.',
+    previewEmpty: 'The preview appears automatically after you enter content.',
+    copyImageButton: 'Copy image',
+    emptyWarning: 'Enter content to generate the QR Code.',
+    presetsTitle: 'Style presets',
+    presetsDescription: 'Start with a preset style and fine-tune the details.',
+    customMode: 'You are using custom mode.',
+    customizationTitle: 'QR customization',
+    customizationDescription: 'Adjust colors, module style, and scanning parameters.',
+    qrColor: 'QR color',
+    backgroundColor: 'Background color',
+    dotStyle: 'Dot style',
+    errorCorrection: 'Error correction',
+    outerCornerStyle: 'Outer corner style',
+    cornerDotStyle: 'Corner dot style',
+    sizeLabel: 'Size',
+    marginLabel: 'Margin',
+    logoScaleLabel: 'Logo scale',
+    logoSectionTitle: 'Center logo (optional)',
+    logoSectionDescription: 'Drag and drop an image or select one manually.',
+    dragHint: 'Drop your image here or click to choose one',
+    supportedFormats: 'PNG, JPG, SVG, and WEBP are supported.',
+    chooseImage: 'Choose image',
+    logoMarginLabel: 'Logo inner margin',
+    logoPreviewAlt: 'Logo preview',
+    logoLoadedFallback: 'Logo loaded',
+    logoAppliedCenter: 'Logo applied to QR center.',
+    viewImage: 'View image',
+    removeLogo: 'Remove logo',
+  },
 } as const;
 
 const presetLabelsByLocale = {
@@ -367,6 +416,21 @@ const presetLabelsByLocale = {
       description: 'Prioriza escaneo en pantalla y en impresión.',
     },
   },
+  zh: {
+    basico: { label: 'Basic', description: 'Clean neutral look for broad usage.' },
+    redondo: {
+      label: 'Rounded',
+      description: 'Smooth curves, useful for modern brand identity.',
+    },
+    quadrado: {
+      label: 'Squared',
+      description: 'Technical style with high contrast for fast scanning.',
+    },
+    contraste: {
+      label: 'High contrast',
+      description: 'Optimized for screens and print readability.',
+    },
+  },
 } as const;
 
 const dotTypeLabelsByLocale: Record<AppLocale, Record<DotType, string>> = {
@@ -393,6 +457,14 @@ const dotTypeLabelsByLocale: Record<AppLocale, Record<DotType, string>> = {
     classy: 'Elegante',
     'classy-rounded': 'Elegante redondeado',
     'extra-rounded': 'Extra redondeado',
+  },
+  zh: {
+    square: 'Square',
+    rounded: 'Rounded',
+    dots: 'Dots',
+    classy: 'Classy',
+    'classy-rounded': 'Classy rounded',
+    'extra-rounded': 'Extra rounded',
   },
 };
 
@@ -421,6 +493,13 @@ const cornerSquareLabelsByLocale: Record<
     classy: 'Elegante',
     'classy-rounded': 'Elegante redondeado',
   },
+  zh: {
+    square: 'Square',
+    dot: 'Circle',
+    'extra-rounded': 'Extra rounded',
+    classy: 'Classy',
+    'classy-rounded': 'Classy rounded',
+  },
 };
 
 const cornerDotLabelsByLocale: Record<
@@ -445,6 +524,12 @@ const cornerDotLabelsByLocale: Record<
     rounded: 'Redondeado',
     classy: 'Elegante',
   },
+  zh: {
+    square: 'Square',
+    dot: 'Dot',
+    rounded: 'Rounded',
+    classy: 'Classy',
+  },
 };
 
 const errorCorrectionLabelsByLocale: Record<
@@ -468,6 +553,12 @@ const errorCorrectionLabelsByLocale: Record<
     M: 'Media (M)',
     Q: 'Alta (Q)',
     H: 'Muy alta (H)',
+  },
+  zh: {
+    L: 'Low (L)',
+    M: 'Medium (M)',
+    Q: 'High (Q)',
+    H: 'Very high (H)',
   },
 };
 

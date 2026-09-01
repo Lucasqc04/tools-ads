@@ -278,6 +278,80 @@ const contentByLocale: Record<AppLocale, CharacterCounterLocaleContent> = {
       },
     ],
   },
+  zh: {
+    name: 'Online Character and Word Counter',
+    shortDescription:
+      'Count characters, words, lines, sentences, paragraphs, emojis, and limits for SEO, social media, writing, and coding.',
+    primaryKeyword: 'online character and word counter',
+    secondaryKeywords: [
+      'character counter',
+      'word counter',
+      'line counter',
+      'seo character counter',
+      'twitter x character counter',
+      'reading time calculator',
+      'hashtag counter',
+      'invisible character detector',
+    ],
+    searchIntent:
+      'Users who need complete text analysis for SEO, social publishing, academic writing, and technical workflows.',
+    seoTitle:
+      'Online Character and Word Counter | SEO, Instagram, X, YouTube, Writing',
+    seoDescription:
+      'Complete text counter with words, lines, emojis, hashtags, limits by platform, quality alerts, and export options.',
+    h1: 'Online Character and Word Counter',
+    intro:
+      'Count characters, words, lines, sentences, paragraphs, emojis, spaces, and validate limits for SEO, social media, writing, and coding.',
+    contentBlocks: [
+      {
+        title: 'More than counting: analysis, cleanup, and adaptation',
+        paragraphs: [
+          'This tool goes beyond basic character counting. It includes words, sentences, paragraphs, links, hashtags, mentions, emails, phone numbers, dates, and UTF-8 byte size.',
+          'With objective presets, you can validate copy for SEO, social media, writing, and technical usage without switching tools.',
+        ],
+      },
+      {
+        title: 'Modes for SEO, social, writing, and programming',
+        paragraphs: [
+          'SEO mode supports title and meta description checks with practical range alerts. Social mode helps validate content for Instagram, X, YouTube, LinkedIn, WhatsApp, and SMS.',
+          'Writing mode highlights repeated words and long sentence patterns. Programming mode shows empty lines, comments, tabs, trailing spaces, and payload size.',
+        ],
+      },
+      {
+        title: 'Privacy-first local processing',
+        paragraphs: [
+          'Analysis is processed locally in your browser. You can inspect, transform, and export text without uploading it by default.',
+          'This approach improves privacy and keeps the workflow fast on desktop and mobile.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'What is the difference between characters with and without spaces?',
+        answer:
+          'With spaces counts all characters. Without spaces removes whitespace such as spaces, tabs, and line breaks.',
+      },
+      {
+        question: 'Does it detect emojis and hashtags?',
+        answer:
+          'Yes. Advanced metrics include emojis, hashtags, mentions, URLs, emails, and more.',
+      },
+      {
+        question: 'Can I use it for title and meta description checks?',
+        answer:
+          'Yes. SEO presets provide practical range guidance for snippet planning.',
+      },
+      {
+        question: 'Is my text sent to a server?',
+        answer:
+          'No by default. Core processing runs locally in the browser.',
+      },
+      {
+        question: 'Can I export results?',
+        answer: 'Yes. You can export TXT, JSON, and CSV files.',
+      },
+    ],
+  },
 };
 
 const uiByLocale: Record<AppLocale, CharacterCounterUiCopy> = {
@@ -404,6 +478,47 @@ const uiByLocale: Record<AppLocale, CharacterCounterUiCopy> = {
     statusDetailNear: 'Cerca del limite maximo. Revisa para evitar corte.',
     statusDetailOk: 'Sin alerta critica para el preset actual.',
   },
+  zh: {
+    textInputLabel: 'Text to analyze',
+    textInputPlaceholder: 'Paste or type your text here...',
+    modeLabel: 'Mode',
+    presetLabel: 'Limit preset',
+    targetLabel: 'Custom target (max chars)',
+    targetPlaceholder: 'e.g. 280',
+    clearText: 'Clear text',
+    copyText: 'Copy text',
+    copiedText: 'Text copied',
+    saveDraft: 'Save draft',
+    draftSaved: 'Draft saved',
+    loadDraft: 'Load draft',
+    exportTxt: 'Export TXT',
+    exportJson: 'Export JSON',
+    exportCsv: 'Export CSV',
+    splitText: 'Split text',
+    splitResultTitle: 'Split result',
+    splitLimitLabel: 'Chars per part',
+    splitNumberedLabel: 'Auto number parts',
+    metricsTitle: 'Metrics dashboard',
+    qualityTitle: 'Text quality',
+    topWordsTitle: 'Top words',
+    repeatedWordsTitle: 'Repeated words',
+    alertsTitle: 'Smart alerts',
+    transformsTitle: 'Quick text actions',
+    privacyTitle: 'Privacy',
+    privacyText: 'Your text is processed locally in-browser. Nothing is sent to server by default.',
+    statusByLimit: {
+      'too-short': 'Too short',
+      ideal: 'Ideal range',
+      'near-limit': 'Near limit',
+      'over-limit': 'Over limit',
+      ok: 'OK',
+    },
+    statusDetailIdeal: 'Inside recommended range for this preset.',
+    statusDetailOver: 'Reduce text to avoid truncation or hard limits.',
+    statusDetailShort: 'Text may be too short for this objective.',
+    statusDetailNear: 'Close to max limit. Review to avoid truncation.',
+    statusDetailOk: 'No critical warning for current preset.',
+  },
 };
 
 const presetsByLocale: Record<AppLocale, CharacterCounterPreset[]> = {
@@ -467,6 +582,26 @@ const presetsByLocale: Record<AppLocale, CharacterCounterPreset[]> = {
     { id: 'whatsapp-message', mode: 'social', label: 'WhatsApp - Mensaje', idealMin: 60, idealMax: 600, max: 4096 },
     { id: 'sms', mode: 'social', label: 'SMS', idealMin: 40, idealMax: 140, max: 160 },
   ],
+  zh: [
+    { id: 'general', mode: 'simple', label: 'General' },
+    { id: 'seo-title', mode: 'seo', label: 'SEO - Title tag', idealMin: 40, idealMax: 60, max: 70 },
+    {
+      id: 'seo-meta-description',
+      mode: 'seo',
+      label: 'SEO - Meta description',
+      idealMin: 120,
+      idealMax: 155,
+      max: 170,
+      note: 'Approximate range. Snippet can vary by device and width.',
+    },
+    { id: 'seo-h1', mode: 'seo', label: 'SEO - H1', idealMin: 20, idealMax: 70, max: 90 },
+    { id: 'instagram-caption', mode: 'social', label: 'Instagram - Caption', idealMin: 80, idealMax: 400, max: 2200 },
+    { id: 'x-post', mode: 'social', label: 'X/Twitter - Post', idealMin: 40, idealMax: 240, max: 280 },
+    { id: 'youtube-description', mode: 'social', label: 'YouTube - Description', idealMin: 200, idealMax: 1200, max: 5000 },
+    { id: 'linkedin-post', mode: 'social', label: 'LinkedIn - Post', idealMin: 150, idealMax: 900, max: 3000 },
+    { id: 'whatsapp-message', mode: 'social', label: 'WhatsApp - Message', idealMin: 60, idealMax: 600, max: 4096 },
+    { id: 'sms', mode: 'social', label: 'SMS', idealMin: 40, idealMax: 140, max: 160 },
+  ],
 };
 
 const modesByLocale: Record<AppLocale, Array<{ id: CharacterCounterMode; label: string }>> = {
@@ -493,6 +628,14 @@ const modesByLocale: Record<AppLocale, Array<{ id: CharacterCounterMode; label: 
     { id: 'seo', label: 'SEO' },
     { id: 'social', label: 'Redes sociales' },
     { id: 'writing', label: 'Redaccion' },
+  ],
+  zh: [
+    { id: 'simple', label: 'Simple' },
+    { id: 'advanced', label: 'Advanced' },
+    { id: 'programming', label: 'Programming' },
+    { id: 'seo', label: 'SEO' },
+    { id: 'social', label: 'Social media' },
+    { id: 'writing', label: 'Writing' },
   ],
 };
 

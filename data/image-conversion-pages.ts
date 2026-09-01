@@ -452,6 +452,7 @@ export const getImageConversionLocalePathMap = (
   'pt-br': getImageConversionPathByLocale(page, 'pt-br'),
   en: getImageConversionPathByLocale(page, 'en'),
   es: getImageConversionPathByLocale(page, 'es'),
+  zh: getImageConversionPathByLocale(page, 'en'),
 });
 
 const getConversionContext = (

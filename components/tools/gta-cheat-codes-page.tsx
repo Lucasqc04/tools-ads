@@ -44,6 +44,11 @@ const relatedGtaCopy: Record<AppLocale, { title: string; description: string }> 
     description:
       'Accede a atajos por juego e intenciones populares como armas, policia, tanque y clima.',
   },
+  zh: {
+    title: 'GTA pages by game and intent',
+    description:
+      'Open shortcuts by game and popular intents like weapons, police, tank, and weather.',
+  },
 };
 
 export const buildGtaCheatCodesMetadata = (locale: AppLocale): Metadata => {

@@ -47,6 +47,11 @@ const platformSectionCopy: Record<AppLocale, { title: string; description: strin
     description:
       'Abre versiones especificas para Free Fire, COD, Discord y otras plataformas con reglas de validacion distintas.',
   },
+  zh: {
+    title: '按游戏和社交平台分类的页面',
+    description:
+      '打开针对 Free Fire、COD、Discord 等平台的专属版本,各平台有不同的昵称验证规则。',
+  },
 };
 
 export async function generateMetadata({

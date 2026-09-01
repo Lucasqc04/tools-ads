@@ -157,26 +157,31 @@ const landing = (
       'pt-br': `${fromLabel} para ${toLabel} online`,
       en: `${fromLabel} to ${toLabel} online`,
       es: `${fromLabel} a ${toLabel} online`,
+      zh: `${fromLabel} to ${toLabel} online`,
     },
     introByLocale: {
       'pt-br': `Converta ${fromLabel} para ${toLabel} usando o motor universal de conversoes, com validacao clara e copia rapida do resultado.`,
       en: `Convert ${fromLabel} to ${toLabel} using the universal conversion engine with clear validation and quick copy output.`,
       es: `Convierte ${fromLabel} a ${toLabel} usando el motor universal con validacion clara y copia rapida.`,
+      zh: `Convert ${fromLabel} to ${toLabel} using the universal conversion engine with clear validation and quick copy output.`,
     },
     seoTitleByLocale: {
       'pt-br': `${fromLabel} para ${toLabel} Online | Conversor Universal`,
       en: `${fromLabel} to ${toLabel} Online | Universal Converter`,
       es: `${fromLabel} a ${toLabel} Online | Conversor Universal`,
+      zh: `${fromLabel} to ${toLabel} Online | Universal Converter`,
     },
     seoDescriptionByLocale: {
       'pt-br': `Ferramenta para ${fromLabel} para ${toLabel} com conversao local, validacao de entrada e suporte a lote quando aplicavel.`,
       en: `Tool for ${fromLabel} to ${toLabel} with local conversion, input validation, and batch mode when available.`,
       es: `Herramienta para ${fromLabel} a ${toLabel} con conversion local, validacion y modo lote cuando aplica.`,
+      zh: `Tool for ${fromLabel} to ${toLabel} with local conversion, input validation, and batch mode when available.`,
     },
     primaryKeywordByLocale: {
       'pt-br': `${fromLabel} para ${toLabel}`,
       en: `${fromLabel} to ${toLabel}`,
       es: `${fromLabel} a ${toLabel}`,
+      zh: `${fromLabel} to ${toLabel}`,
     },
     secondaryKeywordsByLocale: {
       'pt-br': [
@@ -194,22 +199,30 @@ const landing = (
         `${fromLabel} a ${toLabel} online`,
         `herramienta ${fromLabel} ${toLabel}`,
       ],
+      zh: [
+        `convert ${fromLabel} to ${toLabel}`,
+        `${fromLabel} to ${toLabel} converter`,
+        `${fromLabel} to ${toLabel} tool`,
+      ],
     },
     searchIntentByLocale: {
       'pt-br': `Usuarios que precisam converter ${fromLabel} para ${toLabel} rapidamente sem depender de instalacao.`,
       en: `Users looking to convert ${fromLabel} to ${toLabel} quickly without installing software.`,
       es: `Usuarios que necesitan convertir ${fromLabel} a ${toLabel} rapidamente sin instalar software.`,
+      zh: `Users looking to convert ${fromLabel} to ${toLabel} quickly without installing software.`,
     },
     exampleInput,
     contentBlocksByLocale: {
       'pt-br': buildBlocks('pt-br', fromLabel, toLabel, conversion.existingDedicatedToolSlug),
       en: buildBlocks('en', fromLabel, toLabel, conversion.existingDedicatedToolSlug),
       es: buildBlocks('es', fromLabel, toLabel, conversion.existingDedicatedToolSlug),
+      zh: buildBlocks('en', fromLabel, toLabel, conversion.existingDedicatedToolSlug),
     },
     faqByLocale: {
       'pt-br': buildFaq('pt-br'),
       en: buildFaq('en'),
       es: buildFaq('es'),
+      zh: buildFaq('en'),
     },
   };
 };

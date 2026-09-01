@@ -871,6 +871,250 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       fromToConnector: 'a',
     },
   },
+  zh: {
+    languageName: '中文',
+    languageSwitcherLabel: '语言',
+    common: {
+      home: '首页',
+      tools: '工具',
+      about: '关于',
+      contact: '联系我们',
+      privacyPolicy: '隐私政策',
+      terms: '使用条款',
+    },
+    seo: {
+      siteDefaultTitle: '在线工具',
+      siteDefaultDescription:
+        '免费在线工具集合,快速好用、无需注册、无需登录,提供葡萄牙语、英语、西班牙语和中文版本,满足日常任务需求。',
+      home: {
+        title: '免费在线工具:创作者、营销人员与开发者的效率利器',
+        description:
+          '使用便捷的网页工具,免费、无需注册、无需登录,支持本地处理以保护隐私,快速完成常见任务。',
+        keywords: [
+          '免费在线工具',
+          '在线工具无需注册',
+          '在线工具无需登录',
+          '网页效率工具',
+          '开发者在线工具',
+          '浏览器快速工具',
+        ],
+      },
+      tools: {
+        title: '全部在线工具',
+        description:
+          '浏览专注实用的在线工具,页面清晰、免费使用、无需注册,支持桌面和移动端快速操作。',
+        keywords: [
+          '在线工具列表',
+          '免费网页工具',
+          '无需注册的工具',
+          '无需登录的工具',
+          '浏览器工具',
+        ],
+      },
+      about: {
+        title: '关于本项目',
+        description:
+          '了解 Tools Lucasqc 如何打造实用工具,注重简洁体验与透明的隐私实践。',
+        keywords: ['关于 tools lucasqc', '网页工具项目', '网页工具使命'],
+      },
+      contact: {
+        title: '联系我们',
+        description: 'Tools Lucasqc 在线工具的官方支持与合作联系渠道。',
+        keywords: ['联系在线工具', '工具支持', '商务合作'],
+      },
+      privacy: {
+        title: '隐私政策',
+        description:
+          '了解 Tools Lucasqc 如何处理浏览器数据、Cookie、广告集成以及用户隐私权利。',
+        keywords: ['隐私政策', 'cookie', '数据处理', '广告政策'],
+      },
+      terms: {
+        title: '使用条款',
+        description:
+          '使用 Tools Lucasqc 的条款,包括用户责任、平台限制以及内容所有权。',
+        keywords: ['使用条款', '使用条件', '责任声明'],
+      },
+      qrCodeFallback: {
+        title: '免费二维码生成器,无需注册',
+        description:
+          '即时生成二维码,添加中心Logo,直接在浏览器中导出 PNG、JPEG、WEBP、SVG 或 PDF 文件。',
+        keywords: ['免费二维码生成器', '二维码生成无需注册'],
+      },
+      htmlPdfJsonFallback: {
+        title: 'HTML 查看器、PDF 查看器与 JSON 格式化工具',
+        description:
+          '安全预览 HTML、打开本地 PDF 文件,并直接在浏览器中格式化或压缩 JSON。',
+        keywords: ['在线json格式化', 'html查看器', '浏览器pdf查看器'],
+      },
+      cryptoFallback: {
+        title: '加密货币单位换算器',
+        description:
+          '换算 BTC、ETH、SOL、USDT 等加密货币单位,精确本地计算,无需外部 API。',
+        keywords: ['加密货币单位换算', '聪换算器', 'gwei换算eth'],
+      },
+      cryptoConversionNotFound: {
+        title: '未找到该换算页面',
+        description:
+          '当前请求的换算页面暂不可用。请浏览加密货币单位换算器查看相关换算组合。',
+        keywords: ['加密货币单位换算器'],
+      },
+    },
+    header: {
+      goHomeAriaLabel: '前往 Tools Lucasqc 首页',
+      navLabel: '主导航',
+    },
+    footer: {
+      goHomeAriaLabel: '前往 Tools Lucasqc 首页',
+      navLabel: '机构链接',
+      tagline: '快速实用的在线工具',
+      rightsReserved: '版权所有。',
+    },
+    home: {
+      h1: '解决日常任务的实用在线工具',
+      intro:
+        '查找并使用免费在线工具进行转换、计算、生成和可视化,一站式解决常见日常任务,无需注册、无需登录。',
+      featuredToolsTitle: '精选工具',
+      viewAllTools: '查看全部工具',
+      growthTitle: '为高效日常工作流而生',
+      growthParagraphs: [
+        '每个工具都有独立的专属页面,配有快速指南、常见问题和直接操作入口,帮助用户迅速完成任务。',
+        '导航设计刻意保持简洁,减少干扰,让用户无论在电脑还是手机上都能快速找到关键功能。',
+      ],
+    },
+    toolsIndex: {
+      h1: '全部工具',
+      intro:
+        '专注实用的工具目录,每个工具一个页面。所有工具都包含清晰说明、常见问题和实用操作步骤。',
+      searchLabel: '搜索工具',
+      searchPlaceholder: '例如:json、聪、pdf',
+      searchButton: '搜索',
+      resultsLabel: '个结果',
+      emptyMessage: '没有找到匹配的工具,可以试试这些关键词',
+      emptyHints: ['聪', 'json', 'pdf'],
+    },
+    about: {
+      h1: '关于 Tools Lucasqc',
+      intro:
+        'Tools Lucasqc 致力于打造快速、简单、真正实用的网页工具,服务于真实的工作流程。',
+      principlesTitle: '产品原则',
+      principles: [
+        '实用内容优先于商业化。',
+        '桌面和移动端均保持简洁的响应式体验。',
+        '尽可能采用本地处理,更好地保护隐私。',
+        '可扩展的架构,便于持续、稳定地新增工具。',
+      ],
+      qualityTitle: '质量承诺',
+      qualityParagraph:
+        '我们保持机构页面清晰、政策透明、导航直观。这有助于建立用户信任,也符合 Google AdSense 等广告平台的要求。',
+    },
+    contact: {
+      h1: '联系我们',
+      intro:
+        '如需支持、反馈、内容纠错或商务合作,请通过下方的官方联系渠道与我们联系。',
+      emailTitle: '邮箱',
+      responseTimeTitle: '响应时间',
+      responseTimeParagraph:
+        '我们通常在2个工作日内回复。附带清晰复现步骤的技术问题反馈会被优先处理。',
+      bugReportTitle: '提交问题反馈的建议',
+      bugReportItems: [
+        '提供具体的页面链接。',
+        '描述预期行为与实际出现的问题。',
+        '注明使用的浏览器、设备和大致发生时间。',
+      ],
+    },
+    privacy: {
+      h1: '隐私政策',
+      intro:
+        '本政策说明 Tools Lucasqc 如何处理浏览信息,以及我们为保护用户所遵循的做法。',
+      sections: [
+        {
+          title: '1. 工具中处理的数据',
+          body:
+            '核心工具在设计上尽可能在浏览器本地处理数据。也就是说,你在工具字段中输入的内容不会自动发送到我们的服务器。',
+        },
+        {
+          title: '2. Cookie 与统计分析',
+          body:
+            '我们可能使用技术性和统计性 Cookie,以提升性能、稳定性和使用体验。广告合作伙伴也可能根据其自身政策使用 Cookie。',
+        },
+        {
+          title: '3. 广告',
+          body:
+            '本网站可能展示来自 Google AdSense 等服务商的广告。广告投放受合作伙伴政策约束,包括 Cookie 使用和基于兴趣的个性化规则。',
+        },
+        {
+          title: '4. 用户权利',
+          body:
+            '你可以通过联系页面就数据和隐私相关事项提出问题。我们会定期审查本政策,以保持透明与合规。',
+        },
+        {
+          title: '5. 政策更新',
+          body:
+            '我们可能会更新本页面,以反映产品改进、法律变化或新的功能集成。建议你定期查看。',
+        },
+      ],
+    },
+    terms: {
+      h1: '使用条款',
+      intro: '使用本网站即表示你同意以下条款。如果你不同意,请停止使用本站工具。',
+      sections: [
+        {
+          title: '1. 工具性质',
+          body:
+            '本站提供的工具为辅助性工具,不能替代专业的技术、法律、会计或财务建议。',
+        },
+        {
+          title: '2. 使用责任',
+          body:
+            '用户需自行核实结果后再做出重要决策。尽管我们进行质量把控,不同环境和解读方式仍可能存在局限性。',
+        },
+        {
+          title: '3. 知识产权',
+          body:
+            '文本内容、网站结构和视觉组件均受相关权利保护。未经授权不得完整复制。',
+        },
+        {
+          title: '4. 可用性与变更',
+          body:
+            '出于维护、改进或第三方政策调整的需要,我们可能在不预先通知的情况下更新、暂停或移除功能。',
+        },
+        {
+          title: '5. 联系方式',
+          body: '如对本条款有疑问,可通过网站联系页面提交。',
+        },
+      ],
+    },
+    notFound: {
+      title: '页面未找到',
+      description: '你请求的网址不存在或已被移动。请使用下方链接返回首页。',
+      cta: '返回首页',
+    },
+    toolCard: {
+      openTool: '打开工具',
+      openToolAriaPrefix: '打开',
+    },
+    toolShell: {
+      useToolTitle: '使用该工具',
+      contentTitle: '快速指南与实用说明',
+      faqTitle: '常见问题',
+      relatedToolsTitle: '其他实用工具',
+      relatedToolsDescription: '相关链接,帮助你继续完成类似任务,无需重新开始。',
+      trustTitle: '隐私与本地处理',
+      trustText:
+        '本页面的工具直接在你的浏览器中运行,不会将输入内容发送到后端服务器。这样可以提升隐私保护并降低延迟。',
+      cryptoRelatedTitle: '相关换算',
+      cryptoRelatedDescription: '与当前换算意图相近的内部链接推荐。',
+      cryptoPopularTitle: '热门换算',
+      cryptoPopularDescription:
+        '常用换算,例如 gwei 换算 ETH、聪(sat)换算 BTC、lamport 换算 SOL。',
+      conversionBreadcrumbLabel: '加密货币单位换算器',
+      conversionSearchIntent:
+        '用户希望在同一加密资产的两个技术单位之间进行直接换算。',
+    },
+    qrToolUi: {
+      fromToConnector: '至',
+    },
+  },
 };
 
 export const getDictionary = (locale: AppLocale): SiteDictionary => dictionaries[locale];

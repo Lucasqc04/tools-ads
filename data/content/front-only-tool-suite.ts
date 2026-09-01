@@ -47,6 +47,7 @@ const localPrivacy = {
     'O processamento acontece no navegador sempre que possivel. Arquivos e entradas nao precisam ser enviados para o servidor do site para executar a tarefa principal.',
   en: 'Processing happens in the browser whenever possible. Files and inputs do not need to be uploaded to the site server for the main workflow.',
   es: 'El procesamiento ocurre en el navegador siempre que es posible. Los archivos y entradas no necesitan enviarse al servidor del sitio para ejecutar el flujo principal.',
+  zh: 'Processing happens in the browser whenever possible. Files and inputs do not need to be uploaded to the site server for the main workflow.',
 } satisfies Record<AppLocale, string>;
 
 const frontOnlyToolSeeds = [
@@ -207,6 +208,57 @@ const frontOnlyToolSeeds = [
           { question: 'Puedo generar CNPJ sin puntuacion?', answer: 'Si. Elige la opcion sin puntuacion para obtener solo 14 digitos.' },
           { question: 'Sirve para probar formularios?', answer: 'Si. El uso recomendado es QA, homologacion, fixtures y validacion de entrada.' },
           { question: 'Los CNPJ se envian al servidor?', answer: 'No por defecto. La validacion y generacion ocurren localmente en el navegador.' },
+        ],
+      },
+      zh: {
+        name: 'CNPJ Validator and Generator',
+        shortDescription:
+          'Validate Brazilian CNPJ numbers, generate valid test numbers, and export TXT, CSV, or JSON lists.',
+        primaryKeyword: 'cnpj validator and generator',
+        secondaryKeywords: [
+          'valid cnpj generator',
+          'validate cnpj online',
+          'cnpj for testing',
+          'formatted cnpj generator',
+          'cnpj without punctuation',
+          'brazil company tax id test data',
+        ],
+        searchIntent:
+          'Developers and QA teams that need Brazilian company tax ID validation or test data without sign-up.',
+        seoTitle: 'CNPJ Validator and Generator | Formatted or Digits Only',
+        seoDescription:
+          'Validate CNPJ check digits and generate valid CNPJ lists for tests with quick copy and TXT, CSV, JSON export.',
+        h1: 'CNPJ Validator and Generator for Test Data',
+        intro:
+          'Paste a CNPJ to validate check digits or generate valid CNPJ batches with branch code and export options.',
+        contentBlocks: [
+          {
+            title: 'Real CNPJ check digit validation',
+            paragraphs: [
+              'The tool strips punctuation, calculates both CNPJ check digits, and shows formatted and digits-only output. This helps separate mask issues from true algorithm errors.',
+              'Generated CNPJs are useful for forms, QA, staging, and automated tests. They do not identify real companies and should not be used for fraud or impersonation.',
+            ],
+          },
+          {
+            title: 'Exports for test fixtures',
+            paragraphs: [
+              'Generate 1 to 200 CNPJs at once, set the branch code, and choose formatted or raw digits. Copy the list or download it for spreadsheets, fixtures, and scripts.',
+              localPrivacy.en,
+            ],
+            list: ['Line-based TXT', 'CSV with header', 'JSON for API tests'],
+          },
+          {
+            title: 'Important limits',
+            paragraphs: [
+              'A mathematically valid CNPJ does not prove legal existence, status, or official registry data. This page validates only numeric structure and check digits.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Does a generated CNPJ exist officially?', answer: 'No. It is valid by algorithm only and does not query any official registry.' },
+          { question: 'Can I generate digits-only CNPJ?', answer: 'Yes. Choose the no-punctuation option to output the 14 digits only.' },
+          { question: 'Is it suitable for form testing?', answer: 'Yes. The intended use is QA, staging, fixtures, and input validation.' },
+          { question: 'Are CNPJs uploaded to a server?', answer: 'No by default. Validation and generation run locally in the browser.' },
         ],
       },
     },
@@ -370,6 +422,57 @@ const frontOnlyToolSeeds = [
           { question: 'Puedo exportar el resultado?', answer: 'Si. El diagnostico puede copiarse o descargarse en JSON.' },
         ],
       },
+      zh: {
+        name: 'Brazilian Boleto and Digitable Line Validator',
+        shortDescription:
+          'Validate boleto lines or barcodes, convert formats, and extract due date, amount, and free field.',
+        primaryKeyword: 'brazilian boleto validator',
+        secondaryKeywords: [
+          'validate boleto online',
+          'digitable line to barcode',
+          'decode boleto',
+          'boleto check digit',
+          'brazil payment slip validator',
+          'boleto barcode parser',
+        ],
+        searchIntent:
+          'Developers and payment teams that need to inspect boleto lines or barcodes before integrations.',
+        seoTitle: 'Brazilian Boleto Validator | Decode Digitable Line and Barcode',
+        seoDescription:
+          'Paste a boleto digitable line or barcode to validate check digits, convert formats, and read amount, due date, and free field.',
+        h1: 'Brazilian Boleto and Digitable Line Validator',
+        intro:
+          'Paste a 47/48 digit boleto line or 44 digit barcode to validate, convert, and inspect payment fields.',
+        contentBlocks: [
+          {
+            title: 'Bank boleto and collection slip validation',
+            paragraphs: [
+              'The tool detects standard Brazilian bank boleto and collection/utilities slips, recalculates field check digits, and validates the general DAC when applicable.',
+              'The result shows barcode, formatted line, bank, amount, due factor, and free field to speed up payment integration debugging.',
+            ],
+          },
+          {
+            title: 'Convert line and barcode formats',
+            paragraphs: [
+              'When you paste a digitable line, the page builds the equivalent barcode. When you paste a barcode, it builds the corresponding digitable line.',
+              localPrivacy.en,
+            ],
+            list: ['Modulo 10 field checks', 'Modulo 11 general DAC', 'JSON diagnostic export'],
+          },
+          {
+            title: 'Operational limits',
+            paragraphs: [
+              'Mathematical validation does not confirm payment, beneficiary identity, fraud status, or bank registration. Use it as a technical aid and confirm sensitive data through official channels.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Does it query a bank?', answer: 'No. It validates structure, digits, and fields locally without a bank lookup.' },
+          { question: 'Does it support utility collection slips?', answer: 'Yes. 48-digit collection lines and barcodes starting with 8 are handled separately.' },
+          { question: 'Can it show the due date?', answer: 'Yes for bank boletos with a due factor. When needed, candidate cycles are shown.' },
+          { question: 'Can I export the result?', answer: 'Yes. The diagnostic can be copied or downloaded as JSON.' },
+        ],
+      },
     },
   },
   {
@@ -529,6 +632,57 @@ const frontOnlyToolSeeds = [
           { question: 'Que hash debo usar?', answer: 'Prefiere SHA-256 o SHA-512 para integridad moderna. MD5 y SHA-1 son principalmente compatibilidad.' },
           { question: 'Puedo comparar un checksum esperado?', answer: 'Si. Pega el hash esperado y la tabla indica si coincide.' },
           { question: 'Funciona con archivos grandes?', answer: 'Si, pero depende de memoria y rendimiento del dispositivo.' },
+        ],
+      },
+      zh: {
+        name: 'File Hash and Checksum',
+        shortDescription:
+          'Calculate MD5, SHA-1, SHA-256, SHA-384, SHA-512, and CRC32 for local files with comparison and export.',
+        primaryKeyword: 'file hash checksum online',
+        secondaryKeywords: [
+          'sha256 file',
+          'file md5 checksum',
+          'verify checksum',
+          'crc32 online',
+          'calculate file hash',
+          'file hash checker',
+        ],
+        searchIntent:
+          'Technical users who need to verify download, backup, and build artifact integrity.',
+        seoTitle: 'File Hash Online | SHA-256, MD5, SHA-512, and CRC32',
+        seoDescription:
+          'Calculate file checksums in the browser, compare with an expected hash, and export JSON or CSV results.',
+        h1: 'File Hash and Checksum Calculator',
+        intro:
+          'Select a local file, choose hash algorithms, compare with an expected checksum, and export the result.',
+        contentBlocks: [
+          {
+            title: 'Integrity checks without upload',
+            paragraphs: [
+              'Checksums help confirm whether a downloaded, copied, or compressed file changed. This page calculates common hashes directly from the local file.',
+              'MD5 and SHA-1 remain useful for legacy compatibility, while SHA-256 and SHA-512 are stronger choices for modern integrity workflows.',
+            ],
+          },
+          {
+            title: 'Comparison and export',
+            paragraphs: [
+              'Paste an expected hash to automatically see whether any algorithm matches. Then copy all results or download JSON/CSV for audit records or release notes.',
+              localPrivacy.en,
+            ],
+            list: ['MD5 for legacy checksums', 'SHA-256/SHA-512 for releases', 'CRC32 for archive workflows'],
+          },
+          {
+            title: 'Checksum security limits',
+            paragraphs: [
+              'A checksum does not prove authorship and does not replace a digital signature. For sensitive distribution, combine hashes with cryptographic signatures and trusted channels.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Is the file uploaded?', answer: 'No by default. The browser reads the local file and calculates the hashes.' },
+          { question: 'Which hash should I use?', answer: 'Prefer SHA-256 or SHA-512 for modern integrity checks. MD5 and SHA-1 are mainly compatibility formats.' },
+          { question: 'Can I compare an expected checksum?', answer: 'Yes. Paste the expected hash and the table shows whether a result matches.' },
+          { question: 'Does it work with large files?', answer: 'Yes, but very large files depend on your device memory and performance.' },
         ],
       },
     },
@@ -692,6 +846,57 @@ const frontOnlyToolSeeds = [
           { question: 'Remueve texto visible?', answer: 'No. El texto visible forma parte de los pixeles y requiere edicion visual.' },
         ],
       },
+      zh: {
+        name: 'EXIF Reader and Remover',
+        shortDescription:
+          'Read EXIF metadata, GPS, camera, and image dates, copy JSON, and download a cleaned image copy.',
+        primaryKeyword: 'exif reader remover online',
+        secondaryKeywords: [
+          'view photo exif',
+          'remove image metadata',
+          'exif viewer online',
+          'remove gps from photo',
+          'image metadata viewer',
+          'clean jpg exif',
+        ],
+        searchIntent:
+          'Users who want to audit or remove photo metadata before publishing, sharing, or archiving.',
+        seoTitle: 'EXIF Reader and Remover Online | Metadata and GPS',
+        seoDescription:
+          'View image EXIF locally, detect camera/GPS/date fields, and download a clean copy without metadata.',
+        h1: 'EXIF Reader and Image Metadata Remover',
+        intro:
+          'Upload an image, inspect available EXIF/IPTC/XMP metadata, and generate a clean canvas-rendered copy.',
+        contentBlocks: [
+          {
+            title: 'What image metadata can reveal',
+            paragraphs: [
+              'Photos can contain camera model, lens, capture time, orientation, editing software, and sometimes GPS coordinates. Checking these fields before publishing helps with privacy and audits.',
+              'Metadata availability depends on the format and what is embedded in the file. Some social apps already remove part of this data automatically.',
+            ],
+          },
+          {
+            title: 'Local cleanup through rendering',
+            paragraphs: [
+              'The clean copy is created by drawing the image to canvas and exporting PNG, JPEG, or WEBP. This produces a new visual file without common metadata chunks.',
+              localPrivacy.en,
+            ],
+            list: ['Copy metadata JSON', 'Export JSON report', 'Download clean image'],
+          },
+          {
+            title: 'Cleanup limits',
+            paragraphs: [
+              'The tool does not remove visible marks, watermarks, text inside the image, or information stored in pixels. It targets embedded metadata and the exported file.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Can it remove GPS from a photo?', answer: 'Yes, exporting a clean canvas copy removes common embedded GPS metadata from the new file.' },
+          { question: 'Does it work with PNG and WEBP?', answer: 'Reading varies by format, but clean export supports PNG, JPEG, and WEBP.' },
+          { question: 'Is the image uploaded?', answer: 'No by default. Reading and cleanup run in the browser.' },
+          { question: 'Does it remove visible text?', answer: 'No. Visible text is part of the pixels and requires visual editing.' },
+        ],
+      },
     },
   },
   {
@@ -851,6 +1056,57 @@ const frontOnlyToolSeeds = [
           { question: 'Remueve metadatos?', answer: 'Como la exportacion crea una nueva imagen en canvas, metadatos comunes no suelen incluirse.' },
           { question: 'La imagen se sube?', answer: 'No por defecto. El procesamiento usa recursos locales del navegador.' },
           { question: 'Que formato debo descargar?', answer: 'WEBP para web ligera, JPEG para compatibilidad y PNG para transparencia o graficos nitidos.' },
+        ],
+      },
+      zh: {
+        name: 'Resize and Crop Image',
+        shortDescription:
+          'Resize images, crop to fixed proportions, create centered squares, and export PNG, JPEG, or WEBP.',
+        primaryKeyword: 'resize image online',
+        secondaryKeywords: [
+          'crop image online',
+          'image resizer',
+          '1080x1080 image',
+          'make image square',
+          'crop photo online',
+          'export webp image',
+        ],
+        searchIntent:
+          'Users who need to adapt images for social posts, websites, stores, and documents without installing an editor.',
+        seoTitle: 'Resize and Crop Image Online | PNG, JPEG, and WEBP',
+        seoDescription:
+          'Upload an image, set width/height, choose fit, cover, or centered square, and download PNG, JPEG, or WEBP.',
+        h1: 'Resize and Crop Image Online',
+        intro:
+          'Adjust dimensions, keep ratio when needed, crop to cover, or generate a centered square ready to export.',
+        contentBlocks: [
+          {
+            title: 'Resizing for posts, sites, and uploads',
+            paragraphs: [
+              'Many systems require specific image sizes such as 1080x1080, 1200x630, or horizontal banners. This tool renders the new size on canvas with high quality smoothing.',
+              'Use fit to preserve the whole image, cover to fill without borders, and centered square for avatars, catalogs, and social media.',
+            ],
+          },
+          {
+            title: 'Formats and quality',
+            paragraphs: [
+              'Export WEBP for smaller web files, JPEG for wide compatibility, or PNG when you need transparency and crisp edges.',
+              localPrivacy.en,
+            ],
+            list: ['Width and height control', 'Fit, cover, and square modes', 'Preview before download'],
+          },
+          {
+            title: 'Ratio considerations',
+            paragraphs: [
+              'Upscaling a very small image may reduce visual quality. For best results, start from a file larger than the final size and choose balanced WEBP/JPEG quality.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Can I create a square image?', answer: 'Yes. Use centered square mode and set equal width and height.' },
+          { question: 'Does it remove metadata?', answer: 'Because export creates a new canvas image, common metadata is usually not included in the final file.' },
+          { question: 'Is the image uploaded?', answer: 'No by default. Processing uses local browser capabilities.' },
+          { question: 'Which format should I download?', answer: 'WEBP for lightweight web use, JPEG for compatibility, and PNG for transparency or sharp graphics.' },
         ],
       },
     },
@@ -1014,6 +1270,57 @@ const frontOnlyToolSeeds = [
           { question: 'Acepta ZIP con contrasena?', answer: 'Si para el ZIP, cuando el navegador y la biblioteca lo soportan.' },
         ],
       },
+      zh: {
+        name: 'Merge, Split, and Reorder PDF',
+        shortDescription:
+          'Combine PDFs, reorder files, remove items, and split pages into an optionally password-protected ZIP.',
+        primaryKeyword: 'merge split reorder pdf online',
+        secondaryKeywords: [
+          'merge pdf online',
+          'split pdf pages',
+          'reorder pdf',
+          'remove pdf pages',
+          'pdf organizer',
+          'pdf pages to zip',
+        ],
+        searchIntent:
+          'Users who need to assemble or split PDF documents locally before sending, archiving, or printing.',
+        seoTitle: 'Merge, Split, and Reorder PDF Online | Page ZIP Export',
+        seoDescription:
+          'Select PDFs, reorder the queue, merge into one file, or split the first PDF into separate page files inside a ZIP.',
+        h1: 'Merge, Split, and Reorder PDF Online',
+        intro:
+          'Upload PDFs, organize order, remove files from the queue, and export a merged PDF or separate pages in ZIP.',
+        contentBlocks: [
+          {
+            title: 'Practical document organization',
+            paragraphs: [
+              'The interface works with a file queue. Move PDFs up or down, remove items, and create a final document in the exact order you need.',
+              'Split mode takes the first PDF in the queue and exports each page as a separate file inside a ZIP, useful for attachments, contracts, and scanned documents.',
+            ],
+          },
+          {
+            title: 'Optional password ZIP',
+            paragraphs: [
+              'When splitting pages, you can set a ZIP password where the browser and library support encryption. PDF merge creates a regular PDF file.',
+              localPrivacy.en,
+            ],
+            list: ['Merge multiple PDFs', 'Reorder queue', 'Split pages to ZIP'],
+          },
+          {
+            title: 'Protected PDF limits',
+            paragraphs: [
+              'Encrypted, corrupted, or specially protected PDFs may fail to load. For sensitive documents, review the generated file before sharing it.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Can I reorder PDFs?', answer: 'Yes. Use move up and move down buttons before merging.' },
+          { question: 'Does split export every page?', answer: 'Yes. Split mode creates one PDF per page from the first file in the queue.' },
+          { question: 'Are PDFs uploaded?', answer: 'No by default. Assembly uses local browser processing.' },
+          { question: 'Can the ZIP use a password?', answer: 'Yes for the ZIP package when supported by the browser and library.' },
+        ],
+      },
     },
   },
   {
@@ -1173,6 +1480,57 @@ const frontOnlyToolSeeds = [
           { question: 'Incluye manifest PWA?', answer: 'Si. Crea site.webmanifest con nombre, colores, display e iconos.' },
           { question: 'Puedo copiar las tags HTML?', answer: 'Si. El snippet HTML queda disponible tras generar.' },
           { question: 'La imagen se sube?', answer: 'No por defecto. Los iconos se renderizan localmente.' },
+        ],
+      },
+      zh: {
+        name: 'Favicon and Manifest Generator',
+        shortDescription:
+          'Generate favicon.ico, PNGs, Apple Touch Icon, maskable icons, PWA manifest, and HTML snippet in a ZIP.',
+        primaryKeyword: 'favicon and manifest generator',
+        secondaryKeywords: [
+          'favicon generator online',
+          'create favicon ico',
+          'pwa icon generator',
+          'site webmanifest generator',
+          'apple touch icon generator',
+          'maskable icon pwa',
+        ],
+        searchIntent:
+          'Developers and site owners who need to turn a base image into a complete web/PWA icon package.',
+        seoTitle: 'Favicon and PWA Manifest Generator | ICO, PNG, and HTML',
+        seoDescription:
+          'Upload an image and generate favicon.ico, PNG icons, Apple Touch Icon, webmanifest, and ready-to-copy HTML snippet.',
+        h1: 'Favicon, Manifest, and PWA Icon Generator',
+        intro:
+          'Create a full favicon package: ICO, PNGs, maskable icons, manifest, and ready HTML tags.',
+        contentBlocks: [
+          {
+            title: 'Complete package for browsers and PWAs',
+            paragraphs: [
+              'A modern favicon is not just one .ico file. Websites and PWAs use different sizes for tabs, shortcuts, iOS, Android, and home screens.',
+              'The tool generates multi-size favicon.ico, standard PNGs, Apple Touch Icon, maskable icons, and site.webmanifest with name, color, and display mode.',
+            ],
+          },
+          {
+            title: 'Ready HTML snippet and ZIP',
+            paragraphs: [
+              'After generation, copy the HTML for your head tag, copy the manifest, or download all files in a ZIP to place in your public folder.',
+              localPrivacy.en,
+            ],
+            list: ['Multi-size favicon.ico', '192/512 web app icons', 'PWA maskable icons'],
+          },
+          {
+            title: 'Base image quality',
+            paragraphs: [
+              'Use a square, simple image with enough visual margin. Complex logos may lose readability at 16x16, so check small previews before shipping.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Does it create a real favicon.ico?', answer: 'Yes. The package includes an ICO with common embedded PNG sizes.' },
+          { question: 'Does it include a PWA manifest?', answer: 'Yes. It creates site.webmanifest with name, colors, display mode, and icons.' },
+          { question: 'Can I copy the HTML tags?', answer: 'Yes. The HTML snippet is available after generation.' },
+          { question: 'Is the image uploaded?', answer: 'No by default. Icons are rendered locally in the browser.' },
         ],
       },
     },
@@ -1336,6 +1694,57 @@ const frontOnlyToolSeeds = [
           { question: 'El resultado puede copiarse?', answer: 'Si. Puedes copiar, descargar TXT o exportar JSON.' },
         ],
       },
+      zh: {
+        name: 'QR Code Scanner and Decoder',
+        shortDescription:
+          'Read QR Codes from image or camera, copy decoded content, and export TXT or JSON.',
+        primaryKeyword: 'qr code scanner decoder online',
+        secondaryKeywords: [
+          'qr code reader online',
+          'scan qr code image',
+          'decode qr code',
+          'read qr code camera',
+          'qr code to text',
+          'qr code reader browser',
+        ],
+        searchIntent:
+          'Users who need to read QR Codes from an image, screenshot, or camera without installing an app.',
+        seoTitle: 'QR Code Scanner Online | Read QR from Camera or Image',
+        seoDescription:
+          'Read QR Codes in the browser using camera or image upload, copy decoded content, and export TXT or JSON.',
+        h1: 'QR Code Scanner and Decoder Online',
+        intro:
+          'Use camera or upload an image with a QR Code to decode text, URLs, Wi-Fi, Pix, vCard, or any payload.',
+        contentBlocks: [
+          {
+            title: 'Read from camera or file',
+            paragraphs: [
+              'The tool can open your device camera for live scanning or analyze an uploaded image such as a screenshot, photo, or downloaded file.',
+              'The result appears as raw text so you can copy it, review it, save TXT, or export JSON.',
+            ],
+          },
+          {
+            title: 'Scanning privacy',
+            paragraphs: [
+              'Camera access requires browser permission and can be stopped at any time. Image files are processed locally by the QR reading library.',
+              localPrivacy.en,
+            ],
+            list: ['Camera with manual stop', 'Image upload', 'TXT/JSON export'],
+          },
+          {
+            title: 'Supported content',
+            paragraphs: [
+              'QR Codes can carry links, text, Wi-Fi data, vCard, calendar, Pix, and other formats. The tool shows the raw payload so you can decide the next step.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Do I need to install an app?', answer: 'No. It works in the browser with camera or image upload.' },
+          { question: 'Does the camera stay on?', answer: 'Only while you start it. Use stop camera to end scanning.' },
+          { question: 'Can it read screenshots?', answer: 'Yes. Upload an image with a visible QR Code and scan it.' },
+          { question: 'Can I copy the result?', answer: 'Yes. You can copy it, download TXT, or export JSON.' },
+        ],
+      },
     },
   },
   {
@@ -1495,6 +1904,57 @@ const frontOnlyToolSeeds = [
           { question: 'Puedo descargar SVG?', answer: 'Si. Despues de generar, descarga PNG o SVG.' },
           { question: 'El payload queda visible?', answer: 'Si. La pagina muestra el payload bruto para revisar y copiar.' },
           { question: 'Los datos se envian?', answer: 'No por defecto. El QR se genera localmente.' },
+        ],
+      },
+      zh: {
+        name: 'Wi-Fi, vCard, and Event QR Generator',
+        shortDescription:
+          'Create QR Code payloads for Wi-Fi, vCard contacts, and calendar events with PNG/SVG download.',
+        primaryKeyword: 'wifi vcard event qr code generator',
+        secondaryKeywords: [
+          'wifi qr code',
+          'vcard qr code',
+          'calendar qr code',
+          'contact qr generator',
+          'wifi qr generator',
+          'ics qr code',
+        ],
+        searchIntent:
+          'Users who want practical QR Codes to share a network, contact, or event quickly.',
+        seoTitle: 'Wi-Fi, vCard, and Event QR Generator | PNG and SVG',
+        seoDescription:
+          'Build QR Codes for Wi-Fi networks, vCard contacts, or calendar events, copy payload, and download PNG or SVG.',
+        h1: 'Wi-Fi, vCard, and Event QR Code Generator',
+        intro:
+          'Fill Wi-Fi, contact, or calendar data, generate the QR Code, and export image or standardized payload.',
+        contentBlocks: [
+          {
+            title: 'Practical QR with standard payloads',
+            paragraphs: [
+              'Wi-Fi QR lets people connect using SSID and password quickly. vCard helps save contacts, and event QR builds a simple calendar payload.',
+              'The tool shows the raw payload before generating the QR, which makes sensitive data easier to review.',
+            ],
+          },
+          {
+            title: 'Exports for print and web',
+            paragraphs: [
+              'Download PNG for direct use or SVG for materials that need cleaner scaling. The payload can also be copied for documentation or tests.',
+              localPrivacy.en,
+            ],
+            list: ['WPA/WEP/no-password Wi-Fi', 'vCard 3.0 contact', 'ICS calendar event'],
+          },
+          {
+            title: 'Review before sharing',
+            paragraphs: [
+              'Check passwords, phone numbers, emails, and times before publishing. Printed QR Codes are easy to copy, so avoid data that should not circulate.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Can it create password Wi-Fi QR?', answer: 'Yes. Enter SSID, security type, password, and hidden network flag.' },
+          { question: 'Can I download SVG?', answer: 'Yes. After generation, download PNG or SVG.' },
+          { question: 'Is the payload visible?', answer: 'Yes. The page shows raw payload for review and copy.' },
+          { question: 'Are the data uploaded?', answer: 'No by default. QR generation happens locally in the browser.' },
         ],
       },
     },
@@ -1658,6 +2118,57 @@ const frontOnlyToolSeeds = [
           { question: 'El JSON se envia?', answer: 'No por defecto. La inferencia ocurre en el navegador.' },
         ],
       },
+      zh: {
+        name: 'JSON to TypeScript, Zod, and Schema',
+        shortDescription:
+          'Paste real JSON and generate TypeScript interfaces, Zod schema, and JSON Schema with ZIP export.',
+        primaryKeyword: 'json to typescript zod schema',
+        secondaryKeywords: [
+          'json to typescript',
+          'json to zod',
+          'json schema generator',
+          'typescript interface from json',
+          'zod schema generator',
+          'convert json to type',
+        ],
+        searchIntent:
+          'Developers who need to turn real payloads into types, validators, and schemas faster.',
+        seoTitle: 'JSON to TypeScript, Zod, and JSON Schema | Online Generator',
+        seoDescription:
+          'Paste JSON and generate TypeScript interface, Zod schema, and JSON Schema with tab copy and ZIP export.',
+        h1: 'JSON to TypeScript, Zod, and JSON Schema',
+        intro:
+          'Turn a JSON example into reusable code for typing, runtime validation, and API documentation.',
+        contentBlocks: [
+          {
+            title: 'Inference from real examples',
+            paragraphs: [
+              'The tool analyzes objects, arrays, strings, numbers, booleans, and null to create a starter model. It also detects common string formats like email, URL, UUID, and dates.',
+              'Arrays with different objects become combined types where possible. The output is a starting point that should be reviewed before production.',
+            ],
+          },
+          {
+            title: 'Three outputs for one payload',
+            paragraphs: [
+              'TypeScript helps with autocomplete and code contracts. Zod adds runtime validation, while JSON Schema works for documentation, validation, and external tooling.',
+              localPrivacy.en,
+            ],
+            list: ['TypeScript interface', 'Zod schema', 'JSON Schema draft 2020-12'],
+          },
+          {
+            title: 'When to review manually',
+            paragraphs: [
+              'A JSON example does not reveal missing optional fields, business rules, closed enums, or numeric limits. Adjust generated code against the real API.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Does it generate Zod?', answer: 'Yes. It creates a Zod schema and inferred type.' },
+          { question: 'Does it support root arrays?', answer: 'Yes. It generates an item type and list alias when the root is an array.' },
+          { question: 'Can I export everything?', answer: 'Yes. Download a ZIP with TypeScript, Zod, and JSON Schema files.' },
+          { question: 'Is JSON uploaded?', answer: 'No by default. Inference runs in the browser.' },
+        ],
+      },
     },
   },
   {
@@ -1817,6 +2328,57 @@ const frontOnlyToolSeeds = [
           { question: 'Puedo cambiar timezone?', answer: 'Si. Edita el campo timezone para simular otro fuso.' },
           { question: 'Sirve para crontab Linux?', answer: 'Sirve de apoyo para expresiones de 5 campos, pero confirma detalles del ambiente.' },
           { question: 'La expresion se envia?', answer: 'No por defecto. El analisis ocurre en el navegador.' },
+        ],
+      },
+      zh: {
+        name: 'Cron Generator and Explainer',
+        shortDescription:
+          'Build cron expressions, read human descriptions, and preview next runs by timezone.',
+        primaryKeyword: 'cron generator explainer online',
+        secondaryKeywords: [
+          'cron expression generator',
+          'explain cron',
+          'cron to text',
+          'next cron runs',
+          'validate cron online',
+          'crontab generator',
+        ],
+        searchIntent:
+          'Developers and operators who need to create or review cron schedules without time mistakes.',
+        seoTitle: 'Cron Generator and Explainer Online | Next Run Preview',
+        seoDescription:
+          'Create cron expressions, see a human description, choose timezone, and list upcoming executions.',
+        h1: 'Cron Generator and Explainer Online',
+        intro:
+          'Type or choose a cron preset, generate a human explanation, and check upcoming executions.',
+        contentBlocks: [
+          {
+            title: 'Fewer scheduling mistakes',
+            paragraphs: [
+              'Cron is compact but easy to misread. This tool translates the expression and shows future dates so you can validate the schedule.',
+              'Use presets for common patterns such as every 5 minutes, weekdays, first day of the month, or Sunday early morning.',
+            ],
+          },
+          {
+            title: 'Explicit timezone',
+            paragraphs: [
+              'The timezone field helps simulate runs in the correct zone, important for UTC servers, cloud jobs, and distributed teams.',
+              localPrivacy.en,
+            ],
+            list: ['Human description', 'Upcoming run list', 'Copy cron expression'],
+          },
+          {
+            title: 'Compatibility',
+            paragraphs: [
+              'Different environments may accept cron variations with seconds, year, or special aliases. Confirm the syntax supported by your scheduler before deploying.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Does it show next runs?', answer: 'Yes. It lists upcoming dates from the current time.' },
+          { question: 'Can I change timezone?', answer: 'Yes. Edit the timezone field to simulate another zone.' },
+          { question: 'Is it suitable for Linux crontab?', answer: 'It helps with 5-field expressions, but confirm environment-specific syntax.' },
+          { question: 'Is the expression uploaded?', answer: 'No by default. Analysis happens in the browser.' },
         ],
       },
     },
@@ -1980,6 +2542,57 @@ const frontOnlyToolSeeds = [
           { question: 'Los archivos se envian?', answer: 'No por defecto. El procesamiento ocurre localmente.' },
         ],
       },
+      zh: {
+        name: 'Gzip, Deflate, and Password ZIP',
+        shortDescription:
+          'Compress/decompress gzip/deflate, package files or folders into ZIP, and extract ZIP locally.',
+        primaryKeyword: 'gzip deflate zip online',
+        secondaryKeywords: [
+          'gzip compressor online',
+          'decompress gzip',
+          'create password zip',
+          'zip folder online',
+          'deflate online',
+          'extract zip in browser',
+        ],
+        searchIntent:
+          'Developers and technical users who need archive transformations without installing desktop utilities.',
+        seoTitle: 'Gzip, Deflate, and ZIP Online | Compress, Extract, Password',
+        seoDescription:
+          'Compress or decompress gzip/deflate, create ZIP from files/folders, and extract ZIP in the browser.',
+        h1: 'Gzip, Deflate, and Password ZIP Online',
+        intro:
+          'Select files or folders, apply gzip/deflate, create an optionally encrypted ZIP, or extract a ZIP.',
+        contentBlocks: [
+          {
+            title: 'Compression workflows in one place',
+            paragraphs: [
+              'Gzip and deflate are common in HTTP payloads, logs, and technical artifacts. ZIP is better for grouping multiple files or a whole folder.',
+              'The tool uses browser streams when available and a ZIP library to package, extract, and apply a password to the archive.',
+            ],
+          },
+          {
+            title: 'Folders and password',
+            paragraphs: [
+              'Use folder selection to preserve relative paths inside a ZIP. The password is optional and helps reduce casual access to the exported package.',
+              localPrivacy.en,
+            ],
+            list: ['Gzip/gunzip a file', 'Deflate/inflate', 'ZIP files or folder'],
+          },
+          {
+            title: 'Compatibility limits',
+            paragraphs: [
+              'CompressionStream may be missing in older browsers. Password ZIP depends on library support and should be tested in the target environment before critical use.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Can it compress a folder?', answer: 'Yes, using folder selection where the browser supports webkitdirectory.' },
+          { question: 'Can it create password ZIP?', answer: 'Yes. Enter a password before creating the ZIP.' },
+          { question: 'Can it decompress gzip?', answer: 'Yes. Select a .gz file and use decompress gzip.' },
+          { question: 'Are files uploaded?', answer: 'No by default. Processing happens locally.' },
+        ],
+      },
     },
   },
   {
@@ -2139,6 +2752,57 @@ const frontOnlyToolSeeds = [
           { question: 'Que registros soporta?', answer: 'A, AAAA, CNAME, MX, TXT, NS, SOA y CAA.' },
           { question: 'Por que DNS cambio en un lugar y no en otro?', answer: 'Cache y TTL pueden hacer que resolvers devuelvan valores distintos durante propagacion.' },
           { question: 'Puedo exportar la respuesta?', answer: 'Si. Copia o descarga el JSON completo.' },
+        ],
+      },
+      zh: {
+        name: 'DNS Lookup via DoH',
+        shortDescription:
+          'Query DNS records A, AAAA, CNAME, MX, TXT, NS, SOA, and CAA using public DNS over HTTPS.',
+        primaryKeyword: 'dns lookup doh online',
+        secondaryKeywords: [
+          'dns lookup online',
+          'check domain dns',
+          'dns over https lookup',
+          'lookup mx txt',
+          'view dns records',
+          'cloudflare doh dns',
+        ],
+        searchIntent:
+          'Developers, support teams, and admins who need to check DNS records quickly without a terminal.',
+        seoTitle: 'DNS Lookup via DoH | A, MX, TXT, CNAME, NS, and CAA',
+        seoDescription:
+          'Query DNS records through DNS over HTTPS using Cloudflare or Google and export the JSON response.',
+        h1: 'DNS Lookup via DNS over HTTPS',
+        intro:
+          'Enter a domain, choose record type and public resolver, and query DNS directly from the browser.',
+        contentBlocks: [
+          {
+            title: 'DNS checks without terminal',
+            paragraphs: [
+              'DNS lookup helps validate domain pointing, email, CDN, ownership verification, and security configuration.',
+              'The tool queries public DoH resolvers and shows answers, TTL, raw data, and JSON for debugging or support.',
+            ],
+          },
+          {
+            title: 'Common record types',
+            paragraphs: [
+              'Use A/AAAA for IP, CNAME for aliases, MX for email, TXT for verification, NS for authority, SOA for zone data, and CAA for certificate policy.',
+              'The browser fetches Cloudflare or Google directly. The queried domain is sent to the chosen resolver, not to the site backend.',
+            ],
+            list: ['Cloudflare DoH', 'Google DoH', 'JSON export'],
+          },
+          {
+            title: 'Cache and propagation',
+            paragraphs: [
+              'DNS results may vary because of cache, TTL, and propagation. For recent changes, compare resolvers and wait for previous TTLs to expire.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Does the lookup go through this site server?', answer: 'No. The browser calls the selected public DoH resolver directly.' },
+          { question: 'Which records are supported?', answer: 'A, AAAA, CNAME, MX, TXT, NS, SOA, and CAA.' },
+          { question: 'Why did DNS change in one place but not another?', answer: 'Cache and TTL can make resolvers return different values during propagation.' },
+          { question: 'Can I export the response?', answer: 'Yes. Copy or download the full JSON.' },
         ],
       },
     },
@@ -2302,6 +2966,57 @@ const frontOnlyToolSeeds = [
           { question: 'Sirve para mainnet?', answer: 'Si. Puedes elegir mainnet o testnet.' },
         ],
       },
+      zh: {
+        name: 'Bitcoin Fee Calculator with Mempool',
+        shortDescription:
+          'Fetch recommended sat/vB fees, estimate cost by vsize, and compare priorities in sats and BTC.',
+        primaryKeyword: 'bitcoin fee calculator mempool',
+        secondaryKeywords: [
+          'bitcoin fee today',
+          'sat vb calculator',
+          'bitcoin transaction fee calculator',
+          'mempool fee rate',
+          'calculate btc fee',
+          'sats to btc fee',
+        ],
+        searchIntent:
+          'Bitcoin users who need to estimate transaction cost by virtual size before sending or consolidating UTXOs.',
+        seoTitle: 'Bitcoin Fee Calculator | Mempool sat/vB and BTC',
+        seoDescription:
+          'Fetch recommended mempool fees, enter transaction vsize, and estimate transaction cost in sats and BTC.',
+        h1: 'Bitcoin Fee Calculator with Mempool Data',
+        intro:
+          'Refresh recommended fees, enter transaction virtual size, and compare priority, total sats, and BTC value.',
+        contentBlocks: [
+          {
+            title: 'Estimate by sat/vB',
+            paragraphs: [
+              'Bitcoin fees are usually estimated in satoshis per virtual byte. Multiplying sat/vB by transaction vsize gives an estimated total cost in sats.',
+              'The tool compares fast, half-hour, hour, economy, minimum, and custom rates for planning.',
+            ],
+          },
+          {
+            title: 'Public mempool lookup',
+            paragraphs: [
+              'Refresh queries public recommended fee endpoints for the selected network. If the API fails, the table still shows sample values for manual calculation.',
+              'No private key, seed, or signing is involved. This page only calculates costs and displays fee data.',
+            ],
+            list: ['Mainnet and testnet', 'sat/vB to sats', 'JSON export'],
+          },
+          {
+            title: 'What estimates cannot guarantee',
+            paragraphs: [
+              'Recommended fees change quickly with demand. The value does not guarantee confirmation in a specific block and should be checked when broadcasting.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'What is vsize?', answer: 'It is transaction virtual size in vB, used to calculate fee in sat/vB.' },
+          { question: 'Does the tool send transactions?', answer: 'No. It only estimates fees and does not sign or broadcast anything.' },
+          { question: 'Does it fetch mempool data?', answer: 'Yes. Refresh queries a public fee API when available.' },
+          { question: 'Does it support mainnet?', answer: 'Yes. You can choose mainnet or testnet.' },
+        ],
+      },
     },
   },
   {
@@ -2463,6 +3178,57 @@ const frontOnlyToolSeeds = [
           { question: 'Funciona en testnet?', answer: 'Si. Elige testnet en el selector de red.' },
         ],
       },
+      zh: {
+        name: 'Bitcoin Address and TX Decoder Read-only',
+        shortDescription:
+          'Validate Bitcoin addresses and decode raw hex transactions without seed, signing, or broadcast.',
+        primaryKeyword: 'bitcoin address tx decoder',
+        secondaryKeywords: [
+          'validate bitcoin address',
+          'decode bitcoin transaction hex',
+          'bitcoin raw tx decoder',
+          'scriptpubkey bitcoin',
+          'bitcoin address validator',
+          'read only bitcoin tool',
+        ],
+        searchIntent:
+          'Developers and Bitcoin users who need to inspect addresses and raw transactions without signing or broadcasting risk.',
+        seoTitle: 'Bitcoin Address and TX Decoder | Read-only, No Broadcast',
+        seoDescription:
+          'Validate Bitcoin addresses, view scriptPubKey, and decode raw transaction hex with inputs, outputs, txid, and vsize.',
+        h1: 'Bitcoin Address and TX Decoder Read-only',
+        intro:
+          'Inspect addresses and raw transaction hex in read-only mode, without asking for seed, WIF, or private key.',
+        contentBlocks: [
+          {
+            title: 'Inspection without sending risk',
+            paragraphs: [
+              'The tool validates addresses by network and shows scriptPubKey when possible. For raw transactions, it decodes txid, inputs, outputs, values, scripts, and virtual size.',
+              'It does not sign, broadcast, or request seed. The focus is technical reading and safe debugging of public data or prepared transactions.',
+            ],
+          },
+          {
+            title: 'Mainnet and testnet',
+            paragraphs: [
+              'Choosing the correct network prevents false negatives. Mainnet and testnet addresses use different prefixes and rules.',
+              localPrivacy.en,
+            ],
+            list: ['Address validation', 'Raw hex decode', 'JSON export'],
+          },
+          {
+            title: 'Decode limits',
+            paragraphs: [
+              'A standalone raw transaction may not include full previous UTXO details such as input value. For full audit, combine it with explorer or node data.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Does it ask for seed?', answer: 'No. It is read-only and does not need seed, WIF, or private key.' },
+          { question: 'Does it broadcast transactions?', answer: 'No. It only decodes raw hex locally.' },
+          { question: 'Does it show txid?', answer: 'Yes. For valid transactions it shows txid, vsize, weight, inputs, and outputs.' },
+          { question: 'Does it work on testnet?', answer: 'Yes. Choose testnet in the network selector.' },
+        ],
+      },
     },
   },
   {
@@ -2622,6 +3388,57 @@ const frontOnlyToolSeeds = [
           { question: 'Minifica SQL?', answer: 'Si. Minificar elimina espacios repetidos y comentarios simples de linea.' },
           { question: 'Puedo exportar .sql?', answer: 'Si. Usa exportar .sql para descargar el resultado.' },
           { question: 'El SQL se envia?', answer: 'No por defecto. El formato ocurre en el navegador.' },
+        ],
+      },
+      zh: {
+        name: 'SQL Formatter and Minifier',
+        shortDescription:
+          'Format SQL by dialect, adjust keyword case, minify queries, and export a .sql file.',
+        primaryKeyword: 'sql formatter online',
+        secondaryKeywords: [
+          'sql formatter',
+          'sql minifier',
+          'format sql query',
+          'postgres sql formatter',
+          'mysql formatter',
+          'sql beautifier',
+        ],
+        searchIntent:
+          'Developers and analysts who need to clean SQL queries for reading, review, debugging, or documentation.',
+        seoTitle: 'SQL Formatter Online | PostgreSQL, MySQL, SQLite, and T-SQL',
+        seoDescription:
+          'Paste SQL, choose dialect, format, minify, copy output, or export .sql directly in the browser.',
+        h1: 'SQL Formatter and Minifier Online',
+        intro:
+          'Format SQL queries with dialect selection, upper/lower/preserve keywords, minification, and .sql export.',
+        contentBlocks: [
+          {
+            title: 'Readable SQL for review',
+            paragraphs: [
+              'Long queries are hard to review when they arrive in one line. The formatter breaks clauses, indents sections, and normalizes keywords as you prefer.',
+              'Choose common dialects such as PostgreSQL, MySQL, MariaDB, SQLite, BigQuery, T-SQL, and PL/SQL for better syntax compatibility.',
+            ],
+          },
+          {
+            title: 'Minify and export',
+            paragraphs: [
+              'Minify mode removes simple line comments and repeated spaces to create a compact version. You can also copy the result or download query.sql.',
+              localPrivacy.en,
+            ],
+            list: ['Format by dialect', 'Minify SQL', 'Export .sql'],
+          },
+          {
+            title: 'Formatter limits',
+            paragraphs: [
+              'Formatting does not validate permissions, execution plans, or query safety. Always review destructive queries, WHERE filters, and variables before running against a real database.',
+            ],
+          },
+        ],
+        faq: [
+          { question: 'Does it support PostgreSQL?', answer: 'Yes. It also includes MySQL, MariaDB, SQLite, BigQuery, T-SQL, and PL/SQL.' },
+          { question: 'Can it minify SQL?', answer: 'Yes. Minify removes repeated spaces and simple line comments.' },
+          { question: 'Can I export .sql?', answer: 'Yes. Use export .sql to download the result.' },
+          { question: 'Is SQL uploaded?', answer: 'No by default. Formatting runs in the browser.' },
         ],
       },
     },

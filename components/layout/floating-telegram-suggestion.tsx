@@ -16,6 +16,10 @@ const copyByLocale: Record<AppLocale, { label: string; ariaLabel: string }> = {
     label: 'Sugerir herramienta',
     ariaLabel: 'Sugerir herramienta o mejora en Telegram',
   },
+  zh: {
+    label: '建议工具',
+    ariaLabel: '在 Telegram 上建议工具或改进意见',
+  },
 };
 
 type FloatingTelegramSuggestionProps = {

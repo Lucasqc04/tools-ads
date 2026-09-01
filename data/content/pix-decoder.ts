@@ -296,6 +296,87 @@ const contentByLocale: Record<AppLocale, PixDecoderLocaleContent> = {
       { question: '¿Puedo usar el QR Code generado en una tienda?', answer: 'Sí. El QR Code estático generado es válido y funcional.' },
     ],
   },
+  zh: {
+    name: 'Pix QR Code Decoder & Generator',
+    shortDescription:
+      'Generate Pix Copy and Paste payloads, decode EMV fields, validate CRC16, fix errors, view the field tree and download QR Code — all locally in the browser.',
+    primaryKeyword: 'pix qr code decoder online',
+    secondaryKeywords: [
+      'pix emv decoder',
+      'br code decoder',
+      'pix copy paste generator',
+      'pix crc16 validator',
+      'pix payload decoder',
+      'generate pix qr code',
+      'fix pix crc',
+      'extract pix data',
+      'brazilian pix decoder',
+      'emv qr code parser',
+    ],
+    searchIntent:
+      'Developers, merchants and users who need to generate, validate, decode or fix Pix Copy and Paste payloads (BR Code EMV).',
+    seoTitle: 'Pix QR Code Decoder & Generator Online | EMV Validator',
+    seoDescription:
+      'Generate Pix Copy and Paste, validate payload, decode EMV fields, fix CRC16, view tree and download QR Code. 100% local browser processing.',
+    h1: 'Pix QR Code Decoder & Generator Online',
+    intro:
+      'Generate Pix Copy and Paste payloads, decode EMV fields, validate CRC16, fix errors, view the field tree and download QR Code — all locally in the browser.',
+    contentBlocks: [
+      {
+        title: 'What is Pix Copy and Paste?',
+        paragraphs: [
+          'Pix Copy and Paste is a text representation of the Pix QR Code. It\'s a payload in EMV (Europay, Mastercard, Visa) format containing the data needed for a Pix payment: recipient key, amount, name, city and identifier.',
+          'The format is standardized by Brazil\'s Central Bank following the BR Code specification. When scanned or pasted in a banking app, the data is automatically interpreted to initiate the transaction.',
+        ],
+      },
+      {
+        title: 'Static vs. Dynamic Pix',
+        paragraphs: [
+          'Static Pix QR Code can be reused infinitely. It contains the Pix key directly in the payload. Ideal for shops, freelancers and donations.',
+          'Dynamic Pix QR Code is single-use. It contains a URL/location provided by the PSP (Payment Service Provider) that returns payment data in real-time. Used for specific charges and e-commerce.',
+        ],
+        list: [
+          'Static: Pix key in field 26.01, Point of Initiation = 11.',
+          'Dynamic: URL in field 26.25, Point of Initiation = 12.',
+          'Both use GUI br.gov.bcb.pix in field 26.00.',
+          'CRC16-CCITT validates payload integrity.',
+        ],
+      },
+      {
+        title: 'CRC16 — what it is and how it works',
+        paragraphs: [
+          'CRC16-CCITT is a 4-character hexadecimal checksum at the end of the payload (field 63). It ensures the payload hasn\'t been corrupted or altered.',
+          'The calculation uses polynomial 0x1021 with initial value 0xFFFF. If the CRC is incorrect, the banking app may reject the payment.',
+        ],
+      },
+      {
+        title: 'Privacy and local processing',
+        paragraphs: [
+          'All processing — parsing, validation, QR Code generation and CRC — happens 100% in the browser. No payment data is sent to any server.',
+          'The tool does not query Brazil\'s Central Bank DICT, does not validate key ownership and does not confirm payments.',
+        ],
+      },
+      {
+        title: 'Security warnings',
+        paragraphs: [
+          'A valid CRC does NOT mean the recipient is trustworthy. Always verify the data (name, key, amount) in your banking app before confirming a Pix payment.',
+          'Pix QR Codes can be used in scams. Never pay without verifying the recipient. This tool is only for technical analysis and legitimate payload generation.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'What is Pix Copy and Paste?', answer: 'It\'s the text version of a Pix QR Code. An EMV payload containing payment data (key, amount, name, city) that can be pasted in a banking app to initiate a transaction.' },
+      { question: 'Does this tool generate real Pix?', answer: 'Yes, the generated static Pix is real and can be used to receive payments. For real dynamic Pix, you need a PSP (bank or fintech) that provides the URL/location.' },
+      { question: 'What\'s the difference between static and dynamic Pix?', answer: 'Static is reusable, contains the key directly. Dynamic is single-use, contains a PSP URL that returns data in real-time.' },
+      { question: 'What is the Pix CRC?', answer: 'CRC16-CCITT is a 4-character checksum at the end validating integrity. If wrong, the banking app may reject the code.' },
+      { question: 'Can I fix a Pix with invalid CRC?', answer: 'Yes. The tool recalculates the correct CRC and generates the fixed payload.' },
+      { question: 'Is the Pix key validated with the Central Bank?', answer: 'No. The tool only validates format and structure. It doesn\'t query DICT or confirm ownership.' },
+      { question: 'Does the tool confirm payments?', answer: 'No. Payment confirmation depends on the PSP/bank. This tool only generates, validates and decodes payloads.' },
+      { question: 'Is my data sent to a server?', answer: 'No. All processing is local in the browser. No key, amount or payload data leaves your device.' },
+      { question: 'Can I download the Pix QR Code?', answer: 'Yes. You can download in PNG, SVG or PDF, copy as image and customize colors and size.' },
+      { question: 'Can I use the generated QR Code in a store?', answer: 'Yes. The generated static QR Code is valid and functional. Print or display digitally to receive payments.' },
+    ],
+  },
 };
 
 export function getPixDecoderContent(locale: AppLocale): PixDecoderLocaleContent {

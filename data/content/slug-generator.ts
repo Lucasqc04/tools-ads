@@ -136,6 +136,46 @@ const contentByLocale: Record<AppLocale, SlugGeneratorLocaleContent> = {
       { question: 'Puedo copiar URL completa con prefijo?', answer: 'Si. Puedes copiar el preview final.' },
     ],
   },
+  zh: {
+    name: 'URL Slug Generator',
+    shortDescription: 'Turn titles and phrases into clean URL slugs with separator, length, and suggestion controls.',
+    primaryKeyword: 'url slug generator online',
+    secondaryKeywords: ['slug generator', 'create slug online', 'friendly url slug', 'slug for wordpress', 'slug for nextjs'],
+    searchIntent: 'Creators and developers generating clean slugs for blog posts, products, and CMS pages.',
+    seoTitle: 'URL Slug Generator Online | Create Clean Friendly Slugs',
+    seoDescription: 'Generate URL slugs from text with accent removal, separator choice, max length, and final URL preview.',
+    h1: 'URL Slug Generator Online',
+    intro: 'Create clean and consistent slugs for content, products, and categories with practical controls.',
+    contentBlocks: [
+      {
+        title: 'What a slug is',
+        paragraphs: [
+          'A slug is the readable part of a URL path. Good slugs improve readability and make link structures easier to manage.',
+          'This tool normalizes text into URL-safe segments and removes unnecessary noise.',
+        ],
+      },
+      {
+        title: 'Configurable rules',
+        paragraphs: [
+          'Choose hyphen or underscore, remove stopwords, set maximum length, and avoid cutting words when trimming.',
+          'You can also use a URL prefix to preview final routes before publishing.',
+        ],
+      },
+      {
+        title: 'Practical limits',
+        paragraphs: [
+          'Automatic slug generation helps consistency, but final wording should still match your content intent.',
+          'Keep slugs short and meaningful for better usability.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Can I choose hyphen or underscore?', answer: 'Yes. You can choose your preferred separator.' },
+      { question: 'Can it remove accents and emojis?', answer: 'Yes. Cleanup options include accents, punctuation, and emojis.' },
+      { question: 'Can I limit slug length without cutting words?', answer: 'Yes. You can keep word boundaries while limiting length.' },
+      { question: 'Can I copy full URL with prefix?', answer: 'Yes. Add a prefix and copy the full URL preview.' },
+    ],
+  },
 };
 
 export const getSlugGeneratorContent = (locale: AppLocale): SlugGeneratorLocaleContent =>

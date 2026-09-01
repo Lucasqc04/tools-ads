@@ -188,6 +188,7 @@ const localizedSearchIntent: Record<AppLocale, string> = {
     'Pessoas que buscam caractere invisivel por jogo ou rede social para copiar e colar, com mais chance de aprovacao em validadores de nickname.',
   en: 'People looking for platform-specific invisible character patterns to copy and paste into nickname fields.',
   es: 'Personas que buscan patrones de caracter invisible por plataforma para copiar y pegar en campos de nickname.',
+  zh: '希望按游戏或社交平台查找隐藏字符组合并复制粘贴的用户,以提高通过昵称验证的几率。',
 };
 
 const nicknameSymbolSearchIntent: Record<AppLocale, string> = {
@@ -195,6 +196,7 @@ const nicknameSymbolSearchIntent: Record<AppLocale, string> = {
     'Jogadores que querem criar um nickname com simbolos e estilos Unicode adaptados ao contexto do jogo.',
   en: 'Players who want to create a gaming name with symbols and Unicode styles for a specific game.',
   es: 'Jugadores que quieren crear un nickname con simbolos y estilos Unicode para un juego concreto.',
+  zh: '希望为特定游戏创建带有符号和 Unicode 风格昵称的玩家。',
 };
 
 const symbolCategorySearchIntent: Record<AppLocale, string> = {
@@ -202,6 +204,7 @@ const symbolCategorySearchIntent: Record<AppLocale, string> = {
     'Pessoas que buscam um simbolo especifico de uma categoria (setas, coracoes, estrelas, etc.) para copiar e colar rapidamente.',
   en: 'People looking for a specific symbol from one category (arrows, hearts, stars, etc.) to quickly copy and paste.',
   es: 'Personas que buscan un simbolo especifico de una categoria (flechas, corazones, estrellas, etc.) para copiar y pegar rapidamente.',
+  zh: '希望从某个分类(箭头、爱心、星星等)中找到特定符号并快速复制粘贴的用户。',
 };
 
 const symbolCategoryRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
@@ -217,6 +220,10 @@ const symbolCategoryRelatedCopy: Record<AppLocale, { title: string; description:
     title: 'Otras categorías de símbolos',
     description: 'Explora otras categorías de símbolos listos para copiar.',
   },
+  zh: {
+    title: '其他符号分类',
+    description: '浏览其他可直接复制的符号分类。',
+  },
 };
 
 const multiplicationTableSearchIntent: Record<AppLocale, string> = {
@@ -224,6 +231,7 @@ const multiplicationTableSearchIntent: Record<AppLocale, string> = {
     'Estudantes, pais e professores que buscam a tabuada de um numero especifico para consultar ou treinar com quiz.',
   en: 'Students, parents, and teachers looking up the times table of a specific number to review or practice with a quiz.',
   es: 'Estudiantes, padres y docentes que buscan la tabla de multiplicar de un numero especifico para consultar o practicar con un quiz.',
+  zh: 'Students, parents, and teachers looking up the times table of a specific number to review or practice with a quiz.',
 };
 
 const multiplicationTableRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
@@ -239,6 +247,10 @@ const multiplicationTableRelatedCopy: Record<AppLocale, { title: string; descrip
     title: 'Otras tablas de multiplicar',
     description: 'Consulta y practica la tabla de multiplicar de otros números.',
   },
+  zh: {
+    title: 'Other times tables',
+    description: 'Look up and practice the times table of other numbers.',
+  },
 };
 
 const keyboardShortcutsSearchIntent: Record<AppLocale, string> = {
@@ -246,6 +258,7 @@ const keyboardShortcutsSearchIntent: Record<AppLocale, string> = {
     'Usuarios que buscam os atalhos de teclado de um aplicativo especifico para consulta rapida.',
   en: 'People looking up the keyboard shortcuts of a specific app for quick reference.',
   es: 'Personas que buscan los atajos de teclado de una app especifica para consulta rapida.',
+  zh: 'People looking up the keyboard shortcuts of a specific app for quick reference.',
 };
 
 const keyboardShortcutsRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
@@ -261,6 +274,10 @@ const keyboardShortcutsRelatedCopy: Record<AppLocale, { title: string; descripti
     title: 'Atajos de otras aplicaciones',
     description: 'Consulta atajos de teclado de otras apps y sistemas.',
   },
+  zh: {
+    title: 'Shortcuts for other apps',
+    description: 'Look up keyboard shortcuts for other apps and systems.',
+  },
 };
 
 const gamerUsernameSearchIntent: Record<AppLocale, string> = {
@@ -268,6 +285,7 @@ const gamerUsernameSearchIntent: Record<AppLocale, string> = {
     'Jogadores que querem gerar um nome de usuario aleatorio e tematico para um jogo especifico.',
   en: 'Players who want to generate a random, game-themed username for a specific game.',
   es: 'Jugadores que quieren generar un nombre de usuario aleatorio y tematico para un juego especifico.',
+  zh: 'Players who want to generate a random, game-themed username for a specific game.',
 };
 
 const gamerUsernameRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
@@ -282,6 +300,10 @@ const gamerUsernameRelatedCopy: Record<AppLocale, { title: string; description: 
   es: {
     title: 'Generar nombre para otros juegos',
     description: 'Sortea nombres tematicos para otros juegos populares.',
+  },
+  zh: {
+    title: 'Generate usernames for other games',
+    description: 'Roll themed names for other popular games.',
   },
 };
 
@@ -301,6 +323,10 @@ const relatedSectionCopy: Record<AppLocale, { title: string; description: string
     description:
       'Navega por juegos y redes sociales para probar distintos patrones Unicode invisibles.',
   },
+  zh: {
+    title: '其他隐藏字符页面',
+    description: '浏览不同游戏和社交平台,测试各种隐藏 Unicode 组合。',
+  },
 };
 
 const nicknameSymbolRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
@@ -315,6 +341,10 @@ const nicknameSymbolRelatedCopy: Record<AppLocale, { title: string; description:
   es: {
     title: 'Simbolos para otros juegos',
     description: 'Abre otros presets con marcos y recomendaciones para cada juego.',
+  },
+  zh: {
+    title: '其他游戏的符号',
+    description: '打开其他游戏专属的边框和建议预设。',
   },
 };
 
@@ -334,6 +364,10 @@ const toolAliasCopy: Record<AppLocale, { title: string; description: string }> =
     description:
       'Abre versiones enfocadas en tareas concretas sin perder el flujo de la herramienta principal.',
   },
+  zh: {
+    title: '使用本工具的更多方式',
+    description: '打开针对具体任务优化的版本,同时保留主工具的完整功能。',
+  },
 };
 
 const gtaRelatedCopy: Record<AppLocale, { title: string; description: string }> = {
@@ -351,6 +385,11 @@ const gtaRelatedCopy: Record<AppLocale, { title: string; description: string }> 
     title: 'Otras paginas de codigos GTA',
     description:
       'Navega listas por juego y categoria para encontrar el cheat correcto mas rapido.',
+  },
+  zh: {
+    title: 'Related GTA cheat pages',
+    description:
+      'Browse lists by game and category to find the exact cheat faster.',
   },
 };
 
@@ -370,6 +409,11 @@ const imageConversionSectionByLocale: Record<AppLocale, { title: string; descrip
     description:
       'Pares de formatos con alta demanda, como PNG a JPEG, PDF a imagen y JPEG a PDF.',
   },
+  zh: {
+    title: 'Popular image and PDF conversions',
+    description:
+      'High-demand format pairs such as PNG to JPEG, PDF to image, and JPEG to PDF.',
+  },
 };
 
 const invisibleSectionByLocale: Record<AppLocale, { title: string; description: string }> = {
@@ -387,6 +431,10 @@ const invisibleSectionByLocale: Record<AppLocale, { title: string; description: 
     title: 'Paginas por juego y red social',
     description:
       'Enlaces a variaciones por plataforma con recomendaciones de compatibilidad.',
+  },
+  zh: {
+    title: '按游戏和社交平台分类的页面',
+    description: '各平台专属版本的链接,包含隐藏字符组合建议和兼容性提示。',
   },
 };
 

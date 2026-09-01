@@ -100,6 +100,29 @@ const uiByLocale: Record<AppLocale, Ui> = {
     processingNote:
       'La consulta se realiza directamente desde tu navegador a un servicio público de información de IP. Ningún dato pasa por nuestro servidor.',
   },
+  zh: {
+    title: 'Discover Public IP',
+    intro: 'See your public IP, estimated provider and basic device information.',
+    discoverButton: 'Discover my IP',
+    clearButton: 'Clear',
+    fetching: 'Querying...',
+    fetchError: 'Could not retrieve your IP right now. Please try again shortly.',
+    ipLabel: 'IP Address',
+    providerLabel: 'Provider (ISP)',
+    locationLabel: 'Approx. location',
+    deviceLabel: 'Device',
+    browserLabel: 'Browser',
+    osLabel: 'Operating system',
+    latitudeLabel: 'Latitude',
+    longitudeLabel: 'Longitude',
+    copy: 'Copy',
+    copied: 'Copied',
+    copyError: 'Could not copy right now. Try again.',
+    copyNoDots: 'Copy (no dots)',
+    copyAll: 'Copy all',
+    processingNote:
+      'The request is made directly from your browser to a public IP information service. No data is sent to our server.',
+  },
 };
 
 type IpInfo = {

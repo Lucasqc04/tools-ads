@@ -180,6 +180,43 @@ const uiByLocale: Record<AppLocale, ImageCompressionUi> = {
       'Ninguna imagen se envia al servidor por defecto. La compresion ocurre localmente en tu navegador.',
     genericError: 'No fue posible comprimir esta imagen.',
   },
+  zh: {
+    title: 'Batch image compressor',
+    intro:
+      'Reduce the size of multiple images at once, choose compression level, and preview before downloading.',
+    filesLabel: 'Images to compress',
+    filesHint: 'Add multiple images. Processing runs locally in your browser.',
+    outputFormatLabel: 'Output format',
+    compressionLevelLabel: 'Compression level',
+    compressionLevelHint:
+      'Higher levels usually produce smaller files, with more visible quality loss.',
+    compressionLevelBadge: (value) => `${value}%`,
+    compressAll: 'Compress all',
+    compressingAll: 'Compressing...',
+    clearAll: 'Clear list',
+    downloadAll: 'Download all',
+    sourcePreview: 'Original',
+    resultPreview: 'Compressed',
+    waitingCompression: 'Waiting for compression.',
+    processing: 'Processing...',
+    noFilesHint: 'Add images to start batch compression.',
+    estimatedSizeLabel: 'Estimated',
+    currentSizeLabel: 'Current size',
+    finalSizeLabel: 'Final size',
+    savingsLabel: (value) => `Savings: ${value.toFixed(1)}%`,
+    outputFormatSame: 'Keep original format',
+    outputFormatJpeg: 'Convert to JPEG',
+    outputFormatWebp: 'Convert to WEBP',
+    viewImage: 'View image',
+    done: 'Done',
+    pending: 'Pending',
+    error: 'Error',
+    compressButton: 'Compress',
+    downloadButton: 'Download',
+    processingLocalNote:
+      'No image is uploaded to a server by default. Compression happens locally in your browser.',
+    genericError: 'Could not compress this image.',
+  },
 };
 
 const acceptedImageTypes =

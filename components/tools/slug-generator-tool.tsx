@@ -74,6 +74,21 @@ const uiByLocale: Record<AppLocale, SlugUi> = {
     examplesTitle: 'Ejemplos listos',
     localHistoryTitle: 'Historial local',
   },
+  zh: {
+    localNote: 'Local generation in browser. Useful for CMS, blogs, e-commerce, and web routes.',
+    originalTextLabel: 'Original text',
+    urlPrefixLabel: 'URL prefix',
+    emptySlugWarning: 'Empty slug: adjust text or options.',
+    longSlugWarning: 'Long slug. Consider reducing for readability.',
+    copied: 'Copied',
+    copySlug: 'Copy slug',
+    copyFullUrl: 'Copy full URL',
+    saveHistory: 'Save history',
+    clear: 'Clear',
+    suggestionsTitle: 'Suggestions',
+    examplesTitle: 'Ready examples',
+    localHistoryTitle: 'Local history',
+  },
 };
 
 const historyKey = 'slug-generator-history-v1';

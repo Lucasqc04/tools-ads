@@ -38,18 +38,26 @@ const TAB_LABELS = {
   'pt-br': { tester: 'Testar', generator: 'Gerar', builder: 'Construir', explain: 'Explicar', library: 'Biblioteca', validate: 'Validar', extract: 'Extrair', replace: 'Substituir', code: 'Código', diagnose: 'Diagnóstico' },
   en: { tester: 'Test', generator: 'Generate', builder: 'Build', explain: 'Explain', library: 'Library', validate: 'Validate', extract: 'Extract', replace: 'Replace', code: 'Code', diagnose: 'Diagnose' },
   es: { tester: 'Probar', generator: 'Generar', builder: 'Construir', explain: 'Explicar', library: 'Biblioteca', validate: 'Validar', extract: 'Extraer', replace: 'Sustituir', code: 'Código', diagnose: 'Diagnóstico' },
+  zh: { tester: 'Test', generator: 'Generate', builder: 'Build', explain: 'Explain', library: 'Library', validate: 'Validate', extract: 'Extract', replace: 'Replace', code: 'Code', diagnose: 'Diagnose' },
 } as const;
 
 type TabKey = keyof typeof TAB_LABELS['pt-br'];
 
 const CATEGORY_LABELS: Record<PatternCategory, Record<AppLocale, string>> = {
-  brasil: { 'pt-br': 'Brasil', en: 'Brazil', es: 'Brasil' },
-  web: { 'pt-br': 'Web', en: 'Web', es: 'Web' },
-  dev: { 'pt-br': 'Dev', en: 'Dev', es: 'Dev' },
-  texto: { 'pt-br': 'Texto', en: 'Text', es: 'Texto' },
-  datas: { 'pt-br': 'Datas', en: 'Dates', es: 'Fechas' },
-  numeros: { 'pt-br': 'Números', en: 'Numbers', es: 'Números' },
-  seguranca: { 'pt-br': 'Segurança', en: 'Security', es: 'Seguridad' },
+  brasil: { 'pt-br': 'Brasil', en: 'Brazil', es: 'Brasil',
+  zh: 'Brazil', },
+  web: { 'pt-br': 'Web', en: 'Web', es: 'Web',
+  zh: 'Web', },
+  dev: { 'pt-br': 'Dev', en: 'Dev', es: 'Dev',
+  zh: 'Dev', },
+  texto: { 'pt-br': 'Texto', en: 'Text', es: 'Texto',
+  zh: 'Text', },
+  datas: { 'pt-br': 'Datas', en: 'Dates', es: 'Fechas',
+  zh: 'Dates', },
+  numeros: { 'pt-br': 'Números', en: 'Numbers', es: 'Números',
+  zh: 'Numbers', },
+  seguranca: { 'pt-br': 'Segurança', en: 'Security', es: 'Seguridad',
+  zh: 'Security', },
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────

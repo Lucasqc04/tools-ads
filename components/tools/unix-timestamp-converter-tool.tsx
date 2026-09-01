@@ -92,6 +92,25 @@ const uiByLocale: Record<AppLocale, UnixUi> = {
     clear: 'Limpiar',
     liveNowLabel: 'Timestamp actual (tiempo real):',
   },
+  zh: {
+    localNote: 'Local conversion in browser. Useful for logs, APIs, JWT, and databases.',
+    forwardTitle: 'Timestamp -> Date',
+    forwardPlaceholder: 'e.g. 1716890240 or 1716890240000',
+    localLabel: 'Local',
+    relativeLabel: 'Relative',
+    statusLabel: 'Status',
+    futureLabel: 'Future',
+    pastLabel: 'Past',
+    copied: 'Copied',
+    copySeconds: 'Copy seconds',
+    copyMilliseconds: 'Copy milliseconds',
+    reverseTitle: 'Date -> Timestamp',
+    secondsLabel: 'Seconds',
+    millisecondsLabel: 'Milliseconds',
+    useNow: 'Use now',
+    clear: 'Clear',
+    liveNowLabel: 'Current timestamp (real-time):',
+  },
 };
 
 export function UnixTimestampConverterTool({ locale = 'pt-br' }: UnixTimestampConverterToolProps) {

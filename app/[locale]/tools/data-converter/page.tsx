@@ -47,6 +47,11 @@ const aliasSectionByLocale: Record<AppLocale, { title: string; description: stri
     description:
       'Atajos para variaciones comunes como JSON a CSV, CSV a SQL INSERT y XLSX a JSON.',
   },
+  zh: {
+    title: 'Related data conversions',
+    description:
+      'Shortcuts for common variations such as JSON to CSV, CSV to SQL INSERT, and XLSX to JSON.',
+  },
 };
 
 export async function generateMetadata({

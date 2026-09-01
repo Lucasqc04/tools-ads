@@ -4278,9 +4278,88 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
   },
 };
 
+const zhTranslations: Record<ToolId, ToolTranslation> = {
+  ...enTranslations,
+  'invisible-character': {
+    name: 'Fortnite 与游戏隐藏字符生成器',
+    shortDescription:
+      '复制适用于 Fortnite、Free Fire、COD Mobile、Discord 等平台的隐藏字符,支持昵称变体生成、Unicode 检测和清除功能。',
+    primaryKeyword: 'fortnite 隐藏字符',
+    secondaryKeywords: [
+      'fortnite 隐藏昵称',
+      'fortnite 空白名字',
+      'free fire 隐藏昵称',
+      'cod mobile 隐藏昵称',
+      'discord 隐藏文字',
+      '空白字符复制粘贴',
+      '隐藏用户名生成器',
+      '游戏隐藏字符',
+    ],
+    searchIntent:
+      '希望为 Fortnite 显示名称、游戏昵称和个人资料复制并测试隐藏 Unicode 字符的玩家和社交用户。',
+    seoTitle: 'Fortnite 与游戏隐藏字符 | 复制粘贴',
+    seoDescription:
+      '复制适用于 Fortnite 的隐藏字符,生成20个昵称变体,查看 Unicode 编码,并从粘贴文本中移除隐藏字符。',
+    h1: 'Fortnite、Free Fire、COD 和 Discord 的隐藏字符',
+    intro:
+      '根据平台推荐生成并复制隐藏名称,提供20个可直接测试的变体、Unicode 字符表、检测工具和清除功能。',
+    contentBlocks: [
+      {
+        title: '专注 Fortnite 的隐藏昵称工作流程',
+        paragraphs: [
+          '本工具专为"Fortnite 隐藏字符""Fortnite 空白名字""隐藏用户名""隐藏 Unicode 复制粘贴"等搜索需求打造。选择 Fortnite 或其他平台,复制推荐的字符序列,然后在基础昵称周围测试不同的位置。',
+          '由于验证规则会随时间变化,本工具不会承诺某一种固定字符永久有效。相反,它提供了 Hangul Filler、Braille Blank 和零宽度字符等多种组合,方便你快速测试多个选项。',
+        ],
+      },
+      {
+        title: '20 个昵称变体与 Unicode 字符表',
+        paragraphs: [
+          '输入一个基础昵称,即可生成将隐藏字符放在名字前面、后面、字母或单词之间、环绕名字,或仅输出隐藏字符本身的多种变体。',
+          'Unicode 字符表列出了 U+3164、U+2800、U+200B、U+200C、U+200D、U+2060 和 U+FEFF 等单个字符,你可以复制单个编码点,也可以将其加载到生成器中。',
+        ],
+        list: [
+          '复制单个隐藏字符用于快速测试。',
+          '生成20个可直接复制的昵称变体。',
+          '当某个选项被屏蔽时,切换其他 Unicode 组合。',
+          '检测并移除粘贴文本中的隐藏字符。',
+        ],
+      },
+      {
+        title: '检测、清除与实际使用限制',
+        paragraphs: [
+          '将任意昵称粘贴到检测工具中,即可统计可见和隐藏字符数量、查看具体编码点,并生成不含隐藏 Unicode 的干净版本。',
+          '默认情况下,生成和检测都在你的浏览器本地完成。由于平台可能随时调整验证规则,没有任何组合能保证100%通过。',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Fortnite 中哪种隐藏字符效果最好?',
+        answer:
+          '没有固定的保证,但零宽度字符组合、Hangul Filler(U+3164)和 Braille Blank(U+2800)是不错的首选。可以先测试2到4个字符的组合。',
+      },
+      {
+        question: '可以生成多个隐藏昵称变体吗?',
+        answer:
+          '可以。输入一个基础昵称,即可复制将隐藏字符放在前面、后面、字母或单词之间、环绕名字,或单独输出的多种变体。',
+      },
+      {
+        question: '可以检测并移除隐藏字符吗?',
+        answer:
+          '可以。检测工具会列出文本中的隐藏 Unicode 编码点,并生成一份清理后的干净版本。',
+      },
+      {
+        question: '我输入的内容会发送到服务器吗?',
+        answer: '默认不会。字符的生成和检测都在你的浏览器本地完成。',
+      },
+    ],
+  },
+};
+
 const translations: Record<NonPtLocale, Record<ToolId, ToolTranslation>> = {
   en: enTranslations,
   es: esTranslations,
+  zh: zhTranslations,
 };
 
 export const getToolTranslation = (

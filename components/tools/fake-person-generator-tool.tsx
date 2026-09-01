@@ -343,6 +343,7 @@ const uiByLocale: Record<AppLocale, Ui> = {
   'pt-br': ptUi,
   en: enUi,
   es: esUi,
+  zh: enUi,
 };
 
 const checkboxClassName =
@@ -374,6 +375,7 @@ const localeToIntl: Record<AppLocale, string> = {
   'pt-br': 'pt-BR',
   en: 'en-US',
   es: 'es-ES',
+  zh: 'en-US',
 };
 
 const nowStamp = (locale: AppLocale): string =>

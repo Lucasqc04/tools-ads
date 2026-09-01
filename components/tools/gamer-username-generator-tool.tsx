@@ -90,6 +90,23 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     historyEmpty: 'Los nombres generados aparecen aquí.',
     privacy: '🔒 Todo ocurre localmente en tu navegador. Nada se envía a un servidor.',
   },
+  zh: {
+    gameLabel: 'Game',
+    anyGame: 'Generic (any game)',
+    styleLabel: 'Style',
+    classic: 'Classic',
+    leet: 'Leet speak',
+    symbols: 'With symbols',
+    includeNumber: 'Include a number at the end',
+    generate: 'Generate names',
+    copy: 'Copy',
+    copied: 'Copied!',
+    favorites: 'Favorites',
+    favoritesEmpty: 'Click a name\'s star to favorite it.',
+    history: 'Recently generated',
+    historyEmpty: 'Generated names show up here.',
+    privacy: '🔒 Everything runs locally in your browser. Nothing is sent to a server.',
+  },
 };
 
 const styleOptions: Array<{ value: UsernameStyle; labelKey: keyof UiCopy }> = [

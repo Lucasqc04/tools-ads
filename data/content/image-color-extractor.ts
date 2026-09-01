@@ -258,6 +258,75 @@ const contentByLocale: Record<AppLocale, ImageColorExtractorLocaleContent> = {
       { question: '¿Funciona en el celular?', answer: 'Sí. Puedes subir fotos de la galería o tomar fotos de la cámara. La interfaz es responsiva para cualquier pantalla.' },
     ],
   },
+  zh: {
+    name: 'Image Color Extractor',
+    shortDescription:
+      'Extract colors from any image directly in the browser, generate palettes, copy CSS variables and create themes for your projects — all locally.',
+    primaryKeyword: 'extract colors from image online',
+    secondaryKeywords: [
+      'color palette generator',
+      'image color picker',
+      'dominant colors from photo',
+      'css color palette',
+      'extract colors from logo',
+      'tailwind color palette',
+      'theme color generator',
+      'color palette from image',
+      'image to palette',
+    ],
+    searchIntent:
+      'Designers and developers who need to extract a color palette from an image or logo for use in CSS, Tailwind or design systems.',
+    seoTitle: 'Image Color Extractor Online | Palette Generator',
+    seoDescription:
+      'Extract colors from any image online. Generate palettes, copy CSS, JSON or Tailwind config. 100% local browser processing.',
+    h1: 'Image Color Extractor & Palette Generator Online',
+    intro:
+      'Extract colors from any image directly in the browser, generate palettes, copy CSS variables and create themes for your projects — all locally.',
+    contentBlocks: [
+      {
+        title: '100% local color extraction',
+        paragraphs: [
+          'This tool analyzes uploaded images and automatically extracts the most dominant colors. All processing happens in the browser using Canvas, with no data sent to any server.',
+          'You can adjust the number of extracted colors, filter whites/blacks, and export the palette in multiple formats used in CSS, Tailwind and design tools.',
+        ],
+      },
+      {
+        title: 'Available export formats',
+        paragraphs: [
+          'The tool offers multiple export formats for immediate use in real projects.',
+        ],
+        list: [
+          'CSS Variables: --color-1: #7c3aed; ready to paste in :root.',
+          'JSON: array with hex, rgb and hsl for each color.',
+          'Tailwind config: theme.extend.colors with automatic names.',
+          'Sass/SCSS: variables $color-1: #7c3aed.',
+          'HEX list: simple list of hex codes.',
+        ],
+      },
+      {
+        title: 'Design systems and themes',
+        paragraphs: [
+          'By extracting colors from a brand image or reference photo, you can quickly generate a base color set for a design system. The tool suggests name and weight (light, main, dark) for direct use in components.',
+          'Each extracted color can be opened directly in the Color Converter to explore variations, check contrast and generate scales.',
+        ],
+      },
+      {
+        title: 'Privacy and security',
+        paragraphs: [
+          'No image leaves your device. Processing happens via the browser Canvas API. The tool works offline after initial load.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Is the image sent to a server?', answer: 'No. All processing is local in the browser using Canvas API. No image leaves your device.' },
+      { question: 'What image formats are supported?', answer: 'JPG, PNG, WebP, GIF, SVG and BMP. Any format the browser can render.' },
+      { question: 'Can I adjust how many colors are extracted?', answer: 'Yes. Use the slider to select from 3 to 16 colors. More colors generate more detailed palettes.' },
+      { question: 'What do the percentages on colors mean?', answer: 'They represent the approximate proportion of pixels of that color in the image. Higher percentage colors are more dominant.' },
+      { question: 'How to export the palette as CSS?', answer: 'Click the export button and choose "CSS Variables". The code will be copied to your clipboard ready to paste.' },
+      { question: 'Can I use extracted colors in Tailwind?', answer: 'Yes. Use the "Tailwind Config" export to generate a snippet that can be pasted directly in tailwind.config.ts extend.colors.' },
+      { question: 'Does it work on mobile?', answer: 'Yes. You can upload photos from gallery or take camera photos. The interface is responsive for any screen.' },
+    ],
+  },
 };
 
 export function getImageColorExtractorContent(locale: AppLocale): ImageColorExtractorLocaleContent {

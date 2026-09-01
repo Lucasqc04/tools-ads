@@ -292,6 +292,72 @@ const uiByLocale: Record<AppLocale, Ui> = {
     copyError: 'No fue posible copiar ahora. Intentalo de nuevo.',
     shareError: 'No fue posible generar enlace compartible en este dispositivo.',
   },
+  zh: {
+    title: 'Compound Interest Calculator Online',
+    intro:
+      'Simulate monthly-contribution investing, find the contribution needed to hit a target, and estimate required rate for a final amount.',
+    tabs: {
+      invest: 'Invest',
+      goal: 'Reach goal',
+      rate: 'Find rate',
+    },
+    initialAmount: 'Initial amount',
+    monthlyContribution: 'Monthly contribution',
+    targetAmount: 'Target final amount',
+    rateLabel: 'Interest rate',
+    rateFrequency: 'Rate frequency',
+    periodLabel: 'Time horizon',
+    periodFrequency: 'Period frequency',
+    contributionTiming: 'Contribution timing',
+    timingEnd: 'Contribution at period end',
+    timingStart: 'Contribution at period start',
+    frequencyMonthly: 'Per month',
+    frequencyYearly: 'Per year',
+    periodMonths: 'Months',
+    periodYears: 'Years',
+    compareSimple: 'Compare with simple interest',
+    inflationLabel: 'Annual inflation (optional)',
+    calculate: 'Calculate',
+    clear: 'Clear fields',
+    example: 'Quick example: $1,000 initial + $300/month for 5 years at 1% monthly',
+    conversionHint:
+      'When rate and period units differ, the tool converts to equivalent monthly rate automatically.',
+    resultTitle: 'Simulation result',
+    finalAmount: 'Final amount',
+    totalInvested: 'Total invested',
+    totalInterest: 'Total interest',
+    profitability: 'Profitability',
+    realValue: 'Real value (inflation-adjusted)',
+    simpleComparisonTitle: 'Simple interest comparison',
+    simpleFinalAmount: 'Simple final amount',
+    simpleInterest: 'Simple interest',
+    simpleGap: 'Gap vs compound',
+    chartTitle: 'Portfolio growth',
+    chartLegendInvested: 'Total invested',
+    chartLegendAccumulated: 'Accumulated balance',
+    tableTitle: 'Detailed table',
+    tableMonthly: 'Monthly view',
+    tableYearly: 'Yearly view',
+    tablePeriod: 'Period',
+    tableOpening: 'Opening balance',
+    tableContribution: 'Contribution',
+    tableInterest: 'Interest',
+    tableClosing: 'Closing balance',
+    tableInvested: 'Total invested',
+    showAllRows: 'Show all rows',
+    showLessRows: 'Show fewer rows',
+    summaryTitle: 'Text summary',
+    copySummary: 'Copy summary',
+    downloadCsv: 'Download CSV',
+    shareLink: 'Copy shareable link',
+    copied: 'Copied',
+    localNote: 'Local browser calculation. No automatic server upload by default.',
+    invalidInput: 'Enter valid values to calculate.',
+    goalResult: 'Required monthly contribution to hit the target',
+    rateResult: 'Required rate to hit the target',
+    copyError: 'Could not copy right now. Please try again.',
+    shareError: 'Could not generate shareable link on this device.',
+  },
 };
 
 const chartWidth = 720;
@@ -304,12 +370,14 @@ const localeToIntl: Record<AppLocale, string> = {
   'pt-br': 'pt-BR',
   en: 'en-US',
   es: 'es-ES',
+  zh: 'en-US',
 };
 
 const localeToCurrency: Record<AppLocale, string> = {
   'pt-br': 'BRL',
   en: 'USD',
   es: 'EUR',
+  zh: 'USD',
 };
 
 const parseNumberInput = (value: string): number | null => {
@@ -382,6 +450,7 @@ const csvFileNameByLocale: Record<AppLocale, string> = {
   'pt-br': 'simulacao-juros-compostos.csv',
   en: 'compound-interest-simulation.csv',
   es: 'simulacion-interes-compuesto.csv',
+  zh: 'compound-interest-simulation.csv',
 };
 
 const sanitizeCsvHeader = (value: string): string =>
