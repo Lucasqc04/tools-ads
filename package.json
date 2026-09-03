@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "code-converter:college-suite": "sucrase-node scripts/code-converter-college-suite.ts",
     "code-converter:college-suite:update": "sucrase-node scripts/code-converter-college-suite.ts --update"
   },
@@ -21,6 +22,7 @@
     "@ffmpeg/core": "^0.12.10",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
+    "@huggingface/transformers": "^3.8.1",
     "@paralleldrive/cuid2": "^3.3.0",
     "@pdfsmaller/pdf-decrypt": "^1.0.1",
     "@pdfsmaller/pdf-encrypt-lite": "^1.0.2",
@@ -75,6 +77,7 @@
     "eslint-config-next": "15.5.15",
     "postcss": "8.5.6",
     "tailwindcss": "3.4.17",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "vitest": "^2.1.9"
   }
 }

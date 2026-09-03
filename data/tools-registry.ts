@@ -114,6 +114,11 @@ import {
   audioEditorIntro,
 } from '@/data/content/audio-editor';
 import {
+  audioVideoTranscriptionContentBlocks,
+  audioVideoTranscriptionFaq,
+  audioVideoTranscriptionIntro,
+} from '@/data/content/audio-video-transcription';
+import {
   jsonFormatterContentBlocks,
   jsonFormatterFaq,
   jsonFormatterIntro,
@@ -1018,7 +1023,45 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/extrair-audio-de-video',
     faq: audioEditorFaq,
     contentBlocks: audioEditorContentBlocks,
-    relatedToolIds: ['video-compression', 'image-converter', 'image-compression', 'markdown-editor'],
+    relatedToolIds: [
+      'transcricao-de-audio-e-video',
+      'video-compression',
+      'image-converter',
+      'image-compression',
+      'markdown-editor',
+    ],
+  },
+  {
+    id: 'transcricao-de-audio-e-video',
+    slug: 'transcricao-de-audio-e-video',
+    name: 'Transcricao de Audio e Video para Texto',
+    shortDescription:
+      'Transcreva audio e video para texto localmente no navegador com Whisper, gerando texto continuo, segmentos com timestamp e legendas SRT/VTT.',
+    category: 'documents',
+    primaryKeyword: 'transcrever audio e video para texto',
+    secondaryKeywords: [
+      'audio para texto online',
+      'video para texto online',
+      'transcricao automatica de audio',
+      'gerar legenda srt automatica',
+      'whisper no navegador',
+      'transcrever video para texto gratis',
+      'converter audio em texto',
+      'gerar legenda de video',
+      'transcricao offline no navegador',
+      'audio to text sem upload',
+    ],
+    searchIntent:
+      'Usuarios que precisam transcrever reunioes, aulas, entrevistas ou videos para texto pesquisavel e legendas, sem enviar o arquivo para servidores externos.',
+    seoTitle: 'Transcrever Audio e Video para Texto Online Gratis | Whisper Local',
+    seoDescription:
+      'Transcreva audio e video para texto direto no navegador com Whisper local, sem upload. Gere timestamps, legenda SRT/VTT e exporte em TXT ou JSON.',
+    h1: 'Transcrever Audio e Video para Texto com Whisper Local',
+    intro: audioVideoTranscriptionIntro,
+    canonicalPath: '/tools/transcricao-de-audio-e-video',
+    faq: audioVideoTranscriptionFaq,
+    contentBlocks: audioVideoTranscriptionContentBlocks,
+    relatedToolIds: ['extrair-audio-de-video', 'video-compression', 'text-diff', 'markdown-editor'],
   },
   {
     id: 'qr-code-generator',
@@ -1960,6 +2003,7 @@ type LocalizableToolId =
   | 'remover-fundo-imagem'
   | 'video-compression'
   | 'extrair-audio-de-video'
+  | 'transcricao-de-audio-e-video'
   | 'qr-code-generator'
   | 'authenticator-code-generator'
   | 'sorteador'
@@ -1988,6 +2032,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'remover-fundo-imagem',
   'video-compression',
   'extrair-audio-de-video',
+  'transcricao-de-audio-e-video',
   'qr-code-generator',
   'authenticator-code-generator',
   'sorteador',

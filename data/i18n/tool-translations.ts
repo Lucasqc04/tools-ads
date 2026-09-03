@@ -37,6 +37,7 @@ type ToolId =
   | 'remover-fundo-imagem'
   | 'video-compression'
   | 'extrair-audio-de-video'
+  | 'transcricao-de-audio-e-video'
   | 'qr-code-generator'
   | 'authenticator-code-generator'
   | 'sorteador'
@@ -1988,6 +1989,96 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Can I paste a YouTube, X/Twitter, or Facebook link?',
         answer:
           'Not for direct downloads from those platforms. The tool accepts local uploads and direct media-file URLs when the server allows browser access.',
+      },
+    ],
+  },
+  'transcricao-de-audio-e-video': {
+    name: 'Audio and Video Transcription to Text',
+    shortDescription:
+      'Transcribe audio and video to text locally in your browser with Whisper, producing continuous text, timestamped segments, and SRT/VTT subtitles.',
+    primaryKeyword: 'transcribe audio and video to text',
+    secondaryKeywords: [
+      'audio to text online',
+      'video to text online',
+      'automatic audio transcription',
+      'generate srt subtitles automatically',
+      'whisper in the browser',
+      'transcribe video to text free',
+      'convert audio to text',
+      'generate video captions',
+      'offline browser transcription',
+      'audio to text no upload',
+    ],
+    searchIntent:
+      'Users who need to transcribe meetings, lectures, interviews, or videos into searchable text and subtitles without uploading the file to external servers.',
+    seoTitle: 'Transcribe Audio and Video to Text Online Free | Local Whisper',
+    seoDescription:
+      'Transcribe audio and video to text directly in your browser with a local Whisper model, no upload. Get timestamps, SRT/VTT subtitles, and TXT or JSON export.',
+    h1: 'Transcribe Audio and Video to Text with a Local Whisper Model',
+    intro:
+      'Transcribe audio and video to text right in your browser with Whisper running locally, without sending the file to any server. Get continuous text, timestamped segments, and SRT/VTT subtitles.',
+    contentBlocks: [
+      {
+        title: 'Local transcription with Whisper, no upload',
+        paragraphs: [
+          'This tool uses a multilingual Whisper model running entirely in your browser, through WebGPU when available (with an automatic fallback to CPU processing). The audio or video file is never sent to our server: audio extraction, normalization, and inference all happen locally on your device.',
+          'Only the AI model files (Whisper weights) are downloaded from Hugging Face the first time you use the tool. After that, the browser caches those files, so future transcriptions do not require a new download.',
+        ],
+      },
+      {
+        title: 'Audio or video, with automatic audio-track extraction',
+        paragraphs: [
+          'You can upload audio files (MP3, WAV, M4A, AAC, OGG, OPUS, FLAC) or video files (MP4, MOV, WEBM, MKV, and others). When the file is a video, only the audio track is extracted and processed; video frames are not used for transcription.',
+          'The tool first tries to decode audio using native browser APIs. If the format or codec is not directly supported, it falls back to a local converter (FFmpeg compiled to WebAssembly) to extract the audio before transcribing, still without relying on any upload.',
+        ],
+        list: [
+          'Choose a quality tier (Fast, Balanced, or High quality).',
+          'Pick a language manually or let Whisper auto-detect it.',
+          'Transcribe in the original language or translate to English.',
+          'Track real model-download progress and per-chunk transcription progress.',
+          'Cancel at any time without freezing the page.',
+        ],
+      },
+      {
+        title: 'Timestamps, synced player, and export',
+        paragraphs: [
+          'The result includes per-segment timestamps, shown both in the continuous text and in the segment list. Click any timestamp to jump the audio/video player to that exact moment.',
+          'You can copy the plain text, copy it with timestamps, or export as TXT, timestamped TXT, SRT (subtitles), WebVTT, or a structured JSON file with segments, language, and duration.',
+        ],
+      },
+      {
+        title: 'Performance, limits, and privacy',
+        paragraphs: [
+          'On devices with WebGPU support, transcription runs GPU-accelerated. Without WebGPU, the tool uses CPU processing (WebAssembly), which works in virtually any browser but is slower, especially on phones.',
+          'Very long files require more browser memory; there is a practical duration limit to avoid freezing the tab. No audio, video, or transcribed text is stored on our servers or sent to analytics.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Is my audio or video uploaded to a server?',
+        answer:
+          'No. Audio extraction and transcription happen locally in your browser. Only the AI model files are downloaded from Hugging Face to run inference on your device; your media file never leaves the browser.',
+      },
+      {
+        question: 'Which audio and video formats are supported?',
+        answer:
+          'Audio: MP3, WAV, M4A, AAC, OGG, OPUS, and FLAC. Video: MP4, MOV, WEBM, MKV, and other containers with an audio track your browser or the local fallback converter can read.',
+      },
+      {
+        question: 'Does it work without a WebGPU-capable graphics card?',
+        answer:
+          'Yes. When WebGPU is not available, the tool automatically switches to CPU processing. It is slower, but transcription still runs entirely in the browser.',
+      },
+      {
+        question: 'Can I export it as a subtitle file?',
+        answer:
+          'Yes. You can export the result as SRT or WebVTT, as well as plain TXT, timestamped TXT, and a structured JSON file with the segments.',
+      },
+      {
+        question: 'Can I choose the language or translate to English?',
+        answer:
+          'Yes. You can let Whisper auto-detect the language or pick one explicitly, and choose between transcribing in the original language or translating the audio to English.',
       },
     ],
   },
@@ -4105,6 +4196,96 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿Puedo pegar un enlace de YouTube, X/Twitter o Facebook?',
         answer:
           'No para descarga directa de esas plataformas. La herramienta acepta archivos locales y URLs directas de media cuando el servidor permite acceso desde el navegador.',
+      },
+    ],
+  },
+  'transcricao-de-audio-e-video': {
+    name: 'Transcripcion de Audio y Video a Texto',
+    shortDescription:
+      'Transcribe audio y video a texto localmente en tu navegador con Whisper, generando texto continuo, segmentos con timestamp y subtitulos SRT/VTT.',
+    primaryKeyword: 'transcribir audio y video a texto',
+    secondaryKeywords: [
+      'audio a texto online',
+      'video a texto online',
+      'transcripcion automatica de audio',
+      'generar subtitulos srt automaticamente',
+      'whisper en el navegador',
+      'transcribir video a texto gratis',
+      'convertir audio en texto',
+      'generar subtitulos de video',
+      'transcripcion offline en el navegador',
+      'audio a texto sin subir archivos',
+    ],
+    searchIntent:
+      'Usuarios que necesitan transcribir reuniones, clases, entrevistas o videos a texto buscable y subtitulos sin enviar el archivo a servidores externos.',
+    seoTitle: 'Transcribir Audio y Video a Texto Online Gratis | Whisper Local',
+    seoDescription:
+      'Transcribe audio y video a texto directo en tu navegador con Whisper local, sin subir archivos. Genera timestamps, subtitulos SRT/VTT y exporta en TXT o JSON.',
+    h1: 'Transcribir Audio y Video a Texto con Whisper Local',
+    intro:
+      'Transcribe audio y video a texto directo en tu navegador con Whisper corriendo localmente, sin enviar el archivo a ningun servidor. Obten texto continuo, segmentos con timestamp y subtitulos SRT/VTT.',
+    contentBlocks: [
+      {
+        title: 'Transcripcion local con Whisper, sin subir archivos',
+        paragraphs: [
+          'Esta herramienta usa un modelo Whisper multilingue que corre completamente en tu navegador, mediante WebGPU cuando esta disponible (con respaldo automatico a procesamiento por CPU). El archivo de audio o video nunca se envia a nuestro servidor: la extraccion de audio, la normalizacion y la inferencia ocurren localmente en tu dispositivo.',
+          'Solo los archivos del modelo de IA (pesos de Whisper) se descargan desde Hugging Face la primera vez que usas la herramienta. Despues de eso, el navegador guarda esos archivos en cache y las proximas transcripciones no requieren una nueva descarga.',
+        ],
+      },
+      {
+        title: 'Audio o video, con extraccion automatica de la pista de audio',
+        paragraphs: [
+          'Puedes subir archivos de audio (MP3, WAV, M4A, AAC, OGG, OPUS, FLAC) o de video (MP4, MOV, WEBM, MKV y otros). Cuando el archivo es un video, solo se extrae y procesa la pista de audio; los cuadros de video no se usan en la transcripcion.',
+          'La herramienta primero intenta decodificar el audio usando APIs nativas del navegador. Si el formato o codec no es compatible directamente, recurre a un conversor local (FFmpeg compilado a WebAssembly) para extraer el audio antes de transcribir, sin depender de subir el archivo.',
+        ],
+        list: [
+          'Elegir el nivel de calidad (Rapido, Equilibrado o Alta calidad).',
+          'Elegir el idioma manualmente o dejar que Whisper lo detecte automaticamente.',
+          'Transcribir en el idioma original o traducir al ingles.',
+          'Seguir el progreso real de descarga del modelo y de transcripcion por tramo.',
+          'Cancelar en cualquier momento sin congelar la pagina.',
+        ],
+      },
+      {
+        title: 'Timestamps, reproductor sincronizado y exportacion',
+        paragraphs: [
+          'El resultado incluye timestamps por segmento, mostrados tanto en el texto continuo como en la lista de segmentos. Haz clic en cualquier timestamp para mover el reproductor de audio/video exactamente a ese punto.',
+          'Puedes copiar el texto plano, copiarlo con timestamps, o exportar en TXT, TXT con timestamps, SRT (subtitulos), WebVTT o un JSON estructurado con los segmentos, idioma y duracion.',
+        ],
+      },
+      {
+        title: 'Rendimiento, limites y privacidad',
+        paragraphs: [
+          'En dispositivos con soporte WebGPU, la transcripcion corre acelerada por GPU. Sin WebGPU, la herramienta usa procesamiento por CPU (WebAssembly), que funciona en practicamente cualquier navegador pero es mas lento, especialmente en celulares.',
+          'Los archivos muy largos requieren mas memoria del navegador; hay un limite practico de duracion para evitar que la pestana se congele. Ningun audio, video o texto transcrito se guarda en nuestros servidores ni se envia a analytics.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Mi audio o video se sube a un servidor?',
+        answer:
+          'No. La extraccion de audio y la transcripcion ocurren localmente en tu navegador. Solo los archivos del modelo de IA se descargan desde Hugging Face para ejecutar la inferencia en tu dispositivo; tu archivo de media nunca sale del navegador.',
+      },
+      {
+        question: '¿Que formatos de audio y video son compatibles?',
+        answer:
+          'Audio: MP3, WAV, M4A, AAC, OGG, OPUS y FLAC. Video: MP4, MOV, WEBM, MKV y otros contenedores con una pista de audio que tu navegador o el conversor local de respaldo puedan leer.',
+      },
+      {
+        question: '¿Funciona sin una tarjeta grafica compatible con WebGPU?',
+        answer:
+          'Si. Cuando WebGPU no esta disponible, la herramienta cambia automaticamente a procesamiento por CPU. Es mas lento, pero la transcripcion sigue corriendo completamente en el navegador.',
+      },
+      {
+        question: '¿Puedo exportarlo como archivo de subtitulos?',
+        answer:
+          'Si. Puedes exportar el resultado en SRT o WebVTT, ademas de TXT simple, TXT con timestamps y un JSON estructurado con los segmentos.',
+      },
+      {
+        question: '¿Puedo elegir el idioma o traducir al ingles?',
+        answer:
+          'Si. Puedes dejar que Whisper detecte el idioma automaticamente o elegir uno especifico, ademas de elegir entre transcribir en el idioma original o traducir el audio al ingles.',
       },
     ],
   },

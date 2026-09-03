@@ -30,6 +30,7 @@ export const TOOL_ID = {
   chromaBackgroundRemover: 'remover_fundo_imagem',
   videoCompression: 'video_compression',
   audioExtractor: 'extrair_audio_de_video',
+  audioVideoTranscription: 'transcricao_de_audio_e_video',
   qrCodeGenerator: 'qr_code_generator',
   transfer: 'transfer',
   whatsappTelegramLinkGenerator: 'gerador_link_whatsapp_telegram',
