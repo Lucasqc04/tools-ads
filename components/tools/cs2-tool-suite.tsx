@@ -96,7 +96,7 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
   );
 
   return (
-    <Cs2AnalyticsProvider value={{ tool: analyticsTool, locale }}>
+    <Cs2AnalyticsProvider value={{ tool: analyticsTool, locale, markStarted }}>
     <div className="space-y-6">
       <Card className="space-y-3">
         <h3 className="text-base font-semibold text-slate-900">{modeTitle}</h3>

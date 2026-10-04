@@ -128,6 +128,7 @@ import {
   csvViewerFaq,
   csvViewerIntro,
 } from '@/data/content/csv-viewer';
+import { getZplLabelEditorContent } from '@/data/content/zpl-label-editor';
 import {
   dataConverterContentBlocks,
   dataConverterFaq,
@@ -613,6 +614,14 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: csvViewerFaq,
     contentBlocks: csvViewerContentBlocks,
     relatedToolIds: ['json-formatter', 'conversor-universal', 'contador-de-caracteres'],
+  },
+  {
+    id: 'zpl-label-editor',
+    slug: 'editor-etiquetas-zpl',
+    category: 'documents',
+    ...getZplLabelEditorContent('pt-br'),
+    canonicalPath: '/tools/editor-etiquetas-zpl',
+    relatedToolIds: ['csv-viewer', 'image-converter', 'html-viewer'],
   },
   {
     id: 'data-converter',
@@ -2046,6 +2055,16 @@ const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>
   localizableToolIds.has(toolId as LocalizableToolId);
 
 const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition => {
+  if (tool.id === 'zpl-label-editor') {
+    const localized = getZplLabelEditorContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
   if (tool.id === 'nickname-symbol-generator') {
     const localized = getNicknameSymbolGeneratorContent(locale);
 

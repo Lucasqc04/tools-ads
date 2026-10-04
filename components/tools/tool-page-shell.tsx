@@ -65,6 +65,30 @@ export function ToolPageShell({
       description: '针对常见用途的快捷入口,使用相同的完整流程。',
     },
   };
+  const trustNoteByToolId: Partial<Record<string, Record<AppLocale, { title: string; text: string }>>> = {
+    'zpl-label-editor': {
+      'pt-br': {
+        title: 'Privacidade e renderização de etiquetas',
+        text: 'O lote e o rascunho ficam neste navegador. Para obter preview e PDF compatíveis com ZPL, a etiqueta em processamento é enviada ao renderizador; o conteúdo das etiquetas não é incluído nos eventos de análise.',
+      },
+      en: {
+        title: 'Privacy and label rendering',
+        text: 'The batch and draft stay in this browser. To produce ZPL-compatible previews and PDFs, the label being processed is sent to the renderer; label content is not included in analytics events.',
+      },
+      es: {
+        title: 'Privacidad y renderización de etiquetas',
+        text: 'El lote y borrador permanecen en este navegador. Para generar previews y PDF compatibles con ZPL, la etiqueta en proceso se envía al renderizador; el contenido no se incluye en eventos analíticos.',
+      },
+      zh: {
+        title: 'Privacy and label rendering',
+        text: 'The batch and draft stay in this browser. To produce ZPL-compatible previews and PDFs, the label being processed is sent to the renderer; label content is not included in analytics events.',
+      },
+    },
+  };
+  const trustNote = trustNoteByToolId[tool.id]?.[locale] ?? {
+    title: dictionary.toolShell.trustTitle,
+    text: dictionary.toolShell.trustText,
+  };
 
   return (
     <Container className="py-8 md:py-10">
@@ -124,8 +148,8 @@ export function ToolPageShell({
           {afterContentSection ? afterContentSection : null}
 
           <TrustNote
-            title={dictionary.toolShell.trustTitle}
-            text={dictionary.toolShell.trustText}
+            title={trustNote.title}
+            text={trustNote.text}
           />
         </main>
       </div>

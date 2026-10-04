@@ -112,7 +112,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
   'pt-br': {
     title: 'Gerador de Caractere Invisivel para Jogos e Redes Sociais',
     description:
-      'Copie, gere e teste nomes invisiveis com padroes Unicode diferentes. Para Fortnite, teste combinacoes de 2 a 4 caracteres quando um unico invisivel for rejeitado.',
+      'Copie, gere e teste nomes invisiveis com padroes Unicode diferentes. Se um caractere nao funcionar, experimente uma combinacao recomendada e compare variantes para o jogo escolhido.',
     fortniteBadge: 'Modo Fortnite',
     platformLabel: 'Plataforma alvo',
     platformHint:
@@ -188,7 +188,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
   en: {
     title: 'Invisible Character Generator for Games and Social Platforms',
     description:
-      'Copy, generate, and test invisible names with several Unicode patterns. For Fortnite, try 2 to 4-character combinations when a single invisible character is rejected.',
+      'Copy, generate, and test invisible names with several Unicode patterns. If one character fails, try a recommended combination and compare variants for the selected game.',
     fortniteBadge: 'Fortnite mode',
     platformLabel: 'Target platform',
     platformHint:
@@ -264,7 +264,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
   es: {
     title: 'Generador de Caracter Invisible para Juegos y Redes Sociales',
     description:
-      'Copia, genera y prueba nombres invisibles con varios patrones Unicode. Para Fortnite, prueba combinaciones de 2 a 4 caracteres si un solo invisible es rechazado.',
+      'Copia, genera y prueba nombres invisibles con varios patrones Unicode. Si un caracter falla, prueba una combinacion recomendada y compara variantes para el juego seleccionado.',
     fortniteBadge: 'Modo Fortnite',
     platformLabel: 'Plataforma objetivo',
     platformHint:
@@ -340,7 +340,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
   zh: {
     title: '游戏和社交平台隐藏字符生成器',
     description:
-      '复制、生成并测试使用不同 Unicode 模式的隐藏名称。对于 Fortnite,当单个隐藏字符被拒绝时,可以尝试 2 到 4 个字符的组合。',
+      '复制、生成并测试使用不同 Unicode 模式的隐藏名称。如果某个字符不可用,请尝试推荐组合,并比较适用于所选游戏的不同方案。',
     fortniteBadge: 'Fortnite 模式',
     platformLabel: '目标平台',
     platformHint: '验证规则会随时间变化。如果某个组合失败,可以尝试列表中的其他组合。',
@@ -520,6 +520,25 @@ export function InvisibleCharacterTool({
 }: InvisibleCharacterToolProps) {
   const ui = uiByLocale[locale];
   const hasStartedRef = useRef(false);
+  const hasCompletedRef = useRef(false);
+
+  const markStarted = () => {
+    if (hasStartedRef.current) {
+      return;
+    }
+
+    hasStartedRef.current = true;
+    trackEvent('tool_started', { tool: TOOL_ID.invisibleCharacter, locale });
+  };
+
+  const markCompleted = () => {
+    if (hasCompletedRef.current) {
+      return;
+    }
+
+    hasCompletedRef.current = true;
+    trackEvent('tool_completed', { tool: TOOL_ID.invisibleCharacter, locale });
+  };
 
   const defaultPlatformId =
     initialPlatformId && invisiblePlatforms.some((platform) => platform.id === initialPlatformId)
@@ -657,6 +676,8 @@ export function InvisibleCharacterTool({
       return;
     }
 
+    markStarted();
+
     try {
       await navigator.clipboard.writeText(value);
       setFeedbackMessage('');
@@ -666,11 +687,18 @@ export function InvisibleCharacterTool({
         locale,
         field: actionId === 'copy-cleaned' ? 'cleaned_text' : 'invisible_value',
       });
+      markCompleted();
       globalThis.setTimeout(() => {
         setCopiedActionId((current) => (current === actionId ? '' : current));
       }, 1600);
     } catch {
       setFeedbackMessage(ui.genericCopyError);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.invisibleCharacter,
+        locale,
+        error_type: 'processing_failed',
+        action: 'copy',
+      });
     }
   };
 
@@ -679,16 +707,14 @@ export function InvisibleCharacterTool({
   };
 
   const handleGenerateFromControls = () => {
-    if (!hasStartedRef.current) {
-      hasStartedRef.current = true;
-      trackEvent('tool_started', { tool: TOOL_ID.invisibleCharacter, locale });
-    }
+    markStarted();
     setGeneratedValue(computedGeneratedValue);
     setFeedbackMessage('');
-    trackEvent('tool_completed', { tool: TOOL_ID.invisibleCharacter, locale });
+    markCompleted();
   };
 
   const handleUseCombination = (nextPatternId: string) => {
+    markStarted();
     const nextPattern = getInvisibleCombinationById(nextPatternId);
 
     if (!nextPattern) {
@@ -702,6 +728,7 @@ export function InvisibleCharacterTool({
   };
 
   const handleUseCharacter = (nextCharacterId: string) => {
+    markStarted();
     const nextCharacter = invisibleCharacterDefinitions.find(
       (character) => character.id === nextCharacterId,
     );
@@ -816,12 +843,15 @@ export function InvisibleCharacterTool({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-        <section className="space-y-4">
+        <section className={cn('space-y-4', isFortnite && 'order-2 lg:order-1')}>
           <label className="space-y-2">
             <span className="text-sm font-semibold text-slate-800">{ui.platformLabel}</span>
             <Select
               value={platformId}
-              onChange={(event) => setPlatformId(event.target.value)}
+              onChange={(event) => {
+                markStarted();
+                setPlatformId(event.target.value);
+              }}
             >
               <optgroup label={ui.gameGroup}>
                 {gamePlatforms.map((platform) => (
@@ -872,18 +902,28 @@ export function InvisibleCharacterTool({
           </div>
         </section>
 
-        <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4">
+        <section className={cn('space-y-4 rounded-xl border border-slate-200 bg-white p-4', isFortnite && 'order-1 lg:order-2')}>
           <div>
             <p className="text-base font-semibold text-slate-900">{ui.quickCopyTitle}</p>
             <p className="mt-1 text-sm text-slate-600">{ui.quickCopyDescription}</p>
           </div>
+
+          {isFortnite ? (
+            <Button className="w-full sm:w-auto" onClick={handleCopySingleInvisible}>
+              <Clipboard className="mr-2 h-4 w-4" aria-hidden="true" />
+              {copiedActionId === 'copy-main' ? ui.copied : ui.copyInvisible}
+            </Button>
+          ) : null}
 
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-2">
               <span className="text-sm font-semibold text-slate-800">{ui.modeLabel}</span>
               <Select
                 value={generationMode}
-                onChange={(event) => setGenerationMode(event.target.value as GenerationMode)}
+                onChange={(event) => {
+                  markStarted();
+                  setGenerationMode(event.target.value as GenerationMode);
+                }}
               >
                 <option value="combination">{ui.modeCombination}</option>
                 <option value="character">{ui.modeCharacter}</option>
@@ -894,7 +934,10 @@ export function InvisibleCharacterTool({
               <span className="text-sm font-semibold text-slate-800">{ui.placementLabel}</span>
               <Select
                 value={placement}
-                onChange={(event) => setPlacement(event.target.value as NicknamePlacement)}
+                onChange={(event) => {
+                  markStarted();
+                  setPlacement(event.target.value as NicknamePlacement);
+                }}
               >
                 {placementOrder.map((item) => (
                   <option key={item} value={item}>
@@ -936,7 +979,10 @@ export function InvisibleCharacterTool({
             <span className="text-sm font-semibold text-slate-800">{ui.nicknameLabel}</span>
             <Input
               value={nicknameInput}
-              onChange={(event) => setNicknameInput(event.target.value)}
+              onChange={(event) => {
+                markStarted();
+                setNicknameInput(event.target.value);
+              }}
               placeholder={ui.nicknamePlaceholder}
               maxLength={40}
             />
@@ -955,18 +1001,23 @@ export function InvisibleCharacterTool({
               max="12"
               step="1"
               value={repeatCount}
-              onChange={(event) => setRepeatCount(Number(event.target.value))}
+              onChange={(event) => {
+                markStarted();
+                setRepeatCount(Number(event.target.value));
+              }}
               className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-brand-600"
             />
             <span className="text-xs text-slate-500">{ui.sizeHint}</span>
           </label>
 
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={handleCopySingleInvisible}>
-              <Clipboard className="mr-2 h-4 w-4" aria-hidden="true" />
-              {copiedActionId === 'copy-main' ? ui.copied : ui.copyInvisible}
-            </Button>
-            <Button onClick={handleGenerateFromControls}>
+            {!isFortnite ? (
+              <Button variant="secondary" onClick={handleCopySingleInvisible}>
+                <Clipboard className="mr-2 h-4 w-4" aria-hidden="true" />
+                {copiedActionId === 'copy-main' ? ui.copied : ui.copyInvisible}
+              </Button>
+            ) : null}
+            <Button variant={isFortnite ? 'secondary' : 'primary'} onClick={handleGenerateFromControls}>
               <Wand2 className="mr-2 h-4 w-4" aria-hidden="true" />
               {ui.generateInvisibleName}
             </Button>
@@ -1183,7 +1234,10 @@ export function InvisibleCharacterTool({
         </div>
         <Textarea
           value={detectorInput}
-          onChange={(event) => setDetectorInput(event.target.value)}
+          onChange={(event) => {
+            markStarted();
+            setDetectorInput(event.target.value);
+          }}
           placeholder={ui.detectorPlaceholder}
           className="min-h-[110px]"
         />

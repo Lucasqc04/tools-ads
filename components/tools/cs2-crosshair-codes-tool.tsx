@@ -60,6 +60,8 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
   );
 
   const handleCopy = async (slug: string, code: string) => {
+    markStarted();
+
     try {
       await navigator.clipboard.writeText(code);
       setCopiedSlug(slug);
@@ -70,6 +72,12 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
       }, 1600);
     } catch {
       setCopiedSlug('');
+      trackEvent('tool_error', {
+        tool: TOOL_ID.cs2CrosshairCodes,
+        locale,
+        error_type: 'processing_failed',
+        action: 'copy',
+      });
     }
   };
 

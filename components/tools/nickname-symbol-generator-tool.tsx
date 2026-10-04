@@ -74,7 +74,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
   'pt-br': {
     quickStartLabel: 'Pronto em 3 passos',
     stepName: 'Digite seu nome',
-    stepGame: 'Use o teclado',
+    stepGame: 'Escolha o jogo',
     stepStyle: 'Copie e teste',
     platformLabel: 'Jogo ou plataforma',
     platformHint: 'A selecao muda a ordem dos presets e as recomendacoes de teste.',
@@ -88,7 +88,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     copyNickname: 'Copiar nickname',
     copied: 'Copiado',
     shuffle: 'Surpreenda-me',
-    recommendedTitle: '28 molduras e presets',
+    recommendedTitle: 'Molduras recomendadas',
     recommendedDescription: 'Comece por opcoes curtas e ajuste depois se precisar.',
     usePreset: 'Usar preset',
     symbolLibraryTitle: 'Teclado com 224 simbolos',
@@ -116,7 +116,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
   en: {
     quickStartLabel: 'Ready in 3 steps',
     stepName: 'Type your name',
-    stepGame: 'Use the keyboard',
+    stepGame: 'Choose a game',
     stepStyle: 'Copy and test',
     platformLabel: 'Game or platform',
     platformHint: 'Your selection changes preset order and testing guidance.',
@@ -130,7 +130,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     copyNickname: 'Copy nickname',
     copied: 'Copied',
     shuffle: 'Surprise me',
-    recommendedTitle: '28 frames and presets',
+    recommendedTitle: 'Recommended frames',
     recommendedDescription: 'Start with short options and customize only when needed.',
     usePreset: 'Use preset',
     symbolLibraryTitle: 'Keyboard with 224 symbols',
@@ -158,7 +158,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
   es: {
     quickStartLabel: 'Listo en 3 pasos',
     stepName: 'Escribe tu nombre',
-    stepGame: 'Usa el teclado',
+    stepGame: 'Elige el juego',
     stepStyle: 'Copia y prueba',
     platformLabel: 'Juego o plataforma',
     platformHint: 'La seleccion cambia el orden de presets y las recomendaciones.',
@@ -172,7 +172,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     copyNickname: 'Copiar nickname',
     copied: 'Copiado',
     shuffle: 'Sorprendeme',
-    recommendedTitle: '28 marcos y presets',
+    recommendedTitle: 'Marcos recomendados',
     recommendedDescription: 'Empieza con opciones cortas y personaliza solo si hace falta.',
     usePreset: 'Usar preset',
     symbolLibraryTitle: 'Teclado con 224 simbolos',
@@ -200,7 +200,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
   zh: {
     quickStartLabel: '三步搞定',
     stepName: '输入你的名字',
-    stepGame: '使用键盘',
+    stepGame: '选择游戏',
     stepStyle: '复制并测试',
     platformLabel: '游戏或平台',
     platformHint: '选择会改变预设顺序和测试建议。',
@@ -214,7 +214,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     copyNickname: '复制昵称',
     copied: '已复制',
     shuffle: '给我惊喜',
-    recommendedTitle: '28种边框与预设',
+    recommendedTitle: '推荐边框',
     recommendedDescription: '先从简短的选项开始,有需要时再调整。',
     usePreset: '使用预设',
     symbolLibraryTitle: '224个符号键盘',
@@ -276,6 +276,7 @@ export function NicknameSymbolGeneratorTool({
   const activeBaseNameInputRef = useRef<HTMLInputElement | null>(null);
   const baseNameSelectionRef = useRef({ start: 6, end: 6 });
   const hasStartedRef = useRef(false);
+  const hasCompletedRef = useRef(false);
 
   const trackStarted = () => {
     if (hasStartedRef.current) {
@@ -283,6 +284,15 @@ export function NicknameSymbolGeneratorTool({
     }
     hasStartedRef.current = true;
     trackEvent('tool_started', { tool: TOOL_ID.nicknameSymbolGenerator, locale });
+  };
+
+  const trackCompleted = (field: string) => {
+    if (hasCompletedRef.current) {
+      return;
+    }
+
+    hasCompletedRef.current = true;
+    trackEvent('tool_completed', { tool: TOOL_ID.nicknameSymbolGenerator, locale, field });
   };
 
   const selectedPlatform =
@@ -308,6 +318,8 @@ export function NicknameSymbolGeneratorTool({
   );
 
   const copyText = async (value: string, actionId: string) => {
+    trackStarted();
+
     try {
       await navigator.clipboard.writeText(value);
       setCopiedId(actionId);
@@ -322,10 +334,16 @@ export function NicknameSymbolGeneratorTool({
       // composed nickname or a ready-made variant is the real completion
       // signal (a bare symbol copy is a minor pick, not a full completion).
       if (actionId !== 'symbol') {
-        trackEvent('tool_completed', { tool: TOOL_ID.nicknameSymbolGenerator, locale, field });
+        trackCompleted(field);
       }
     } catch {
       setFeedback(ui.error);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.nicknameSymbolGenerator,
+        locale,
+        error_type: 'processing_failed',
+        action: 'copy',
+      });
     }
   };
 
@@ -355,6 +373,7 @@ export function NicknameSymbolGeneratorTool({
   };
 
   const handleKeyboardBackspace = () => {
+    trackStarted();
     const selection = baseNameSelectionRef.current;
     const edit = deleteNicknameTextAtSelection(
       baseName,
@@ -368,6 +387,7 @@ export function NicknameSymbolGeneratorTool({
   };
 
   const clearComposer = () => {
+    trackStarted();
     setBaseName('');
     setLeftSymbol('');
     setRightSymbol('');
@@ -405,6 +425,11 @@ export function NicknameSymbolGeneratorTool({
       return;
     }
 
+    trackEvent('format_selected', {
+      tool: TOOL_ID.nicknameSymbolGenerator,
+      locale,
+      format: frame.id,
+    });
     setLeftSymbol(frame.left);
     setRightSymbol(frame.right);
     setSelectedSymbol(frame.left || frame.right || selectedSymbol);
@@ -454,6 +479,8 @@ export function NicknameSymbolGeneratorTool({
       setStyleId(style.id);
     }
   };
+
+  const isFocusedFlow = platformId === 'brawl-stars' || platformId === 'rocket-league';
 
   const targetLabel = (target: SymbolTarget): string => {
     if (target === 'cursor') {
@@ -582,6 +609,7 @@ export function NicknameSymbolGeneratorTool({
             <button
               type="button"
               onClick={() => copyText(preview, 'preview')}
+              aria-live="polite"
               className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400"
             >
               {copiedId === 'preview' ? (
@@ -593,6 +621,11 @@ export function NicknameSymbolGeneratorTool({
             </button>
           </div>
         </div>
+        {feedback ? (
+          <p role="status" aria-live="polite" className="text-sm font-medium text-red-200">
+            {feedback}
+          </p>
+        ) : null}
       </section>
 
       <section className="space-y-4 border-b border-slate-200 p-5 md:p-6">
@@ -637,11 +670,23 @@ export function NicknameSymbolGeneratorTool({
         </p>
       </section>
 
-      <section className="space-y-5 border-b border-slate-200 p-5 md:p-6">
-        <div>
-          <h3 className="text-lg font-semibold text-slate-900">{ui.symbolLibraryTitle}</h3>
-          <p className="mt-1 text-sm leading-6 text-slate-600">{ui.symbolLibraryDescription}</p>
-        </div>
+      <details open={!isFocusedFlow} className="group border-b border-slate-200">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 marker:content-none md:p-6 [&::-webkit-details-marker]:hidden">
+          <span className="min-w-0">
+            <span className="block text-lg font-semibold text-slate-900">{ui.symbolLibraryTitle}</span>
+            <span className="mt-1 block text-sm leading-6 text-slate-600">
+              {ui.symbolLibraryDescription}
+            </span>
+          </span>
+          <span
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xl font-medium text-slate-700 transition group-open:rotate-45"
+            aria-hidden="true"
+          >
+            +
+          </span>
+        </summary>
+
+        <div className="space-y-5 border-t border-slate-200 p-5 md:p-6">
 
         <label className="space-y-2 md:hidden">
           <span className="text-sm font-semibold text-slate-800">{ui.nameLabel}</span>
@@ -763,7 +808,8 @@ export function NicknameSymbolGeneratorTool({
             {copiedId === 'symbol' ? ui.copied : ui.copySymbol}
           </button>
         </div>
-      </section>
+        </div>
+      </details>
 
       <details className="group border-b border-slate-200">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 marker:content-none md:p-6 [&::-webkit-details-marker]:hidden">
@@ -860,8 +906,6 @@ export function NicknameSymbolGeneratorTool({
             );
           })}
         </div>
-
-        {feedback ? <p className="text-sm font-medium text-red-600">{feedback}</p> : null}
 
         <p className="flex items-start gap-2 rounded-xl bg-sky-50 px-4 py-3 text-sm leading-6 text-sky-900">
           <Sparkles className="mt-1 h-4 w-4 shrink-0" aria-hidden="true" />

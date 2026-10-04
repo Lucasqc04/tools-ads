@@ -30,6 +30,7 @@ import { trackEvent, type ToolId } from '@/lib/analytics';
 type Cs2AnalyticsContextValue = {
   tool: ToolId;
   locale: AppLocale;
+  markStarted: () => void;
 };
 
 const Cs2AnalyticsContext = createContext<Cs2AnalyticsContextValue | null>(null);
@@ -68,7 +69,17 @@ export function CopyButton({
   const analytics = useContext(Cs2AnalyticsContext);
 
   const onCopy = async () => {
+    analytics?.markStarted();
+
     if (!(await writeClipboard(value))) {
+      if (analytics) {
+        trackEvent('tool_error', {
+          tool: analytics.tool,
+          locale: analytics.locale,
+          error_type: 'processing_failed',
+          action: 'copy',
+        });
+      }
       return;
     }
 
@@ -100,6 +111,8 @@ export function DownloadCfgButton({
 }) {
   const analytics = useContext(Cs2AnalyticsContext);
   const onDownload = () => {
+    analytics?.markStarted();
+
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');

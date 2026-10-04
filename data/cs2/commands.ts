@@ -533,6 +533,38 @@ export const cs2Commands: Cs2Command[] = [
   }),
 
   cmd({
+    id: 'sv-clantags-enabled-0',
+    command: 'sv_clantags_enabled 0',
+    category: 'server',
+    requiresSvCheats: false,
+    localOnly: true,
+    safeForOfficialServers: false,
+    showInCompetitiveConfig: false,
+    showInPracticeConfig: false,
+    showInFunConfig: true,
+    showInTournamentSafeConfig: false,
+    warningLevel: 'info',
+    name: {
+      'pt-br': 'Desativar clan tags no servidor',
+      en: 'Disable clan tags on the server',
+      es: 'Desactivar etiquetas de clan en el servidor',
+      zh: '在服务器上禁用战队标签',
+    },
+    description: {
+      'pt-br': 'Opção oficial adicionada em setembro de 2026 para servidores personalizados que querem ocultar clan tags.',
+      en: 'Official option added in September 2026 for custom servers that want to hide clan tags.',
+      es: 'Opción oficial añadida en septiembre de 2026 para servidores personalizados que quieran ocultar etiquetas de clan.',
+      zh: '2026 年 9 月新增的官方选项,供想隐藏战队标签的自定义服务器使用。',
+    },
+    warning: {
+      'pt-br': 'Use apenas em um servidor personalizado que voce administra. Isso nao altera as partidas oficiais.',
+      en: 'Use only on a custom server you administer. This does not change official matchmaking.',
+      es: 'Usalo solo en un servidor personalizado que administres. No cambia el emparejamiento oficial.',
+      zh: '仅在你管理的自定义服务器上使用,不会更改官方匹配。',
+    },
+  }),
+
+  cmd({
     id: 'mp-restartgame-1',
     command: 'mp_restartgame 1',
     category: 'round',
@@ -625,16 +657,16 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Aumentar limite de granadas',
-      en: 'Increase grenade carry limit',
-      es: 'Aumentar limite de granadas',
-      zh: '提高投掷物携带上限',
+      'pt-br': 'Definir limite total de granadas',
+      en: 'Set total grenade limit',
+      es: 'Definir limite total de granadas',
+      zh: '设置投掷物总上限',
     },
     description: {
-      'pt-br': 'Permite carregar mais utilitarios para testar lineup seguida.',
-      en: 'Lets you hold more utility for lineup sequences.',
-      es: 'Permite cargar mas utilidad para secuencias de lineup.',
-      zh: '让你携带更多道具,便于连续练习点位。',
+      'pt-br': 'Define o total de granadas que podem ser carregadas e compradas por rodada no servidor local.',
+      en: 'Sets the total grenades that can be carried and purchased per round on a local server.',
+      es: 'Define el total de granadas que se pueden llevar y comprar por ronda en un servidor local.',
+      zh: '设置本地服务器中每回合可携带和购买的投掷物总数。',
     },
   }),
 

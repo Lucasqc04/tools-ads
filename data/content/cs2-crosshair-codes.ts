@@ -66,7 +66,7 @@ const ptBrContent: Cs2CrosshairCodesLocaleContent = {
       title: 'Como usar esta base de miras no CS2',
       paragraphs: [
         'Esta pagina foi pensada para quem quer testar miras de pro players sem perder tempo em listas confusas. Voce pode buscar pelo nome do jogador, aplicar filtros por funcao e copiar o codigo no mesmo card.',
-        'Muitos jogadores ainda procuram por termo de CS:GO, e isso faz sentido: o formato do codigo continua no padrao CSGO-xxxxx. Na pratica, esses codigos continuam sendo usados no Counter-Strike 2 para importar configuracoes de crosshair.',
+        'Muitos jogadores ainda procuram por termos de CS:GO. Em setembro de 2026, a Valve adicionou o estilo Static Quadrant e a cor de contorno e alterou o formato de compartilhamento. Os codigos desta base sao anteriores a essas mudancas e ainda precisam ser confirmados no jogo atual.',
         'Depois de importar, use o codigo como base e ajuste tamanho, gap, espessura e cor para o seu monitor e estilo de jogo. A melhor mira e a que voce consegue ler com clareza em qualquer mapa e situacao de combate.',
       ],
     },
@@ -85,7 +85,7 @@ const ptBrContent: Cs2CrosshairCodesLocaleContent = {
     {
       title: 'Limites e avisos importantes',
       paragraphs: [
-        'Jogadores profissionais podem mudar configuracoes com frequencia por fase, campeonato, monitor ou preferencia pessoal. Por isso cada card mostra data de ultima checagem e nivel de confianca da informacao.',
+        'Jogadores profissionais podem mudar configuracoes com frequencia por fase, campeonato, monitor ou preferencia pessoal. A base foi checada em 27 de maio de 2026, antes das mudancas de mira de setembro; os codigos ainda precisam ser confirmados no formato atual do CS2.',
         'Quando um codigo nao estiver confirmado com seguranca, ele fica marcado com confianca baixa. Nessas situacoes, use como referencia inicial e valide com outras fontes antes de tratar como configuracao definitiva.',
         'Tudo aqui e focado em praticidade para treino e melhoria de consistencia. O codigo nao substitui fundamentos como posicionamento, pre-fire, controle de spray e leitura de timing.',
       ],
@@ -102,12 +102,12 @@ const ptBrContent: Cs2CrosshairCodesLocaleContent = {
     {
       question: 'Como importar um codigo de mira no CS2?',
       answer:
-        'Abra Counter-Strike 2, va em Settings > Game > Crosshair e use a opcao de importacao. Cole o codigo CSGO-xxxxx e confirme para aplicar.',
+        'Abra Settings > Crosshair/Scopes > Share or Import. A Valve alterou o formato em setembro de 2026; este codigo e anterior a mudanca e ainda nao foi revalidado no cliente atual. Confirme antes de usar.',
     },
     {
       question: 'Esses codigos tambem funcionam para quem busca CS:GO crosshair?',
       answer:
-        'Sim. Mesmo com o jogo atual sendo CS2, o formato de codigo de mira continua no padrao conhecido de CSGO crosshair code.',
+        'Os termos de CS:GO ainda ajudam a encontrar configuracoes de mira. A Valve mudou o formato compartilhado em setembro de 2026, entao codigos anteriores a atualizacao precisam ser conferidos no jogo atual.',
     },
     {
       question: 'A mira de pro player pode mudar com o tempo?',
@@ -155,7 +155,7 @@ const ptBrContent: Cs2CrosshairCodesLocaleContent = {
     },
     cautionTitle: 'Aviso importante',
     cautionText:
-      'Jogadores profissionais podem mudar suas configuracoes com o tempo. Mantemos esta pagina atualizada quando novas informacoes confiaveis aparecem.',
+      'A Valve adicionou novos ajustes de mira e mudou o formato de compartilhamento em setembro de 2026. Os codigos desta base foram checados antes dessa atualizacao; confirme cada um no CS2 atual antes de usar.',
     sourceLabel: 'Fonte',
   },
 };
@@ -185,7 +185,7 @@ const enContent: Cs2CrosshairCodesLocaleContent = {
       title: 'Use this CS2 crosshair database in a practical way',
       paragraphs: [
         'This page is built for speed. Instead of jumping across outdated screenshots, you can search by player name, filter by role, and copy the crosshair code from the same card.',
-        'Many players still search for CS:GO crosshair terms, and that is expected. The import format still uses CSGO-style codes, so old naming behavior remains common in current CS2 searches.',
+        'Many players still search for CS:GO crosshair terms. In September 2026, Valve added the Static Quadrant style and an outline-color option, and changed the share-code format. These entries predate those changes and still need confirmation in the current game.',
         'After importing, adjust details like thickness, size, and color for your monitor and resolution. A pro code is a strong baseline, but the final crosshair should match your own visual comfort.',
       ],
     },
@@ -204,7 +204,7 @@ const enContent: Cs2CrosshairCodesLocaleContent = {
     {
       title: 'Important limitations and update notes',
       paragraphs: [
-        'Professional players may update their settings often due to tournaments, monitor changes, or personal preference. That is why each entry includes last checked date and confidence level.',
+        'Professional players may update their settings due to tournaments, monitors, or personal preference. This database was checked on May 27, 2026, before September crosshair changes; codes still need confirmation in the current CS2 format.',
         'When a code is not fully validated, we keep confidence as medium or low. Treat these entries as a starting point and confirm with additional reliable sources.',
         'A crosshair code helps with clarity, but aim performance still depends on positioning, crosshair placement discipline, spray control, and decision-making under pressure.',
       ],
@@ -221,12 +221,12 @@ const enContent: Cs2CrosshairCodesLocaleContent = {
     {
       question: 'How do I import a crosshair code in CS2?',
       answer:
-        'Open Counter-Strike 2, go to Settings > Game > Crosshair, choose import/share, paste the CSGO-style code, and apply it.',
+        'Open Settings > Crosshair/Scopes > Share or Import. Valve changed the format in September 2026; this entry predates that change and has not been revalidated in the current client. Confirm it before use.',
     },
     {
       question: 'Do these codes work for CS:GO crosshair searches too?',
       answer:
-        'Yes. Even though the current game is CS2, the code format remains compatible with the known CSGO crosshair style.',
+        'CS:GO terms are still useful for finding crosshair settings. Valve changed the share-code format in September 2026, so entries from before the update need to be checked in the current game.',
     },
     {
       question: 'Can pro player crosshair settings change often?',
@@ -274,7 +274,7 @@ const enContent: Cs2CrosshairCodesLocaleContent = {
     },
     cautionTitle: 'Important note',
     cautionText:
-      'Professional players may change their settings over time. We keep this page updated when new reliable information is available.',
+      'Valve added crosshair options and changed the share-code format in September 2026. These codes were checked before that update; confirm each one in the current game before using it.',
     sourceLabel: 'Source',
   },
 };
@@ -304,7 +304,7 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
       title: 'Como aprovechar esta base de miras en CS2',
       paragraphs: [
         'La pagina esta enfocada en accion rapida: buscas el jugador, aplicas filtros y copias el codigo desde el mismo bloque sin pasos innecesarios.',
-        'Muchos usuarios siguen buscando por terminos de CS:GO, y eso sigue siendo normal. El formato del codigo de mira mantiene el patron CSGO-xxxxx, por eso ambas intenciones de busqueda conviven.',
+        'Muchos usuarios siguen buscando terminos de CS:GO. En septiembre de 2026, Valve agrego el estilo Static Quadrant, una opcion de color para el contorno y cambio el formato compartido. Estos codigos son anteriores a esos cambios y deben confirmarse en el juego actual.',
         'Despues de importar, conviene ajustar color, grosor, gap y tamano segun tu resolucion y visibilidad. Un codigo profesional es una base util, no un ajuste final obligatorio.',
       ],
     },
@@ -323,7 +323,7 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
     {
       title: 'Limites y notas de actualizacion',
       paragraphs: [
-        'Los profesionales cambian configuraciones con el tiempo. Por eso cada jugador muestra fecha de verificacion y nivel de confianza de la informacion.',
+        'Los profesionales cambian su configuracion con el tiempo. La base se reviso el 27 de mayo de 2026, antes de los cambios de mira de septiembre; los codigos todavia deben confirmarse en el formato actual de CS2.',
         'Si un codigo no esta totalmente confirmado, queda marcado con confianza media o baja para que lo uses como referencia inicial y no como dato absoluto.',
         'Recuerda que la mira no reemplaza fundamentos de juego: colocacion de crosshair, control de spray, timing y toma de decisiones.',
       ],
@@ -340,12 +340,12 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
     {
       question: 'Como importo un codigo de mira en CS2?',
       answer:
-        'Entra en Counter-Strike 2, abre Settings > Game > Crosshair, usa la opcion de importar/compartir, pega el codigo y confirma.',
+        'Abre Settings > Crosshair/Scopes > Share or Import. Valve cambio el formato en septiembre de 2026; este codigo es anterior y todavia no fue revalidado en el cliente actual. Confirmalo antes de usarlo.',
     },
     {
       question: 'Estos codigos tambien sirven para busquedas de CS:GO crosshair?',
       answer:
-        'Si. Aunque el juego actual es CS2, el formato de codigo sigue el estilo conocido de CSGO crosshair code.',
+        'Los terminos de CS:GO siguen ayudando a encontrar miras. Valve cambio el formato compartido en septiembre de 2026, asi que los codigos anteriores a la actualizacion deben comprobarse en el juego actual.',
     },
     {
       question: 'Las miras de pro players cambian con frecuencia?',
@@ -393,7 +393,7 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
     },
     cautionTitle: 'Aviso importante',
     cautionText:
-      'Los jugadores profesionales pueden cambiar su configuracion con el tiempo. Actualizamos esta pagina cuando aparecen fuentes confiables nuevas.',
+      'Valve agrego opciones de mira y cambio el formato de los codigos en septiembre de 2026. Estos codigos se revisaron antes del cambio; confirma cada uno en el juego actual antes de usarlo.',
     sourceLabel: 'Fuente',
   },
 };
@@ -423,7 +423,7 @@ const zhContent: Cs2CrosshairCodesLocaleContent = {
       title: '如何高效使用这个 CS2 准星数据库',
       paragraphs: [
         '本页面专为速度而设计。你无需在过时的截图之间来回切换,只需按玩家姓名搜索、按位置筛选,并在同一张卡片中复制准星代码。',
-        '很多玩家仍然习惯搜索 CS:GO 相关的准星词汇,这很正常。导入格式仍然沿用 CSGO 风格的代码,所以这类旧有搜索习惯在当前的 CS2 搜索中依然常见。',
+        '很多玩家仍会搜索 CS:GO 准星相关词汇。Valve 于 2026 年 9 月新增 Static Quadrant 样式和准星轮廓颜色选项,并更改了分享代码格式。本数据库中的代码早于这些变化,仍需在当前游戏中确认。',
         '导入之后,请根据你的显示器和分辨率调整粗细、大小和颜色等细节。职业选手的代码是一个不错的起点,但最终的准星应该符合你自己的视觉舒适度。',
       ],
     },
@@ -442,7 +442,7 @@ const zhContent: Cs2CrosshairCodesLocaleContent = {
     {
       title: '重要限制与更新说明',
       paragraphs: [
-        '职业选手可能因为赛程、更换显示器或个人偏好而频繁调整设置。因此每张卡片都会显示最后检查日期和信息可信度。',
+        '职业选手可能因赛事、更换显示器或个人偏好调整设置。本数据库最后检查于 2026 年 5 月 27 日,早于 9 月的准星更新;这些代码仍需在当前 CS2 格式中确认。',
         '当某个代码尚未被完全验证时,我们会将其标记为中等或较低可信度。这类信息请当作初步参考,并结合其他可靠来源加以确认。',
         '准星代码有助于提升清晰度,但实际的瞄准表现仍然取决于走位、准星预瞄习惯、压枪控制和高压下的判断力。',
       ],
@@ -459,11 +459,11 @@ const zhContent: Cs2CrosshairCodesLocaleContent = {
     {
       question: '如何在 CS2 中导入准星代码?',
       answer:
-        '打开 Counter-Strike 2,进入 Settings > Game > Crosshair,选择导入/分享选项,粘贴 CSGO 风格的代码并应用。',
+        '进入 Settings > Crosshair/Scopes > Share or Import。Valve 于 2026 年 9 月更改了分享代码格式;本条目早于该更新,尚未在当前客户端重新验证,请先确认再使用。',
     },
     {
       question: '这些代码也适用于搜索 CS:GO 准星的玩家吗?',
-      answer: '是的。尽管当前游戏是 CS2,代码格式依然兼容已知的 CSGO 准星风格。',
+      answer: 'CS:GO 相关词汇仍可用于搜索准星设置。Valve 于 2026 年 9 月更改了分享代码格式,因此更新前的代码需要在当前游戏中确认。',
     },
     {
       question: '职业选手的准星设置会经常变化吗?',
@@ -509,7 +509,7 @@ const zhContent: Cs2CrosshairCodesLocaleContent = {
     },
     cautionTitle: '重要提示',
     cautionText:
-      '职业选手可能会随时间调整设置。当有新的可靠信息出现时,我们会更新此页面。',
+      'Valve 于 2026 年 9 月新增准星选项并更改分享代码格式。这些代码在更新前检查过;使用前请在当前游戏中逐一确认。',
     sourceLabel: '来源',
   },
 };

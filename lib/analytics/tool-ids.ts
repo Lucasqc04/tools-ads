@@ -17,6 +17,7 @@ export const TOOL_ID = {
   markdownEditor: 'markdown_editor',
   jsonFormatter: 'json_formatter',
   csvViewer: 'csv_viewer',
+  zplLabelEditor: 'zpl_label_editor',
   dataConverter: 'data_converter',
   textDiff: 'text_diff',
   openGraphPreview: 'open_graph_preview',

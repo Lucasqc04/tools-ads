@@ -9,6 +9,7 @@ import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
 import { CompoundInterestTool } from '@/components/tools/compound-interest-tool';
 import { CpfGeneratorTool } from '@/components/tools/cpf-generator-tool';
 import { CsvViewerTool } from '@/components/tools/csv-viewer-tool';
+import { ZplLabelEditorTool } from '@/components/tools/zpl-label-editor-tool';
 import { DataConverterTool } from '@/components/tools/data-converter-tool';
 import { TextDiffTool } from '@/components/tools/text-diff-tool';
 import { OpenGraphPreviewTool } from '@/components/tools/open-graph-preview-tool';
@@ -446,6 +447,7 @@ const softwareCategoryByToolSlug: Record<string, string> = {
   'markdown-editor': 'DeveloperApplication',
   'json-formatter': 'DeveloperApplication',
   'csv-viewer': 'DeveloperApplication',
+  'editor-etiquetas-zpl': 'BusinessApplication',
   'data-converter': 'DeveloperApplication',
   'text-diff': 'DeveloperApplication',
   'open-graph-preview': 'DeveloperApplication',
@@ -728,6 +730,7 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'markdown-editor': ({ locale }) => <MarkdownEditorTool locale={locale} />,
   'json-formatter': ({ locale }) => <JsonFormatterTool locale={locale} />,
   'csv-viewer': ({ locale }) => <CsvViewerTool locale={locale} />,
+  'editor-etiquetas-zpl': ({ locale }) => <ZplLabelEditorTool locale={locale} />,
   'data-converter': ({ locale }) => <DataConverterTool locale={locale} />,
   'text-diff': ({ locale }) => <TextDiffTool locale={locale} />,
   'open-graph-preview': ({ locale }) => <OpenGraphPreviewTool locale={locale} />,
