@@ -225,16 +225,12 @@ const getAcceptedDescription = (
 };
 
 const formatMaxSize = (maxSize: number): string => {
+  const gigabytes = maxSize / (1024 * 1024 * 1024);
+  if (gigabytes >= 1) {
+    return `${Number(gigabytes.toFixed(1))}GB`;
+  }
+
   const megabytes = maxSize / (1024 * 1024);
-
-  if (megabytes >= 100) {
-    return '100MB';
-  }
-
-  if (megabytes >= 50) {
-    return '50MB';
-  }
-
   if (megabytes >= 1) {
     return `${Math.round(megabytes)}MB`;
   }

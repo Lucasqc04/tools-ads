@@ -8,6 +8,10 @@ import { type AppLocale } from '@/lib/i18n/config';
 import {
   compressVideoFile,
   estimateCompressedVideoSize,
+  LARGE_VIDEO_THRESHOLD_BYTES,
+  LargeVideoCompressionError,
+  MAX_VIDEO_FILE_SIZE_BYTES,
+  removeLargeVideoOutput,
   readVideoMetadata,
   type CompressionLogEvent,
   type VideoMetadata,
@@ -32,7 +36,11 @@ type VideoCompressionItem = {
   logs?: string[];
   resultFile?: File;
   resultUrl?: string;
+  resultName?: string;
+  storageFileName?: string;
   errorMessage?: string;
+  startedAt?: number;
+  elapsedSeconds?: number;
 };
 
 type VideoCompressionUi = {
@@ -66,6 +74,13 @@ type VideoCompressionUi = {
   compressButton: string;
   downloadButton: string;
   genericError: string;
+  largeFileHint: string;
+  largeFileNotice: string;
+  elapsedLabel: (value: string) => string;
+  largeCodecError: string;
+  largeStorageError: string;
+  largeQuotaError: string;
+  largeProcessingError: string;
 };
 
 const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
@@ -75,7 +90,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
       'Comprima varios videos no navegador, ajuste o nivel de compressao e compare preview antes do download.',
     filesLabel: 'Videos para comprimir',
     filesHint:
-      'Suporta envio em lote. O processamento e local e pode levar mais tempo em arquivos grandes.',
+      'Envio em lote para arquivos de ate 10 GB. Videos acima de 512 MB sao processados localmente em fluxo; arquivos menores podem usar o processamento do site.',
     compressionLevelLabel: 'Nivel de compressao',
     compressionLevelHint:
       'Nivel maior reduz mais o tamanho (com impacto maior em qualidade e possivel reducao de resolucao).',
@@ -98,13 +113,26 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     ffmpegWarmupNote:
       'No primeiro uso, o mecanismo de compressao pode baixar recursos e iniciar mais devagar.',
     processingLocalNote:
-      'Os videos sao processados localmente no navegador. Nao ha upload automatico para servidor por padrao.',
+      'Videos acima de 512 MB ficam no aparelho e sao processados no navegador. Arquivos menores podem ser enviados para a API de processamento do site quando disponivel.',
     done: 'Concluido',
     pending: 'Pendente',
     error: 'Erro',
     compressButton: 'Comprimir',
     downloadButton: 'Baixar',
     genericError: 'Nao foi possivel comprimir este video.',
+    largeFileHint:
+      'Arquivos acima de 512 MB usam processamento local em fluxo. Em um video de 5 GB, a conversao pode levar bastante tempo e depende dos codecs do navegador e do espaco livre no aparelho.',
+    largeFileNotice:
+      'Video grande: o processamento roda em uma tarefa separada para manter a pagina responsiva e tenta manter a tela ligada. Mantenha esta pagina aberta; ao trocar de aplicativo ou bloquear o celular, o navegador pode pausar a conversao.',
+    elapsedLabel: (value) => `Tempo: ${value}`,
+    largeCodecError:
+      'Este navegador ou dispositivo nao oferece os codecs necessarios para comprimir este video. Tente um navegador atualizado em um computador.',
+    largeStorageError:
+      'O armazenamento local do navegador nao esta disponivel para salvar o video comprimido.',
+    largeQuotaError:
+      'Nao ha espaco livre suficiente no armazenamento do navegador para terminar esta compressao.',
+    largeProcessingError:
+      'Nao foi possivel processar este video grande. Mantenha a pagina aberta e tente novamente em um navegador atualizado.',
   },
   en: {
     title: 'Online video compressor',
@@ -112,7 +140,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
       'Compress multiple videos directly in your browser, control compression level, and preview before download.',
     filesLabel: 'Videos to compress',
     filesHint:
-      'Batch upload is supported. Processing is local and may take longer for large files.',
+      'Batch uploads up to 10 GB are supported. Videos over 512 MB are streamed locally; smaller files may use the site processing API.',
     compressionLevelLabel: 'Compression level',
     compressionLevelHint:
       'Higher levels usually reduce size more, with stronger quality and resolution impact.',
@@ -135,13 +163,26 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     ffmpegWarmupNote:
       'On first run, the compression engine may download assets and start slower.',
     processingLocalNote:
-      'Videos are processed locally in your browser. No automatic server upload is performed by default.',
+      'Videos over 512 MB stay on your device and are processed in the browser. Smaller files may be sent to the site processing API when available.',
     done: 'Done',
     pending: 'Pending',
     error: 'Error',
     compressButton: 'Compress',
     downloadButton: 'Download',
     genericError: 'Could not compress this video.',
+    largeFileHint:
+      'Files over 512 MB use local streaming processing. A 5 GB video can take a long time and depends on browser codecs and free device storage.',
+    largeFileNotice:
+      'Large video: processing runs in a separate task to keep the page responsive and tries to keep the screen awake. Keep this page open; switching apps or locking your phone may pause the conversion.',
+    elapsedLabel: (value) => `Time: ${value}`,
+    largeCodecError:
+      'This browser or device does not provide the codecs needed for this video. Try an up-to-date browser on a computer.',
+    largeStorageError:
+      'Browser local storage is unavailable for saving the compressed video.',
+    largeQuotaError:
+      'There is not enough free browser storage to finish this compression.',
+    largeProcessingError:
+      'This large video could not be processed. Keep the page open and try again in an up-to-date browser.',
   },
   es: {
     title: 'Compresor de video online',
@@ -149,7 +190,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
       'Comprime varios videos en el navegador, ajusta el nivel de compresion y previsualiza antes de descargar.',
     filesLabel: 'Videos para comprimir',
     filesHint:
-      'Soporta carga por lote. El procesamiento es local y puede tardar mas en archivos grandes.',
+      'Admite cargas por lote de hasta 10 GB. Los videos de mas de 512 MB se procesan localmente en flujo; los archivos menores pueden usar la API del sitio.',
     compressionLevelLabel: 'Nivel de compresion',
     compressionLevelHint:
       'Un nivel mayor suele reducir mas el tamano, con mayor impacto en calidad y resolucion.',
@@ -172,13 +213,26 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     ffmpegWarmupNote:
       'En el primer uso, el motor de compresion puede descargar recursos e iniciar mas lento.',
     processingLocalNote:
-      'Los videos se procesan localmente en el navegador. No hay subida automatica a servidor por defecto.',
+      'Los videos de mas de 512 MB permanecen en el dispositivo y se procesan en el navegador. Los archivos menores pueden enviarse a la API del sitio cuando este disponible.',
     done: 'Listo',
     pending: 'Pendiente',
     error: 'Error',
     compressButton: 'Comprimir',
     downloadButton: 'Descargar',
     genericError: 'No fue posible comprimir este video.',
+    largeFileHint:
+      'Los archivos de mas de 512 MB usan procesamiento local en flujo. Un video de 5 GB puede tardar bastante y depende de los codecs del navegador y del espacio libre del dispositivo.',
+    largeFileNotice:
+      'Video grande: el procesamiento se ejecuta en una tarea separada para mantener la pagina activa e intenta mantener la pantalla encendida. Deja esta pagina abierta; cambiar de aplicacion o bloquear el celular puede pausar la conversion.',
+    elapsedLabel: (value) => `Tiempo: ${value}`,
+    largeCodecError:
+      'Este navegador o dispositivo no ofrece los codecs necesarios para comprimir este video. Prueba un navegador actualizado en una computadora.',
+    largeStorageError:
+      'El almacenamiento local del navegador no esta disponible para guardar el video comprimido.',
+    largeQuotaError:
+      'No hay suficiente espacio libre en el almacenamiento del navegador para terminar esta compresion.',
+    largeProcessingError:
+      'No se pudo procesar este video grande. Deja la pagina abierta e intenta de nuevo en un navegador actualizado.',
   },
   zh: {
     title: 'Online video compressor',
@@ -186,7 +240,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
       'Compress multiple videos directly in your browser, control compression level, and preview before download.',
     filesLabel: 'Videos to compress',
     filesHint:
-      'Batch upload is supported. Processing is local and may take longer for large files.',
+      'Batch uploads up to 10 GB are supported. Videos over 512 MB are streamed locally; smaller files may use the site processing API.',
     compressionLevelLabel: 'Compression level',
     compressionLevelHint:
       'Higher levels usually reduce size more, with stronger quality and resolution impact.',
@@ -209,13 +263,26 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     ffmpegWarmupNote:
       'On first run, the compression engine may download assets and start slower.',
     processingLocalNote:
-      'Videos are processed locally in your browser. No automatic server upload is performed by default.',
+      'Videos over 512 MB stay on your device and are processed in the browser. Smaller files may be sent to the site processing API when available.',
     done: 'Done',
     pending: 'Pending',
     error: 'Error',
     compressButton: 'Compress',
     downloadButton: 'Download',
     genericError: 'Could not compress this video.',
+    largeFileHint:
+      'Files over 512 MB use local streaming processing. A 5 GB video can take a long time and depends on browser codecs and free device storage.',
+    largeFileNotice:
+      'Large video: processing runs in a separate task to keep the page responsive and tries to keep the screen awake. Keep this page open; switching apps or locking your phone may pause the conversion.',
+    elapsedLabel: (value) => `Time: ${value}`,
+    largeCodecError:
+      'This browser or device does not provide the codecs needed for this video. Try an up-to-date browser on a computer.',
+    largeStorageError:
+      'Browser local storage is unavailable for saving the compressed video.',
+    largeQuotaError:
+      'There is not enough free browser storage to finish this compression.',
+    largeProcessingError:
+      'This large video could not be processed. Keep the page open and try again in an up-to-date browser.',
   },
 };
 
@@ -257,6 +324,36 @@ const formatDuration = (seconds: number): string => {
   return `${minutes}:${rest}`;
 };
 
+const requestScreenWakeLock = async (): Promise<WakeLockSentinel | null> => {
+  if (typeof navigator === 'undefined' || !navigator.wakeLock || document.visibilityState !== 'visible') {
+    return null;
+  }
+
+  try {
+    return await navigator.wakeLock.request('screen');
+  } catch {
+    return null;
+  }
+};
+
+const getLargeVideoErrorMessage = (error: unknown, ui: VideoCompressionUi): string => {
+  if (!(error instanceof LargeVideoCompressionError)) {
+    return error instanceof Error ? error.message : ui.genericError;
+  }
+
+  switch (error.code) {
+    case 'webcodecs_unsupported':
+    case 'unsupported_codec':
+      return ui.largeCodecError;
+    case 'storage_unavailable':
+      return ui.largeStorageError;
+    case 'storage_quota':
+      return ui.largeQuotaError;
+    default:
+      return ui.largeProcessingError;
+  }
+};
+
 const formatResolution = (metadata: VideoMetadata | undefined): string => {
   if (!metadata || !metadata.width || !metadata.height) {
     return '--';
@@ -287,6 +384,8 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
   const [compressionLevel, setCompressionLevel] = useState(58);
   const [isCompressing, setIsCompressing] = useState(false);
   const itemsRef = useRef<VideoCompressionItem[]>([]);
+  const isAnyItemCompressing = items.some((item) => item.status === 'compressing');
+  const hasLargeFiles = items.some((item) => item.file.size > LARGE_VIDEO_THRESHOLD_BYTES);
 
   useEffect(() => {
     itemsRef.current = items;
@@ -298,6 +397,9 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
         URL.revokeObjectURL(item.sourceUrl);
         if (item.resultUrl) {
           URL.revokeObjectURL(item.resultUrl);
+        }
+        if (item.storageFileName) {
+          void removeLargeVideoOutput(item.storageFileName);
         }
       });
     },
@@ -363,6 +465,10 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
   };
 
   const handleRemoveFile = (index: number) => {
+    if (isCompressing || isAnyItemCompressing) {
+      return;
+    }
+
     setItems((current) => {
       const target = current[index];
       if (!target) {
@@ -373,23 +479,52 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
       if (target.resultUrl) {
         URL.revokeObjectURL(target.resultUrl);
       }
+      if (target.storageFileName) {
+        void removeLargeVideoOutput(target.storageFileName);
+      }
 
       return current.filter((_, currentIndex) => currentIndex !== index);
     });
   };
 
   const handleClearAll = () => {
+    if (isCompressing || isAnyItemCompressing) {
+      return;
+    }
+
     setItems((current) => {
       current.forEach((item) => {
         URL.revokeObjectURL(item.sourceUrl);
         if (item.resultUrl) {
           URL.revokeObjectURL(item.resultUrl);
         }
+        if (item.storageFileName) {
+          void removeLargeVideoOutput(item.storageFileName);
+        }
       });
 
       return [];
     });
   };
+
+  useEffect(() => {
+    if (!isAnyItemCompressing) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      const now = Date.now();
+      setItems((current) =>
+        current.map((item) =>
+          item.status === 'compressing' && item.startedAt
+            ? { ...item, elapsedSeconds: Math.floor((now - item.startedAt) / 1000) }
+            : item,
+        ),
+      );
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [isAnyItemCompressing]);
 
   useEffect(() => {
     items.forEach((item) => {
@@ -414,11 +549,25 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
   }, [items]);
 
   const handleCompressSingle = async (item: VideoCompressionItem) => {
+    const startedAt = Date.now();
+    if (item.resultUrl) {
+      URL.revokeObjectURL(item.resultUrl);
+    }
+    if (item.storageFileName) {
+      void removeLargeVideoOutput(item.storageFileName);
+    }
+
     updateItem(item.id, (current) => ({
       ...current,
       status: 'compressing',
       progressPercent: 0,
+      resultFile: undefined,
+      resultUrl: undefined,
+      resultName: undefined,
+      storageFileName: undefined,
       errorMessage: undefined,
+      startedAt,
+      elapsedSeconds: 0,
     }));
 
     trackEvent('tool_started', {
@@ -427,7 +576,13 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
       file_type: getFileTypeLabel(item.file),
     });
 
+    let wakeLock: WakeLockSentinel | null = null;
+
     try {
+      if (item.file.size > LARGE_VIDEO_THRESHOLD_BYTES) {
+        wakeLock = await requestScreenWakeLock();
+      }
+
       const result = await compressVideoFile(item.file, {
         compressionLevel,
         onProgress: (event) => {
@@ -462,8 +617,12 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
           status: 'done',
           resultFile: result.file,
           resultUrl: nextResultUrl,
+          resultName: result.file.name,
+          storageFileName: result.storageFileName,
           progressPercent: 100,
           errorMessage: undefined,
+          startedAt: undefined,
+          elapsedSeconds: Math.floor((Date.now() - startedAt) / 1000),
         };
       });
 
@@ -474,12 +633,15 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
         compression_level: compressionLevel,
       });
     } catch (error) {
+      const errorMessage = getLargeVideoErrorMessage(error, ui);
       updateItem(item.id, (current) => ({
         ...current,
         status: 'error',
         progressPercent: 0,
-        errorMessage: error instanceof Error ? error.message : ui.genericError,
-        logs: [...(current.logs ?? []), error instanceof Error ? error.message : String(error)].slice(-12),
+        errorMessage,
+        startedAt: undefined,
+        elapsedSeconds: Math.floor((Date.now() - startedAt) / 1000),
+        logs: [...(current.logs ?? []), errorMessage].slice(-12),
       }));
 
       trackEvent('tool_error', {
@@ -487,11 +649,13 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
         locale,
         error_type: 'processing_failed',
       });
+    } finally {
+      await wakeLock?.release().catch(() => undefined);
     }
   };
 
   const handleCompressAll = async () => {
-    if (!items.length || isCompressing) {
+    if (!items.length || isCompressing || isAnyItemCompressing) {
       return;
     }
 
@@ -526,7 +690,8 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
       }
 
       setTimeout(() => {
-        downloadBlob(resultFile, resultFile.name);
+        const fileName = item.resultName ?? resultFile.name;
+        downloadBlob(resultFile, fileName);
       }, index * 130);
     });
   };
@@ -544,11 +709,24 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
         helperText={ui.filesHint}
         accept={acceptedVideoTypes}
         multiple
-        maxSize={1024 * 1024 * 1024}
+        maxSize={MAX_VIDEO_FILE_SIZE_BYTES}
         selectedFiles={items.map((item) => item.file)}
         onFilesSelected={handleAddFiles}
         onRemoveFile={handleRemoveFile}
       />
+
+      {hasLargeFiles ? (
+        <p
+          role="status"
+          className={`rounded-lg border p-3 text-sm ${
+            isAnyItemCompressing
+              ? 'border-amber-200 bg-amber-50 text-amber-800'
+              : 'border-blue-200 bg-blue-50 text-blue-800'
+          }`}
+        >
+          {isAnyItemCompressing ? ui.largeFileNotice : ui.largeFileHint}
+        </p>
+      ) : null}
 
       <label className="space-y-2">
         <div className="flex items-center justify-between gap-2">
@@ -587,14 +765,18 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
           onClick={() => {
             void handleCompressAll();
           }}
-          disabled={!hasFiles || isCompressing}
+          disabled={!hasFiles || isCompressing || isAnyItemCompressing}
         >
-          {isCompressing ? ui.compressingAll : ui.compressAll}
+          {isCompressing || isAnyItemCompressing ? ui.compressingAll : ui.compressAll}
         </Button>
         <Button variant="secondary" onClick={handleDownloadAll} disabled={!canDownloadAll}>
           {ui.downloadAll}
         </Button>
-        <Button variant="ghost" onClick={handleClearAll} disabled={!hasFiles || isCompressing}>
+        <Button
+          variant="ghost"
+          onClick={handleClearAll}
+          disabled={!hasFiles || isCompressing || isAnyItemCompressing}
+        >
           {ui.clearAll}
         </Button>
       </div>
@@ -645,7 +827,8 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
                       />
                     </div>
                     <p className="text-xs text-slate-600">
-                      {ui.processing} {item.progressPercent}%
+                      {ui.processing} {item.progressPercent}% •{' '}
+                      {ui.elapsedLabel(formatDuration(item.elapsedSeconds ?? 0))}
                     </p>
                   </div>
                 ) : null}
@@ -714,7 +897,7 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
                     onClick={() => {
                       void handleCompressSingle(item);
                     }}
-                    disabled={item.status === 'compressing' || isCompressing}
+                    disabled={item.status === 'compressing' || isCompressing || isAnyItemCompressing}
                   >
                     {ui.compressButton}
                   </Button>
@@ -727,7 +910,7 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
                           locale,
                           format: 'mp4',
                         });
-                        downloadBlob(item.resultFile, item.resultFile.name);
+                        downloadBlob(item.resultFile, item.resultName ?? item.resultFile.name);
                       }
                     }}
                     disabled={!item.resultFile}

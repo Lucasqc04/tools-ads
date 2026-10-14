@@ -1,5 +1,11 @@
 import { FFmpeg, type LogEvent, type ProgressEvent } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
+import { getVideoCompressionProfile, type VideoCompressionProfile } from '@/lib/video-compression-profile';
+import {
+  type LargeVideoCompressionErrorCode,
+  type VideoCompressionWorkerRequest,
+  type VideoCompressionWorkerResponse,
+} from '@/lib/video-compression-worker-protocol';
 
 export type VideoMetadata = {
   durationInSeconds: number;
@@ -15,12 +21,7 @@ export type VideoCompressionOptions = {
   onProgress?: (event: ProgressEvent) => void;
 };
 
-export type VideoCompressionProfile = {
-  crf: number;
-  videoBitrateFactor: number;
-  audioBitrateKbps: number;
-  downscaleFactor: number;
-};
+export type { VideoCompressionProfile } from '@/lib/video-compression-profile';
 
 type CompressionAttempt = {
   label: string;
@@ -52,6 +53,9 @@ const CORE_SOURCES = [
   },
 ] as const;
 
+export const LARGE_VIDEO_THRESHOLD_BYTES = 512 * 1024 * 1024;
+export const MAX_VIDEO_FILE_SIZE_BYTES = 10 * 1024 * 1024 * 1024;
+
 const SERVER_COMPRESS_ENDPOINT = '/api/video-compress';
 const SERVER_REQUEST_TIMEOUT_MS = 8 * 60 * 1000;
 
@@ -81,26 +85,6 @@ const buildFfmpegLoadError = (failures: string[]): Error =>
     )}). Verifique sua conexao, extensoes de bloqueio e tente novamente.`,
   );
 
-const getCompressionProfile = (compressionLevel: number): VideoCompressionProfile => {
-  const normalized = clamp(compressionLevel / 100, 0, 1);
-
-  return {
-    crf: Math.round(20 + normalized * 17),
-    videoBitrateFactor: clamp(0.98 - normalized * 0.72, 0.22, 0.98),
-    audioBitrateKbps: normalized >= 0.75 ? 64 : normalized >= 0.45 ? 96 : 128,
-    downscaleFactor:
-      normalized >= 0.9
-        ? 0.58
-        : normalized >= 0.75
-          ? 0.68
-          : normalized >= 0.55
-            ? 0.8
-            : normalized >= 0.35
-              ? 0.9
-              : 1,
-  };
-};
-
 const getSanitizedName = (fileName: string): string =>
   fileName
     .replace(/\.[^.]+$/, '')
@@ -115,6 +99,128 @@ const getUniqueToken = (): string => `${Date.now()}-${Math.random().toString(36)
 
 const toOutputName = (sourceName: string): string =>
   `${getSanitizedName(sourceName)}-compressed.mp4`;
+
+export class LargeVideoCompressionError extends Error {
+  constructor(readonly code: LargeVideoCompressionErrorCode) {
+    super(code);
+    this.name = 'LargeVideoCompressionError';
+  }
+}
+
+const getLargeVideoMetadata = async (file: File): Promise<VideoMetadata | null> => {
+  const { ALL_FORMATS, BlobSource, Input } = await import('mediabunny');
+  const input = new Input({
+    formats: ALL_FORMATS,
+    source: new BlobSource(file),
+  });
+
+  try {
+    const videoTrack = await input.getPrimaryVideoTrack();
+    if (!videoTrack) {
+      return null;
+    }
+
+    return {
+      durationInSeconds: (await input.getDurationFromMetadata([videoTrack])) ?? 0,
+      width: await videoTrack.getDisplayWidth(),
+      height: await videoTrack.getDisplayHeight(),
+    };
+  } finally {
+    input.dispose();
+  }
+};
+
+const compressLargeVideoFile = async (
+  file: File,
+  options: VideoCompressionOptions,
+): Promise<{ file: File; storageFileName: string }> => {
+  if (typeof Worker === 'undefined') {
+    throw new LargeVideoCompressionError('webcodecs_unsupported');
+  }
+
+  const storageFileName = `${getUniqueToken()}-compressed.mp4`;
+  const worker = new Worker(new URL('./video-compression.worker.ts', import.meta.url), {
+    type: 'module',
+  });
+
+  return new Promise((resolve, reject) => {
+    const finish = () => worker.terminate();
+
+    worker.onerror = () => {
+      finish();
+      reject(new LargeVideoCompressionError('processing_failed'));
+    };
+
+    worker.onmessage = (event: MessageEvent<VideoCompressionWorkerResponse>) => {
+      const message = event.data;
+
+      if (message.type === 'log') {
+        emitLog(options, message.message);
+        return;
+      }
+
+      if (message.type === 'progress') {
+        emitProgress(options, message.progress);
+        return;
+      }
+
+      if (message.type === 'failed') {
+        finish();
+        reject(new LargeVideoCompressionError(message.code));
+        return;
+      }
+
+      if (message.type === 'completed') {
+        finish();
+        void (async () => {
+          try {
+            const root = await navigator.storage.getDirectory();
+            const directory = await root.getDirectoryHandle('adtools-video-compression');
+            const handle = await directory.getFileHandle(message.storageFileName);
+            const storedFile = await handle.getFile();
+            const resultFile = new File([storedFile], toOutputName(file.name), {
+              type: 'video/mp4',
+              lastModified: Date.now(),
+            });
+            emitProgress(options, 1);
+            resolve({ file: resultFile, storageFileName: message.storageFileName });
+          } catch {
+            await removeLargeVideoOutput(message.storageFileName);
+            reject(new LargeVideoCompressionError('storage_unavailable'));
+          }
+        })();
+      }
+    };
+
+    const request: VideoCompressionWorkerRequest = {
+      type: 'compress',
+      file,
+      compressionLevel: options.compressionLevel,
+      storageFileName,
+    };
+
+    try {
+      worker.postMessage(request);
+    } catch {
+      finish();
+      reject(new LargeVideoCompressionError('processing_failed'));
+    }
+  });
+};
+
+export const removeLargeVideoOutput = async (storageFileName: string): Promise<void> => {
+  if (typeof navigator === 'undefined' || !navigator.storage?.getDirectory) {
+    return;
+  }
+
+  try {
+    const root = await navigator.storage.getDirectory();
+    const directory = await root.getDirectoryHandle('adtools-video-compression');
+    await directory.removeEntry(storageFileName);
+  } catch {
+    // The temporary result may already have been removed by the browser.
+  }
+};
 
 const getScaleFilter = (downscaleFactor: number): string | undefined => {
   if (downscaleFactor >= 0.995) {
@@ -261,7 +367,7 @@ export const estimateCompressedVideoSize = (
   durationInSeconds: number,
   compressionLevel: number,
 ): number => {
-  const profile = getCompressionProfile(compressionLevel);
+  const profile = getVideoCompressionProfile(compressionLevel);
 
   if (durationInSeconds > 0) {
     const originalBitrateKbps = (fileSize * 8) / durationInSeconds / 1000;
@@ -287,6 +393,17 @@ export const readVideoMetadata = async (file: File): Promise<VideoMetadata> => {
       width: 0,
       height: 0,
     };
+  }
+
+  if (file.size > LARGE_VIDEO_THRESHOLD_BYTES) {
+    try {
+      const metadata = await getLargeVideoMetadata(file);
+      if (metadata) {
+        return metadata;
+      }
+    } catch {
+      // Fall back to the browser's metadata reader for containers Mediabunny cannot inspect.
+    }
   }
 
   const objectUrl = URL.createObjectURL(file);
@@ -320,16 +437,30 @@ export const compressVideoFile = async (
   metadata: VideoMetadata;
   estimatedSize: number;
   profile: VideoCompressionProfile;
+  storageFileName?: string;
 }> => {
   emitLog(options, `Inicializando compressao para ${file.name}...`);
 
   const metadata = await readVideoMetadata(file);
-  const profile = getCompressionProfile(options.compressionLevel);
+  const profile = getVideoCompressionProfile(options.compressionLevel);
   const estimatedSize = estimateCompressedVideoSize(
     file.size,
     metadata.durationInSeconds,
     options.compressionLevel,
   );
+
+  if (file.size > LARGE_VIDEO_THRESHOLD_BYTES) {
+    emitLog(options, 'Arquivo grande detectado. Processando localmente em fluxo no navegador...');
+    const largeResult = await compressLargeVideoFile(file, options);
+
+    return {
+      file: largeResult.file,
+      metadata,
+      estimatedSize,
+      profile,
+      storageFileName: largeResult.storageFileName,
+    };
+  }
 
   try {
     emitLog(options, 'Tentando compressao via API do servidor...');
