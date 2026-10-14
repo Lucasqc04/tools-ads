@@ -379,23 +379,19 @@ export function TimelapseCreatorTool({ locale = 'pt-br' }: TimelapseCreatorToolP
   const activeSegment = segments.find((segment) => segment.id === selectedSegmentId);
 
   return (
-    <div className="space-y-6">
-      <Card className="overflow-hidden border-slate-800 bg-slate-950 p-0 text-white shadow-none">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 px-5 py-4 md:px-7">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-lime-300 text-slate-950"><FastForward size={20} /></span>
-            <div>
-              <h3 className="font-semibold">{ui.title}</h3>
-              <p className="text-sm text-slate-400">{ui.intro}</p>
-            </div>
+    <Card className="space-y-5">
+        <header className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-brand-200 bg-gradient-to-r from-brand-50 to-indigo-50 p-4">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900">{ui.title}</h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-700">{ui.intro}</p>
           </div>
-          {file ? <Button variant="ghost" className="text-slate-300 hover:bg-white/10 hover:text-white" onClick={clearFile}><Trash2 size={16} className="mr-2" />{ui.removeFile}</Button> : null}
-        </div>
+          {file ? <Button variant="ghost" onClick={clearFile}><Trash2 size={16} className="mr-2" />{ui.removeFile}</Button> : null}
+        </header>
 
-        <div className="grid gap-6 p-5 md:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.8fr)] md:p-7">
+        <div className="grid gap-6 md:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.8fr)]">
           <div className="min-w-0 space-y-4">
             {sourceUrl ? (
-              <div className="overflow-hidden rounded-xl border border-white/10 bg-black">
+              <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-900">
                 <video
                   ref={videoRef}
                   src={sourceUrl}
@@ -420,23 +416,23 @@ export function TimelapseCreatorTool({ locale = 'pt-br' }: TimelapseCreatorToolP
 
             {file && metadata ? (
               <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-                <div className="border-l-2 border-lime-300 pl-3"><div className="text-xs text-slate-400">{ui.sourceDuration}</div><div className="mt-1 font-medium">{formatDuration(metadata.durationInSeconds)}</div></div>
-                <div className="border-l-2 border-sky-400 pl-3"><div className="text-xs text-slate-400">{ui.duration}</div><div className="mt-1 font-medium">{formatDuration(finalDuration)}</div></div>
-                <div className="border-l-2 border-white/30 pl-3"><div className="text-xs text-slate-400">{ui.size}</div><div className="mt-1 font-medium">{formatBytes(file.size)}</div></div>
-                <div className="border-l-2 border-white/30 pl-3"><div className="text-xs text-slate-400">{ui.resolution}</div><div className="mt-1 font-medium">{metadata.width}×{metadata.height}</div></div>
+                <div className="border-l-2 border-brand-600 pl-3"><div className="text-xs text-slate-600">{ui.sourceDuration}</div><div className="mt-1 font-medium text-slate-900">{formatDuration(metadata.durationInSeconds)}</div></div>
+                <div className="border-l-2 border-brand-600 pl-3"><div className="text-xs text-slate-600">{ui.duration}</div><div className="mt-1 font-medium text-slate-900">{formatDuration(finalDuration)}</div></div>
+                <div className="border-l-2 border-slate-300 pl-3"><div className="text-xs text-slate-600">{ui.size}</div><div className="mt-1 font-medium text-slate-900">{formatBytes(file.size)}</div></div>
+                <div className="border-l-2 border-slate-300 pl-3"><div className="text-xs text-slate-600">{ui.resolution}</div><div className="mt-1 font-medium text-slate-900">{metadata.width}×{metadata.height}</div></div>
               </div>
             ) : null}
 
             {metadata && file ? (
-              <div className="space-y-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 md:p-5">
+              <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4 md:p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 text-sm font-semibold"><Film size={16} className="text-lime-300" />{ui.editor}</div>
-                  <Button variant="secondary" className="h-9 border-white/15 bg-white/10 text-white hover:bg-white/15" onClick={splitAtPlayhead} disabled={!activeSegment || playhead <= (activeSegment?.start ?? 0) + 0.1 || playhead >= (activeSegment?.end ?? 0) - 0.1}><Scissors size={15} className="mr-2" />{ui.split}</Button>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-800"><Film size={16} className="text-brand-700" />{ui.editor}</div>
+                  <Button variant="secondary" onClick={splitAtPlayhead} disabled={!activeSegment || playhead <= (activeSegment?.start ?? 0) + 0.1 || playhead >= (activeSegment?.end ?? 0) - 0.1}><Scissors size={15} className="mr-2" />{ui.split}</Button>
                 </div>
-                <p className="text-xs leading-5 text-slate-400">{ui.splitHint}</p>
+                <p className="text-xs leading-5 text-slate-600">{ui.splitHint}</p>
 
-                <label className="block space-y-2 text-xs text-slate-400">
-                  <span className="flex items-center justify-between"><span>{ui.playhead}</span><span className="font-mono text-white">{formatDuration(playhead)} / {formatDuration(metadata.durationInSeconds)}</span></span>
+                <label className="block space-y-2 text-xs text-slate-600">
+                  <span className="flex items-center justify-between"><span>{ui.playhead}</span><span className="font-mono text-slate-900">{formatDuration(playhead)} / {formatDuration(metadata.durationInSeconds)}</span></span>
                   <input
                     type="range"
                     min={0}
@@ -448,17 +444,17 @@ export function TimelapseCreatorTool({ locale = 'pt-br' }: TimelapseCreatorToolP
                       setPlayhead(value);
                       if (videoRef.current) videoRef.current.currentTime = value;
                     }}
-                    className="h-2 w-full cursor-pointer accent-lime-300"
+                    className="h-2 w-full cursor-pointer accent-brand-600"
                   />
                 </label>
 
-                <div className="flex h-10 w-full overflow-hidden rounded-lg border border-white/10 bg-slate-900" aria-label={ui.segments}>
+                <div className="flex h-10 w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100" aria-label={ui.segments}>
                   {segments.map((segment, index) => (
                     <button
                       key={segment.id}
                       onClick={() => setSelectedSegmentId(segment.id)}
                       title={`${ui.segment} ${index + 1}: ${formatDuration(segment.start)}–${formatDuration(segment.end)} (${segment.speed}×)`}
-                      className={`min-w-[12px] border-r border-slate-950/80 transition-colors ${segment.include ? 'bg-lime-300/90 hover:bg-lime-200' : 'bg-slate-700 hover:bg-slate-600'} ${selectedSegmentId === segment.id ? 'ring-2 ring-inset ring-white' : ''}`}
+                      className={`min-w-[12px] border-r border-slate-50 transition-colors ${segment.include ? 'bg-brand-500 hover:bg-brand-600' : 'bg-slate-300 hover:bg-slate-400'} ${selectedSegmentId === segment.id ? 'ring-2 ring-inset ring-brand-800' : ''}`}
                       style={{ flexGrow: Math.max(0.01, segment.end - segment.start), flexBasis: 0 }}
                       aria-label={`${ui.segment} ${index + 1}`}
                     />
@@ -467,22 +463,22 @@ export function TimelapseCreatorTool({ locale = 'pt-br' }: TimelapseCreatorToolP
 
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h4 className="text-sm font-semibold">{ui.segments}</h4>
-                    <button onClick={speedUpAll} className="text-xs font-semibold text-lime-200 underline-offset-4 hover:underline"><FastForward size={13} className="mr-1 inline" />{ui.allFast}</button>
+                    <h4 className="text-sm font-semibold text-slate-800">{ui.segments}</h4>
+                    <button onClick={speedUpAll} className="text-xs font-semibold text-brand-700 underline-offset-4 hover:underline"><FastForward size={13} className="mr-1 inline" />{ui.allFast}</button>
                   </div>
                   <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
                     {segments.map((segment, index) => (
-                      <div key={segment.id} onClick={() => setSelectedSegmentId(segment.id)} className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg border p-3 transition-colors ${selectedSegmentId === segment.id ? 'border-lime-300/50 bg-lime-300/[0.07]' : 'border-white/10 bg-black/10'}`}>
+                      <div key={segment.id} onClick={() => setSelectedSegmentId(segment.id)} className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg border p-3 transition-colors ${selectedSegmentId === segment.id ? 'border-brand-300 bg-brand-50' : 'border-slate-200 bg-white'}`}>
                         <div className="min-w-0">
-                          <div className="flex items-center gap-2 text-sm font-medium"><span className="text-xs text-slate-400">{ui.segment} {index + 1}</span><span className="font-mono text-xs text-slate-300">{formatDuration(segment.start)}–{formatDuration(segment.end)}</span></div>
-                          <label className="mt-2 flex items-center gap-2 text-xs text-slate-400">
-                            <input type="checkbox" checked={segment.include} onChange={(event) => updateSegment(segment.id, { include: event.target.checked })} className="accent-lime-300" />
+                          <div className="flex items-center gap-2 text-sm font-medium text-slate-800"><span className="text-xs text-slate-600">{ui.segment} {index + 1}</span><span className="font-mono text-xs text-slate-700">{formatDuration(segment.start)}–{formatDuration(segment.end)}</span></div>
+                          <label className="mt-2 flex items-center gap-2 text-xs text-slate-600">
+                            <input type="checkbox" checked={segment.include} onChange={(event) => updateSegment(segment.id, { include: event.target.checked })} className="accent-brand-600" />
                             {segment.include ? ui.included : ui.removed}
                           </label>
                         </div>
-                        <label className="space-y-1 text-xs text-slate-400">
+                        <label className="space-y-1 text-xs text-slate-600">
                           <span>{ui.speed}</span>
-                          <Select className="h-9 min-w-[94px] border-white/15 bg-slate-900 text-white" value={String(segment.speed)} onChange={(event) => updateSegment(segment.id, { speed: Number(event.target.value) })}>
+                          <Select value={String(segment.speed)} onChange={(event) => updateSegment(segment.id, { speed: Number(event.target.value) })}>
                             {speedOptions.map((value) => <option key={value} value={value}>{value}×</option>)}
                           </Select>
                         </label>
@@ -494,39 +490,38 @@ export function TimelapseCreatorTool({ locale = 'pt-br' }: TimelapseCreatorToolP
             ) : null}
 
             {resultUrl && resultFile ? (
-              <div className="space-y-3 border-t border-white/10 pt-5">
-                <h4 className="flex items-center gap-2 text-sm font-semibold"><Video size={16} className="text-lime-300" />{ui.ready}</h4>
-                <video src={resultUrl} controls playsInline className="aspect-video max-h-[420px] w-full rounded-xl bg-black object-contain" />
-                <Button className="w-full bg-lime-300 text-slate-950 hover:bg-lime-200" onClick={downloadResult}><Download size={16} className="mr-2" />{ui.download}</Button>
+              <div className="space-y-3 border-t border-slate-200 pt-5">
+                <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-800"><Video size={16} className="text-brand-700" />{ui.ready}</h4>
+                <video src={resultUrl} controls playsInline className="aspect-video max-h-[420px] w-full rounded-xl bg-slate-900 object-contain" />
+                <Button className="w-full" onClick={downloadResult}><Download size={16} className="mr-2" />{ui.download}</Button>
               </div>
             ) : null}
           </div>
 
-          <aside className="space-y-5 border-t border-white/10 pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0">
+          <aside className="space-y-5 border-t border-slate-200 pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0">
             <div className="space-y-3">
-              <h4 className="flex items-center gap-2 text-sm font-semibold"><Gauge size={16} className="text-lime-300" />{ui.output}</h4>
-              <label className="block space-y-1.5 text-xs text-slate-400"><span>{ui.fps}</span><Select className="border-white/15 bg-slate-900 text-white" value={frameRate} onChange={(event) => setFrameRate(Number(event.target.value) as 24 | 30 | 60)}><option value={24}>24 fps</option><option value={30}>30 fps</option><option value={60}>60 fps</option></Select></label>
-              <label className="block space-y-1.5 text-xs text-slate-400"><span>{ui.quality}</span><Select className="border-white/15 bg-slate-900 text-white" value={quality} onChange={(event) => setQuality(event.target.value as TimelapseQuality)}><option value="high">{ui.high}</option><option value="medium">{ui.medium}</option><option value="low">{ui.low}</option></Select></label>
-              <label className="block space-y-1.5 text-xs text-slate-400"><span>{ui.format}</span><Select className="border-white/15 bg-slate-900 text-white" value={format} onChange={(event) => setFormat(event.target.value as TimelapseFormat)}><option value="mp4">MP4</option><option value="webm">WebM</option></Select></label>
-              <p className="text-xs leading-5 text-slate-400">{ui.muted}</p>
+              <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-800"><Gauge size={16} className="text-brand-700" />{ui.output}</h4>
+              <label className="block space-y-1.5 text-xs text-slate-600"><span>{ui.fps}</span><Select value={frameRate} onChange={(event) => setFrameRate(Number(event.target.value) as 24 | 30 | 60)}><option value={24}>24 fps</option><option value={30}>30 fps</option><option value={60}>60 fps</option></Select></label>
+              <label className="block space-y-1.5 text-xs text-slate-600"><span>{ui.quality}</span><Select value={quality} onChange={(event) => setQuality(event.target.value as TimelapseQuality)}><option value="high">{ui.high}</option><option value="medium">{ui.medium}</option><option value="low">{ui.low}</option></Select></label>
+              <label className="block space-y-1.5 text-xs text-slate-600"><span>{ui.format}</span><Select value={format} onChange={(event) => setFormat(event.target.value as TimelapseFormat)}><option value="mp4">MP4</option><option value="webm">WebM</option></Select></label>
+              <p className="text-xs leading-5 text-slate-600">{ui.muted}</p>
             </div>
 
-            <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-slate-300"><p>{ui.local}</p><p className="mt-2 text-slate-500">{ui.warmup}</p></div>
-            {!supportsExport ? <p role="status" className="text-xs leading-5 text-amber-200">{ui.warmup}</p> : null}
-            {errorMessage ? <p role="alert" className="text-sm leading-5 text-rose-300">{errorMessage}</p> : null}
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-700"><p>{ui.local}</p><p className="mt-2 text-slate-600">{ui.warmup}</p></div>
+            {!supportsExport ? <p role="status" className="text-xs leading-5 text-amber-700">{ui.warmup}</p> : null}
+            {errorMessage ? <p role="alert" className="text-sm leading-5 text-red-700">{errorMessage}</p> : null}
 
             {file && metadata ? (
               <div className="space-y-3">
-                <Button className="w-full bg-lime-300 text-slate-950 hover:bg-lime-200" onClick={() => void runExport()} disabled={exportState === 'processing' || !supportsExport || !segments.some((segment) => segment.include)}>
+                <Button className="w-full" onClick={() => void runExport()} disabled={exportState === 'processing' || !supportsExport || !segments.some((segment) => segment.include)}>
                   {exportState === 'processing' ? <Loader2 size={16} className="mr-2 animate-spin" /> : <FastForward size={16} className="mr-2" />}
                   {exportState === 'processing' ? ui.exporting : ui.export}
                 </Button>
-                {exportState === 'processing' ? <div className="space-y-2"><div className="h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-lime-300 transition-[width]" style={{ width: `${Math.max(2, progress * 100)}%` }} /></div><div className="flex justify-between gap-2 text-xs text-slate-400"><span>{ui.progress(progress)}</span><span>{statusMessage}</span></div></div> : null}
+                {exportState === 'processing' ? <div className="space-y-2"><div className="h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-brand-600 transition-[width]" style={{ width: `${Math.max(2, progress * 100)}%` }} /></div><div className="flex justify-between gap-2 text-xs text-slate-600"><span>{ui.progress(progress)}</span><span>{statusMessage}</span></div></div> : null}
               </div>
-            ) : <p className="flex min-h-20 items-center gap-3 text-sm leading-6 text-slate-400"><Film size={22} className="shrink-0 text-slate-600" />{ui.empty}</p>}
+            ) : <p className="flex min-h-20 items-center gap-3 text-sm leading-6 text-slate-600"><Film size={22} className="shrink-0 text-brand-700" />{ui.empty}</p>}
           </aside>
         </div>
-      </Card>
-    </div>
+    </Card>
   );
 }

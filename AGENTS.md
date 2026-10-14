@@ -853,4 +853,34 @@ conteúdo em si.
 [ ] Nenhum dado do usuário enviado ao dataLayer
 [ ] Nenhum evento duplicado por re-render/Strict Mode/double click
 
+## 21. PADRÃO VISUAL E CORES (OBRIGATÓRIO)
+
+O visual das ferramentas deve seguir o design system que já existe no projeto.
+Não criar paleta, tema ou estilo de componente por preferência individual.
+
+Antes de implementar ou alterar uma interface:
+- comparar com pelo menos uma ferramenta existente de fluxo ou categoria semelhante
+- identificar os componentes compartilhados e os padrões de layout usados nela
+- reaproveitar `Card`, `Button`, `Input`, `Select`, upload e demais componentes existentes
+- usar os tokens definidos em `tailwind.config.ts` e os estilos dos componentes em `components/ui/`
+
+Regras de cor:
+- `brand` é a cor de ação e seleção; usar seus tons já definidos em `tailwind.config.ts`
+- `slate` é a escala de texto, fundo neutro e borda padrão
+- cores semânticas de aviso, erro e sucesso só podem ser usadas para seus estados correspondentes e conforme exemplos existentes
+- não introduzir cores de destaque, temas escuros, gradientes ou valores hex/RGB/HSL novos em uma ferramenta sem que o padrão visual existente do projeto já os use naquele contexto
+- fundos escuros podem permanecer apenas em áreas de mídia ou superfícies cujo padrão existente justifique esse tratamento
+- estados selecionados devem usar o tratamento existente, como `border-brand-300 bg-brand-50 text-brand-800`; controles desativados devem usar a aparência desativada do componente compartilhado
+- manter contraste suficiente entre texto e fundo; não aplicar opacidade à área inteira para indicar que um fluxo ainda não começou
+
+Regras de componentes e classes:
+- preservar os estilos padrão dos componentes compartilhados; passar por `className` apenas classes adicionais sem conflito
+- `lib/cn.ts` concatena classes, mas não resolve conflitos entre utilitários Tailwind; não combinar classes conflitantes como `bg-white` e `bg-slate-950`, `p-5` e `p-0`, ou `text-slate-900` e `text-white` no mesmo componente
+- se um padrão visual realmente necessário ainda não existir, primeiro definir um token ou variante reutilizável no design system e documentá-lo; não improvisar o estilo em uma ferramenta isolada
+
+Verificação visual obrigatória:
+- conferir a interface em desktop e nas larguras de 375px e 320px
+- confirmar que textos, labels, estados selecionados, campos, botões e mensagens de estado estão legíveis
+- comparar a tela com a ferramenta de referência e corrigir diferenças de cor, espaçamento e controles antes de concluir
+
 ## FIM

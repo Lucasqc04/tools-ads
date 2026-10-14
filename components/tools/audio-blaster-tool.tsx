@@ -353,7 +353,7 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
   ) => (
     <label className="block space-y-2 text-sm">
       <span className="flex items-center justify-between gap-2 text-slate-700"><span>{label}</span><span className="font-mono text-xs text-slate-500">{value}{suffix}</span></span>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} className="h-2 w-full cursor-pointer accent-fuchsia-600" />
+      <input type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} className="h-2 w-full cursor-pointer accent-brand-600" />
     </label>
   );
 
@@ -365,21 +365,19 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
   ];
 
   return (
-    <div className="space-y-6">
-      <Card className="overflow-hidden border-slate-800 bg-slate-950 p-0 text-white shadow-none">
-        <div className="flex flex-wrap items-center gap-3 border-b border-white/10 px-5 py-4 md:px-7">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-fuchsia-500 text-white"><AudioLines size={20} /></span>
+    <Card className="space-y-5">
+        <header className="rounded-xl border border-brand-200 bg-gradient-to-r from-brand-50 to-indigo-50 p-4">
           <div>
-            <h3 className="font-semibold">{ui.title}</h3>
-            <p className="text-sm text-slate-400">{ui.intro}</p>
+            <h3 className="text-lg font-semibold text-slate-900">{ui.title}</h3>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-700">{ui.intro}</p>
           </div>
-        </div>
+        </header>
 
-        <div className="grid gap-6 p-5 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:p-7">
+        <div className="grid gap-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div className="min-w-0 space-y-5">
             {file && sourceUrl ? (
-              <div className="space-y-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                <div className="flex min-w-0 items-center gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-fuchsia-200"><Volume2 size={17} /></span><div className="min-w-0"><div className="truncate text-sm font-semibold">{file.name}</div><div className="text-xs text-slate-400">{formatBytes(file.size)}{duration ? ` · ${formatDuration(duration)}` : ''}</div></div><button className="ml-auto shrink-0 text-xs text-fuchsia-200 underline-offset-4 hover:underline" onClick={() => { setFile(null); setSourceUrl(null); clearResult(); }}>{ui.upload}</button></div>
+              <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex min-w-0 items-center gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-brand-700"><Volume2 size={17} /></span><div className="min-w-0"><div className="truncate text-sm font-semibold text-slate-900">{file.name}</div><div className="text-xs text-slate-600">{formatBytes(file.size)}{duration ? ` · ${formatDuration(duration)}` : ''}</div></div><button className="ml-auto shrink-0 text-xs font-medium text-brand-700 underline-offset-4 hover:underline" onClick={() => { setFile(null); setSourceUrl(null); clearResult(); }}>{ui.upload}</button></div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{ui.original}</p>
                 <audio
                   src={sourceUrl}
@@ -406,23 +404,23 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
             )}
 
             <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-slate-200">{ui.presets}</h4>
+              <h4 className="text-sm font-semibold text-slate-800">{ui.presets}</h4>
               <div className="grid grid-cols-2 gap-2">
                 {presetButtons.map(({ id, label, icon: Icon }) => (
-                  <button key={id} onClick={() => applyPreset(id)} className={`flex min-h-12 min-w-0 items-center gap-2 rounded-lg border px-3 py-2 text-left text-xs font-medium transition-colors ${settings.mode === presets[id].mode ? 'border-fuchsia-400/60 bg-fuchsia-400/10 text-fuchsia-100' : 'border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/[0.07]'}`}><Icon size={15} className="shrink-0" /><span className="truncate">{label}</span></button>
+                  <button key={id} onClick={() => applyPreset(id)} className={`flex min-h-12 min-w-0 items-center gap-2 rounded-lg border px-3 py-2 text-left text-xs font-medium transition-colors ${settings.mode === presets[id].mode ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}`}><Icon size={15} className="shrink-0" /><span className="truncate">{label}</span></button>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-slate-400">{ui.local}</div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-700">{ui.local}</div>
           </div>
 
-          <div className="min-w-0 space-y-5 border-t border-white/10 pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0">
-            <h4 className="flex items-center gap-2 text-sm font-semibold"><Sparkles size={16} className="text-fuchsia-300" />{ui.settings}</h4>
+          <div className="min-w-0 space-y-5 border-t border-slate-200 pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0">
+            <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-800"><Sparkles size={16} className="text-brand-700" />{ui.settings}</h4>
 
             <label className="block space-y-1.5 text-sm text-slate-700">
-              <span className="text-slate-300">{ui.mode}</span>
-              <Select className="border-white/15 bg-slate-900 text-white" value={settings.mode} onChange={(event) => updateSettings({ mode: event.target.value as AudioDistortionMode })}>
+              <span>{ui.mode}</span>
+              <Select value={settings.mode} onChange={(event) => updateSettings({ mode: event.target.value as AudioDistortionMode })}>
                 {Object.entries(uiMode).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </Select>
             </label>
@@ -440,32 +438,31 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-              <label className="block space-y-1.5 text-xs text-slate-400"><span>{ui.outputFormat}</span><Select className="border-white/15 bg-slate-900 text-white" value={outputFormat} onChange={(event) => setOutputFormat(event.target.value as 'mp3' | 'wav')}><option value="mp3">MP3</option><option value="wav">WAV</option></Select></label>
-              {outputFormat === 'mp3' ? <label className="block space-y-1.5 text-xs text-slate-400"><span>{ui.bitrate}</span><Select className="border-white/15 bg-slate-900 text-white" value={bitrate} onChange={(event) => setBitrate(Number(event.target.value))}><option value={128}>128 kbps</option><option value={192}>192 kbps</option><option value={320}>320 kbps</option></Select></label> : null}
+              <label className="block space-y-1.5 text-xs text-slate-600"><span>{ui.outputFormat}</span><Select value={outputFormat} onChange={(event) => setOutputFormat(event.target.value as 'mp3' | 'wav')}><option value="mp3">MP3</option><option value="wav">WAV</option></Select></label>
+              {outputFormat === 'mp3' ? <label className="block space-y-1.5 text-xs text-slate-600"><span>{ui.bitrate}</span><Select value={bitrate} onChange={(event) => setBitrate(Number(event.target.value))}><option value={128}>128 kbps</option><option value={192}>192 kbps</option><option value={320}>320 kbps</option></Select></label> : null}
             </div>
             <p className="text-xs leading-5 text-slate-500">{ui.processingNote}</p>
 
-            {error ? <p role="alert" className="text-sm leading-5 text-rose-300">{error}</p> : null}
-            {processing ? <div className="space-y-2"><div className="h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-fuchsia-400 transition-[width]" style={{ width: `${Math.max(2, progress * 100)}%` }} /></div><div className="text-xs text-slate-400">{ui.progress(progress)}</div></div> : null}
+            {error ? <p role="alert" className="text-sm leading-5 text-red-700">{error}</p> : null}
+            {processing ? <div className="space-y-2"><div className="h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-brand-600 transition-[width]" style={{ width: `${Math.max(2, progress * 100)}%` }} /></div><div className="text-xs text-slate-600">{ui.progress(progress)}</div></div> : null}
 
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button className="w-full bg-fuchsia-500 text-white hover:bg-fuchsia-400" onClick={() => void process()} disabled={!file || processing || encoding || file.size > MAX_AUDIO_BLASTER_FILE_SIZE_BYTES || duration > MAX_AUDIO_BLASTER_DURATION_SECONDS}>
+              <Button className="w-full" onClick={() => void process()} disabled={!file || processing || encoding || file.size > MAX_AUDIO_BLASTER_FILE_SIZE_BYTES || duration > MAX_AUDIO_BLASTER_DURATION_SECONDS}>
                 {processing ? <Loader2 size={16} className="mr-2 animate-spin" /> : <Waves size={16} className="mr-2" />}{processing ? ui.processing : ui.process}
               </Button>
             </div>
 
             {resultUrl && resultFile ? (
-              <div className="space-y-4 border-t border-white/10 pt-5">
-                <h4 className="text-sm font-semibold">{ui.preview}</h4>
+              <div className="space-y-4 border-t border-slate-200 pt-5">
+                <h4 className="text-sm font-semibold text-slate-800">{ui.preview}</h4>
                 <audio src={resultUrl} controls className="h-10 w-full" />
-                <Button variant="secondary" className="w-full border-white/15 bg-white/10 text-white hover:bg-white/15" onClick={() => void downloadResult()} disabled={encoding}>
+                <Button variant="secondary" className="w-full" onClick={() => void downloadResult()} disabled={encoding}>
                   {encoding ? <Loader2 size={16} className="mr-2 animate-spin" /> : <Download size={16} className="mr-2" />}{encoding ? ui.processing : ui.download}
                 </Button>
               </div>
-            ) : !file ? <p className="flex min-h-16 items-center gap-3 text-sm leading-6 text-slate-400"><AudioLines size={22} className="shrink-0 text-slate-600" />{ui.noFile}</p> : null}
+            ) : !file ? <p className="flex min-h-16 items-center gap-3 text-sm leading-6 text-slate-600"><AudioLines size={22} className="shrink-0 text-brand-700" />{ui.noFile}</p> : null}
           </div>
         </div>
-      </Card>
-    </div>
+    </Card>
   );
 }
