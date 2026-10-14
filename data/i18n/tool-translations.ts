@@ -1,5 +1,6 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 import type { AppLocale } from '@/lib/i18n/config';
+import { newMediaTranslations } from '@/data/i18n/media-tool-translations';
 
 export type ToolTranslation = {
   name: string;
@@ -37,6 +38,8 @@ type ToolId =
   | 'remover-fundo-imagem'
   | 'video-compression'
   | 'extrair-audio-de-video'
+  | 'timelapse-creator'
+  | 'audio-blaster'
   | 'transcricao-de-audio-e-video'
   | 'qr-code-generator'
   | 'authenticator-code-generator'
@@ -2251,6 +2254,7 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
+  ...newMediaTranslations.en,
 };
 
 const esTranslations: Record<ToolId, ToolTranslation> = {
@@ -4459,6 +4463,7 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       },
     ],
   },
+  ...newMediaTranslations.es,
 };
 
 const zhTranslations: Record<ToolId, ToolTranslation> = {

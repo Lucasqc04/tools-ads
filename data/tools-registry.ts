@@ -114,6 +114,16 @@ import {
   audioEditorIntro,
 } from '@/data/content/audio-editor';
 import {
+  timelapseCreatorContentBlocks,
+  timelapseCreatorFaq,
+  timelapseCreatorIntro,
+} from '@/data/content/timelapse-creator';
+import {
+  audioBlasterContentBlocks,
+  audioBlasterFaq,
+  audioBlasterIntro,
+} from '@/data/content/audio-blaster';
+import {
   audioVideoTranscriptionContentBlocks,
   audioVideoTranscriptionFaq,
   audioVideoTranscriptionIntro,
@@ -1039,6 +1049,60 @@ export const toolsRegistry: ToolDefinition[] = [
       'image-compression',
       'markdown-editor',
     ],
+  },
+  {
+    id: 'timelapse-creator',
+    slug: 'criador-de-timelapse',
+    name: 'Criador de Timelapse Online',
+    shortDescription:
+      'Transforme vídeos longos em timelapses, acelere ou desacelere cada trecho e exporte MP4 ou WebM no navegador.',
+    category: 'documents',
+    primaryKeyword: 'criador de timelapse online gratis',
+    secondaryKeywords: [
+      'acelerar video online',
+      'transformar video em timelapse',
+      'mudar velocidade do video por trecho',
+      'desacelerar parte do video',
+      'editor de velocidade de video online',
+    ],
+    searchIntent:
+      'Pessoas que querem transformar gravações longas em timelapses ou ajustar a velocidade de partes específicas de um vídeo.',
+    seoTitle: 'Criador de Timelapse Online | Ajuste a Velocidade por Trecho',
+    seoDescription:
+      'Crie timelapse com vídeos longos, divida a linha do tempo, acelere ou desacelere trechos e exporte MP4 ou WebM direto no navegador.',
+    h1: 'Crie um Timelapse e Ajuste a Velocidade de Cada Trecho',
+    intro: timelapseCreatorIntro,
+    canonicalPath: '/tools/criador-de-timelapse',
+    faq: timelapseCreatorFaq,
+    contentBlocks: timelapseCreatorContentBlocks,
+    relatedToolIds: ['video-compression', 'extrair-audio-de-video', 'transcricao-de-audio-e-video'],
+  },
+  {
+    id: 'audio-blaster',
+    slug: 'estourador-de-audio',
+    name: 'Estourador de Áudio Online',
+    shortDescription:
+      'Distorça áudio para memes com clipping, saturação, foldback, bitcrush e efeito de rádio; ouça antes de baixar.',
+    category: 'documents',
+    primaryKeyword: 'estourar audio online para meme',
+    secondaryKeywords: [
+      'distorcer audio online',
+      'audio estourado para meme',
+      'efeito clipping de audio',
+      'bitcrush de audio online',
+      'efeito de voz de radio online',
+    ],
+    searchIntent:
+      'Pessoas que querem saturar ou distorcer intencionalmente uma fala, efeito ou música curta para criar memes e efeitos cômicos.',
+    seoTitle: 'Estourador de Áudio Online | Clipping, Bitcrush e Rádio',
+    seoDescription:
+      'Crie áudio distorcido para memes com clipping, drive, foldback, bitcrush e presets de rádio. Ouça e exporte WAV ou MP3 localmente.',
+    h1: 'Estoure Áudio para Memes com Clipping e Bitcrush',
+    intro: audioBlasterIntro,
+    canonicalPath: '/tools/estourador-de-audio',
+    faq: audioBlasterFaq,
+    contentBlocks: audioBlasterContentBlocks,
+    relatedToolIds: ['extrair-audio-de-video', 'transcricao-de-audio-e-video', 'video-compression'],
   },
   {
     id: 'transcricao-de-audio-e-video',
@@ -2012,6 +2076,8 @@ type LocalizableToolId =
   | 'remover-fundo-imagem'
   | 'video-compression'
   | 'extrair-audio-de-video'
+  | 'timelapse-creator'
+  | 'audio-blaster'
   | 'transcricao-de-audio-e-video'
   | 'qr-code-generator'
   | 'authenticator-code-generator'
@@ -2041,6 +2107,8 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'remover-fundo-imagem',
   'video-compression',
   'extrair-audio-de-video',
+  'timelapse-creator',
+  'audio-blaster',
   'transcricao-de-audio-e-video',
   'qr-code-generator',
   'authenticator-code-generator',

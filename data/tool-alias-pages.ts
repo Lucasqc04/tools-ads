@@ -62,7 +62,14 @@ const ROOT_RESERVED_SLUGS = new Set<string>([
   'robots.txt',
 ]);
 
-const MAX_ALIASES_PER_LOCALE = 4;
+const DEFAULT_MAX_ALIASES_PER_LOCALE = 4;
+const MAX_ALIASES_BY_TOOL: Record<string, number> = {
+  'criador-de-timelapse': 7,
+  'estourador-de-audio': 7,
+};
+
+const getMaxAliasesPerLocale = (toolSlug: string): number =>
+  MAX_ALIASES_BY_TOOL[toolSlug] ?? DEFAULT_MAX_ALIASES_PER_LOCALE;
 
 const TOOL_SLUGS_WITH_DEDICATED_LANDING_PAGES = new Set([
   'nickname-symbol-generator',
@@ -303,7 +310,7 @@ const buildToolAliasPages = (): ToolAliasPage[] => {
     const keywordBucket = new Map<string, Partial<Record<AppLocale, string>>>();
 
     locales.forEach((locale) => {
-      const phrases = collectToolKeywordSeeds(tool.slug, locale).slice(0, MAX_ALIASES_PER_LOCALE);
+      const phrases = collectToolKeywordSeeds(tool.slug, locale).slice(0, getMaxAliasesPerLocale(tool.slug));
 
       phrases.forEach((phrase) => {
         const slug = sanitizeSlug(phrase);

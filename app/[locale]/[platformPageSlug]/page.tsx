@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { AudioEditorTool } from '@/components/tools/audio-editor-tool';
+import { AudioBlasterTool } from '@/components/tools/audio-blaster-tool';
 import { AuthenticatorCodeGeneratorTool } from '@/components/tools/authenticator-code-generator-tool';
 import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-tool';
 import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
@@ -50,6 +51,7 @@ import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
 import { WhatsAppTelegramLinkGeneratorTool } from '@/components/tools/whatsapp-telegram-link-generator-tool';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import { VideoCompressionTool } from '@/components/tools/video-compression-tool';
+import { TimelapseCreatorTool } from '@/components/tools/timelapse-creator-tool';
 import { UniversalConverterTool } from '@/components/tools/universal-converter-tool';
 import {
   getFeaturedCryptoConversionPages,
@@ -743,6 +745,8 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'remover-fundo-imagem': ({ locale }) => <ChromaBackgroundRemoverTool locale={locale} />,
   'video-compression': ({ locale }) => <VideoCompressionTool locale={locale} />,
   'extrair-audio-de-video': ({ locale }) => <AudioEditorTool locale={locale} />,
+  'criador-de-timelapse': ({ locale }) => <TimelapseCreatorTool locale={locale} />,
+  'estourador-de-audio': ({ locale }) => <AudioBlasterTool locale={locale} />,
   'qr-code-generator': ({ locale }) => <QrCodeGeneratorTool locale={locale} />,
   'gerador-link-whatsapp-telegram': ({ locale }) => (
     <WhatsAppTelegramLinkGeneratorTool locale={locale} />

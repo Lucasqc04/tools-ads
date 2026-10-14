@@ -906,6 +906,58 @@ const baseKeywordsByTool: ToolKeywordMap = {
       'audio cutter online',
     ],
   },
+  'criador-de-timelapse': {
+    'pt-br': [
+      'fazer timelapse de video online',
+      'acelerar video para timelapse',
+      'editor de timelapse online',
+      'mudar velocidade de partes do video',
+      'timelapse de obra online',
+      'desacelerar trecho de video',
+    ],
+    en: [
+      'make a video timelapse online',
+      'speed up video into a timelapse',
+      'online timelapse editor',
+      'change speed of video sections',
+      'construction timelapse maker',
+      'slow down a video section',
+    ],
+    es: [
+      'hacer timelapse de video online',
+      'acelerar video para timelapse',
+      'editor de timelapse online',
+      'cambiar velocidad por partes del video',
+      'timelapse de obra online',
+      'ralentizar tramo de video',
+    ],
+  },
+  'estourador-de-audio': {
+    'pt-br': [
+      'distorcer audio online para meme',
+      'audio estourado online',
+      'efeito de clipping de audio',
+      'bitcrush de audio online',
+      'efeito de radio para voz',
+      'saturar audio para meme',
+    ],
+    en: [
+      'distort audio online for memes',
+      'make audio sound blown out',
+      'audio clipping effect online',
+      'bitcrush audio online',
+      'radio voice effect online',
+      'saturate audio for a meme',
+    ],
+    es: [
+      'distorsionar audio online para memes',
+      'audio reventado online',
+      'efecto clipping de audio',
+      'bitcrush de audio online',
+      'efecto de radio para voz',
+      'saturar audio para memes',
+    ],
+  },
   'qr-code-generator': {
     'pt-br': [
       'gerador de qr code',
