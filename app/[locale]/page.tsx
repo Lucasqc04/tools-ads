@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Container } from '@/components/layout/container';
 import { ToolCatalogExplorer } from '@/components/tools/tool-catalog-explorer';
 import { getLocalizedToolsRegistry } from '@/data/tools-registry';
+import { getVercelToolPopularity } from '@/lib/analytics/vercel-tool-popularity';
 import { buildLocalePathMap, localizePath } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
 import { resolveLocale } from '@/lib/i18n/resolve-locale';
@@ -29,33 +30,37 @@ type HomePageProps = {
 const categoryLabels = {
   'pt-br': {
     all: 'Todas as categorias',
-    technical: 'Tecnicas',
+    allShort: 'Categoria',
+    technical: 'Técnicas',
     gaming: 'Jogos',
-    utility: 'Utilitarios',
+    utility: 'Utilitárias',
     crypto: 'Cripto',
     dev: 'Dev',
-    documents: 'Documentos e Midia',
+    documents: 'Docs e mídia',
   },
   en: {
     all: 'All categories',
+    allShort: 'Category',
     technical: 'Technical',
     gaming: 'Gaming',
     utility: 'Utilities',
     crypto: 'Crypto',
     dev: 'Dev',
-    documents: 'Documents and Media',
+    documents: 'Docs/media',
   },
   es: {
     all: 'Todas las categorias',
-    technical: 'Tecnicas',
+    allShort: 'Categoría',
+    technical: 'Técnicas',
     gaming: 'Juegos',
     utility: 'Utilidades',
     crypto: 'Cripto',
     dev: 'Dev',
-    documents: 'Documentos y Media',
+    documents: 'Docs y medios',
   },
   zh: {
     all: '全部分类',
+    allShort: '类别',
     technical: '技术工具',
     gaming: '游戏工具',
     utility: '实用工具',
@@ -63,55 +68,59 @@ const categoryLabels = {
     dev: '开发工具',
     documents: '文档与媒体',
   },
-} satisfies Record<string, Record<ToolCategoryFilter, string>>;
+} satisfies Record<string, Record<ToolCategoryFilter, string> & { allShort: string }>;
 
 const gameLabels = {
   'pt-br': {
     all: 'Todos os jogos',
+    allShort: 'Jogo',
     cs2: 'Counter-Strike 2',
     gta: 'GTA',
     other: 'Outros jogos',
   },
   en: {
     all: 'All games',
+    allShort: 'Game',
     cs2: 'Counter-Strike 2',
     gta: 'GTA',
     other: 'Other games',
   },
   es: {
     all: 'Todos los juegos',
+    allShort: 'Juego',
     cs2: 'Counter-Strike 2',
     gta: 'GTA',
     other: 'Otros juegos',
   },
   zh: {
     all: '全部游戏',
+    allShort: '游戏',
     cs2: 'Counter-Strike 2',
     gta: 'GTA',
     other: '其他游戏',
   },
-} satisfies Record<string, Record<ToolGameFilter, string>>;
+} satisfies Record<string, Record<ToolGameFilter, string> & { allShort: string }>;
 
 const sectionLabels = {
   'pt-br': {
-    technical: 'Ferramentas tecnicas',
-    gaming: 'Ferramentas de jogos',
-    utility: 'Ferramentas utilitarias',
+    technical: 'Ferramentas técnicas',
+    gaming: 'Ferramentas para jogos',
+    utility: 'Ferramentas utilitárias',
   },
   en: {
     technical: 'Technical tools',
-    gaming: 'Gaming tools',
-    utility: 'Utility tools',
+    gaming: 'Tools for games',
+    utility: 'Everyday utilities',
   },
   es: {
-    technical: 'Herramientas tecnicas',
-    gaming: 'Herramientas de juegos',
-    utility: 'Herramientas utilitarias',
+    technical: 'Herramientas técnicas',
+    gaming: 'Herramientas para juegos',
+    utility: 'Utilidades cotidianas',
   },
   zh: {
     technical: '技术工具',
     gaming: '游戏工具',
-    utility: '实用工具',
+    utility: '日常实用工具',
   },
 } satisfies Record<string, { technical: string; gaming: string; utility: string }>;
 
@@ -157,30 +166,41 @@ export default async function HomePage({
   const game: ToolGameFilter = isToolGameFilter(rawGame) ? rawGame : 'all';
 
   const tools = getLocalizedToolsRegistry(locale);
+  const popularity = await getVercelToolPopularity(locale);
 
   const labelsCategory = categoryLabels[locale];
   const labelsGame = gameLabels[locale];
   const labelsSection = sectionLabels[locale];
 
   return (
-    <Container className="py-10 md:py-14">
-      <section className="max-w-reading space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
+    <Container className="py-5 md:py-10">
+      <div className="max-w-4xl">
+        <span
+          aria-hidden="true"
+          className="mb-3 block h-1 w-10 rounded-full bg-brand-600 md:mb-4"
+        />
+        <h1 className="max-w-4xl text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-5xl">
           {dictionary.home.h1}
         </h1>
-        <p className="text-lg leading-8 text-slate-700">{dictionary.home.intro}</p>
-      </section>
+        <p className="mt-2 max-w-2xl text-sm leading-5 text-slate-700 md:mt-3 md:text-base md:leading-7">
+          {dictionary.home.intro}
+        </p>
+      </div>
 
-      <section className="mt-10" aria-labelledby="featured-tools-title">
-        <div className="mb-5 flex items-end justify-between gap-3">
+      <section className="mt-7 md:mt-9" aria-labelledby="catalog-title">
+        <div className="mb-3 flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between md:mb-4">
           <h2
-            id="featured-tools-title"
-            className="text-2xl font-bold tracking-tight text-slate-900"
+            id="catalog-title"
+            className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl"
           >
-            {dictionary.home.featuredToolsTitle}
+            {dictionary.home.catalogTitle}
           </h2>
-          <Link href={localizePath(locale, '/tools')} className="text-sm font-semibold">
+          <Link
+            href={localizePath(locale, '/tools')}
+            className="inline-flex w-fit items-center gap-1 rounded-lg py-1 text-sm font-semibold text-brand-700 transition-colors hover:text-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
+          >
             {dictionary.home.viewAllTools}
+            <span aria-hidden="true">↗</span>
           </Link>
         </div>
 
@@ -198,7 +218,10 @@ export default async function HomePage({
           resultsLabel={dictionary.toolsIndex.resultsLabel}
           emptyMessage={dictionary.toolsIndex.emptyMessage}
           emptyHints={dictionary.toolsIndex.emptyHints}
-          compactGamingWhenIdle
+          popularity={popularity}
+          viewAllLabel={dictionary.home.viewAllTools}
+          isHome
+          sectionHeadingLevel={3}
         />
       </section>
 
@@ -208,12 +231,14 @@ export default async function HomePage({
       </div>
       */}
 
-      <section className="prose-lite mt-12 max-w-reading space-y-4">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-          {dictionary.home.growthTitle}
+      <section className="prose-lite mt-14 max-w-4xl border-t border-slate-200 pt-10">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+          {dictionary.home.guideTitle}
         </h2>
-        <p>{dictionary.home.growthParagraphs[0]}</p>
-        <p>{dictionary.home.growthParagraphs[1]}</p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2 md:gap-8">
+          <p>{dictionary.home.guideParagraphs[0]}</p>
+          <p>{dictionary.home.guideParagraphs[1]}</p>
+        </div>
       </section>
     </Container>
   );

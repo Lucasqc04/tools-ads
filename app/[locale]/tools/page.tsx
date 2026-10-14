@@ -11,6 +11,7 @@ import {
 } from '@/lib/tools/catalog';
 import { buildLocalePathMap, localizePath } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/dictionary';
+import { getVercelToolPopularity } from '@/lib/analytics/vercel-tool-popularity';
 import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { buildLocalizedMetadata } from '@/lib/seo';
 
@@ -28,33 +29,37 @@ type ToolsIndexPageProps = {
 const categoryLabels = {
   'pt-br': {
     all: 'Todas as categorias',
-    technical: 'Tecnicas',
+    allShort: 'Categoria',
+    technical: 'Técnicas',
     gaming: 'Jogos',
-    utility: 'Utilitarios',
+    utility: 'Utilitárias',
     crypto: 'Cripto',
     dev: 'Dev',
-    documents: 'Documentos e Midia',
+    documents: 'Docs e mídia',
   },
   en: {
     all: 'All categories',
+    allShort: 'Category',
     technical: 'Technical',
     gaming: 'Gaming',
     utility: 'Utilities',
     crypto: 'Crypto',
     dev: 'Dev',
-    documents: 'Documents and Media',
+    documents: 'Docs/media',
   },
   es: {
     all: 'Todas las categorias',
-    technical: 'Tecnicas',
+    allShort: 'Categoría',
+    technical: 'Técnicas',
     gaming: 'Juegos',
     utility: 'Utilidades',
     crypto: 'Cripto',
     dev: 'Dev',
-    documents: 'Documentos y Media',
+    documents: 'Docs y medios',
   },
   zh: {
     all: '全部分类',
+    allShort: '类别',
     technical: '技术工具',
     gaming: '游戏工具',
     utility: '实用工具',
@@ -62,55 +67,59 @@ const categoryLabels = {
     dev: '开发工具',
     documents: '文档与媒体',
   },
-} satisfies Record<string, Record<ToolCategoryFilter, string>>;
+} satisfies Record<string, Record<ToolCategoryFilter, string> & { allShort: string }>;
 
 const gameLabels = {
   'pt-br': {
     all: 'Todos os jogos',
+    allShort: 'Jogo',
     cs2: 'Counter-Strike 2',
     gta: 'GTA',
     other: 'Outros jogos',
   },
   en: {
     all: 'All games',
+    allShort: 'Game',
     cs2: 'Counter-Strike 2',
     gta: 'GTA',
     other: 'Other games',
   },
   es: {
     all: 'Todos los juegos',
+    allShort: 'Juego',
     cs2: 'Counter-Strike 2',
     gta: 'GTA',
     other: 'Otros juegos',
   },
   zh: {
     all: '全部游戏',
+    allShort: '游戏',
     cs2: 'Counter-Strike 2',
     gta: 'GTA',
     other: '其他游戏',
   },
-} satisfies Record<string, Record<ToolGameFilter, string>>;
+} satisfies Record<string, Record<ToolGameFilter, string> & { allShort: string }>;
 
 const sectionLabels = {
   'pt-br': {
-    technical: 'Ferramentas tecnicas',
-    gaming: 'Ferramentas de jogos',
-    utility: 'Ferramentas utilitarias',
+    technical: 'Ferramentas técnicas',
+    gaming: 'Ferramentas para jogos',
+    utility: 'Ferramentas utilitárias',
   },
   en: {
     technical: 'Technical tools',
-    gaming: 'Gaming tools',
-    utility: 'Utility tools',
+    gaming: 'Tools for games',
+    utility: 'Everyday utilities',
   },
   es: {
-    technical: 'Herramientas tecnicas',
-    gaming: 'Herramientas de juegos',
-    utility: 'Herramientas utilitarias',
+    technical: 'Herramientas técnicas',
+    gaming: 'Herramientas para juegos',
+    utility: 'Utilidades cotidianas',
   },
   zh: {
     technical: '技术工具',
     gaming: '游戏工具',
-    utility: '实用工具',
+    utility: '日常实用工具',
   },
 } satisfies Record<string, { technical: string; gaming: string; utility: string }>;
 
@@ -156,13 +165,14 @@ export default async function ToolsIndexPage({
   const game: ToolGameFilter = isToolGameFilter(rawGame) ? rawGame : 'all';
 
   const tools = getLocalizedToolsRegistry(locale);
+  const popularity = await getVercelToolPopularity(locale);
 
   const labelsCategory = categoryLabels[locale];
   const labelsGame = gameLabels[locale];
   const labelsSection = sectionLabels[locale];
 
   return (
-    <Container className="py-8 md:py-10">
+    <Container className="py-6 md:py-10">
       <Breadcrumbs
         items={[
           { name: dictionary.common.home, href: localizePath(locale, '/') },
@@ -170,16 +180,16 @@ export default async function ToolsIndexPage({
         ]}
       />
 
-      <header className="max-w-reading space-y-3">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+      <header className="max-w-reading space-y-2">
+        <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 md:text-4xl">
           {dictionary.toolsIndex.h1}
         </h1>
-        <p className="text-base leading-7 text-slate-700 md:text-lg">
+        <p className="text-sm leading-6 text-slate-700 md:text-base md:leading-7">
           {dictionary.toolsIndex.intro}
         </p>
       </header>
 
-      <div className="mt-6" aria-label="Available tools">
+      <div className="mt-5" aria-label="Available tools">
         <ToolCatalogExplorer
           tools={tools}
           locale={locale}
@@ -194,9 +204,9 @@ export default async function ToolsIndexPage({
           resultsLabel={dictionary.toolsIndex.resultsLabel}
           emptyMessage={dictionary.toolsIndex.emptyMessage}
           emptyHints={dictionary.toolsIndex.emptyHints}
+          popularity={popularity}
           showSearchLabel
           showQuerySuffix
-          compactGamingWhenIdle
         />
       </div>
 

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { ToolCard } from '@/components/tools/tool-card';
 import type { AppLocale } from '@/lib/i18n/config';
 import { getToolGameGroup, isTechnicalToolCategory } from '@/lib/tools/catalog';
@@ -7,7 +6,7 @@ import type { ToolDefinition } from '@/types/tool';
 type ToolCatalogSectionsProps = {
   tools: ToolDefinition[];
   locale: AppLocale;
-  compactGaming?: boolean;
+  headingLevel: 2 | 3;
   labelsCategory: {
     crypto: string;
     dev: string;
@@ -28,7 +27,7 @@ type ToolCatalogSectionsProps = {
 export function ToolCatalogSections({
   tools,
   locale,
-  compactGaming = false,
+  headingLevel,
   labelsCategory,
   labelsGame,
   labelsSection,
@@ -69,63 +68,39 @@ export function ToolCatalogSections({
     },
   ].filter((group) => group.tools.length > 0);
 
-  const cs2FeaturedIds = [
-    'cs2-practice-commands',
-    'cs2-autoexec-generator',
-    'cs2-competitive-config',
-    'cs2-crosshair-codes',
-  ];
-
-  const getCompactGroupTools = (groupKey: string, groupTools: ToolDefinition[]): ToolDefinition[] => {
-    if (!compactGaming || groupKey !== 'cs2' || groupTools.length <= 6) {
-      return groupTools;
-    }
-
-    const selected = cs2FeaturedIds
-      .map((id) => groupTools.find((tool) => tool.id === id))
-      .filter((tool): tool is ToolDefinition => Boolean(tool));
-
-    if (selected.length >= 3) {
-      return selected;
-    }
-
-    return groupTools.slice(0, 4);
-  };
-
-  const cs2HubTool = gamingGroups
-    .find((group) => group.key === 'cs2')
-    ?.tools.find((tool) => tool.id === 'cs2-practice-commands');
-
-  let moreModesLabel = 'Ver todos os modos CS2';
-  let hiddenModesPrefix = 'Mais modos de CS2 disponiveis no hub:';
-
-  if (locale === 'en') {
-    moreModesLabel = 'View all CS2 modes';
-    hiddenModesPrefix = 'More CS2 modes available in the hub:';
-  }
-
-  if (locale === 'es') {
-    moreModesLabel = 'Ver todos los modos CS2';
-    hiddenModesPrefix = 'Mas modos de CS2 disponibles en el hub:';
-  }
-
   const utilityTools = tools.filter((tool) => tool.category === 'utility');
 
   const hasTechnical = tools.some((tool) => isTechnicalToolCategory(tool.category));
   const hasGaming = tools.some((tool) => tool.category === 'gaming');
+  const SectionHeading = headingLevel === 2 ? 'h2' : 'h3';
+  const GroupHeading = headingLevel === 2 ? 'h3' : 'h4';
+  const groupedToolHeadingLevel = headingLevel === 2 ? 4 : 5;
+  const utilityToolHeadingLevel = headingLevel === 2 ? 3 : 4;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10 md:space-y-12">
       {hasTechnical ? (
-        <section className="space-y-4">
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">{labelsSection.technical}</h2>
+        <section className="space-y-5">
+          <SectionHeading className="border-b border-slate-200 pb-3 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+            {labelsSection.technical}
+          </SectionHeading>
 
           {technicalGroups.map((group) => (
             <section key={group.key} className="space-y-3" aria-label={group.label}>
-              <h3 className="text-sm font-semibold text-slate-700">{group.label}</h3>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="flex items-center gap-3">
+                <GroupHeading className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-600">
+                  {group.label}
+                </GroupHeading>
+                <span aria-hidden="true" className="h-px flex-1 bg-slate-200" />
+              </div>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {group.tools.map((tool) => (
-                  <ToolCard key={tool.id} tool={tool} locale={locale} />
+                  <ToolCard
+                    key={tool.id}
+                    tool={tool}
+                    locale={locale}
+                    headingLevel={groupedToolHeadingLevel}
+                  />
                 ))}
               </div>
             </section>
@@ -134,25 +109,29 @@ export function ToolCatalogSections({
       ) : null}
 
       {hasGaming ? (
-        <section className="space-y-4">
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">{labelsSection.gaming}</h2>
+        <section className="space-y-5">
+          <SectionHeading className="border-b border-slate-200 pb-3 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+            {labelsSection.gaming}
+          </SectionHeading>
 
           {gamingGroups.map((group) => (
             <section key={group.key} className="space-y-3" aria-label={group.label}>
-              <h3 className="text-sm font-semibold text-slate-700">{group.label}</h3>
-              <div className="grid gap-4 md:grid-cols-2">
-                {getCompactGroupTools(group.key, group.tools).map((tool) => (
-                  <ToolCard key={tool.id} tool={tool} locale={locale} />
+              <div className="flex items-center gap-3">
+                <GroupHeading className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-600">
+                  {group.label}
+                </GroupHeading>
+                <span aria-hidden="true" className="h-px flex-1 bg-slate-200" />
+              </div>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {group.tools.map((tool) => (
+                  <ToolCard
+                    key={tool.id}
+                    tool={tool}
+                    locale={locale}
+                    headingLevel={groupedToolHeadingLevel}
+                  />
                 ))}
               </div>
-              {compactGaming && group.key === 'cs2' && group.tools.length > getCompactGroupTools(group.key, group.tools).length && cs2HubTool ? (
-                <p className="text-sm text-slate-600">
-                  {hiddenModesPrefix}{' '}
-                  <Link href={cs2HubTool.canonicalPath} className="font-semibold text-slate-900">
-                    {moreModesLabel}
-                  </Link>
-                </p>
-              ) : null}
             </section>
           ))}
         </section>
@@ -160,10 +139,17 @@ export function ToolCatalogSections({
 
       {utilityTools.length > 0 ? (
         <section className="space-y-4">
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">{labelsSection.utility}</h2>
-          <div className="grid gap-4 md:grid-cols-2">
+          <SectionHeading className="border-b border-slate-200 pb-3 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+            {labelsSection.utility}
+          </SectionHeading>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {utilityTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} locale={locale} />
+              <ToolCard
+                key={tool.id}
+                tool={tool}
+                locale={locale}
+                headingLevel={utilityToolHeadingLevel}
+              />
             ))}
           </div>
         </section>

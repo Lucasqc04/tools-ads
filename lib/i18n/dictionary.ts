@@ -55,10 +55,10 @@ export type SiteDictionary = {
   home: {
     h1: string;
     intro: string;
-    featuredToolsTitle: string;
+    catalogTitle: string;
     viewAllTools: string;
-    growthTitle: string;
-    growthParagraphs: [string, string];
+    guideTitle: string;
+    guideParagraphs: [string, string];
   };
   toolsIndex: {
     h1: string;
@@ -66,7 +66,12 @@ export type SiteDictionary = {
     searchLabel: string;
     searchPlaceholder: string;
     searchButton: string;
-    resultsLabel: string;
+    resultsLabel: {
+      singular: string;
+      plural: string;
+      catalog: string;
+      showing: string;
+    };
     emptyMessage: string;
     emptyHints: string[];
   };
@@ -139,9 +144,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       siteDefaultDescription:
         'Hub de ferramentas online grátis para tarefas do dia a dia, com experiência rápida, sem cadastro e sem login em português, inglês e espanhol.',
       home: {
-        title: 'Ferramentas Online para Produtividade e Desenvolvimento',
+        title: 'Ferramentas Online Grátis para o Dia a Dia',
         description:
-          'Use ferramentas online práticas, gratuitas, sem cadastro e sem login para resolver tarefas comuns com rapidez e processamento local quando aplicável.',
+          'Converta, calcule, gere e organize tarefas com ferramentas online grátis. Busque por nome ou categoria e abra a opção que você precisa.',
         keywords: [
           'ferramentas online',
           'ferramentas online gratis sem cadastro',
@@ -223,25 +228,29 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'Todos os direitos reservados.',
     },
     home: {
-      h1: 'Ferramentas online úteis para o dia a dia',
+      h1: 'Ferramentas online para o dia a dia',
       intro:
-        'Encontre e use ferramentas online gratuitas para converter, calcular, gerar, visualizar e resolver tarefas comuns do cotidiano, tudo em um só lugar, sem cadastro e sem login.',
-      featuredToolsTitle: 'Ferramentas em destaque',
-      viewAllTools: 'Ver todas as ferramentas',
-      growthTitle: 'Ferramentas pensadas para uso rápido',
-      growthParagraphs: [
-        'Cada ferramenta tem sua própria página com guia rápido, FAQ e ações diretas para você concluir a tarefa sem perder tempo.',
-        'A navegação é leve para evitar poluição visual. Em celular e desktop, você chega nas ações principais com poucos cliques.',
+        'Ferramentas grátis para converter arquivos, calcular valores e resolver tarefas do dia a dia.',
+      catalogTitle: 'Mais acessadas',
+      viewAllTools: 'Ver todas',
+      guideTitle: 'Como encontrar a ferramenta certa',
+      guideParagraphs: [
+        'Busque pelo que você precisa fazer — como converter PDF, formatar JSON ou criar um QR Code. A pesquisa também encontra termos sem acento e pequenas variações na escrita.',
+        'Use as categorias e o filtro de jogo para refinar os resultados. O catálogo completo reúne ferramentas de cripto, desenvolvimento, documentos e mídia, jogos e tarefas cotidianas.',
       ],
     },
     toolsIndex: {
       h1: 'Todas as ferramentas',
-      intro:
-        'Catálogo enxuto com páginas focadas. Cada ferramenta traz contexto, FAQ e fluxo simples para você resolver a tarefa em poucos passos.',
+      intro: 'Busque pelo nome, tarefa ou categoria e abra a ferramenta que resolve o que você precisa.',
       searchLabel: 'Buscar ferramenta',
-      searchPlaceholder: 'Ex.: json, satoshi, pdf',
+      searchPlaceholder: 'Nome ou tarefa, ex.: json, boleto, pdf',
       searchButton: 'Buscar',
-      resultsLabel: 'resultado(s)',
+      resultsLabel: {
+        singular: 'ferramenta encontrada',
+        plural: 'ferramentas encontradas',
+        catalog: 'ferramentas no catálogo',
+        showing: 'exibidas de',
+      },
       emptyMessage: 'Nenhuma ferramenta encontrada para essa busca. Tente termos como',
       emptyHints: ['satoshi', 'json', 'pdf'],
     },
@@ -388,9 +397,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       siteDefaultDescription:
         'Global hub of free online tools for everyday tasks, with fast UX, no sign-up, and no login in Portuguese, English, and Spanish.',
       home: {
-        title: 'Free Online Tools for Creators, Marketers, and Developers',
+        title: 'Free Online Tools for Everyday Tasks',
         description:
-          'Use practical web tools with fast workflows, free access, no sign-up, no login, and privacy-friendly local processing.',
+          'Convert files, calculate, generate, and organize everyday tasks with free online tools. Search by name or category to find what you need.',
         keywords: [
           'free online tools',
           'free online tools no sign up',
@@ -472,25 +481,29 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'All rights reserved.',
     },
     home: {
-      h1: 'Useful online tools for everyday tasks',
+      h1: 'Online tools for everyday tasks',
       intro:
-        'Find and use free online tools to convert, calculate, generate, visualize and solve common daily tasks, all in one place with no sign-up and no login.',
-      featuredToolsTitle: 'Featured tools',
+        'Free tools to convert files, calculate values, and handle everyday tasks.',
+      catalogTitle: 'Popular tools',
       viewAllTools: 'View all tools',
-      growthTitle: 'Built for fast everyday workflows',
-      growthParagraphs: [
-        'Each tool has its own focused page with a quick guide, FAQ, and direct actions so users can finish tasks quickly.',
-        'Navigation stays intentionally lightweight to reduce clutter, helping users reach key actions fast on both desktop and mobile.',
+      guideTitle: 'How to find the right tool',
+      guideParagraphs: [
+        'Search for the task you have in mind, such as converting a PDF, formatting JSON, or creating a QR code. Search also handles accents and small spelling variations.',
+        'Use the category and game filters to narrow the results. The full catalog covers crypto, development, documents and media, gaming, and everyday utilities.',
       ],
     },
     toolsIndex: {
       h1: 'All tools',
-      intro:
-        'A focused catalog with one page per utility. Every tool includes clear context, FAQ, and practical steps for quick use.',
+      intro: 'Find the right tool by name, task, category, or game.',
       searchLabel: 'Search tools',
-      searchPlaceholder: 'Example: json, satoshi, pdf',
+      searchPlaceholder: 'Tool or task, e.g. json, pdf, QR code',
       searchButton: 'Search',
-      resultsLabel: 'result(s)',
+      resultsLabel: {
+        singular: 'tool found',
+        plural: 'tools found',
+        catalog: 'tools in the catalog',
+        showing: 'shown of',
+      },
       emptyMessage: 'No tools matched this query. Try terms like',
       emptyHints: ['satoshi', 'json', 'pdf'],
     },
@@ -637,9 +650,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       siteDefaultDescription:
         'Hub internacional de herramientas online gratis para tareas cotidianas, con UX rápida, sin registro y sin login en portugués, inglés y español.',
       home: {
-        title: 'Herramientas Online Gratis para Productividad y Desarrollo',
+        title: 'Herramientas Online Gratis para el Día a Día',
         description:
-          'Usa utilidades web prácticas, gratis, sin registro y sin login, con procesamiento local para una experiencia más rápida y confiable.',
+          'Convierte archivos, calcula, genera contenido y resuelve tareas con herramientas online gratis. Busca por nombre o categoría.',
         keywords: [
           'herramientas online gratis',
           'herramientas online sin registro',
@@ -721,25 +734,29 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'Todos los derechos reservados.',
     },
     home: {
-      h1: 'Herramientas online útiles para el día a día',
+      h1: 'Herramientas online para el día a día',
       intro:
-        'Encuentra y usa herramientas online gratis para convertir, calcular, generar, visualizar y resolver tareas cotidianas, todo en un solo lugar, sin registro y sin login.',
-      featuredToolsTitle: 'Herramientas destacadas',
-      viewAllTools: 'Ver todas las herramientas',
-      growthTitle: 'Diseñadas para uso rápido',
-      growthParagraphs: [
-        'Cada herramienta tiene su propia página con guía rápida, FAQ y acciones directas para completar la tarea sin perder tiempo.',
-        'La navegación se mantiene ligera para evitar ruido visual y facilitar el uso en móvil y escritorio.',
+        'Herramientas gratis para convertir archivos, calcular y resolver tareas cotidianas.',
+      catalogTitle: 'Más utilizadas',
+      viewAllTools: 'Ver todas',
+      guideTitle: 'Cómo encontrar la herramienta adecuada',
+      guideParagraphs: [
+        'Busca la tarea que necesitas, como convertir un PDF, dar formato a JSON o crear un código QR. La búsqueda también acepta términos sin tilde y pequeños errores al escribir.',
+        'Usa las categorías y el filtro de juegos para afinar los resultados. El catálogo completo incluye cripto, desarrollo, documentos y medios, juegos y utilidades cotidianas.',
       ],
     },
     toolsIndex: {
       h1: 'Todas las herramientas',
-      intro:
-        'Catálogo enfocado con una página por utilidad. Cada herramienta incluye contexto, FAQ y pasos prácticos de uso.',
+      intro: 'Busca por nombre, tarea, categoría o juego y abre la herramienta adecuada.',
       searchLabel: 'Buscar herramienta',
-      searchPlaceholder: 'Ej.: json, satoshi, pdf',
+      searchPlaceholder: 'Nombre o tarea, ej.: json, boleto, pdf',
       searchButton: 'Buscar',
-      resultsLabel: 'resultado(s)',
+      resultsLabel: {
+        singular: 'herramienta encontrada',
+        plural: 'herramientas encontradas',
+        catalog: 'herramientas en el catálogo',
+        showing: 'mostradas de',
+      },
       emptyMessage: 'No se encontraron herramientas para esta búsqueda. Prueba con',
       emptyHints: ['satoshi', 'json', 'pdf'],
     },
@@ -887,9 +904,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       siteDefaultDescription:
         '免费在线工具集合,快速好用、无需注册、无需登录,提供葡萄牙语、英语、西班牙语和中文版本,满足日常任务需求。',
       home: {
-        title: '免费在线工具:创作者、营销人员与开发者的效率利器',
+        title: '日常实用免费在线工具',
         description:
-          '使用便捷的网页工具,免费、无需注册、无需登录,支持本地处理以保护隐私,快速完成常见任务。',
+          '使用免费在线工具转换文件、计算数值、生成内容并处理日常任务。按名称或类别搜索,快速找到所需工具。',
         keywords: [
           '免费在线工具',
           '在线工具无需注册',
@@ -970,25 +987,29 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: '版权所有。',
     },
     home: {
-      h1: '解决日常任务的实用在线工具',
+      h1: '解决日常任务的在线工具',
       intro:
-        '查找并使用免费在线工具进行转换、计算、生成和可视化,一站式解决常见日常任务,无需注册、无需登录。',
-      featuredToolsTitle: '精选工具',
-      viewAllTools: '查看全部工具',
-      growthTitle: '为高效日常工作流而生',
-      growthParagraphs: [
-        '每个工具都有独立的专属页面,配有快速指南、常见问题和直接操作入口,帮助用户迅速完成任务。',
-        '导航设计刻意保持简洁,减少干扰,让用户无论在电脑还是手机上都能快速找到关键功能。',
+        '免费转换文件、计算数值,并处理开发、游戏和日常任务。可按名称或类别快速查找。',
+      catalogTitle: '热门工具',
+      viewAllTools: '查看全部',
+      guideTitle: '如何找到合适的工具',
+      guideParagraphs: [
+        '搜索要完成的任务,例如转换 PDF、格式化 JSON 或创建二维码。也可以使用类别和游戏筛选器缩小范围。',
+        '完整目录包含加密货币、开发、文档与媒体、游戏和日常实用工具。打开工具页面即可查看说明、示例和使用方式。',
       ],
     },
     toolsIndex: {
       h1: '全部工具',
-      intro:
-        '专注实用的工具目录,每个工具一个页面。所有工具都包含清晰说明、常见问题和实用操作步骤。',
+      intro: '按名称、任务、类别或游戏查找所需工具。',
       searchLabel: '搜索工具',
-      searchPlaceholder: '例如:json、聪、pdf',
+      searchPlaceholder: '搜索工具或任务,例如:json、pdf',
       searchButton: '搜索',
-      resultsLabel: '个结果',
+      resultsLabel: {
+        singular: '个工具',
+        plural: '个工具',
+        catalog: '个目录工具',
+        showing: '项，共',
+      },
       emptyMessage: '没有找到匹配的工具,可以试试这些关键词',
       emptyHints: ['聪', 'json', 'pdf'],
     },
