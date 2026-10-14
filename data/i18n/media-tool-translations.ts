@@ -53,19 +53,19 @@ export const newMediaTranslations: Record<'en' | 'es', Record<MediaToolId, ToolT
     },
     'audio-blaster': {
       name: 'Audio Distortion and Clipping Tool',
-      shortDescription: 'Distort audio for memes with clipping, saturation, foldback, bitcrush, or a radio effect, then preview before export.',
+      shortDescription: 'Upload audio or record with your microphone, add clipping, saturation, foldback, bitcrush, or a radio effect, then preview before export.',
       primaryKeyword: 'distort audio online for memes',
       secondaryKeywords: ['audio clipping tool online', 'make audio sound blown out', 'bitcrush audio online', 'radio voice effect online', 'meme audio distortion'],
-      searchIntent: 'People intentionally clipping or distorting a short sound, voice, or music snippet for a meme or comic effect.',
+      searchIntent: 'People uploading or recording a short sound, voice, or music snippet to intentionally distort it for a meme or comic effect.',
       seoTitle: 'Audio Distortion Tool Online | Clipping, Bitcrush, and Radio',
-      seoDescription: 'Make intentionally distorted audio for memes with clipping, drive, foldback, bitcrush, and radio presets. Preview and export WAV or MP3 locally.',
+      seoDescription: 'Upload or record audio in your browser, add clipping, drive, foldback, bitcrush, or radio effects, then preview and export WAV or MP3 locally.',
       h1: 'Distort Audio for Memes with Clipping and Bitcrush Effects',
-      intro: 'Add intentional clipping, saturation, foldback, bitcrush, or radio tone to an audio clip and listen before you download it.',
+      intro: 'Upload an audio clip or record with your microphone, add clipping, saturation, foldback, bitcrush, or radio tone, and listen before downloading.',
       contentBlocks: [
         {
           title: 'Intentional audio distortion for memes',
           paragraphs: [
-            'This audio distortion tool changes a voice, sound effect, or short music clip on purpose. Push the signal into clipping for the loud, square-edged sound often used in meme edits, or choose a more textured effect. Upload a short file, select a preset, and adjust gain, drive, and effect mix. A preview lets you hear the result before saving it.',
+            'This audio distortion tool changes a voice, sound effect, or short music clip on purpose. Push the signal into clipping for the loud, square-edged sound often used in meme edits, or choose a more textured effect. Upload a short file or record a voice with your microphone, select a preset, and adjust gain, drive, and effect mix. A preview lets you hear the result before saving it.',
             'Hard clipping cuts off peaks. Soft saturation rounds them off. Foldback reflects the waveform once it passes its limit, producing harsher overtones. Bitcrush lowers sample resolution and holds sample values longer for an old video-game texture. Radio mode filters low and high frequencies to suggest a small speaker or megaphone.',
           ],
         },
@@ -86,7 +86,7 @@ export const newMediaTranslations: Record<'en' | 'es', Record<MediaToolId, ToolT
         {
           title: 'Supported files and privacy',
           paragraphs: [
-            'Processing stays local: audio is decoded and changed in your browser, and it is not sent to the site server. The preview is created as a WAV file. If you choose MP3, the browser loads a local encoder to make the smaller version; the first conversion may take a little longer.',
+            'Processing stays local: uploaded or recorded audio is decoded and changed in your browser, and it is not sent to the site server. Recording requires microphone permission. The preview is created as a WAV file. If you choose MP3, the browser loads a local encoder to make the smaller version; the first conversion may take a little longer.',
             'To keep editing responsive, files are limited to 100 MB and four minutes. Decoded audio can take much more memory than the original MP3 or M4A. If a codec cannot be decoded, convert the clip to MP3 or WAV and try again. Strong distortion can make speech harder to understand and create uncomfortable peaks, so lower playback volume before listening on loud speakers.',
           ],
         },
@@ -94,7 +94,7 @@ export const newMediaTranslations: Record<'en' | 'es', Record<MediaToolId, ToolT
       faq: [
         { question: 'What does it mean to blow out or distort audio?', answer: 'It means intentionally clipping or saturating peaks to create a rough, distorted sound often used in memes and exaggerated voice effects.' },
         { question: 'Which effects are available?', answer: 'Choose hard clipping, soft saturation, foldback, bitcrush, or a radio/megaphone tone, with presets for a quick start.' },
-        { question: 'Can I listen before downloading?', answer: 'Yes. The tool creates a WAV preview that you can play before exporting as WAV or MP3.' },
+        { question: 'Can I record with my microphone and listen before downloading?', answer: 'Yes. Allow microphone access to record a voice clip up to four minutes, or upload a file. The tool creates a WAV preview you can play before exporting as WAV or MP3.' },
         { question: 'Is my audio uploaded to a server?', answer: 'No. Decoding, effects, and preview generation happen locally in the browser.' },
         { question: 'What is the file limit?', answer: 'Each audio clip can be up to 100 MB and four minutes long to keep local memory use manageable.' },
       ],
@@ -150,19 +150,19 @@ export const newMediaTranslations: Record<'en' | 'es', Record<MediaToolId, ToolT
     },
     'audio-blaster': {
       name: 'Herramienta para Distorsionar Audio',
-      shortDescription: 'Distorsiona audio para memes con clipping, saturación, foldback, bitcrush o efecto de radio y escucha antes de exportar.',
+      shortDescription: 'Sube audio o graba con el micrófono, añade clipping, saturación, foldback, bitcrush o efecto de radio y escucha antes de exportar.',
       primaryKeyword: 'distorsionar audio online para memes',
       secondaryKeywords: ['herramienta clipping de audio', 'audio saturado para meme', 'efecto bitcrush online', 'efecto de voz de radio online', 'distorsión de audio meme'],
-      searchIntent: 'Personas que saturan o distorsionan a propósito una voz, un sonido o un fragmento musical corto para un meme o efecto cómico.',
+      searchIntent: 'Personas que suben o graban una voz, un sonido o un fragmento musical corto para distorsionarlo a propósito en un meme o efecto cómico.',
       seoTitle: 'Distorsionador de Audio Online | Clipping, Bitcrush y Radio',
-      seoDescription: 'Crea audio distorsionado para memes con clipping, drive, foldback, bitcrush y presets de radio. Escucha y exporta WAV o MP3 localmente.',
+      seoDescription: 'Sube o graba audio en el navegador, añade clipping, drive, foldback, bitcrush o efecto de radio y exporta WAV o MP3 localmente.',
       h1: 'Distorsiona Audio para Memes con Clipping y Bitcrush',
-      intro: 'Añade clipping, saturación, foldback, bitcrush o tono de radio a un audio y escúchalo antes de descargarlo.',
+      intro: 'Sube un audio o graba con el micrófono, añade clipping, saturación, foldback, bitcrush o tono de radio y escúchalo antes de descargarlo.',
       contentBlocks: [
         {
           title: 'Distorsión intencional de audio para memes',
           paragraphs: [
-            'Esta herramienta cambia a propósito una voz, un efecto o un fragmento musical corto. Lleva la señal al clipping para lograr el sonido fuerte y cuadrado habitual en ediciones de memes, o elige una textura diferente. Añade un archivo, selecciona un preset y ajusta ganancia, drive y mezcla del efecto. La vista previa te permite escuchar el resultado antes de guardarlo.',
+            'Esta herramienta cambia a propósito una voz, un efecto o un fragmento musical corto. Lleva la señal al clipping para lograr el sonido fuerte y cuadrado habitual en ediciones de memes, o elige una textura diferente. Añade un archivo o graba una voz con el micrófono, selecciona un preset y ajusta ganancia, drive y mezcla del efecto. La vista previa te permite escuchar el resultado antes de guardarlo.',
             'El clipping seco corta los picos. La saturación suave los redondea. Foldback refleja la onda cuando supera el límite y crea armónicos ásperos. Bitcrush reduce la resolución y mantiene las muestras durante más tiempo para conseguir una textura de videojuego antiguo. El modo radio filtra graves y agudos para imitar un altavoz pequeño o un megáfono.',
           ],
         },
@@ -183,7 +183,7 @@ export const newMediaTranslations: Record<'en' | 'es', Record<MediaToolId, ToolT
         {
           title: 'Archivos compatibles y privacidad',
           paragraphs: [
-            'El procesamiento es local: el audio se decodifica y transforma en el navegador, sin enviarse al servidor del sitio. La vista previa se genera como WAV. Si eliges MP3, el navegador carga un codificador local para crear la versión comprimida; la primera conversión puede tardar un poco más.',
+            'El procesamiento es local: el audio subido o grabado se decodifica y transforma en el navegador, sin enviarse al servidor del sitio. Para grabar, debes permitir el acceso al micrófono. La vista previa se genera como WAV. Si eliges MP3, el navegador carga un codificador local para crear la versión comprimida; la primera conversión puede tardar un poco más.',
             'Para mantener la edición ágil, cada archivo puede tener hasta 100 MB y cuatro minutos. El audio descomprimido ocupa mucha más memoria que el MP3 o M4A original. Si el navegador no decodifica un códec, convierte el clip a MP3 o WAV y vuelve a intentarlo. Una distorsión fuerte puede dificultar la comprensión y crear picos molestos, así que baja el volumen antes de escuchar en altavoces potentes.',
           ],
         },
@@ -191,7 +191,7 @@ export const newMediaTranslations: Record<'en' | 'es', Record<MediaToolId, ToolT
       faq: [
         { question: '¿Qué significa reventar o distorsionar el audio?', answer: 'Es aplicar clipping o saturación a propósito para cortar picos y crear un sonido áspero, común en memes y voces exageradas.' },
         { question: '¿Qué efectos incluye?', answer: 'Puedes elegir clipping seco, saturación suave, foldback, bitcrush o tono de radio/megáfono, con presets para empezar rápido.' },
-        { question: '¿Puedo escuchar antes de descargar?', answer: 'Sí. La herramienta crea una vista previa WAV que puedes reproducir antes de exportar en WAV o MP3.' },
+        { question: '¿Puedo grabar con el micrófono y escuchar antes de descargar?', answer: 'Sí. Permite el acceso al micrófono para grabar una voz de hasta cuatro minutos o sube un archivo. La herramienta crea una vista previa WAV que puedes escuchar antes de exportar en WAV o MP3.' },
         { question: '¿Mi audio se sube a un servidor?', answer: 'No. La decodificación, los efectos y la vista previa se procesan localmente en el navegador.' },
         { question: '¿Cuál es el límite del archivo?', answer: 'Cada audio puede tener hasta 100 MB y cuatro minutos para mantener bajo control la memoria local.' },
       ],

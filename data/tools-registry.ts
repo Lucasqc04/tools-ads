@@ -1082,7 +1082,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'estourador-de-audio',
     name: 'Estourador de Áudio Online',
     shortDescription:
-      'Distorça áudio para memes com clipping, saturação, foldback, bitcrush e efeito de rádio; ouça antes de baixar.',
+      'Envie um áudio ou grave pelo microfone, aplique clipping, saturação, foldback, bitcrush ou efeito de rádio e ouça antes de baixar.',
     category: 'documents',
     primaryKeyword: 'estourar audio online para meme',
     secondaryKeywords: [
@@ -1096,7 +1096,7 @@ export const toolsRegistry: ToolDefinition[] = [
       'Pessoas que querem saturar ou distorcer intencionalmente uma fala, efeito ou música curta para criar memes e efeitos cômicos.',
     seoTitle: 'Estourador de Áudio Online | Clipping, Bitcrush e Rádio',
     seoDescription:
-      'Crie áudio distorcido para memes com clipping, drive, foldback, bitcrush e presets de rádio. Ouça e exporte WAV ou MP3 localmente.',
+      'Envie ou grave áudio no navegador, aplique clipping, drive, foldback, bitcrush ou efeito de rádio e exporte WAV ou MP3 localmente.',
     h1: 'Estoure Áudio para Memes com Clipping e Bitcrush',
     intro: audioBlasterIntro,
     canonicalPath: '/tools/estourador-de-audio',

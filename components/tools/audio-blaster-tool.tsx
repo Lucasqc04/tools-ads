@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { AudioLines, Download, Loader2, Radio, Sparkles, Volume2, Waves } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { AudioLines, Download, Loader2, Mic, Radio, Sparkles, Square, Volume2, Waves } from 'lucide-react';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -29,6 +29,14 @@ const copy = {
     intro: 'Distorça um áudio de propósito com clipping, drive, efeito de rádio ou textura 8-bit.',
     upload: 'Escolher áudio',
     uploadHint: 'MP3, WAV, M4A, OGG e WebM. Até 100 MB e 4 minutos.',
+    recordAudio: 'Gravar áudio pelo microfone',
+    recordAgain: 'Gravar outro áudio',
+    recording: 'Gravando pelo microfone',
+    stopRecording: 'Parar gravação',
+    recordingHint: 'A gravação fica neste navegador e pode durar até 4 minutos.',
+    recorderUnsupported: 'Este navegador não oferece suporte à gravação de áudio.',
+    microphonePermission: 'Permita o acesso ao microfone para iniciar a gravação.',
+    recordingFailed: 'Não foi possível concluir a gravação. Tente novamente.',
     original: 'Áudio original',
     settings: 'Efeito',
     presets: 'Comece por um preset',
@@ -74,6 +82,14 @@ const copy = {
     intro: 'Intentionally distort audio with clipping, drive, radio tone, or an 8-bit texture.',
     upload: 'Choose audio',
     uploadHint: 'MP3, WAV, M4A, OGG, and WebM. Up to 100 MB and 4 minutes.',
+    recordAudio: 'Record audio with microphone',
+    recordAgain: 'Record another audio',
+    recording: 'Recording from microphone',
+    stopRecording: 'Stop recording',
+    recordingHint: 'The recording stays in this browser and can last up to 4 minutes.',
+    recorderUnsupported: 'This browser does not support audio recording.',
+    microphonePermission: 'Allow microphone access to start recording.',
+    recordingFailed: 'Could not finish the recording. Please try again.',
     original: 'Original audio',
     settings: 'Effect',
     presets: 'Start with a preset',
@@ -119,6 +135,14 @@ const copy = {
     intro: 'Distorsiona el audio a propósito con clipping, drive, efecto de radio o textura de 8 bits.',
     upload: 'Elegir audio',
     uploadHint: 'MP3, WAV, M4A, OGG y WebM. Hasta 100 MB y 4 minutos.',
+    recordAudio: 'Grabar audio con el micrófono',
+    recordAgain: 'Grabar otro audio',
+    recording: 'Grabando con el micrófono',
+    stopRecording: 'Detener grabación',
+    recordingHint: 'La grabación permanece en este navegador y puede durar hasta 4 minutos.',
+    recorderUnsupported: 'Este navegador no admite la grabación de audio.',
+    microphonePermission: 'Permite el acceso al micrófono para empezar a grabar.',
+    recordingFailed: 'No se pudo completar la grabación. Inténtalo de nuevo.',
     original: 'Audio original',
     settings: 'Efecto',
     presets: 'Empieza con un preset',
@@ -164,6 +188,14 @@ const copy = {
     intro: '使用削波、驱动、收音机音色或 8 位质感，为音频添加夸张失真。',
     upload: '选择音频',
     uploadHint: '支持 MP3、WAV、M4A、OGG、WebM，最大 100 MB，时长 4 分钟。',
+    recordAudio: '使用麦克风录音',
+    recordAgain: '重新录制音频',
+    recording: '正在使用麦克风录音',
+    stopRecording: '停止录音',
+    recordingHint: '录音保存在此浏览器中，最长可录制 4 分钟。',
+    recorderUnsupported: '此浏览器不支持音频录制。',
+    microphonePermission: '请允许访问麦克风以开始录音。',
+    recordingFailed: '无法完成录音，请重试。',
     original: '原始音频',
     settings: '效果',
     presets: '选择预设',
@@ -256,7 +288,7 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
     setResultFile(null);
   };
 
-  const handleFiles = (files: File[]) => {
+  const handleFiles = (files: File[], source: 'upload' | 'recording' = 'upload') => {
     const next = files[0];
     if (!next) return;
     clearResult();
@@ -266,10 +298,125 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
     setSourceUrl(URL.createObjectURL(next));
     setDuration(0);
     setProgress(0);
-    trackEvent('tool_started', { tool: TOOL_ID.audioBlaster, locale });
-    trackEvent('file_uploaded', { tool: TOOL_ID.audioBlaster, locale, file_type: 'audio' });
+    if (source === 'upload') {
+      trackEvent('tool_started', { tool: TOOL_ID.audioBlaster, locale });
+      trackEvent('file_uploaded', { tool: TOOL_ID.audioBlaster, locale, file_type: 'audio' });
+    }
     if (next.size > MAX_AUDIO_BLASTER_FILE_SIZE_BYTES) setError(ui.fileTooLarge);
   };
+
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const recordingChunksRef = useRef<Blob[]>([]);
+  const recordingStartedAtRef = useRef(0);
+  const recordingStartPendingRef = useRef(false);
+  const recordingFailedRef = useRef(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingElapsed, setRecordingElapsed] = useState(0);
+
+  const startRecording = async () => {
+    if (recordingStartPendingRef.current || isRecording) return;
+    setError('');
+
+    if (typeof MediaRecorder === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      setError(ui.recorderUnsupported);
+      trackEvent('tool_error', { tool: TOOL_ID.audioBlaster, locale, error_type: 'unsupported_browser' });
+      return;
+    }
+
+    recordingStartPendingRef.current = true;
+    let stream: MediaStream | null = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const preferredMimeType = [
+        'audio/webm;codecs=opus',
+        'audio/mp4',
+        'audio/ogg;codecs=opus',
+        'audio/webm',
+      ].find((mimeType) => MediaRecorder.isTypeSupported?.(mimeType));
+      const recorder = preferredMimeType
+        ? new MediaRecorder(stream, { mimeType: preferredMimeType })
+        : new MediaRecorder(stream);
+
+      streamRef.current = stream;
+      recorderRef.current = recorder;
+      recordingChunksRef.current = [];
+      recordingFailedRef.current = false;
+      recordingStartedAtRef.current = Date.now();
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) recordingChunksRef.current.push(event.data);
+      };
+      recorder.onerror = () => {
+        recordingFailedRef.current = true;
+        setError(ui.recordingFailed);
+        trackEvent('tool_error', { tool: TOOL_ID.audioBlaster, locale, error_type: 'processing_failed' });
+        if (recorder.state === 'recording') recorder.stop();
+      };
+      recorder.onstop = () => {
+        const chunks = recordingChunksRef.current;
+        const mimeType = recorder.mimeType || chunks[0]?.type || 'audio/webm';
+        const recordedBlob = new Blob(chunks, { type: mimeType });
+        stream?.getTracks().forEach((track) => track.stop());
+        if (streamRef.current === stream) streamRef.current = null;
+        if (recorderRef.current === recorder) recorderRef.current = null;
+        setIsRecording(false);
+        setRecordingElapsed(Math.min(MAX_AUDIO_BLASTER_DURATION_SECONDS, Math.floor((Date.now() - recordingStartedAtRef.current) / 1000)));
+
+        if (recordingFailedRef.current || recordedBlob.size === 0) {
+          if (!recordingFailedRef.current) setError(ui.recordingFailed);
+          recordingChunksRef.current = [];
+          return;
+        }
+
+        const extension = mimeType.includes('mp4') ? 'm4a' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+        const fileName = `gravacao-${new Date().toISOString().replace(/[:.]/g, '-')}.${extension}`;
+        handleFiles([new File([recordedBlob], fileName, { type: mimeType })], 'recording');
+        recordingChunksRef.current = [];
+      };
+      recorder.start(1000);
+      setRecordingElapsed(0);
+      setIsRecording(true);
+      trackEvent('tool_started', { tool: TOOL_ID.audioBlaster, locale });
+      trackEvent('generation_started', { tool: TOOL_ID.audioBlaster, locale, mode: 'microphone_recording' });
+    } catch (cause) {
+      stream?.getTracks().forEach((track) => track.stop());
+      if (streamRef.current === stream) streamRef.current = null;
+      recorderRef.current = null;
+      const denied = cause instanceof DOMException && (cause.name === 'NotAllowedError' || cause.name === 'PermissionDeniedError');
+      setError(denied ? ui.microphonePermission : ui.recordingFailed);
+      trackEvent('tool_error', { tool: TOOL_ID.audioBlaster, locale, error_type: denied ? 'permission_denied' : 'processing_failed' });
+    } finally {
+      recordingStartPendingRef.current = false;
+    }
+  };
+
+  const stopRecording = () => {
+    if (recorderRef.current?.state === 'recording') recorderRef.current.stop();
+  };
+
+  useEffect(() => {
+    if (!isRecording) return;
+    const timer = window.setInterval(() => {
+      const elapsedSeconds = (Date.now() - recordingStartedAtRef.current) / 1000;
+      const elapsed = Math.floor(elapsedSeconds);
+      setRecordingElapsed(Math.min(elapsed, MAX_AUDIO_BLASTER_DURATION_SECONDS));
+      if (elapsedSeconds >= MAX_AUDIO_BLASTER_DURATION_SECONDS - 0.5 && recorderRef.current?.state === 'recording') {
+        recorderRef.current.stop();
+      }
+    }, 100);
+    return () => window.clearInterval(timer);
+  }, [isRecording]);
+
+  useEffect(() => () => {
+    const recorder = recorderRef.current;
+    if (recorder) {
+      recorder.ondataavailable = null;
+      recorder.onstop = null;
+      recorder.onerror = null;
+      if (recorder.state === 'recording') recorder.stop();
+    }
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+  }, []);
 
   const updateSettings = (patch: Partial<Settings>) => {
     clearResult();
@@ -375,7 +522,19 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
 
         <div className="grid gap-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div className="min-w-0 space-y-5">
-            {file && sourceUrl ? (
+            {isRecording ? (
+              <div className="space-y-4 rounded-xl border border-brand-200 bg-brand-50 p-4">
+                <div role="status" aria-live="polite" className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-brand-700"><Mic size={17} /></span>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-semibold text-slate-900">{ui.recording}</div>
+                    <div aria-live="off" className="font-mono text-xs text-slate-600">{formatDuration(recordingElapsed)} / {formatDuration(MAX_AUDIO_BLASTER_DURATION_SECONDS)}</div>
+                  </div>
+                </div>
+                <p className="text-xs leading-5 text-slate-600">{ui.recordingHint}</p>
+                <Button variant="secondary" className="w-full" onClick={stopRecording}><Square size={15} className="mr-2" />{ui.stopRecording}</Button>
+              </div>
+            ) : file && sourceUrl ? (
               <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <div className="flex min-w-0 items-center gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-brand-700"><Volume2 size={17} /></span><div className="min-w-0"><div className="truncate text-sm font-semibold text-slate-900">{file.name}</div><div className="text-xs text-slate-600">{formatBytes(file.size)}{duration ? ` · ${formatDuration(duration)}` : ''}</div></div><button className="ml-auto shrink-0 text-xs font-medium text-brand-700 underline-offset-4 hover:underline" onClick={() => { setFile(null); setSourceUrl(null); clearResult(); }}>{ui.upload}</button></div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{ui.original}</p>
@@ -402,6 +561,12 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
                 locale={locale}
               />
             )}
+
+            {!isRecording ? (
+              <Button variant="secondary" className="w-full" onClick={() => void startRecording()} disabled={processing || encoding}>
+                <Mic size={16} className="mr-2" />{file ? ui.recordAgain : ui.recordAudio}
+              </Button>
+            ) : null}
 
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-slate-800">{ui.presets}</h4>
@@ -447,7 +612,7 @@ export function AudioBlasterTool({ locale = 'pt-br' }: AudioBlasterToolProps) {
             {processing ? <div className="space-y-2"><div className="h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-brand-600 transition-[width]" style={{ width: `${Math.max(2, progress * 100)}%` }} /></div><div className="text-xs text-slate-600">{ui.progress(progress)}</div></div> : null}
 
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button className="w-full" onClick={() => void process()} disabled={!file || processing || encoding || file.size > MAX_AUDIO_BLASTER_FILE_SIZE_BYTES || duration > MAX_AUDIO_BLASTER_DURATION_SECONDS}>
+              <Button className="w-full" onClick={() => void process()} disabled={!file || processing || encoding || isRecording || file.size > MAX_AUDIO_BLASTER_FILE_SIZE_BYTES || duration > MAX_AUDIO_BLASTER_DURATION_SECONDS}>
                 {processing ? <Loader2 size={16} className="mr-2 animate-spin" /> : <Waves size={16} className="mr-2" />}{processing ? ui.processing : ui.process}
               </Button>
             </div>
