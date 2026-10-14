@@ -152,6 +152,7 @@ export function SymbolsToCopyTool({
   const [copiedSymbol, setCopiedSymbol] = useState<string | null>(null);
   const [copiedSequence, setCopiedSequence] = useState(false);
 
+  const formatRef = useRef<CopyFormat>('raw');
   const hasStartedRef = useRef(false);
   const hasCompletedRef = useRef(false);
 
@@ -330,6 +331,11 @@ export function SymbolsToCopyTool({
                   type="button"
                   aria-pressed={format === option.value}
                   onClick={() => {
+                    if (formatRef.current === option.value) {
+                      return;
+                    }
+
+                    formatRef.current = option.value;
                     markStarted();
                     setFormat(option.value);
                     trackEvent('format_selected', {

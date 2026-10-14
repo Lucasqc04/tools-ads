@@ -691,6 +691,7 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
   const [cameraMessage, setCameraMessage] = useState('');
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<{ stop: () => void } | null>(null);
+  const lastScannedTextRef = useRef('');
   const hasStartedRef = useRef(false);
 
   const reportStartedOnce = () => {
@@ -699,16 +700,47 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
     trackEvent('tool_started', { tool: TOOL_ID.boletoValidator, locale });
   };
 
+  const reportValidationResult = (parsed: BoletoParseResult) => {
+    const status = parsed.ok ? 'valid' : 'invalid';
+    trackEvent('validation_result', {
+      tool: TOOL_ID.boletoValidator,
+      locale,
+      result_type: parsed.kind,
+      status,
+    });
+
+    if (parsed.kind === 'unknown') {
+      trackEvent('tool_error', {
+        tool: TOOL_ID.boletoValidator,
+        locale,
+        error_type: 'invalid_input',
+        action: 'validate',
+      });
+      return;
+    }
+
+    trackEvent('tool_completed', {
+      tool: TOOL_ID.boletoValidator,
+      locale,
+      result_type: parsed.kind,
+      status,
+    });
+  };
+
   const analyze = () => {
     reportStartedOnce();
-    const parsed = parseBoleto(input);
-    setResult(parsed);
-    if (parsed.kind === 'unknown') {
-      trackEvent('tool_error', { tool: TOOL_ID.boletoValidator, locale, error_type: 'invalid_input' });
-    } else if (parsed.ok) {
-      trackEvent('tool_completed', { tool: TOOL_ID.boletoValidator, locale, result_type: parsed.kind });
-    } else {
-      trackEvent('tool_error', { tool: TOOL_ID.boletoValidator, locale, error_type: 'validation_failed' });
+    try {
+      const parsed = parseBoleto(input);
+      setResult(parsed);
+      reportValidationResult(parsed);
+    } catch {
+      setResult(null);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.boletoValidator,
+        locale,
+        error_type: 'processing_failed',
+        action: 'validate',
+      });
     }
   };
   const outputJson = result ? JSON.stringify(result, null, 2) : '';
@@ -725,24 +757,23 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
 
   const startCamera = async () => {
     if (!videoRef.current) return;
-    const { BrowserMultiFormatReader } = await import('@zxing/browser');
-    const reader = new BrowserMultiFormatReader();
+    reportStartedOnce();
+    lastScannedTextRef.current = '';
 
     try {
+      const { BrowserMultiFormatReader } = await import('@zxing/browser');
+      const reader = new BrowserMultiFormatReader();
       controlsRef.current = await reader.decodeFromVideoDevice(undefined, videoRef.current, (decoded) => {
         if (!decoded) return;
         const text = decoded.getText();
+        if (lastScannedTextRef.current === text) return;
+        lastScannedTextRef.current = text;
         const parsed = parseBoleto(text);
         setInput(text);
         setResult(parsed);
         setCameraMessage(ui.cameraFound);
-        reportStartedOnce();
+        reportValidationResult(parsed);
         if (parsed.kind !== 'unknown') {
-          if (parsed.ok) {
-            trackEvent('tool_completed', { tool: TOOL_ID.boletoValidator, locale, result_type: parsed.kind });
-          } else {
-            trackEvent('tool_error', { tool: TOOL_ID.boletoValidator, locale, error_type: 'validation_failed' });
-          }
           stopCamera();
         }
       });
@@ -751,6 +782,12 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
     } catch (error) {
       setCameraMessage(error instanceof Error ? error.message : 'Falha ao abrir camera.');
       setCameraActive(false);
+      trackEvent('tool_error', {
+        tool: TOOL_ID.boletoValidator,
+        locale,
+        error_type: 'processing_failed',
+        action: 'camera_start',
+      });
     }
   };
 

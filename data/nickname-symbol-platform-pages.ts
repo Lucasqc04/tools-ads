@@ -535,10 +535,30 @@ export const toLocalizedNicknameSymbolPlatformLink = (
   };
 };
 
+const featuredPlatformOrder = [
+  'cod-mobile',
+  'free-fire',
+  'mobile-legends',
+  'honor-of-kings',
+  'delta-force',
+  'marvel-rivals',
+  'fortnite',
+  'roblox',
+  'pubg-mobile',
+  'valorant',
+  'counter-strike-2',
+];
+
 export const getFeaturedNicknameSymbolPlatformPages = (
   limit = 6,
-): NicknameSymbolPlatformPage[] =>
-  nicknameSymbolPlatformPages.filter((page) => page.featured).slice(0, limit);
+): NicknameSymbolPlatformPage[] => {
+  const rank = new Map(featuredPlatformOrder.map((platformId, index) => [platformId, index]));
+
+  return nicknameSymbolPlatformPages
+    .filter((page) => page.featured)
+    .sort((left, right) => (rank.get(left.platformId) ?? 999) - (rank.get(right.platformId) ?? 999))
+    .slice(0, limit);
+};
 
 export const getRelatedNicknameSymbolPlatformPages = (
   platformId: string,

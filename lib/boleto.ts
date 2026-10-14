@@ -23,6 +23,7 @@ export type BoletoParseResult = {
   bankCode?: string;
   bankName?: string;
   currencyCode?: string;
+  valueType?: string;
   amountCents?: number;
   amountDisplay?: string;
   dueFactor?: string;
@@ -191,6 +192,12 @@ const parseBankBarcode = (barcode: string, inputDigits: string): BoletoParseResu
     }
   });
 
+  if (barcode[3] !== '9') {
+    issues.push(
+      buildIssue('moeda', '9', barcode[3], 'Codigo de moeda do boleto bancario nao confere.'),
+    );
+  }
+
   const expectedGeneral = modulo11Boleto(`${barcode.slice(0, 4)}${barcode.slice(5)}`);
   if (expectedGeneral !== barcode[4]) {
     issues.push(buildIssue('codigo de barras', expectedGeneral, barcode[4], 'DAC geral do boleto nao confere.'));
@@ -234,6 +241,30 @@ const parseCollectionBarcode = (barcode: string, inputDigits: string): BoletoPar
     }
   }
 
+  if (barcode[0] !== '8') {
+    issues.push(
+      buildIssue('identificacao do produto', '8', barcode[0], 'Codigo de arrecadacao deve comecar com 8.'),
+    );
+  }
+
+  if (!['6', '7', '8', '9'].includes(barcode[2])) {
+    issues.push(
+      buildIssue('tipo de valor', '6, 7, 8 ou 9', barcode[2], 'Tipo de valor do codigo de arrecadacao nao confere.'),
+    );
+  }
+
+  const expectedGeneral = algorithm(`${barcode.slice(0, 3)}${barcode.slice(4)}`);
+  if (expectedGeneral !== barcode[3]) {
+    issues.push(
+      buildIssue(
+        'codigo de barras',
+        expectedGeneral,
+        barcode[3],
+        'DAC geral do codigo de arrecadacao nao confere.',
+      ),
+    );
+  }
+
   const amountCents = ['6', '8'].includes(barcode[2]) ? Number(barcode.slice(4, 15)) : undefined;
 
   return {
@@ -243,7 +274,7 @@ const parseCollectionBarcode = (barcode: string, inputDigits: string): BoletoPar
     lineDigits,
     barcode,
     formattedLine: formatCollectionLine(lineDigits),
-    currencyCode: barcode[2],
+    valueType: barcode[2],
     amountCents,
     amountDisplay: typeof amountCents === 'number' ? formatCurrency(amountCents) : undefined,
     freeField: barcode.slice(15),
