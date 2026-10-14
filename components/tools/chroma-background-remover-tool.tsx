@@ -1220,7 +1220,7 @@ export function ChromaBackgroundRemoverTool({
 
   return (
     <Card className="space-y-5">
-      <header className="rounded-lg border border-brand-200 bg-gradient-to-r from-brand-50 to-cyan-50 p-4">
+      <header className="border-b border-slate-200 pb-4">
         <div className="flex items-start gap-3">
           <div className="rounded-lg bg-white p-2 text-brand-700 shadow-sm">
             <SlidersHorizontal className="h-5 w-5" />

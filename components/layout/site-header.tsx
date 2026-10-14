@@ -22,15 +22,15 @@ export function SiteHeader({ locale = 'pt-br' }: SiteHeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
-      <Container className="py-3 md:py-0">
-        <div className="flex min-h-16 flex-col gap-3 md:flex-row md:items-center md:gap-6">
+      <Container className="py-2 md:py-0">
+        <div className="flex min-h-16 flex-col gap-2 md:flex-row md:items-center md:gap-6">
           <div className="flex items-center justify-between gap-4">
             <Link
               href={localizePath(locale, '/')}
               className="flex shrink-0 items-center gap-3 rounded-lg pr-1"
               aria-label={dictionary.header.goHomeAriaLabel || `Go to ${siteConfig.siteName}`}
             >
-              <BrandLogo priority size={36} imageClassName="h-9 w-9" />
+              <BrandLogo priority size={32} imageClassName="h-8 w-8" />
               <span className="text-base font-bold tracking-tight text-slate-950 sm:text-lg">
                 {siteConfig.siteName}
               </span>
@@ -55,7 +55,7 @@ export function SiteHeader({ locale = 'pt-br' }: SiteHeaderProps) {
                 <Link
                   key={href}
                   href={localizePath(locale, href)}
-                  className={`whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors md:px-3.5 md:py-2 ${
                     index === 0
                       ? 'bg-brand-50 text-brand-700 hover:bg-brand-100 hover:text-brand-800'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'

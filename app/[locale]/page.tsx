@@ -173,13 +173,13 @@ export default async function HomePage({
   const labelsSection = sectionLabels[locale];
 
   return (
-    <Container className="py-5 md:py-10">
+    <Container className="py-4 md:py-8">
       <div className="max-w-4xl">
         <span
           aria-hidden="true"
           className="mb-3 block h-1 w-10 rounded-full bg-brand-600 md:mb-4"
         />
-        <h1 className="max-w-4xl text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-5xl">
+        <h1 className="max-w-4xl text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
           {dictionary.home.h1}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-5 text-slate-700 md:mt-3 md:text-base md:leading-7">
@@ -187,11 +187,11 @@ export default async function HomePage({
         </p>
       </div>
 
-      <section className="mt-7 md:mt-9" aria-labelledby="catalog-title">
+      <section className="mt-6 md:mt-8" aria-labelledby="catalog-title">
         <div className="mb-3 flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between md:mb-4">
           <h2
             id="catalog-title"
-            className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl"
+            className="text-lg font-bold tracking-tight text-slate-900 md:text-xl"
           >
             {dictionary.home.catalogTitle}
           </h2>
@@ -231,8 +231,8 @@ export default async function HomePage({
       </div>
       */}
 
-      <section className="prose-lite mt-14 max-w-4xl border-t border-slate-200 pt-10">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+      <section className="prose-lite mt-12 max-w-4xl border-t border-slate-200 pt-8 md:mt-14 md:pt-10">
+        <h2 className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
           {dictionary.home.guideTitle}
         </h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2 md:gap-8">

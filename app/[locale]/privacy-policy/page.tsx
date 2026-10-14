@@ -34,15 +34,15 @@ export default async function PrivacyPolicyPage({ params }: PrivacyPolicyPagePro
   const dictionary = getDictionary(locale);
 
   return (
-    <Container className="py-8 md:py-10">
+    <Container className="py-5 md:py-8">
       <Breadcrumbs
         items={[
           { name: dictionary.common.home, href: localizePath(locale, '/') },
           { name: dictionary.common.privacyPolicy },
         ]}
       />
-      <article className="prose-lite max-w-reading space-y-6">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+      <article className="prose-lite max-w-reading space-y-5 md:space-y-6">
+        <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 md:text-3xl">
           {dictionary.privacy.h1}
         </h1>
         <p>{dictionary.privacy.intro}</p>
@@ -55,7 +55,7 @@ export default async function PrivacyPolicyPage({ params }: PrivacyPolicyPagePro
 
         {dictionary.privacy.sections.map((section) => (
           <section key={section.title} className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
               {section.title}
             </h2>
             <p>{section.body}</p>

@@ -10,14 +10,14 @@ export function ContentBlocks({
   title = 'Guia rápido e contexto de uso',
 }: ContentBlocksProps) {
   return (
-    <section aria-labelledby="tool-content-title" className="prose-lite space-y-8">
-      <h2 id="tool-content-title" className="text-2xl font-bold tracking-tight text-slate-900">
+    <section aria-labelledby="tool-content-title" className="prose-lite space-y-6 md:space-y-8">
+      <h2 id="tool-content-title" className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
         {title}
       </h2>
 
       {blocks.map((block) => (
-        <article key={block.title} className="space-y-4">
-          <h3 className="text-xl font-semibold tracking-tight text-slate-900">{block.title}</h3>
+        <article key={block.title} className="space-y-3 md:space-y-4">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 md:text-xl">{block.title}</h3>
           {block.paragraphs.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}

@@ -91,7 +91,7 @@ export function ToolPageShell({
   };
 
   return (
-    <Container className="py-8 md:py-10">
+    <Container className="py-5 md:py-8">
       <ToolViewTracker toolId={tool.id} locale={locale} />
       <Breadcrumbs
         items={[
@@ -101,19 +101,19 @@ export function ToolPageShell({
         ]}
       />
 
-      <header className="max-w-reading space-y-3">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">{tool.h1}</h1>
-        <p className="text-base leading-7 text-slate-700 md:text-lg">{tool.intro}</p>
+      <header className="max-w-reading space-y-2">
+        <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl">{tool.h1}</h1>
+        <p className="text-sm leading-6 text-slate-700 md:text-base md:leading-7">{tool.intro}</p>
       </header>
 
-      <div className="mt-8">
+      <div className="mt-6 md:mt-8">
         <ZhTranslationNotice locale={locale} toolId={tool.id} />
 
-        {beforeToolSection ? <div className="mb-8">{beforeToolSection}</div> : null}
+        {beforeToolSection ? <div className="mb-6 md:mb-8">{beforeToolSection}</div> : null}
 
-        <main className="space-y-8">
+        <main className="space-y-6 md:space-y-8">
           <section aria-labelledby="tool-interface-title" className="space-y-3">
-            <h2 id="tool-interface-title" className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 id="tool-interface-title" className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
               {dictionary.toolShell.useToolTitle}
             </h2>
             {toolUi}

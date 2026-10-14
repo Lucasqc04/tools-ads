@@ -240,7 +240,7 @@ export function GamerUsernameGeneratorTool({
 
   return (
     <div className="space-y-6">
-      <Card className="space-y-4 p-4 md:p-6">
+      <Card className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-1 block text-xs font-medium text-slate-500">{ui.gameLabel}</label>

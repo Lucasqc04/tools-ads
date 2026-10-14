@@ -8,9 +8,9 @@ export default function LocalizedNotFound() {
   const dictionary = getDictionary(locale);
 
   return (
-    <Container className="py-16">
-      <div className="max-w-reading space-y-4 rounded-xl border border-slate-200 bg-white p-8 text-center shadow-card">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+    <Container className="py-8 md:py-12">
+      <div className="max-w-reading space-y-4 rounded-xl border border-slate-200 bg-white p-5 text-center shadow-card md:p-8">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
           {dictionary.notFound.title}
         </h1>
         <p className="text-slate-700">{dictionary.notFound.description}</p>

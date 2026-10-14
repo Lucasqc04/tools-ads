@@ -32,15 +32,15 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const dictionary = getDictionary(locale);
 
   return (
-    <Container className="py-8 md:py-10">
+    <Container className="py-5 md:py-8">
       <Breadcrumbs
         items={[
           { name: dictionary.common.home, href: localizePath(locale, '/') },
           { name: dictionary.common.about },
         ]}
       />
-      <article className="prose-lite max-w-reading space-y-6">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+      <article className="prose-lite max-w-reading space-y-5 md:space-y-6">
+        <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 md:text-3xl">
           {dictionary.about.h1}
         </h1>
         <p>{dictionary.about.intro}</p>
@@ -51,7 +51,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
         </div>
         */}
 
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h2 className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
           {dictionary.about.principlesTitle}
         </h2>
         <ul>
@@ -60,7 +60,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
           ))}
         </ul>
 
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h2 className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
           {dictionary.about.qualityTitle}
         </h2>
         <p>{dictionary.about.qualityParagraph}</p>

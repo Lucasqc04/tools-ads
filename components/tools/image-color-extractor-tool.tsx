@@ -255,7 +255,7 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
 
       {/* Image preview */}
       {imageUrl && (
-        <Card className="p-4 md:p-6">
+        <Card>
           <div className="flex justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -269,7 +269,7 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
 
       {/* Controls */}
       {imageUrl && (
-        <Card className="p-4 md:p-6">
+        <Card>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
             <div className="flex-1">
               <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -303,7 +303,7 @@ export function ImageColorExtractorTool({ locale = 'pt-br' }: ImageColorExtracto
 
       {/* Palette display */}
       {colors.length > 0 && (
-        <Card className="p-4 md:p-6">
+        <Card>
           <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{l('palette', locale)}</h3>
 
           {/* Color swatches */}

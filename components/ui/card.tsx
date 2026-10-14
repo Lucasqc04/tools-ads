@@ -1,11 +1,16 @@
 import type { HTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
 
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+type CardProps = HTMLAttributes<HTMLDivElement> & {
+  padding?: 'default' | 'none';
+};
+
+export function Card({ className, padding = 'default', ...props }: CardProps) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-slate-200 bg-white p-5 shadow-card',
+        'rounded-xl border border-slate-200 bg-white shadow-card',
+        padding === 'default' && 'p-4 md:p-5',
         className,
       )}
       {...props}

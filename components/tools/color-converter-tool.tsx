@@ -183,7 +183,7 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
   return (
     <div className="space-y-6">
       {/* Input Section */}
-      <Card className="p-4 md:p-6">
+      <Card>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <div className="flex-1">
             <Input
@@ -224,7 +224,7 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
           {/* Preview + Formats */}
           <div className="grid gap-4 md:grid-cols-2">
             {/* Preview */}
-            <Card className="p-4 md:p-6">
+            <Card>
               <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{l('preview', locale)}</h3>
               <div
                 className="flex h-32 items-center justify-center rounded-lg border text-sm font-mono"
@@ -247,7 +247,7 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
             </Card>
 
             {/* Formats */}
-            <Card className="p-4 md:p-6">
+            <Card>
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">{l('formats', locale)}</h3>
                 <Button variant="ghost" className="h-8 px-3 text-xs" onClick={copyAllFormats}>
@@ -273,7 +273,7 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
           </div>
 
           {/* Contrast Checker */}
-          <Card className="p-4 md:p-6">
+          <Card>
             <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{l('contrast', locale)}</h3>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
               <div className="flex-1">
@@ -323,7 +323,7 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
           </Card>
 
           {/* Scale */}
-          <Card className="p-4 md:p-6">
+          <Card>
             <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{l('scale', locale)}</h3>
             <div className="flex flex-wrap gap-1">
               {scale.map((s) => (
@@ -350,7 +350,7 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
           </Card>
 
           {/* Palettes */}
-          <Card className="p-4 md:p-6">
+          <Card>
             <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{l('palettes', locale)}</h3>
             <div className="grid gap-4 sm:grid-cols-3">
               {/* Complementary */}
@@ -385,7 +385,7 @@ export function ColorConverterTool({ locale = 'pt-br' }: ColorConverterToolProps
           </Card>
 
           {/* Favorites */}
-          <Card className="p-4 md:p-6">
+          <Card>
             <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">{l('favorites', locale)}</h3>
             <div className="flex flex-wrap gap-1">
               {favorites.length === 0 && (

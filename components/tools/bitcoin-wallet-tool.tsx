@@ -914,7 +914,7 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
 
   return (
     <Card className="space-y-5">
-      <header className="rounded-xl border border-brand-200 bg-gradient-to-r from-brand-50 to-indigo-50 p-4">
+      <header className="border-b border-slate-200 pb-4">
         <h3 className="text-lg font-semibold text-slate-900">{ui.title}</h3>
         <p className="mt-1 text-sm text-slate-700">{ui.intro}</p>
       </header>

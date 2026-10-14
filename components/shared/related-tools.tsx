@@ -17,7 +17,7 @@ export function RelatedTools({ tools, locale = 'pt-br' }: RelatedToolsProps) {
 
   return (
     <section aria-labelledby="related-tools-title" className="space-y-3">
-      <h2 id="related-tools-title" className="text-2xl font-bold tracking-tight text-slate-900">
+      <h2 id="related-tools-title" className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
         {dictionary.toolShell.relatedToolsTitle}
       </h2>
       <p className="text-sm text-slate-600">

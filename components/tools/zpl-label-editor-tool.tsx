@@ -545,7 +545,7 @@ export function ZplLabelEditorTool({ locale = 'pt-br' }: ZplLabelEditorToolProps
 
   if (!labels.length) {
     return (
-      <Card className="mx-auto max-w-4xl space-y-6 p-5 sm:p-8">
+      <Card className="mx-auto max-w-4xl space-y-6">
         {draft ? (
           <div className="flex flex-col gap-3 rounded-xl border border-brand-200 bg-brand-50 p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-medium text-brand-900">{ui.draftFound}</p>
@@ -586,7 +586,7 @@ export function ZplLabelEditorTool({ locale = 'pt-br' }: ZplLabelEditorToolProps
   }
 
   return (
-    <Card className="overflow-hidden p-0">
+    <Card padding="none" className="overflow-hidden">
       <div className="flex flex-col gap-4 border-b border-slate-200 px-4 py-4 lg:flex-row lg:items-center lg:justify-between lg:px-5">
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-slate-900">{fileName}</p>

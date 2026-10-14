@@ -20,7 +20,7 @@ export function SiteFooter({ locale = 'pt-br' }: Readonly<SiteFooterProps>) {
   }[locale];
 
   return (
-    <footer className="mt-16 border-t border-slate-200 bg-white">
+    <footer className="mt-12 border-t border-slate-200 bg-white md:mt-16">
       <Container className="py-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
           <div className="max-w-xl space-y-3">

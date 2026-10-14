@@ -78,10 +78,10 @@ export function ToolCatalogSections({
   const utilityToolHeadingLevel = headingLevel === 2 ? 3 : 4;
 
   return (
-    <div className="space-y-10 md:space-y-12">
+    <div className="space-y-8 md:space-y-10">
       {hasTechnical ? (
-        <section className="space-y-5">
-          <SectionHeading className="border-b border-slate-200 pb-3 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+        <section className="space-y-4 md:space-y-5">
+          <SectionHeading className="border-b border-slate-200 pb-3 text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
             {labelsSection.technical}
           </SectionHeading>
 
@@ -109,8 +109,8 @@ export function ToolCatalogSections({
       ) : null}
 
       {hasGaming ? (
-        <section className="space-y-5">
-          <SectionHeading className="border-b border-slate-200 pb-3 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+        <section className="space-y-4 md:space-y-5">
+          <SectionHeading className="border-b border-slate-200 pb-3 text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
             {labelsSection.gaming}
           </SectionHeading>
 
@@ -139,7 +139,7 @@ export function ToolCatalogSections({
 
       {utilityTools.length > 0 ? (
         <section className="space-y-4">
-          <SectionHeading className="border-b border-slate-200 pb-3 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+          <SectionHeading className="border-b border-slate-200 pb-3 text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
             {labelsSection.utility}
           </SectionHeading>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">

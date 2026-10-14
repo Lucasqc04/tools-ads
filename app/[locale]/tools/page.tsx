@@ -172,7 +172,7 @@ export default async function ToolsIndexPage({
   const labelsSection = sectionLabels[locale];
 
   return (
-    <Container className="py-6 md:py-10">
+    <Container className="py-4 md:py-8">
       <Breadcrumbs
         items={[
           { name: dictionary.common.home, href: localizePath(locale, '/') },
@@ -181,7 +181,7 @@ export default async function ToolsIndexPage({
       />
 
       <header className="max-w-reading space-y-2">
-        <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 md:text-4xl">
+        <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 md:text-3xl">
           {dictionary.toolsIndex.h1}
         </h1>
         <p className="text-sm leading-6 text-slate-700 md:text-base md:leading-7">
@@ -189,7 +189,7 @@ export default async function ToolsIndexPage({
         </p>
       </header>
 
-      <div className="mt-5" aria-label="Available tools">
+      <div className="mt-4" aria-label="Available tools">
         <ToolCatalogExplorer
           tools={tools}
           locale={locale}

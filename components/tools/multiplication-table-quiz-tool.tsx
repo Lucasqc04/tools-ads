@@ -396,7 +396,7 @@ export function MultiplicationTableQuizTool({
 
         {viewMode === 'table' ? (
           <div className="mt-4 space-y-4">
-            <Card className="p-4 md:p-6">
+            <Card>
               <p className="mb-2 text-xs font-medium text-slate-500">{ui.selectNumber}</p>
               <div className="flex flex-wrap gap-2">
                 {Array.from({ length: MAX_TABLE_NUMBER }, (_, index) => index + 1).map((n) => (
@@ -436,7 +436,7 @@ export function MultiplicationTableQuizTool({
         ) : (
           <div className="mt-4 space-y-4">
             {!questions.length || roundResult ? (
-              <Card className="space-y-4 p-4 md:p-6">
+              <Card className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-xs font-medium text-slate-500">{ui.difficulty}</span>
                   {(['easy', 'medium', 'hard'] as QuizDifficulty[]).map((level) => (
@@ -494,7 +494,7 @@ export function MultiplicationTableQuizTool({
             ) : null}
 
             {questions.length > 0 && !roundResult && currentQuestion ? (
-              <Card className="space-y-4 p-4 md:p-6 text-center">
+              <Card className="space-y-4 text-center">
                 <p className="text-xs font-medium text-slate-500">
                   {ui.question(currentIndex + 1, questions.length)}
                 </p>
@@ -537,7 +537,7 @@ export function MultiplicationTableQuizTool({
               </Card>
             ) : null}
 
-            <Card className="p-4 md:p-6">
+            <Card>
               <p className="mb-2 text-sm font-semibold text-slate-700">{ui.mistakesTitle}</p>
               {mistakes.length === 0 ? (
                 <p className="text-xs text-slate-400">{ui.mistakesEmpty}</p>

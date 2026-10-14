@@ -2823,7 +2823,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   };
 
   return (
-    <Card className="space-y-6 overflow-hidden p-4 md:p-6">
+    <Card className="space-y-6 overflow-hidden">
       {renderExpandedQrModal()}
       <div className="flex flex-wrap gap-2">
         <button

@@ -306,7 +306,7 @@ export function AudioVideoTranscriptionTool({ locale = 'pt-br' }: AudioVideoTran
 
   return (
     <Card className="space-y-5">
-      <header className="rounded-xl border border-brand-200 bg-gradient-to-r from-brand-50 to-indigo-50 p-4">
+      <header className="border-b border-slate-200 pb-4">
         <div className="flex items-start gap-2">
           <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" aria-hidden="true" />
           <p className="text-sm text-slate-700">{ui.privacyNote}</p>

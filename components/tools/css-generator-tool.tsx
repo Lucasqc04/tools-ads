@@ -1471,7 +1471,7 @@ export function CssGeneratorTool({ locale = 'pt-br', initialCategory = 'presets'
   const categoryList: CategoryId[] = ['presets', 'shadow', 'radius', 'gradient', 'glass', 'border', 'text', 'spacing', 'transform', 'filters', 'animation'];
 
   return (
-    <Card className="overflow-hidden p-0">
+    <Card padding="none" className="overflow-hidden">
       {/* Mobile: preview + toggle */}
       <div className="lg:hidden">
         {/* Preview area mobile */}
