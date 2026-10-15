@@ -231,18 +231,15 @@ export function NicknameSymbolGeneratorTool({
   const ui = uiByLocale[locale];
   const defaultPlatform =
     getNicknameSymbolPlatformById(initialPlatformId ?? 'cod-mobile') ?? nicknameSymbolPlatforms[0];
-  const defaultFrame = getNicknameFrameById(defaultPlatform?.recommendedFrameIds[0] ?? 'plain');
 
   const [platformId, setPlatformId] = useState(defaultPlatform?.id ?? 'fortnite');
   const [baseName, setBaseName] = useState('Shadow');
-  const [styleId, setStyleId] = useState<NicknameTextStyleId>(
-    defaultPlatform?.recommendedStyleId ?? 'original',
-  );
-  const [leftSymbol, setLeftSymbol] = useState(defaultFrame?.left ?? 'ϟ');
-  const [rightSymbol, setRightSymbol] = useState(defaultFrame?.right ?? 'ϟ');
-  const [categoryId, setCategoryId] = useState<NicknameSymbolCategoryId | 'all'>('popular');
+  const [styleId, setStyleId] = useState<NicknameTextStyleId>('original');
+  const [leftSymbol, setLeftSymbol] = useState('');
+  const [rightSymbol, setRightSymbol] = useState('');
+  const [categoryId, setCategoryId] = useState<NicknameSymbolCategoryId | 'all'>('all');
   const [symbolSearch, setSymbolSearch] = useState('');
-  const [selectedSymbol, setSelectedSymbol] = useState(defaultFrame?.left || 'ϟ');
+  const [selectedSymbol, setSelectedSymbol] = useState('');
   const [copiedId, setCopiedId] = useState('');
   const [feedback, setFeedback] = useState('');
   const baseNameInputRef = useRef<HTMLInputElement>(null);
@@ -406,13 +403,7 @@ export function NicknameSymbolGeneratorTool({
     }
 
     trackStarted();
-
-    const frame = getNicknameFrameById(platform.recommendedFrameIds[0] ?? 'plain');
     setPlatformId(platform.id);
-    setStyleId(platform.recommendedStyleId);
-    setLeftSymbol(frame?.left ?? '');
-    setRightSymbol(frame?.right ?? '');
-    setSelectedSymbol(frame?.left || frame?.right || '★');
     trackEvent('mode_selected', {
       tool: TOOL_ID.nicknameSymbolGenerator,
       locale,
@@ -477,59 +468,38 @@ export function NicknameSymbolGeneratorTool({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
-      <section className="space-y-4 border-b border-slate-200 p-4 sm:p-5 md:p-6">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="min-w-0 space-y-2">
-            <span className="text-sm font-semibold text-slate-800">{ui.nameLabel}</span>
-            <div className="flex gap-2">
-              <input
-                ref={baseNameInputRef}
-                value={baseName}
-                onChange={(event) => updateBaseName(event.currentTarget)}
-                onFocus={(event) => rememberBaseNameSelection(event.currentTarget)}
-                onSelect={(event) => rememberBaseNameSelection(event.currentTarget)}
-                onKeyUp={(event) => rememberBaseNameSelection(event.currentTarget)}
-                onBlur={(event) => rememberBaseNameSelection(event.currentTarget)}
-                placeholder={ui.namePlaceholder}
-                aria-describedby="nickname-editor-hint"
-                autoComplete="off"
-                spellCheck={false}
-                className="min-h-12 min-w-0 flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-base text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
-              />
-              <button
-                type="button"
-                onClick={clearName}
-                aria-label={ui.clearName}
-                title={ui.clearName}
-                className="inline-flex min-h-12 min-w-12 items-center justify-center rounded-xl border border-slate-300 text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700"
-              >
-                <Trash2 className="h-4 w-4" aria-hidden="true" />
-              </button>
-            </div>
-            <span id="nickname-editor-hint" className="block text-xs leading-5 text-slate-500">
-              {ui.nameHint}
-            </span>
-          </label>
-
-          <label className="min-w-0 space-y-2">
-            <span className="text-sm font-semibold text-slate-800">{ui.platformLabel}</span>
-            <select
-              value={platformId}
-              onChange={(event) => selectPlatform(event.target.value)}
-              className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+      <section className="border-b border-slate-200 p-4 sm:p-5 md:p-6">
+        <label className="block min-w-0 space-y-2">
+          <span className="text-sm font-semibold text-slate-800">{ui.nameLabel}</span>
+          <div className="flex gap-2">
+            <input
+              ref={baseNameInputRef}
+              value={baseName}
+              onChange={(event) => updateBaseName(event.currentTarget)}
+              onFocus={(event) => rememberBaseNameSelection(event.currentTarget)}
+              onSelect={(event) => rememberBaseNameSelection(event.currentTarget)}
+              onKeyUp={(event) => rememberBaseNameSelection(event.currentTarget)}
+              onBlur={(event) => rememberBaseNameSelection(event.currentTarget)}
+              placeholder={ui.namePlaceholder}
+              aria-describedby="nickname-editor-hint"
+              autoComplete="off"
+              spellCheck={false}
+              className="min-h-12 min-w-0 flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-base text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+            />
+            <button
+              type="button"
+              onClick={clearName}
+              aria-label={ui.clearName}
+              title={ui.clearName}
+              className="inline-flex min-h-12 min-w-12 items-center justify-center rounded-xl border border-slate-300 text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700"
             >
-              {platformGroups.map((group) => (
-                <optgroup key={group.category} label={group.label}>
-                  {group.platforms.map((platform) => (
-                    <option key={platform.id} value={platform.id}>
-                      {platform.name}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </label>
-        </div>
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+          <span id="nickname-editor-hint" className="block text-xs leading-5 text-slate-500">
+            {ui.nameHint}
+          </span>
+        </label>
       </section>
 
       <section className="border-b border-slate-200 bg-slate-950 px-4 py-6 text-white sm:px-5 md:px-6">
@@ -672,6 +642,25 @@ export function NicknameSymbolGeneratorTool({
       </section>
 
       <section className="space-y-4 border-b border-slate-200 p-4 sm:p-5 md:p-6">
+        <label className="block max-w-xl space-y-2">
+          <span className="text-sm font-semibold text-slate-800">{ui.platformLabel}</span>
+          <select
+            value={platformId}
+            onChange={(event) => selectPlatform(event.target.value)}
+            className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+          >
+            {platformGroups.map((group) => (
+              <optgroup key={group.category} label={group.label}>
+                {group.platforms.map((platform) => (
+                  <option key={platform.id} value={platform.id}>
+                    {platform.name}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </label>
+
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h3 className="text-lg font-semibold text-slate-900">{ui.recommendedTitle}</h3>
