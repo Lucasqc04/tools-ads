@@ -19,7 +19,7 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
   'pt-br': {
     name: 'Gerador de Simbolos para Nickname',
     shortDescription:
-      'Crie nicknames com 224 simbolos, 28 molduras e 12 estilos de letras para Fortnite, Free Fire, Roblox, Valorant, COD Mobile e outros jogos.',
+      'Crie nicknames com mais de 650 simbolos e emojis, 28 molduras e 12 estilos de letras para Fortnite, Free Fire, Roblox, Valorant, COD Mobile e outros jogos.',
     primaryKeyword: 'simbolos para nickname fortnite',
     secondaryKeywords: [
       'gerador de nickname com simbolos',
@@ -36,7 +36,7 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
       'Monte nicknames para Fortnite e outros jogos com teclado de simbolos. Insira caracteres no meio do nome, escolha molduras e copie sem cadastro.',
     h1: 'Gerador de Simbolos para Nickname de Fortnite e Jogos',
     intro:
-      'Digite seu nome e use o teclado para inserir 224 simbolos em qualquer posicao. Combine 14 categorias, 28 molduras e 12 estilos Unicode.',
+      'Digite seu nome e use o teclado para inserir mais de 650 simbolos e emojis em qualquer posicao. Explore 22 categorias, 28 molduras e 12 estilos Unicode.',
     contentBlocks: [
       {
         title: 'Como criar um nickname gamer com simbolos',
@@ -104,7 +104,7 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
   en: {
     name: 'Gaming Name Symbol Generator',
     shortDescription:
-      'Create gaming names with 224 symbols, 28 frames, and 12 letter styles for Fortnite, Free Fire, Roblox, Valorant, COD Mobile, and more.',
+      'Create gaming names with over 650 symbols and emojis, 28 frames, and 12 letter styles for Fortnite, Free Fire, Roblox, Valorant, COD Mobile, and more.',
     primaryKeyword: 'fortnite name symbols generator',
     secondaryKeywords: [
       'gaming name symbol generator',
@@ -121,7 +121,7 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
       'Build Fortnite and gaming names with a symbol keyboard. Insert characters anywhere, choose Unicode frames and styles, then copy with no sign-up.',
     h1: 'Fortnite Name Symbols Generator for Gaming Nicknames',
     intro:
-      'Type your name and use the keyboard to insert 224 symbols anywhere. Combine 14 categories, 28 frames, and 12 Unicode letter styles.',
+      'Type your name and use the keyboard to insert over 650 symbols and emojis anywhere. Explore 22 categories, 28 frames, and 12 Unicode letter styles.',
     contentBlocks: [
       {
         title: 'Build a gaming name with symbols',
@@ -189,7 +189,7 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
   es: {
     name: 'Generador de Simbolos para Nicknames',
     shortDescription:
-      'Crea nombres con 224 simbolos, 28 marcos y 12 estilos de letras para Fortnite, Free Fire, Roblox, Valorant, COD Mobile y otros juegos.',
+      'Crea nombres con mas de 650 simbolos y emojis, 28 marcos y 12 estilos de letras para Fortnite, Free Fire, Roblox, Valorant, COD Mobile y otros juegos.',
     primaryKeyword: 'simbolos para nombre fortnite',
     secondaryKeywords: [
       'generador de nicknames con simbolos',
@@ -206,7 +206,7 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
       'Monta nombres para Fortnite y otros juegos con un teclado de simbolos. Inserta caracteres donde quieras, elige marcos y copia sin registro.',
     h1: 'Generador de Simbolos para Nombres de Fortnite y Juegos',
     intro:
-      'Escribe tu nombre y usa el teclado para insertar 224 simbolos en cualquier posicion. Combina 14 categorias, 28 marcos y 12 estilos Unicode.',
+      'Escribe tu nombre y usa el teclado para insertar mas de 650 simbolos y emojis en cualquier posicion. Explora 22 categorias, 28 marcos y 12 estilos Unicode.',
     contentBlocks: [
       {
         title: 'Como crear un nickname gamer con simbolos',
@@ -274,7 +274,7 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
   zh: {
     name: '游戏昵称符号生成器',
     shortDescription:
-      '为 Fortnite、Free Fire、Roblox、Valorant、COD Mobile 等游戏创建带有224种符号、28种花体边框和12种字体风格的昵称。',
+      '为 Fortnite、Free Fire、Roblox、Valorant、COD Mobile 等游戏创建带有650多种符号和表情、28种花体边框和12种字体风格的昵称。',
     primaryKeyword: 'fortnite 昵称符号生成器',
     secondaryKeywords: [
       '游戏昵称符号生成器',
@@ -291,7 +291,7 @@ const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
       '使用符号键盘搭建 Fortnite 和其他游戏的昵称。可在任意位置插入字符,选择 Unicode 花体边框和风格,无需注册即可复制。',
     h1: 'Fortnite 游戏昵称符号生成器',
     intro:
-      '输入你的名字,使用符号键盘在任意位置插入224种符号。可组合14个分类、28种花体边框和12种 Unicode 字体风格。',
+      '输入你的名字,使用符号键盘在任意位置插入650多种符号和表情。浏览22个分类、28种花体边框和12种 Unicode 字体风格。',
     contentBlocks: [
       {
         title: '用符号打造游戏昵称',

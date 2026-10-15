@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { Check, Copy, Search, Shuffle, Sparkles, Trash2 } from 'lucide-react';
 import { trackEvent, TOOL_ID } from '@/lib/analytics';
 import {
@@ -80,7 +80,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     recommendedDescription: 'Comece por opcoes curtas e ajuste depois se precisar.',
     usePreset: 'Usar preset',
     symbolLibraryTitle: 'Catalogo de simbolos',
-    symbolLibraryDescription: 'Escolha uma categoria, busque um simbolo, clique para inserir ou copie.',
+    symbolLibraryDescription: 'Deslize a grade para os lados para trocar de categoria; role para explorar simbolos e emojis. Toque para inserir ou copie.',
     allSymbols: 'Todos',
     searchSymbols: 'Buscar simbolos',
     searchPlaceholder: 'Buscar por simbolo ou categoria',
@@ -117,7 +117,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     recommendedDescription: 'Start with short options and customize only when needed.',
     usePreset: 'Use preset',
     symbolLibraryTitle: 'Symbol catalog',
-    symbolLibraryDescription: 'Choose a category, search for a symbol, select it to insert, or copy it.',
+    symbolLibraryDescription: 'Swipe the grid sideways to switch categories, then scroll to explore symbols and emojis. Tap to insert or copy.',
     allSymbols: 'All',
     searchSymbols: 'Search symbols',
     searchPlaceholder: 'Search by symbol or category',
@@ -154,7 +154,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     recommendedDescription: 'Empieza con opciones cortas y personaliza solo si hace falta.',
     usePreset: 'Usar preset',
     symbolLibraryTitle: 'Catalogo de simbolos',
-    symbolLibraryDescription: 'Elige una categoria, busca un simbolo, seleccionalo para insertarlo o copialo.',
+    symbolLibraryDescription: 'Desliza la cuadrícula hacia los lados para cambiar de categoría y baja para explorar símbolos y emojis. Toca para insertar o copiar.',
     allSymbols: 'Todos',
     searchSymbols: 'Buscar simbolos',
     searchPlaceholder: 'Buscar por simbolo o categoria',
@@ -191,7 +191,7 @@ const uiByLocale: Record<AppLocale, UiCopy> = {
     recommendedDescription: '先从简短的选项开始,有需要时再调整。',
     usePreset: '使用预设',
     symbolLibraryTitle: '符号目录',
-    symbolLibraryDescription: '选择分类、搜索符号,点击即可插入,也可以直接复制。',
+    symbolLibraryDescription: '左右滑动网格切换分类,向下滚动浏览符号和表情。点击即可插入或复制。',
     allSymbols: '全部',
     searchSymbols: '搜索符号',
     searchPlaceholder: '按符号或分类搜索',
@@ -224,6 +224,11 @@ const copyFieldByActionId: Record<string, string> = {
   all: 'variant_list',
 };
 
+const catalogCategoryIds: Array<NicknameSymbolCategoryId | 'all'> = [
+  'all',
+  ...nicknameSymbolCategories.map(({ id }) => id),
+];
+
 export function NicknameSymbolGeneratorTool({
   locale = 'pt-br',
   initialPlatformId,
@@ -237,16 +242,25 @@ export function NicknameSymbolGeneratorTool({
   const [styleId, setStyleId] = useState<NicknameTextStyleId>('original');
   const [leftSymbol, setLeftSymbol] = useState('');
   const [rightSymbol, setRightSymbol] = useState('');
-  const [categoryId, setCategoryId] = useState<NicknameSymbolCategoryId | 'all'>('all');
+  const [categoryId, setCategoryId] = useState<NicknameSymbolCategoryId | 'all'>('popular');
   const [symbolSearch, setSymbolSearch] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState('');
   const [copiedId, setCopiedId] = useState('');
   const [feedback, setFeedback] = useState('');
   const baseNameInputRef = useRef<HTMLInputElement>(null);
   const activeBaseNameInputRef = useRef<HTMLInputElement | null>(null);
+  const categoryNavigationRef = useRef<HTMLDivElement>(null);
+  const catalogSwipeStartRef = useRef<{ x: number; y: number } | null>(null);
+  const suppressCatalogClickRef = useRef(false);
   const baseNameSelectionRef = useRef({ start: 6, end: 6 });
   const hasStartedRef = useRef(false);
   const hasCompletedRef = useRef(false);
+
+  useEffect(() => {
+    categoryNavigationRef.current
+      ?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, [categoryId]);
 
   const trackStarted = () => {
     if (hasStartedRef.current) {
@@ -270,7 +284,7 @@ export function NicknameSymbolGeneratorTool({
 
   const symbolEntries = useMemo(() => {
     const query = symbolSearch.trim().toLocaleLowerCase(locale);
-    const categories = query || categoryId === 'all'
+    const categories = categoryId === 'all'
       ? nicknameSymbolCategories
       : nicknameSymbolCategories.filter((category) => category.id === categoryId);
     const uniqueSymbols = new Map<string, { symbol: string; categoryName: string }>();
@@ -409,6 +423,39 @@ export function NicknameSymbolGeneratorTool({
       locale,
       mode: platform.id,
     });
+  };
+
+  const handleCatalogPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    catalogSwipeStartRef.current = { x: event.clientX, y: event.clientY };
+  };
+
+  const handleCatalogPointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const start = catalogSwipeStartRef.current;
+    catalogSwipeStartRef.current = null;
+
+    if (!start || symbolSearch.trim()) {
+      return;
+    }
+
+    const deltaX = event.clientX - start.x;
+    const deltaY = event.clientY - start.y;
+
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) {
+      return;
+    }
+
+    const currentIndex = catalogCategoryIds.indexOf(categoryId);
+    const nextIndex = currentIndex + (deltaX < 0 ? 1 : -1);
+    const nextCategoryId = catalogCategoryIds[nextIndex];
+
+    suppressCatalogClickRef.current = true;
+    window.setTimeout(() => {
+      suppressCatalogClickRef.current = false;
+    }, 350);
+
+    if (nextCategoryId) {
+      setCategoryId(nextCategoryId);
+    }
   };
 
   const applyFrame = (frameId: string) => {
@@ -567,7 +614,12 @@ export function NicknameSymbolGeneratorTool({
           />
         </label>
 
-        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
+        <div
+          ref={categoryNavigationRef}
+          role="group"
+          aria-label={ui.symbolLibraryTitle}
+          className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2"
+        >
           <button
             type="button"
             onClick={() => setCategoryId('all')}
@@ -579,6 +631,7 @@ export function NicknameSymbolGeneratorTool({
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200')
             }
           >
+            <span className="mr-1" aria-hidden="true">✦</span>
             {ui.allSymbols}
           </button>
           {nicknameSymbolCategories.map((category) => (
@@ -594,13 +647,21 @@ export function NicknameSymbolGeneratorTool({
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200')
               }
             >
+              <span className="mr-1" aria-hidden="true">{category.symbols[0]}</span>
               {category.labelByLocale[locale]}
             </button>
           ))}
         </div>
 
         {symbolEntries.length ? (
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10">
+          <div
+            onPointerDown={handleCatalogPointerDown}
+            onPointerUp={handleCatalogPointerUp}
+            onPointerCancel={() => {
+              catalogSwipeStartRef.current = null;
+            }}
+            className="grid max-h-[min(60vh,28rem)] touch-pan-y select-none grid-cols-3 gap-2 overflow-y-auto pr-1 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10"
+          >
             {symbolEntries.map(({ symbol }) => (
               <div
                 key={symbol}
@@ -608,7 +669,13 @@ export function NicknameSymbolGeneratorTool({
               >
                 <button
                   type="button"
-                  onClick={() => applySymbol(symbol)}
+                  onClick={() => {
+                    if (suppressCatalogClickRef.current) {
+                      suppressCatalogClickRef.current = false;
+                      return;
+                    }
+                    applySymbol(symbol);
+                  }}
                   aria-label={ui.insertSymbol + ': ' + symbol}
                   aria-pressed={selectedSymbol === symbol}
                   className={
@@ -620,7 +687,13 @@ export function NicknameSymbolGeneratorTool({
                 </button>
                 <button
                   type="button"
-                  onClick={() => copyText(symbol, 'symbol')}
+                  onClick={() => {
+                    if (suppressCatalogClickRef.current) {
+                      suppressCatalogClickRef.current = false;
+                      return;
+                    }
+                    void copyText(symbol, 'symbol');
+                  }}
                   aria-label={ui.copySymbol + ': ' + symbol}
                   title={ui.copySymbol}
                   className="inline-flex min-h-12 w-10 shrink-0 items-center justify-center border-l border-slate-200 text-slate-500 transition hover:bg-slate-50 hover:text-brand-700"
