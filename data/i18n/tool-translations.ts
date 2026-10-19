@@ -4468,6 +4468,79 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
 
 const zhTranslations: Record<ToolId, ToolTranslation> = {
   ...enTranslations,
+  'html-viewer': {
+    name: '在线 HTML 编辑器与预览工具',
+    shortDescription:
+      '在浏览器中编辑 HTML、CSS 和 JavaScript，使用沙盒预览、控制台调试、代码模板和 HTML 文件导出。',
+    primaryKeyword: '在线 HTML 编辑器',
+    secondaryKeywords: [
+      'HTML 在线预览',
+      'HTML CSS JS 在线编辑器',
+      '在线运行 HTML 代码',
+      '带控制台的 HTML 编辑器',
+      'HTML 沙盒预览',
+      '浏览器 HTML playground',
+    ],
+    searchIntent:
+      '开发者、设计师和学生希望快速编写并预览 HTML、CSS 和 JavaScript 片段，并在浏览器中检查控制台输出。',
+    seoTitle: '在线 HTML 编辑器 | CSS、JavaScript、实时预览与控制台',
+    seoDescription:
+      '在线编写 HTML、CSS 和 JavaScript，使用语法高亮、沙盒预览和控制台调试。代码在浏览器本地处理，可导出完整 HTML 文件。',
+    h1: '在线 HTML 编辑器：实时预览 CSS、JavaScript 和控制台',
+    intro:
+      '直接在浏览器中编写和运行 HTML、CSS 与 JavaScript，查看响应式预览和控制台消息，并导出完整的 .html 文件。',
+    contentBlocks: [
+      {
+        title: '在一个工作区编写 HTML、CSS 和 JavaScript',
+        paragraphs: [
+          'HTML 编辑器提供独立的代码面板，支持语法高亮、行号和基础检查。它适合测试页面片段、表单、表格、邮件模板或小型界面，不需要先安装完整的开发环境。',
+          '编辑代码后，可以手动运行预览，也可以启用自动运行。预览会将 HTML、CSS 和 JavaScript 组合到隔离的 iframe 中，方便快速查看页面效果。',
+        ],
+      },
+      {
+        title: '通过预览和控制台检查页面',
+        paragraphs: [
+          '控制台会显示预览中产生的日志、警告、运行时错误和未处理的 Promise 拒绝。桌面、平板和手机宽度选项可以帮助你检查布局在不同屏幕上的表现。',
+          '你也可以从模板开始，或导入 HTML、CSS 和 JavaScript 文件。完成后，可以复制生成的文档、下载 .html 文件，或在新标签页中打开预览。',
+        ],
+        list: [
+          '在 HTML、CSS 和 JavaScript 面板之间切换。',
+          '使用沙盒预览查看页面和控制台输出。',
+          '导入 .html、.css 和 .js 文件继续编辑。',
+          '复制或下载包含样式和脚本的完整 HTML 文档。',
+        ],
+      },
+      {
+        title: '代码处理方式与安全边界',
+        paragraphs: [
+          '编辑和预览默认在你的浏览器中完成，代码不会自动上传到工具服务器。导入的文件也在本地读取。',
+          '预览会在沙盒 iframe 中运行脚本，但这不能替代安全审查。测试外部代码时，请只运行你信任的内容。大型项目或完整构建流程仍应使用本地开发环境。',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '这个 HTML 编辑器可以运行 JavaScript 吗？',
+        answer: '可以。JavaScript 会在沙盒预览中运行，日志、警告和运行时错误会显示在工具的控制台中。',
+      },
+      {
+        question: '可以分别导入 HTML、CSS 和 JavaScript 文件吗？',
+        answer: '可以。你可以导入 .html、.css 和 .js 文件，选择主 HTML 文件，然后继续在编辑器中修改。',
+      },
+      {
+        question: '可以下载最终页面吗？',
+        answer: '可以。你可以复制生成的文档，或下载包含 CSS 和 JavaScript 的完整 .html 文件。',
+      },
+      {
+        question: '我的代码会上传到服务器吗？',
+        answer: '默认不会。编辑、预览和文件读取都在浏览器本地进行。',
+      },
+      {
+        question: '手机上可以使用吗？',
+        answer: '可以。编辑器支持移动屏幕，也可以切换手机预览宽度来检查响应式布局。',
+      },
+    ],
+  },
   'invisible-character': {
     name: 'Fortnite 与游戏隐藏字符生成器',
     shortDescription:

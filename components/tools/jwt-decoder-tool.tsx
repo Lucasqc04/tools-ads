@@ -111,29 +111,51 @@ const uiByLocale: Record<AppLocale, JwtUi> = {
     noClaims: 'No se encontraron claims comunes.',
   },
   zh: {
-    inputLabel: 'JWT token',
-    inputPlaceholder: 'Paste your JWT here...',
-    decode: 'Decode',
-    clear: 'Clear',
-    loadExample: 'Load example',
-    copyToken: 'Copy token',
-    copyHeader: 'Copy header',
-    copyPayload: 'Copy payload',
-    copyPayloadClean: 'Copy clean payload',
-    copied: 'Copied',
-    resultHeader: 'Header (JSON)',
-    resultPayload: 'Payload (JSON)',
-    resultSignature: 'Signature',
-    warningsTitle: 'Important warnings',
-    claimsTitle: 'Common claims',
-    expired: 'Token expired',
-    valid: 'Token still valid',
-    wrapToken: 'Wrap token line',
-    singleLine: 'Single line token',
-    localOnlyTitle: 'Important',
-    localOnlyText: 'This tool only decodes JWT. It does NOT verify signature and does NOT guarantee token authenticity.',
-    noClaims: 'No common claims found.',
+    inputLabel: 'JWT 令牌',
+    inputPlaceholder: '在此粘贴 JWT…',
+    decode: '解码',
+    clear: '清空',
+    loadExample: '加载示例',
+    copyToken: '复制令牌',
+    copyHeader: '复制 Header',
+    copyPayload: '复制 Payload',
+    copyPayloadClean: '复制整理后的 Payload',
+    copied: '已复制',
+    resultHeader: 'Header（JSON）',
+    resultPayload: 'Payload（JSON）',
+    resultSignature: '签名（Signature）',
+    warningsTitle: '重要提醒',
+    claimsTitle: '常见声明',
+    expired: '令牌已过期',
+    valid: '令牌仍有效',
+    wrapToken: '换行显示令牌',
+    singleLine: '单行显示令牌',
+    localOnlyTitle: '安全说明',
+    localOnlyText: '此工具只解码 JWT，不会验证签名，也不能保证令牌真实可信。请勿仅凭解码结果授权操作。',
+    noClaims: '未发现常见声明。',
   },
+};
+
+const JWT_MESSAGE_TRANSLATIONS_ZH: Record<string, string> = {
+  'Informe um token JWT para continuar.': '请输入 JWT 令牌。',
+  'JWT malformado: o token precisa ter 3 partes separadas por ponto.': 'JWT 格式错误：令牌必须包含由点号分隔的三部分。',
+  'Header decodificado, mas nao e um objeto JSON valido.': 'Header 已解码，但不是有效的 JSON 对象。',
+  'Nao foi possivel decodificar o header do JWT.': '无法解码 JWT Header。',
+  'Payload decodificado, mas nao e um objeto JSON valido.': 'Payload 已解码，但不是有效的 JSON 对象。',
+  'Nao foi possivel decodificar o payload do JWT.': '无法解码 JWT Payload。',
+  'A parte de assinatura esta vazia. Isso pode indicar token incompleto.': '签名部分为空，令牌可能不完整。',
+  'Este resultado apenas decodifica o JWT e NAO valida assinatura, emissor ou confiabilidade.': '此结果仅用于解码 JWT，不会验证签名、签发者或令牌可信度。',
+};
+
+const localizeJwtMessage = (
+  message: string,
+  locale: AppLocale,
+  kind: 'error' | 'warning',
+): string => {
+  if (locale !== 'zh') return message;
+  return JWT_MESSAGE_TRANSLATIONS_ZH[message] ?? (kind === 'error'
+    ? '无法解析此 JWT，请检查令牌格式是否正确。'
+    : '解码提醒：请在可信环境中验证令牌的签名和来源。');
 };
 
 const toBase64Url = (value: string): string =>
@@ -268,7 +290,7 @@ export function JwtDecoderTool({ locale = 'pt-br' }: JwtDecoderToolProps) {
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           <ul className="space-y-1">
             {decoded.errors.map((error) => (
-              <li key={error}>- {error}</li>
+              <li key={error}>- {localizeJwtMessage(error, locale, 'error')}</li>
             ))}
           </ul>
         </div>
@@ -279,7 +301,7 @@ export function JwtDecoderTool({ locale = 'pt-br' }: JwtDecoderToolProps) {
           <h3 className="text-sm font-semibold text-amber-900">{ui.warningsTitle}</h3>
           <ul className="space-y-1 text-sm text-amber-800">
             {decoded.warnings.map((warning) => (
-              <li key={warning}>- {warning}</li>
+              <li key={warning}>- {localizeJwtMessage(warning, locale, 'warning')}</li>
             ))}
           </ul>
         </section>

@@ -1,3 +1,5 @@
+import type { AppLocale } from '@/lib/i18n/config';
+
 // ---------- TYPES ----------
 
 export type EmvField = {
@@ -920,23 +922,41 @@ export function pixToJson(result: PixValidationResult): string {
   }, null, 2);
 }
 
-export function pixToCsv(pixData: PixData): string {
+const PIX_KEY_TYPE_LABELS_ZH: Record<PixKeyType, string> = {
+  cpf: 'CPF',
+  cnpj: 'CNPJ',
+  email: '邮箱',
+  phone: '电话号码',
+  random: '随机密钥',
+  manual: '手动/其他',
+};
+
+export function pixToCsv(pixData: PixData, locale: AppLocale = 'pt-br'): string {
+  const isZh = locale === 'zh';
+  const type = pixData.type === 'static'
+    ? (isZh ? '静态 Pix' : pixData.type)
+    : pixData.type === 'dynamic'
+      ? (isZh ? '动态 Pix' : pixData.type)
+      : (isZh ? '未知' : pixData.type);
+  const keyType = isZh && pixData.keyType
+    ? PIX_KEY_TYPE_LABELS_ZH[pixData.keyType]
+    : pixData.keyType ?? '';
   const rows = [
-    ['Campo', 'Valor'],
-    ['Tipo', pixData.type],
-    ['Chave', pixData.key ?? ''],
-    ['Tipo da Chave', pixData.keyType ?? ''],
-    ['Valor', pixData.amount ?? ''],
-    ['Nome', pixData.merchantName ?? ''],
-    ['Cidade', pixData.merchantCity ?? ''],
-    ['País', pixData.countryCode ?? ''],
-    ['Moeda', pixData.currency ?? ''],
+    [isZh ? '字段' : 'Campo', isZh ? '值' : 'Valor'],
+    [isZh ? '类型' : 'Tipo', type],
+    [isZh ? 'Pix 密钥' : 'Chave', pixData.key ?? ''],
+    [isZh ? '密钥类型' : 'Tipo da Chave', keyType],
+    [isZh ? '金额' : 'Valor', pixData.amount ?? ''],
+    [isZh ? '收款人姓名' : 'Nome', pixData.merchantName ?? ''],
+    [isZh ? '城市' : 'Cidade', pixData.merchantCity ?? ''],
+    [isZh ? '国家/地区' : 'País', pixData.countryCode ?? ''],
+    [isZh ? '货币代码' : 'Moeda', pixData.currency ?? ''],
     ['TXID', pixData.txid ?? ''],
-    ['Info Adicional', pixData.additionalInfo ?? ''],
+    [isZh ? '附加信息' : 'Info Adicional', pixData.additionalInfo ?? ''],
     ['URL', pixData.url ?? ''],
     ['MCC', pixData.merchantCategoryCode ?? ''],
     ['CRC', pixData.crcProvided ?? ''],
-    ['CRC Válido', pixData.crcValid ? 'Sim' : 'Não'],
+    [isZh ? 'CRC 有效' : 'CRC Válido', pixData.crcValid ? (isZh ? '是' : 'Sim') : (isZh ? '否' : 'Não')],
   ];
   return rows.map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
 }

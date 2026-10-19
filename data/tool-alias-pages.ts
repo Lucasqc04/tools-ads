@@ -79,6 +79,26 @@ const TOOL_SLUGS_WITH_DEDICATED_LANDING_PAGES = new Set([
   'gamer-username-generator',
 ]);
 
+const legacyZhToolAliases: Record<string, Array<{ slug: string; keyword: string }>> = {
+  'html-viewer': [
+    { slug: 'free-html-viewer-online', keyword: '免费在线 HTML 预览工具' },
+    { slug: 'html-editor-with-preview-and-console', keyword: '带预览和控制台的 HTML 编辑器' },
+    { slug: 'free-html-editor-with-css-js-preview-and-console', keyword: '支持 CSS 和 JavaScript 预览的免费 HTML 编辑器' },
+    { slug: 'html-css-js-preview', keyword: 'HTML、CSS 和 JavaScript 在线预览' },
+  ],
+  'jwt-decoder': [
+    { slug: 'jwt-decoder-online', keyword: 'JWT 在线解码' },
+    { slug: 'jwt-decoder-online-for-header-and-payload-inspection', keyword: '查看 JWT Header 和 Payload' },
+    { slug: 'decode-jwt', keyword: '解码 JWT 令牌' },
+  ],
+  'pix-decoder': [
+    { slug: 'pix-qr-code-decoder-online', keyword: 'Pix 二维码解码器' },
+    { slug: 'pix-qr-code-decoder-generator', keyword: 'Pix 二维码解码与生成' },
+    { slug: 'pix-qr-code-decoder-generator-online', keyword: '在线 Pix 二维码解码与生成' },
+    { slug: 'pix-emv-decoder', keyword: 'Pix EMV 解析器' },
+  ],
+};
+
 const LEGACY_ALIAS_SUFFIXES = [
   'sem-cadastro',
   'sem-login',
@@ -308,6 +328,10 @@ const buildToolAliasPages = (): ToolAliasPage[] => {
     }
 
     const keywordBucket = new Map<string, Partial<Record<AppLocale, string>>>();
+
+    legacyZhToolAliases[tool.slug]?.forEach(({ slug, keyword }) => {
+      keywordBucket.set(slug, { zh: keyword });
+    });
 
     locales.forEach((locale) => {
       const phrases = collectToolKeywordSeeds(tool.slug, locale).slice(0, getMaxAliasesPerLocale(tool.slug));

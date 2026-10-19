@@ -291,54 +291,54 @@ const uiByLocale: Record<AppLocale, HtmlViewerUi> = {
     themeDark: 'Oscuro',
   },
   zh: {
-    title: 'HTML Editor with Live Preview, CSS, JS, and Console',
+    title: 'HTML 在线编辑器：实时预览与控制台',
     intro:
-      'Edit HTML, CSS, and JavaScript with syntax highlighting, line numbers, sandbox preview, captured console, and one-click .html export.',
-    editorTitle: 'Editor',
+      '在线编辑 HTML、CSS 和 JavaScript，使用语法高亮、行号、沙盒预览和控制台，并一键导出 .html 文件。',
+    editorTitle: '代码编辑器',
     htmlLabel: 'HTML',
     cssLabel: 'CSS',
     jsLabel: 'JavaScript',
-    htmlPlaceholder: '<main><h1>Hello world</h1></main>',
+    htmlPlaceholder: '<main><h1>你好，世界</h1></main>',
     cssPlaceholder: 'body { font-family: sans-serif; }',
-    jsPlaceholder: "console.log('Preview ready');",
-    run: 'Run',
-    autoRun: 'Auto-run',
-    format: 'Format',
-    clear: 'Clear',
-    copyDocument: 'Copy final HTML',
-    copied: 'Copied',
-    download: 'Download .html',
-    templatesLabel: 'Quick template',
-    templatesHint: 'Start from a template and adjust the code in the editor.',
-    filesLabel: 'Import files',
-    filesHint: 'Load .html, .css, and .js files to populate the editor.',
-    htmlEntryLabel: 'Main HTML',
+    jsPlaceholder: "console.log('预览已就绪');",
+    run: '运行预览',
+    autoRun: '自动运行',
+    format: '格式化',
+    clear: '清空',
+    copyDocument: '复制完整 HTML',
+    copied: '已复制',
+    download: '下载 .html',
+    templatesLabel: '快速模板',
+    templatesHint: '选择一个模板作为起点，然后在编辑器中修改代码。',
+    filesLabel: '导入文件',
+    filesHint: '加载 .html、.css 和 .js 文件以填充编辑器。',
+    htmlEntryLabel: '主 HTML 文件',
     unsupportedFilesWarning:
-      'Some files were ignored because their extension is not supported. Use .html, .css, or .js only.',
+      '部分文件因扩展名不受支持而被忽略。请仅使用 .html、.css 或 .js 文件。',
     noHtmlFileWarning:
-      'No HTML file was found. Include at least one .html file to build the preview.',
-    fileReadError: 'Could not read one or more selected files. Please try again.',
-    loadedFilesTitle: 'Loaded files',
-    previewTitle: 'Preview',
-    previewHint: 'The iframe runs CSS and JS in a sandbox and forwards logs to the console below.',
-    desktop: 'Desktop',
-    tablet: 'Tablet',
-    mobile: 'Mobile',
-    fullscreen: 'Fullscreen',
-    editorFullscreen: 'Editor fullscreen',
-    exitFullscreen: 'Exit fullscreen',
-    openNewTab: 'New tab',
-    consoleTitle: 'Console',
-    consoleHint: 'Logs, warnings, errors, and rejected promises appear here.',
-    clearConsole: 'Clear console',
-    emptyConsole: 'No logs yet. Run the preview or use console.log in JS.',
-    issuesTitle: 'Checks',
-    noIssues: 'No simple issues found.',
+      '没有找到 HTML 文件。请至少导入一个 .html 文件以生成预览。',
+    fileReadError: '无法读取一个或多个所选文件，请重试。',
+    loadedFilesTitle: '已加载的文件',
+    previewTitle: '页面预览',
+    previewHint: 'iframe 会在沙盒中运行 CSS 和 JavaScript，并将日志发送到下方控制台。',
+    desktop: '桌面',
+    tablet: '平板',
+    mobile: '手机',
+    fullscreen: '全屏',
+    editorFullscreen: '编辑器全屏',
+    exitFullscreen: '退出全屏',
+    openNewTab: '在新标签页打开',
+    consoleTitle: '控制台',
+    consoleHint: '预览中的日志、警告、错误和未处理的 Promise 会显示在这里。',
+    clearConsole: '清空控制台',
+    emptyConsole: '暂无日志。运行预览，或在 JavaScript 中使用 console.log。',
+    issuesTitle: '代码检查',
+    noIssues: '未发现明显问题。',
     securityHint:
-      'Security tip: run trusted code only. Scripts execute inside the sandboxed preview.',
-    emptyPreviewHint: 'Add HTML content to render preview.',
-    themeLight: 'Light',
-    themeDark: 'Dark',
+      '安全提示：只运行可信代码。脚本会在沙盒预览中执行。',
+    emptyPreviewHint: '添加 HTML 代码以显示预览。',
+    themeLight: '浅色',
+    themeDark: '深色',
   },
 };
 
@@ -368,12 +368,12 @@ const templateLabels: Record<AppLocale, Record<TemplateId, Pick<HtmlTemplate, 'l
     blank: { label: 'En blanco', description: 'Empieza desde cero.' },
   },
   zh: {
-    starter: { label: 'Starter component', description: 'Simple page with a button and interaction.' },
-    landing: { label: 'Landing section', description: 'Hero with CTA, benefits, and proof card.' },
-    email: { label: 'HTML email', description: 'Email-friendly table structure.' },
-    form: { label: 'Form demo', description: 'Form with simple JavaScript validation.' },
-    table: { label: 'Responsive table', description: 'Styled table with basic sorting.' },
-    blank: { label: 'Blank', description: 'Start from zero.' },
+    starter: { label: '基础组件', description: '带按钮和交互效果的简单页面。' },
+    landing: { label: '落地页区块', description: '包含行动按钮、功能介绍和证明信息的页面。' },
+    email: { label: 'HTML 邮件', description: '适合邮件客户端的表格结构。' },
+    form: { label: '表单示例', description: '带有简单 JavaScript 校验的表单。' },
+    table: { label: '响应式表格', description: '带样式和基础排序功能的表格。' },
+    blank: { label: '空白模板', description: '从零开始编写。' },
   },
 };
 
@@ -953,7 +953,115 @@ form?.addEventListener('submit', (event) => {
 });`,
     },
   },
-  zh: templateCode,
+  zh: {
+    ...templateCode,
+    starter: {
+      ...starterTemplate,
+      html: `<main class="hero">
+  <p class="eyebrow">HTML 编辑器</p>
+  <h1>实时预览</h1>
+  <p>编辑 HTML、CSS 和 JavaScript，并在沙盒中查看控制台消息。</p>
+  <button id="cta">运行交互</button>
+</main>`,
+      js: `const button = document.getElementById('cta');
+
+button?.addEventListener('click', () => {
+  console.log('已在沙盒预览中点击按钮');
+  button.textContent = '交互正常';
+  button.style.background = '#0f766e';
+});`,
+    },
+    landing: {
+      ...landingTemplate,
+      html: `<main class="page">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">产品更新</p>
+      <h1>创建更顺畅的 HTML 测试流程</h1>
+      <p class="lead">使用此模板测试间距、按钮、卡片、响应式布局和脚本行为。</p>
+      <a href="#features" class="button">查看功能</a>
+    </div>
+    <aside class="proof">
+      <strong>98%</strong>
+      <span>更快完成 QA 测试</span>
+    </aside>
+  </section>
+  <section id="features" class="features">
+    <article>桌面和手机预览。</article>
+    <article>快速查看控制台日志。</article>
+    <article>导出完整 HTML 文件。</article>
+  </section>
+</main>`,
+      js: `document.querySelectorAll('.features article').forEach((card, index) => {
+  card.addEventListener('click', () => {
+    console.log('已选择功能', index + 1);
+    card.toggleAttribute('data-active');
+  });
+});`,
+    },
+    email: {
+      ...emailTemplate,
+      html: `<table role="presentation" class="email" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="header">
+      <h1>每周报告</h1>
+      <p>摘要、指标和后续操作。</p>
+    </td>
+  </tr>
+  <tr>
+    <td class="body">
+      <p>你好，</p>
+      <p>此 HTML 邮件模板采用简单结构，以提高客户端兼容性。</p>
+      <a class="button" href="https://example.com">打开控制台</a>
+    </td>
+  </tr>
+</table>`,
+      js: `console.log('邮件模板预览已加载');`,
+    },
+    form: {
+      ...formTemplate,
+      html: `<form id="signup" novalidate>
+  <h1>加入测试计划</h1>
+  <label>
+    邮箱
+    <input id="email" type="email" placeholder="name@example.com" />
+  </label>
+  <button type="submit">提交</button>
+  <p id="message" aria-live="polite"></p>
+</form>`,
+      js: `const form = document.getElementById('signup');
+const email = document.getElementById('email');
+const message = document.getElementById('message');
+
+form?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const valid = email?.value.includes('@');
+  message.textContent = valid ? '可以提交。' : '请输入有效的邮箱地址。';
+  console[valid ? 'log' : 'warn'](message.textContent);
+});`,
+    },
+    table: {
+      ...tableTemplate,
+      html: `<main>
+  <h1>各渠道收入</h1>
+  <table>
+    <thead>
+      <tr><th>渠道</th><th>访客数</th><th>收入</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>搜索</td><td>12,430</td><td>¥48,900</td></tr>
+      <tr><td>直接访问</td><td>8,220</td><td>¥31,400</td></tr>
+      <tr><td>社交媒体</td><td>5,810</td><td>¥12,700</td></tr>
+    </tbody>
+  </table>
+</main>`,
+      js: `document.querySelectorAll('tbody tr').forEach((row) => {
+  row.addEventListener('click', () => {
+    console.log('已选择行：', row.innerText);
+  });
+});`,
+    },
+  },
 };
 
 const getTemplates = (locale: AppLocale): HtmlTemplate[] =>
@@ -1810,7 +1918,7 @@ export function HtmlViewerTool({ locale = 'pt-br' }: HtmlViewerToolProps) {
           </span>
           <span className="inline-flex items-center rounded-full bg-emerald-400/15 px-2.5 py-1 text-emerald-200">
             <TerminalSquare className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
-            Console
+            {locale === 'zh' ? '控制台' : 'Console'}
           </span>
         </div>
         <h3 className="mt-3 text-lg font-semibold text-white">{ui.title}</h3>

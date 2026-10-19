@@ -4,6 +4,9 @@ export const zhReadyToolIds: Set<string> = new Set<string>([
   'invisible-character',
   'nickname-symbol-generator',
   'symbols-to-copy',
+  'html-viewer',
+  'pix-decoder',
+  'jwt-decoder',
   'cs2-crosshair-codes',
   ...cs2ToolIds,
 ]);
