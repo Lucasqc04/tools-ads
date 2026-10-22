@@ -4,6 +4,23 @@ type LocaleKeywordMap = Partial<Record<AppLocale, string[]>>;
 type ToolKeywordMap = Record<string, LocaleKeywordMap>;
 
 const baseKeywordsByTool: ToolKeywordMap = {
+  'instagram-image-optimizer': {
+    'pt-br': [
+      'redimensionar imagem para instagram',
+      'ajustar foto para feed instagram',
+      'preparar foto 3:4 para instagram',
+    ],
+    en: [
+      'resize image for instagram',
+      'instagram feed photo resizer',
+      'prepare 3:4 instagram photo',
+    ],
+    es: [
+      'redimensionar imagen para instagram',
+      'ajustar foto para feed instagram',
+      'preparar foto 3:4 para instagram',
+    ],
+  },
   'authenticator-code-generator': {
     'pt-br': [
       'gerador de codigo authenticator',

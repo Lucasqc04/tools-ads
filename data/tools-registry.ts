@@ -89,6 +89,11 @@ import {
   imageCompressionIntro,
 } from '@/data/content/image-compression';
 import {
+  instagramImageOptimizerContentBlocks,
+  instagramImageOptimizerFaq,
+  instagramImageOptimizerIntro,
+} from '@/data/content/instagram-image-optimizer';
+import {
   backgroundRemoverContentBlocks,
   backgroundRemoverFaq,
   backgroundRemoverIntro,
@@ -943,6 +948,34 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: imageCompressionFaq,
     contentBlocks: imageCompressionContentBlocks,
     relatedToolIds: ['image-converter', 'image-to-base64', 'video-compression'],
+  },
+  {
+    id: 'instagram-image-optimizer',
+    slug: 'instagram-image-optimizer',
+    name: 'Otimizador de Imagem para Instagram',
+    shortDescription:
+      'Prepare fotos para Feed, Carrossel, Story ou capa de Reel com corte ajustável, comparação e download em lote.',
+    category: 'documents',
+    primaryKeyword: 'otimizar imagem para instagram',
+    secondaryKeywords: [
+      'redimensionar foto para instagram',
+      'tamanho de imagem para instagram',
+      'cortar foto para story instagram',
+      'preparar imagem para carrossel instagram',
+      'imagem 3:4 para instagram',
+    ],
+    searchIntent:
+      'Pessoas que precisam ajustar o enquadramento e as dimensões de fotos para publicações do Instagram antes de baixar e publicar manualmente.',
+    seoTitle:
+      'Otimizador de Imagem para Instagram | Corte, Feed e Story',
+    seoDescription:
+      'Ajuste fotos para Feed, Carrossel, Story e capa de Reel. Reposicione o corte, compare antes e depois e baixe imagens processadas no navegador.',
+    h1: 'Otimizador de Imagem para Instagram com Corte e Preview',
+    intro: instagramImageOptimizerIntro,
+    canonicalPath: '/tools/instagram-image-optimizer',
+    faq: instagramImageOptimizerFaq,
+    contentBlocks: instagramImageOptimizerContentBlocks,
+    relatedToolIds: ['image-compression', 'image-converter', 'redimensionar-imagem'],
   },
   {
     id: 'remover-fundo-imagem',
@@ -2073,6 +2106,7 @@ type LocalizableToolId =
   | 'image-to-base64'
   | 'image-converter'
   | 'image-compression'
+  | 'instagram-image-optimizer'
   | 'remover-fundo-imagem'
   | 'video-compression'
   | 'extrair-audio-de-video'
@@ -2104,6 +2138,7 @@ const localizableToolIds = new Set<LocalizableToolId>([
   'image-to-base64',
   'image-converter',
   'image-compression',
+  'instagram-image-optimizer',
   'remover-fundo-imagem',
   'video-compression',
   'extrair-audio-de-video',

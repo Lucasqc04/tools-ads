@@ -27,6 +27,7 @@ import { MarkdownEditorTool } from '@/components/tools/markdown-editor-tool';
 import { ImageConversionLinks } from '@/components/tools/image-conversion-links';
 import { ImageConverterTool } from '@/components/tools/image-converter-tool';
 import { ImageCompressionTool } from '@/components/tools/image-compression-tool';
+import { InstagramImageOptimizerTool } from '@/components/tools/instagram-image-optimizer-tool';
 import { ChromaBackgroundRemoverTool } from '@/components/tools/chroma-background-remover-tool';
 import { ImageToBase64Tool } from '@/components/tools/image-to-base64-tool';
 import { InvisibleCharacterTool } from '@/components/tools/invisible-character-tool';
@@ -742,6 +743,7 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'base64-image-viewer': ({ locale }) => <Base64ImageViewerTool locale={locale} />,
   'image-to-base64': ({ locale }) => <ImageToBase64Tool locale={locale} />,
   'image-compression': ({ locale }) => <ImageCompressionTool locale={locale} />,
+  'instagram-image-optimizer': ({ locale }) => <InstagramImageOptimizerTool locale={locale} />,
   'remover-fundo-imagem': ({ locale }) => <ChromaBackgroundRemoverTool locale={locale} />,
   'video-compression': ({ locale }) => <VideoCompressionTool locale={locale} />,
   'extrair-audio-de-video': ({ locale }) => <AudioEditorTool locale={locale} />,

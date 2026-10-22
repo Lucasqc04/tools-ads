@@ -28,6 +28,7 @@ export const TOOL_ID = {
   imageToBase64: 'image_to_base64',
   imageConverter: 'image_converter',
   imageCompression: 'image_compression',
+  instagramImageOptimizer: 'instagram_image_optimizer',
   chromaBackgroundRemover: 'remover_fundo_imagem',
   videoCompression: 'video_compression',
   audioExtractor: 'extrair_audio_de_video',

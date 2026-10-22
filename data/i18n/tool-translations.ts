@@ -35,6 +35,7 @@ type ToolId =
   | 'image-to-base64'
   | 'image-converter'
   | 'image-compression'
+  | 'instagram-image-optimizer'
   | 'remover-fundo-imagem'
   | 'video-compression'
   | 'extrair-audio-de-video'
@@ -1729,6 +1730,85 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
         question: 'Does this work on mobile?',
         answer:
           'Yes. The layout is responsive and works on mobile screens as well.',
+      },
+    ],
+  },
+  'instagram-image-optimizer': {
+    name: 'Instagram Image Optimizer',
+    shortDescription:
+      'Prepare photos for Feed, Carousel, Stories, or Reel covers with adjustable crop, comparison, and batch download.',
+    primaryKeyword: 'resize image for instagram',
+    secondaryKeywords: [
+      'instagram image resizer',
+      'instagram photo dimensions',
+      'crop photo for instagram story',
+      'prepare carousel images for instagram',
+      '3:4 instagram image',
+    ],
+    searchIntent:
+      'People who need to adjust photo framing and dimensions for Instagram before downloading and publishing manually.',
+    seoTitle: 'Instagram Image Optimizer | Crop, Feed, Stories, and Reels',
+    seoDescription:
+      'Prepare photos for Feed, Carousel, Stories, and Reel covers. Reposition the crop, compare before and after, and download images processed in your browser.',
+    h1: 'Instagram Image Optimizer with Crop and Preview',
+    intro:
+      'Choose a destination, adjust the crop if needed, compare the prepared image, and download it. Processing runs in your browser.',
+    contentBlocks: [
+      {
+        title: 'Prepare the framing before you publish',
+        paragraphs: [
+          'The Instagram image optimizer adjusts a photo for Feed, Carousel, Story, or Reel cover. Choose a destination and drag or zoom the crop frame to check what will remain in the exported image.',
+          'The vertical 3:4 Feed preset uses 1080 × 1440 pixels as a reference. Instagram also accepts other photo shapes, such as 4:5, square, and landscape within its published limits. Stories and Reel covers use 9:16 as a visual reference; Instagram may still make its own adjustments when you publish.',
+        ],
+      },
+      {
+        title: 'What changes in the prepared file',
+        paragraphs: [
+          'Images larger than the selected destination are reduced without automatic upscaling. If the selected shape differs from the original, the exported file is cropped. JPEG is the default for photos, while PNG stays PNG to avoid removing transparency or degrading graphics without an explicit choice.',
+          'When the image already fits the selected shape and dimensions, Automatic keeps the original bytes. This avoids needless re-encoding. Cropping, resizing, or changing format creates a new file and may remove metadata such as location; browser decoding and encoding can also change color profiles or HDR appearance.',
+        ],
+        list: [
+          'Vertical 3:4 Feed, 4:5 portrait, square, or landscape.',
+          'Stories and Reel covers in 9:16; profile in 1:1.',
+          'Optional position and zoom adjustment for each photo.',
+          'Before-and-after comparison, individual downloads, and batch ZIP.',
+          'Optional local record of publishing conditions and your preference after comparing in Instagram.',
+        ],
+      },
+      {
+        title: 'Privacy and limits',
+        paragraphs: [
+          'Images are not sent to a server: reading, cropping, and export happen in your browser. The original remains available for comparison and can be downloaded unchanged. EXIF orientation and HEIC support depend on the browser and device codecs; if a photo cannot be opened, save a JPEG copy and try again.',
+          'The exported file is a technical preparation, not a simulation of Instagram compression. Instagram may recompress images after publication, so a prepared version is not guaranteed to look better on every device. Compare alternatives by publishing them under the same conditions and checking the result in Instagram.',
+          'After comparing, you can save a local note with the device, Instagram version, post type, and conditions used. This history stays in this device’s browser and does not contain images.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Are my images uploaded to a server?',
+        answer:
+          'No. Selection, cropping, resizing, and export happen in your browser. The tool does not upload photos to a server.',
+      },
+      {
+        question: 'Does Instagram accept 3:4 photos?',
+        answer:
+          'Yes. Instagram announced support for 3:4 photos in Feed posts and carousels. The app may still process images when you publish.',
+      },
+      {
+        question: 'Does this guarantee Instagram will not compress my photo?',
+        answer:
+          'No. Instagram may recompress images during publishing. This tool prepares a file but cannot predict the platform’s final result.',
+      },
+      {
+        question: 'Can I keep the image unchanged?',
+        answer:
+          'Yes. Choose Keep original to use the same bytes. Automatic mode also keeps a photo without re-encoding when it already fits the destination.',
+      },
+      {
+        question: 'Which image formats can I use?',
+        answer:
+          'JPEG, PNG, and WebP are the most compatible. HEIC/HEIF may open in some browsers; if your device has no compatible codec, save the photo as JPEG first.',
       },
     ],
   },
@@ -3938,6 +4018,85 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
         question: '¿Funciona en movil?',
         answer:
           'Si. El layout es responsive y se adapta a pantallas pequenas.',
+      },
+    ],
+  },
+  'instagram-image-optimizer': {
+    name: 'Optimizador de Imágenes para Instagram',
+    shortDescription:
+      'Prepara fotos para Feed, carrusel, Story o portada de Reel con recorte ajustable, comparación y descarga por lote.',
+    primaryKeyword: 'redimensionar imagen para instagram',
+    secondaryKeywords: [
+      'optimizador de imagen para instagram',
+      'tamaño de foto para instagram',
+      'recortar foto para story de instagram',
+      'preparar imagenes para carrusel de instagram',
+      'imagen 3:4 para instagram',
+    ],
+    searchIntent:
+      'Personas que necesitan ajustar el encuadre y las dimensiones de fotos para Instagram antes de descargarlas y publicarlas manualmente.',
+    seoTitle: 'Optimizador de Imágenes para Instagram | Recorte, Feed y Story',
+    seoDescription:
+      'Prepara fotos para Feed, carrusel, Story y portada de Reel. Ajusta el recorte, compara antes y después y descarga imágenes procesadas en el navegador.',
+    h1: 'Optimizador de Imágenes para Instagram con Recorte y Vista Previa',
+    intro:
+      'Elige un destino, ajusta el recorte si hace falta, compara la imagen preparada y descárgala. El procesamiento ocurre en el navegador.',
+    contentBlocks: [
+      {
+        title: 'Prepara el encuadre antes de publicar',
+        paragraphs: [
+          'El optimizador ajusta una foto para Feed, carrusel, Story o portada de Reel. Elige un destino y arrastra o amplía el recuadro para comprobar qué parte quedará en el archivo exportado.',
+          'El preset vertical 3:4 para Feed usa 1080 × 1440 píxeles como referencia. Instagram también acepta otras formas para fotos, como 4:5, cuadrado y horizontal dentro de los límites publicados. Stories y portadas de Reel usan 9:16 como referencia visual; Instagram todavía puede aplicar sus propios ajustes al publicar.',
+        ],
+      },
+      {
+        title: 'Qué cambia en el archivo preparado',
+        paragraphs: [
+          'Las imágenes mayores que el destino se reducen sin ampliación automática. Si la proporción elegida es distinta de la original, se recorta el archivo exportado. JPEG es el formato automático para fotos y PNG permanece PNG para no quitar transparencia ni degradar gráficos sin una elección explícita.',
+          'Cuando la proporción y las dimensiones ya caben en el destino, el modo automático conserva los bytes originales. Al recortar, redimensionar o cambiar el formato se crea un archivo nuevo y se pueden quitar metadatos como la ubicación; la decodificación del navegador también puede cambiar el perfil de color o la apariencia HDR.',
+        ],
+        list: [
+          'Feed vertical 3:4, retrato 4:5, cuadrado u horizontal.',
+          'Stories y portadas de Reel en 9:16; perfil en 1:1.',
+          'Ajuste opcional de posición y zoom para cada foto.',
+          'Comparación antes/después, descargas individuales y ZIP por lote.',
+          'Registro local opcional de las condiciones de publicación y de tu preferencia tras comparar en Instagram.',
+        ],
+      },
+      {
+        title: 'Privacidad y límites',
+        paragraphs: [
+          'Las imágenes no se envían a un servidor: la lectura, el recorte y la exportación ocurren en el navegador. El original sigue disponible para comparar y descargar sin cambios. La orientación EXIF y HEIC dependen de los códecs del navegador y del dispositivo; si una foto no abre, guarda una copia JPEG e inténtalo de nuevo.',
+          'El archivo exportado es una preparación técnica, no una simulación de la compresión de Instagram. La plataforma puede recomprimir la imagen después de publicarla, así que no se garantiza que una versión preparada se vea mejor en todos los dispositivos. Compara alternativas publicándolas en las mismas condiciones y revisa el resultado en Instagram.',
+          'Después de comparar, puedes guardar una nota local con el dispositivo, la versión de Instagram, el tipo de publicación y las condiciones usadas. El historial queda en el navegador de este dispositivo y no contiene imágenes.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: '¿Mis imágenes se envían a un servidor?',
+        answer:
+          'No. La selección, el recorte, el cambio de tamaño y la exportación ocurren en el navegador. La herramienta no sube fotos a un servidor.',
+      },
+      {
+        question: '¿Instagram acepta fotos 3:4?',
+        answer:
+          'Sí. Instagram anunció soporte para fotos 3:4 en publicaciones del Feed y carruseles. La aplicación todavía puede procesar las imágenes al publicar.',
+      },
+      {
+        question: '¿La herramienta garantiza que Instagram no comprima mi foto?',
+        answer:
+          'No. Instagram puede recomprimir imágenes durante la publicación. Esta herramienta prepara el archivo, pero no puede predecir el resultado final de la plataforma.',
+      },
+      {
+        question: '¿Puedo conservar la imagen sin cambios?',
+        answer:
+          'Sí. Elige “Mantener original” para usar los mismos bytes. El modo automático también conserva una foto sin recodificar cuando ya cabe en el destino.',
+      },
+      {
+        question: '¿Qué formatos de imagen puedo usar?',
+        answer:
+          'JPEG, PNG y WebP son los formatos más compatibles. HEIC/HEIF puede abrirse en algunos navegadores; si tu dispositivo no tiene un códec compatible, guarda la foto como JPEG antes.',
       },
     ],
   },
