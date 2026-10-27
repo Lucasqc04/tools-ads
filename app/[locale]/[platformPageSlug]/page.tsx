@@ -52,6 +52,7 @@ import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
 import { WhatsAppTelegramLinkGeneratorTool } from '@/components/tools/whatsapp-telegram-link-generator-tool';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import { VideoCompressionTool } from '@/components/tools/video-compression-tool';
+import { ShareScreenTool } from '@/components/tools/share-screen-tool';
 import { TimelapseCreatorTool } from '@/components/tools/timelapse-creator-tool';
 import { UniversalConverterTool } from '@/components/tools/universal-converter-tool';
 import {
@@ -746,6 +747,7 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'instagram-image-optimizer': ({ locale }) => <InstagramImageOptimizerTool locale={locale} />,
   'remover-fundo-imagem': ({ locale }) => <ChromaBackgroundRemoverTool locale={locale} />,
   'video-compression': ({ locale }) => <VideoCompressionTool locale={locale} />,
+  'share-screen': ({ locale }) => <ShareScreenTool locale={locale} />,
   'extrair-audio-de-video': ({ locale }) => <AudioEditorTool locale={locale} />,
   'criador-de-timelapse': ({ locale }) => <TimelapseCreatorTool locale={locale} />,
   'estourador-de-audio': ({ locale }) => <AudioBlasterTool locale={locale} />,

@@ -37,6 +37,7 @@ export const TOOL_ID = {
   audioVideoTranscription: 'transcricao_de_audio_e_video',
   qrCodeGenerator: 'qr_code_generator',
   transfer: 'transfer',
+  shareScreen: 'share_screen',
   whatsappTelegramLinkGenerator: 'gerador_link_whatsapp_telegram',
   sorteador: 'sorteador',
   characterCounter: 'contador_de_caracteres',

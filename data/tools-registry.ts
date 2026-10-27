@@ -176,6 +176,7 @@ import {
   transferFaq,
   transferIntro,
 } from '@/data/content/transfer';
+import { getShareScreenContent } from '@/data/content/share-screen';
 import {
   sorteadorContentBlocks,
   sorteadorFaq,
@@ -1264,6 +1265,14 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['qr-code-generator', 'pix-decoder', 'gerador-link-whatsapp-telegram'],
   },
   {
+    id: 'share-screen',
+    slug: 'share-screen',
+    ...getShareScreenContent('pt-br'),
+    category: 'utility',
+    canonicalPath: '/tools/share-screen',
+    relatedToolIds: ['transfer', 'qr-code-generator', 'video-compression'],
+  },
+  {
     id: 'gerador-link-whatsapp-telegram',
     slug: 'gerador-link-whatsapp-telegram',
     name: 'Gerador de Link com Mensagem para WhatsApp e Telegram',
@@ -2158,6 +2167,14 @@ const isLocalizableToolId = (toolId: string): toolId is LocalizableToolId =>
   localizableToolIds.has(toolId as LocalizableToolId);
 
 const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition => {
+  if (tool.id === 'share-screen') {
+    return {
+      ...tool,
+      ...getShareScreenContent(locale),
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
   if (tool.id === 'zpl-label-editor') {
     const localized = getZplLabelEditorContent(locale);
 
