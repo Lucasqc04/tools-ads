@@ -113,6 +113,12 @@ export type UnsequencedSignal =
       };
     };
 
+export const isViewerSignalDirectionValid = (signal: UnsequencedSignal, target: string): boolean => {
+  if (signal.type === 'offer') return target !== 'host';
+  if (signal.type === 'join' || signal.type === 'quality-request' || signal.type === 'restart-request') return target === 'host';
+  return true;
+};
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 

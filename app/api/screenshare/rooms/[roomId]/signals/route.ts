@@ -1,5 +1,5 @@
 import { sha256Hex } from '@/lib/screenshare/auth';
-import { isValidPeerId, isValidRoomId, isValidSecret, validateSignalPayload } from '@/lib/screenshare/protocol';
+import { isValidPeerId, isValidRoomId, isValidSecret, isViewerSignalDirectionValid, validateSignalPayload } from '@/lib/screenshare/protocol';
 import { consumeRateLimit, pollSignals, sendSignal } from '@/lib/screenshare/store';
 import { isRecord, json, readJsonBody, serverError } from '@/lib/screenshare/http';
 
@@ -31,10 +31,7 @@ export async function POST(request: Request, { params }: RouteProps) {
     }
     const peerId = peerIdValue as string;
     const target = targetValue as string;
-    if (role === 'viewer' && (signal.type === 'join' || signal.type === 'quality-request' || signal.type === 'restart-request') && target !== 'host') {
-      return json({ error: 'invalid_signal_direction' }, 400);
-    }
-    if (role === 'viewer' && signal.type === 'offer' && target === 'host') {
+    if (role === 'viewer' && !isViewerSignalDirectionValid(signal, target)) {
       return json({ error: 'invalid_signal_direction' }, 400);
     }
 
@@ -44,7 +41,7 @@ export async function POST(request: Request, { params }: RouteProps) {
     if (role === 'host' && signal.type !== 'offer' && signal.type !== 'candidate') {
       return json({ error: 'invalid_signal_direction' }, 400);
     }
-    if (role === 'viewer' && signal.type !== 'join' && signal.type !== 'answer' && signal.type !== 'candidate' && signal.type !== 'restart-request' && signal.type !== 'bye' && signal.type !== 'quality-request') {
+    if (role === 'viewer' && signal.type !== 'join' && signal.type !== 'offer' && signal.type !== 'answer' && signal.type !== 'candidate' && signal.type !== 'restart-request' && signal.type !== 'bye' && signal.type !== 'quality-request') {
       return json({ error: 'invalid_signal_direction' }, 400);
     }
 

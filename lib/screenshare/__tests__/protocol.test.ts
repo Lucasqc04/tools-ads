@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isQualityMode, isRoomAccess, isValidPeerId, isValidRoomId, isValidSecret, sanitizeParticipantName, validateSignalPayload } from '../protocol';
+import { isQualityMode, isRoomAccess, isValidPeerId, isValidRoomId, isValidSecret, isViewerSignalDirectionValid, sanitizeParticipantName, validateSignalPayload } from '../protocol';
 
 describe('screen-share signaling validation', () => {
   it('accepts cryptographically-sized IDs and tokens only', () => {
@@ -18,6 +18,15 @@ describe('screen-share signaling validation', () => {
     expect(validateSignalPayload({ type: 'offer', negotiationId: '12345678-1234-1234', description: { type: 'offer', sdp: 'x'.repeat(80_001) } })).toBeNull();
     expect(validateSignalPayload({ type: 'quality-request', preference: 'economy' })).toEqual({ type: 'quality-request', preference: 'economy' });
     expect(validateSignalPayload({ type: 'quality-request', preference: 'force-1080p' })).toBeNull();
+  });
+
+  it('allows viewer offers only to another viewer and keeps control signals host-directed', () => {
+    const offer = { type: 'offer', negotiationId: '12345678-1234-1234', description: { type: 'offer', sdp: 'v=0' } } as const;
+    expect(isViewerSignalDirectionValid(offer, 'host')).toBe(false);
+    expect(isViewerSignalDirectionValid(offer, 'a'.repeat(32))).toBe(true);
+    expect(isViewerSignalDirectionValid({ type: 'join' }, 'host')).toBe(true);
+    expect(isViewerSignalDirectionValid({ type: 'join' }, 'a'.repeat(32))).toBe(false);
+    expect(isViewerSignalDirectionValid({ type: 'quality-request', preference: 'economy' }, 'a'.repeat(32))).toBe(false);
   });
 
   it('normalizes temporary participant names and validates room access choices', () => {
