@@ -882,10 +882,28 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         mesh.senderKinds = meshKinds;
         mesh.pc.ontrack = (event) => attachRemoteTrack(mesh.id, transceivers, event);
       };
+      const pendingHostTrackEvents: RTCTrackEvent[] = [];
+      const pendingMeshTrackEvents = new Map<string, RTCTrackEvent[]>();
+      runtime.pc.ontrack = (event) => {
+        if (!runtime.transceivers) {
+          pendingHostTrackEvents.push(event);
+          return;
+        }
+        attachRemoteTrack('host', runtime.transceivers, event);
+      };
       const makeMeshPeer = (otherPeerId: string, createOfferTransceivers = false): ViewerMeshPeer => {
         const meshPc = new RTCPeerConnection({ iceServers: config.iceServers, iceCandidatePoolSize: 2 });
         const mesh: ViewerMeshPeer = { id: otherPeerId, pc: meshPc, negotiationId: crypto.randomUUID(), candidates: [], transceivers: null, senders: [], senderKinds: [], bytes: new Map(), lastStatsAt: Date.now(), state: meshPc.connectionState };
         runtime.meshPeers.set(otherPeerId, mesh);
+        meshPc.ontrack = (event) => {
+          if (!mesh.transceivers) {
+            const pending = pendingMeshTrackEvents.get(otherPeerId) ?? [];
+            pending.push(event);
+            pendingMeshTrackEvents.set(otherPeerId, pending);
+            return;
+          }
+          attachRemoteTrack(mesh.id, mesh.transceivers, event);
+        };
         if (createOfferTransceivers) {
           const tracks = runtime.localStream?.getTracks() ?? [];
           const shared = runtime.screenStream;
@@ -947,10 +965,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
             const kinds: CallMediaKind[] = ['microphone', 'camera', 'screen', 'screenAudio'];
             runtime.senderKinds = kinds;
             runtime.senders = kinds.map((kind) => runtime.transceivers![kind].sender);
-            // Register before replaceTrack yields: ontrack may fire immediately after
-            // setRemoteDescription and otherwise the initial host media is discarded.
-            runtime.pc.ontrack = (event) => attachRemoteTrack('host', runtime.transceivers!, event);
             await bindCallMediaTracks(runtime.pc, runtime.localStream, runtime.screenStream);
+            for (const event of pendingHostTrackEvents.splice(0)) attachRemoteTrack('host', transceivers, event);
           }
           for (const candidate of runtime.candidates.splice(0).filter((item) => item.negotiationId === signal.negotiationId)) await runtime.pc.addIceCandidate(candidate.candidate).catch(() => undefined);
           const answer = await runtime.pc.createAnswer();
@@ -974,6 +990,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
             if (!transceivers) throw new Error('The remote offer does not contain the expected media sections.');
             setMeshTransceivers(mesh, transceivers);
             await bindCallMediaTracks(mesh.pc, runtime.localStream, runtime.screenStream);
+            for (const event of pendingMeshTrackEvents.get(mesh.id) ?? []) attachRemoteTrack(mesh.id, transceivers, event);
+            pendingMeshTrackEvents.delete(mesh.id);
           }
           for (const candidate of mesh.candidates.splice(0).filter((item) => item.negotiationId === signal.negotiationId)) await mesh.pc.addIceCandidate(candidate.candidate).catch(() => undefined);
           const answer = await mesh.pc.createAnswer();
