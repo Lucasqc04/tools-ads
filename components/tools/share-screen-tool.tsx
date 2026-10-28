@@ -29,7 +29,7 @@ import { getBrowserNetworkInformation, classifyBrowserNetwork, type BrowserNetwo
 import { qualityProfiles, type QualityMode, type ScreenShareSignal, type UnsequencedSignal } from '@/lib/screenshare/protocol';
 import { getShareScreenUi } from '@/data/i18n/share-screen-ui';
 import { getShareScreenCallCopy } from '@/data/i18n/share-screen-call';
-import { createCallMediaTransceivers, getDisplayMediaOptions, getRemoteTrackKind, type CallMediaKind, type CallMediaTransceivers } from '@/lib/screenshare/media';
+import { bindCallMediaTracks, createCallMediaTransceivers, getDisplayMediaOptions, getRemoteTrackKind, type CallMediaKind, type CallMediaTransceivers } from '@/lib/screenshare/media';
 import type { AppLocale } from '@/lib/i18n/config';
 
 type Props = { locale?: AppLocale; initialRoomId?: string };
@@ -79,8 +79,8 @@ type HostRuntime = {
   everConnected: boolean;
   closed: boolean;
 };
-type ViewerMeshPeer = { id: string; pc: RTCPeerConnection; negotiationId: string; candidates: Array<{ negotiationId: string; candidate: RTCIceCandidateInit }>; transceivers: CallMediaTransceivers; senders: RTCRtpSender[]; senderKinds: CallMediaKind[]; bytes: ByteCounterState; lastStatsAt: number; state: RTCPeerConnectionState };
-type ViewerRuntime = { roomId: string; peerId: string; token: string; pc: RTCPeerConnection; transceivers: CallMediaTransceivers; senders: RTCRtpSender[]; senderKinds: CallMediaKind[]; meshPeers: Map<string, ViewerMeshPeer>; localStream: MediaStream | null; screenStream: MediaStream | null; cursor: number; negotiationId: string | null; candidates: Array<{ negotiationId: string; candidate: RTCIceCandidateInit }>; bytes: ByteCounterState; sessionBytes: number; lastStatsAt: number; lastAdaptation: number; heartbeatTimer: number | null; pollTimer: number | null; rosterTimer: number | null; recoveryTimer: number | null; connected: boolean; completed: boolean; closed: boolean };
+type ViewerMeshPeer = { id: string; pc: RTCPeerConnection; negotiationId: string; candidates: Array<{ negotiationId: string; candidate: RTCIceCandidateInit }>; transceivers: CallMediaTransceivers | null; senders: RTCRtpSender[]; senderKinds: CallMediaKind[]; bytes: ByteCounterState; lastStatsAt: number; state: RTCPeerConnectionState };
+type ViewerRuntime = { roomId: string; peerId: string; token: string; pc: RTCPeerConnection; transceivers: CallMediaTransceivers | null; senders: RTCRtpSender[]; senderKinds: CallMediaKind[]; meshPeers: Map<string, ViewerMeshPeer>; localStream: MediaStream | null; screenStream: MediaStream | null; cursor: number; negotiationId: string | null; candidates: Array<{ negotiationId: string; candidate: RTCIceCandidateInit }>; bytes: ByteCounterState; sessionBytes: number; lastStatsAt: number; lastAdaptation: number; heartbeatTimer: number | null; pollTimer: number | null; rosterTimer: number | null; recoveryTimer: number | null; connected: boolean; completed: boolean; closed: boolean };
 type PeerView = { id: string; displayName: string; state: RTCPeerConnectionState; metrics: ConnectionMetrics | null; cameraOn: boolean; microphoneOn: boolean };
 type ParticipantView = { id: string; displayName: string; state: string; cameraOn: boolean; microphoneOn: boolean };
 type RemoteMedia = { camera?: MediaStream; screen?: MediaStream; microphone?: MediaStream; screenAudio?: MediaStream };
@@ -797,19 +797,9 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       const config = await api<{ iceServers: RTCIceServer[]; viewerLimit: number }>('/api/screenshare/config');
       setViewerLimitFromConfig(config.viewerLimit);
       const pc = new RTCPeerConnection({ iceServers: config.iceServers, iceCandidatePoolSize: 2 });
-      const localTracks = localMediaRef.current?.getTracks() ?? [];
       const currentScreen = viewerRef.current?.screenStream ?? null;
-      const transceivers = createCallMediaTransceivers(
-        pc,
-        localTracks.find((track) => track.kind === 'audio') ?? null,
-        localTracks.find((track) => track.kind === 'video') ?? null,
-        currentScreen?.getVideoTracks()[0] ?? null,
-        currentScreen?.getAudioTracks()[0] ?? null,
-      );
-      const senderKinds: CallMediaKind[] = ['microphone', 'camera', 'screen', 'screenAudio'];
       const runtime: ViewerRuntime = {
-        roomId, peerId, token, pc, transceivers,
-        senders: senderKinds.map((kind) => transceivers[kind].sender), senderKinds,
+        roomId, peerId, token, pc, transceivers: null, senders: [], senderKinds: [],
         meshPeers: new Map(), localStream: localMediaRef.current, screenStream: currentScreen,
         cursor: 0, negotiationId: null, candidates: [], bytes: new Map(), sessionBytes: 0, lastStatsAt: Date.now(), lastAdaptation: 0,
         heartbeatTimer: null, pollTimer: null, rosterTimer: null, recoveryTimer: null, connected: false, completed: false, closed: false,
@@ -885,21 +875,28 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           }
         };
       };
-      const makeMeshPeer = (otherPeerId: string): ViewerMeshPeer => {
-        const meshPc = new RTCPeerConnection({ iceServers: config.iceServers, iceCandidatePoolSize: 2 });
-        const tracks = runtime.localStream?.getTracks() ?? [];
-        const shared = runtime.screenStream;
-        const meshTransceivers = createCallMediaTransceivers(
-          meshPc,
-          tracks.find((track) => track.kind === 'audio') ?? null,
-          tracks.find((track) => track.kind === 'video') ?? null,
-          shared?.getVideoTracks()[0] ?? null,
-          shared?.getAudioTracks()[0] ?? null,
-        );
+      const setMeshTransceivers = (mesh: ViewerMeshPeer, transceivers: CallMediaTransceivers) => {
         const meshKinds: CallMediaKind[] = ['microphone', 'camera', 'screen', 'screenAudio'];
-        const mesh: ViewerMeshPeer = { id: otherPeerId, pc: meshPc, negotiationId: crypto.randomUUID(), candidates: [], transceivers: meshTransceivers, senders: meshKinds.map((kind) => meshTransceivers[kind].sender), senderKinds: meshKinds, bytes: new Map(), lastStatsAt: Date.now(), state: meshPc.connectionState };
+        mesh.transceivers = transceivers;
+        mesh.senders = meshKinds.map((kind) => transceivers[kind].sender);
+        mesh.senderKinds = meshKinds;
+        mesh.pc.ontrack = (event) => attachRemoteTrack(mesh.id, transceivers, event);
+      };
+      const makeMeshPeer = (otherPeerId: string, createOfferTransceivers = false): ViewerMeshPeer => {
+        const meshPc = new RTCPeerConnection({ iceServers: config.iceServers, iceCandidatePoolSize: 2 });
+        const mesh: ViewerMeshPeer = { id: otherPeerId, pc: meshPc, negotiationId: crypto.randomUUID(), candidates: [], transceivers: null, senders: [], senderKinds: [], bytes: new Map(), lastStatsAt: Date.now(), state: meshPc.connectionState };
         runtime.meshPeers.set(otherPeerId, mesh);
-        meshPc.ontrack = (event) => attachRemoteTrack(otherPeerId, meshTransceivers, event);
+        if (createOfferTransceivers) {
+          const tracks = runtime.localStream?.getTracks() ?? [];
+          const shared = runtime.screenStream;
+          setMeshTransceivers(mesh, createCallMediaTransceivers(
+            meshPc,
+            tracks.find((track) => track.kind === 'audio') ?? null,
+            tracks.find((track) => track.kind === 'video') ?? null,
+            shared?.getVideoTracks()[0] ?? null,
+            shared?.getAudioTracks()[0] ?? null,
+          ));
+        }
         meshPc.onicecandidate = (event) => {
           if (event.candidate) void sendViewerSignal(runtime, { type: 'candidate', negotiationId: mesh.negotiationId, candidate: serializeCandidate(event.candidate) }, otherPeerId).catch(() => undefined);
         };
@@ -908,15 +905,23 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       };
       const createMeshOffer = async (otherPeerId: string) => {
         let mesh = runtime.meshPeers.get(otherPeerId);
-        if (!mesh) mesh = makeMeshPeer(otherPeerId);
+        if (!mesh) mesh = makeMeshPeer(otherPeerId, true);
+        if (!mesh.transceivers) {
+          const tracks = runtime.localStream?.getTracks() ?? [];
+          const shared = runtime.screenStream;
+          setMeshTransceivers(mesh, createCallMediaTransceivers(
+            mesh.pc,
+            tracks.find((track) => track.kind === 'audio') ?? null,
+            tracks.find((track) => track.kind === 'video') ?? null,
+            shared?.getVideoTracks()[0] ?? null,
+            shared?.getAudioTracks()[0] ?? null,
+          ));
+        }
         if (mesh.pc.signalingState !== 'stable') return;
         mesh.negotiationId = crypto.randomUUID();
         const offer = await mesh.pc.createOffer();
         await mesh.pc.setLocalDescription(offer);
         await sendViewerSignal(runtime, { type: 'offer', negotiationId: mesh.negotiationId, description: { type: 'offer', sdp: offer.sdp ?? '' } }, otherPeerId);
-      };
-      runtime.pc.ontrack = (event) => {
-        attachRemoteTrack('host', runtime.transceivers, event);
       };
       runtime.pc.onicecandidate = (event) => {
         if (event.candidate && runtime.negotiationId) void sendViewerSignal(runtime, { type: 'candidate', negotiationId: runtime.negotiationId, candidate: serializeCandidate(event.candidate) }).catch(() => undefined);
@@ -935,6 +940,13 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         if (signal.type === 'offer' && signal.fromPeerId === 'host') {
           runtime.negotiationId = signal.negotiationId;
           await runtime.pc.setRemoteDescription(signal.description);
+          if (!runtime.transceivers) {
+            runtime.transceivers = await bindCallMediaTracks(runtime.pc, runtime.localStream, runtime.screenStream);
+            const kinds: CallMediaKind[] = ['microphone', 'camera', 'screen', 'screenAudio'];
+            runtime.senderKinds = kinds;
+            runtime.senders = kinds.map((kind) => runtime.transceivers![kind].sender);
+            runtime.pc.ontrack = (event) => attachRemoteTrack('host', runtime.transceivers!, event);
+          }
           for (const candidate of runtime.candidates.splice(0).filter((item) => item.negotiationId === signal.negotiationId)) await runtime.pc.addIceCandidate(candidate.candidate).catch(() => undefined);
           const answer = await runtime.pc.createAnswer();
           await runtime.pc.setLocalDescription(answer);
@@ -952,6 +964,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           if (!mesh) mesh = makeMeshPeer(signal.fromPeerId);
           mesh.negotiationId = signal.negotiationId;
           await mesh.pc.setRemoteDescription(signal.description);
+          if (!mesh.transceivers) setMeshTransceivers(mesh, await bindCallMediaTracks(mesh.pc, runtime.localStream, runtime.screenStream));
           for (const candidate of mesh.candidates.splice(0).filter((item) => item.negotiationId === signal.negotiationId)) await mesh.pc.addIceCandidate(candidate.candidate).catch(() => undefined);
           const answer = await mesh.pc.createAnswer();
           await mesh.pc.setLocalDescription(answer);
@@ -1369,8 +1382,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         const allocation = allocatePeerBitrate({ budgetMbps: pref.uploadBudgetMbps, activeViewers: outgoingConnections.length, profileCeilingBps: screenProfile + cameraBps, viewerPrefersEconomy: economy, audioPerViewerBps: audioBps });
         setBudgetShortfall(allocation.budgetShortfall);
         if (Date.now() - runtime.lastAdaptation >= 5_000) {
-          const hasCamera = runtime.transceivers.camera.sender.track?.readyState === 'live';
-          const hasScreen = runtime.transceivers.screen.sender.track?.readyState === 'live';
+          const hasCamera = runtime.transceivers?.camera.sender.track?.readyState === 'live';
+          const hasScreen = runtime.transceivers?.screen.sender.track?.readyState === 'live';
           const videoCount = Math.max(1, Number(hasCamera) + Number(hasScreen));
           for (const group of outgoingConnections) for (let index = 0; index < group.senders.length; index += 1) {
             const sender = group.senders[index];
@@ -1453,7 +1466,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   }, [notify, ui, x]);
 
   const fullscreen = useCallback(() => {
-    const element = document.getElementById('screenshare-call-stage');
+    const element = document.getElementById('screenshare-call-root');
     if (!element) return;
     if (document.fullscreenElement) void document.exitFullscreen();
     else void element.requestFullscreen?.();
@@ -1463,7 +1476,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const negotiatingCount = peers.filter((peer) => peer.state !== 'connected' && peer.state !== 'closed').length;
   const measuredUploadEstimate = hostDataMeasured ? getProjectedHourlyBytes(hostBytes, clock - (room?.startedAt ?? clock)) : null;
   const averagePerMinute = room && hostDataMeasured && clock - room.startedAt > 0 ? hostBytes / ((clock - room.startedAt) / 60_000) : null;
-  const limitPercent = getConsumptionPercent(hostBytes, preferences.sessionLimitBytes);
+  const sessionLimitBytes = preferences.sessionLimitBytes ?? 0;
+  const limitPercent = getConsumptionPercent(hostBytes, sessionLimitBytes || null);
   const effectiveCurrentProfileBps = preferences.dataSaver ? qualityProfiles.economy.maxBitrate : preferences.qualityMode === 'automatic' && hostRef.current
     ? (preferences.contentPreference === 'motion' && hostRef.current.captureLevel !== 'economy' ? qualityProfiles.fluid.maxBitrate : qualityProfiles[hostRef.current.captureLevel].maxBitrate)
     : getNominalVideoBitrate(preferences.qualityMode);
@@ -1541,7 +1555,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     </div>
   );
 
-  const renderStats = (viewer = false) => {
+  const renderStats = (viewer = false, dark = false) => {
     const metrics = viewer ? viewerMetrics : hostMetrics;
     const rows: Array<[string, string]> = [
       [ui.connection, viewer ? viewerQualityLabel : qualityLabel],
@@ -1553,12 +1567,22 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       [ui.iceRoute, metrics?.connection === 'direct' ? ui.direct : metrics?.connection === 'relayed' ? ui.relayed : ui.unknownRoute],
       [ui.droppedFrames, metrics?.framesDropped == null ? '—' : String(metrics.framesDropped)],
     ];
-    return <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{rows.map(([label, value]) => <div key={label} className="rounded-lg border border-slate-200 bg-white px-3 py-2"><p className="text-xs text-slate-500">{label}</p><p className="mt-0.5 text-sm font-semibold text-slate-900">{value}</p></div>)}</div>;
+    return <div className="grid min-w-0 grid-cols-2 gap-2">{rows.map(([label, value]) => <div key={label} className={`min-w-0 rounded-xl border p-3 ${dark ? 'border-slate-700 bg-slate-800/70' : 'border-slate-200 bg-white'}`}><p className={`text-[11px] leading-4 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p><p className={`mt-1 break-words text-sm font-semibold leading-5 ${dark ? 'text-slate-100' : 'text-slate-900'}`}>{value}</p></div>)}</div>;
   };
 
   const isHostCall = Boolean(room && !initialRoomId);
   const isViewerCall = Boolean(initialRoomId && viewerPeerId && ['waiting', 'connecting', 'watching'].includes(phase));
   const inCall = isHostCall && phase === 'active' || isViewerCall;
+  useEffect(() => {
+    if (!inCall) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'F12') return;
+      event.preventDefault();
+      fullscreen();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [fullscreen, inCall]);
   const selfId = isHostCall ? 'host' : viewerPeerId;
   const sharedBy = participants.find((person) => person.id === screenSharerId)?.displayName ?? (screenSharerId === 'host' ? room?.hostName ?? roomStatus?.hostName : undefined);
   const sharedStream = screenSharerId === 'host'
@@ -1586,7 +1610,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     const shareLabel = screenSharerId === selfId ? callCopy.switchScreen : callCopy.screenShare;
     const markPlayBlocked = () => setCallPlayBlocked(true);
     return (
-      <div className="fixed inset-0 !mt-0 z-[100] flex h-[100dvh] w-full flex-col overflow-hidden bg-slate-950 text-white" role="application" aria-label={callCopy.roomTitle}>
+      <div id="screenshare-call-root" className="fixed inset-0 !mt-0 z-[100] flex h-[100dvh] w-full flex-col overflow-hidden bg-slate-950 text-white" role="application" aria-label={callCopy.roomTitle}>
         <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-slate-800 px-3 sm:px-5">
           <div className="min-w-0"><p className="truncate text-sm font-semibold">{room?.hostName ?? roomStatus?.hostName ?? callCopy.roomTitle}</p><p className="text-xs text-slate-400">{isHostCall && room ? formatDuration(room.startedAt, clock) : callCopy.roomTitle} · {connectedParticipants} {callCopy.participants.toLocaleLowerCase()}</p></div>
           <div className="flex shrink-0 items-center gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-2.5 py-1.5 text-xs text-slate-200"><span className={`h-2 w-2 rounded-full ${hostReconnectText ? 'bg-amber-400' : phase === 'watching' || phase === 'active' ? 'bg-emerald-400' : 'animate-pulse bg-amber-400'}`} />{hostReconnectText ? ui.reconnecting : phase === 'watching' || phase === 'active' ? (isHostCall ? qualityLabel : viewerQualityLabel) : ui.connecting}</span>{isHostCall ? <Button variant="media" className="h-9 px-3" onClick={() => void copyLink()}><Copy size={15} /><span className="ml-2 hidden sm:inline">{callCopy.copyInvite}</span></Button> : null}</div>
@@ -1631,7 +1655,23 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
               {pendingPeers.length ? <div className="mb-3"><p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{callCopy.pendingRequests}</p>{pendingPeers.map((peer) => <div key={peer.id} className="mb-2 rounded-xl bg-slate-800 p-3"><p className="truncate text-sm font-medium">{peer.displayName}</p><p className="mb-3 mt-1 text-xs text-slate-400">{callCopy.approvalRequest}</p><div className="flex gap-2"><Button className="h-8 flex-1 px-2 text-xs" onClick={() => void moderateViewer(peer.id, 'approve')}>{callCopy.approve}</Button><Button variant="media" className="h-8 px-2 text-xs" onClick={() => void moderateViewer(peer.id, 'reject')}>{callCopy.reject}</Button></div></div>)}</div> : null}
               {participants.map((person) => <div key={person.id} className="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-slate-800">{callIdentity(person)}<div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{person.id === selfId ? callCopy.you : person.displayName}</p><p className="text-xs text-slate-400">{person.id === 'host' ? callCopy.host : person.state === 'connected' ? ui.stable : ui.connecting}</p></div>{person.microphoneOn ? <Mic size={15} className="text-slate-300" /> : <MicOff size={15} className="text-slate-500" />}</div>)}
               {participants.length <= 1 ? <p className="px-2 py-3 text-sm text-slate-400">{callCopy.waitingForPeople}</p> : null}
-            </div> : hostCallPanel === 'stats' ? <div className="space-y-3 text-slate-900"><div className="rounded-xl bg-white p-3">{renderStats(!isHostCall)}</div><p className="text-xs leading-5 text-slate-400">{ui.statsNote}</p>{isHostCall ? <div className="rounded-xl border border-slate-700 p-3 text-sm text-slate-200"><p>{x.currentRate}: {hostDataMeasured ? formatMbps(currentUploadBps) : ui.notMeasured}</p><p className="mt-1">{x.dataSent}: {hostDataMeasured ? formatDataAmount(hostBytes) : ui.notMeasured}</p><p className="mt-1">{x.projectedHour}: {measuredUploadEstimate == null ? '—' : `${formatDataAmount(measuredUploadEstimate)} / h`}</p></div> : <p className="text-sm text-slate-300">{x.viewerData}: {viewerDataMeasured ? formatDataAmount(viewerBytes) : ui.notMeasured}</p>}</div> : <div className="space-y-4">{isHostCall ? <div className="rounded-xl bg-white p-3">{renderPreferences(true)}</div> : <div className="space-y-3 rounded-xl border border-slate-700 p-3"><label className="flex items-start gap-2 text-sm text-slate-200"><input type="checkbox" checked={viewerEconomy} onChange={(event) => void requestViewerPreference(event.target.checked)} className="mt-1 accent-brand-500" /><span><span className="font-semibold">{x.economyViewer}</span><span className="mt-1 block text-xs leading-5 text-slate-400">{x.mediaOnly}</span></span></label><p className="text-sm text-slate-300">{x.currentRate}: {formatMbps(viewerMetrics?.bitrateBps)} · {x.viewerData}: {viewerDataMeasured ? formatDataAmount(viewerBytes) : ui.notMeasured}</p></div>}<label className="flex items-center gap-2 text-sm text-slate-200"><input type="checkbox" checked={speakerMuted} onChange={(event) => setSpeakerMuted(event.target.checked)} />{callCopy.speakers}</label><label className="block text-xs text-slate-300">{ui.volume}<input className="mt-2 w-full accent-brand-500" type="range" min="0" max="1" step="0.05" value={speakerVolume} onChange={(event) => setSpeakerVolume(Number(event.target.value))} /></label><p className="text-xs leading-5 text-slate-400">{callCopy.screenMobileNote}</p></div>}
+            </div> : hostCallPanel === 'stats' ? <div className="space-y-4">
+              {isHostCall ? <section className="rounded-2xl border border-slate-700 bg-slate-800/40 p-3">
+                <div className="mb-3 flex items-center justify-between gap-2"><h3 className="text-sm font-semibold text-white">{callCopy.roomTitle}</h3><span className="rounded-full bg-slate-800 px-2.5 py-1 text-xs text-slate-300">{connectedCount} / {peers.length} {callCopy.participants.toLocaleLowerCase()}</span></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="min-w-0 rounded-xl bg-slate-800 p-3"><p className="text-[11px] leading-4 text-slate-400">{x.currentRate}</p><p className="mt-1 break-words text-sm font-semibold text-white">{hostDataMeasured ? formatMbps(currentUploadBps) : ui.notMeasured}</p></div>
+                  <div className="min-w-0 rounded-xl bg-slate-800 p-3"><p className="text-[11px] leading-4 text-slate-400">{x.dataSent}</p><p className="mt-1 break-words text-sm font-semibold text-white">{hostDataMeasured ? formatDataAmount(hostBytes) : ui.notMeasured}</p></div>
+                  <div className="min-w-0 rounded-xl bg-slate-800 p-3"><p className="text-[11px] leading-4 text-slate-400">{x.averageMinute}</p><p className="mt-1 break-words text-sm font-semibold text-white">{averagePerMinute == null ? ui.notMeasured : formatDataAmount(averagePerMinute)}</p></div>
+                  <div className="min-w-0 rounded-xl bg-slate-800 p-3"><p className="text-[11px] leading-4 text-slate-400">{x.projectedHour}</p><p className="mt-1 break-words text-sm font-semibold text-white">{measuredUploadEstimate == null ? ui.notMeasured : `${formatDataAmount(measuredUploadEstimate)} / h`}</p></div>
+                </div>
+                {sessionLimitBytes > 0 ? <div className="mt-3 rounded-xl border border-slate-700 bg-slate-900/60 p-3"><div className="mb-2 flex items-center justify-between gap-2 text-xs"><span className="text-slate-300">{x.sessionDataLimit}</span><span className="font-medium text-white">{Math.min(100, limitPercent ?? 0).toFixed(0)}% · {formatDataAmount(sessionLimitBytes)}</span></div><div className="h-2 overflow-hidden rounded-full bg-slate-700"><div className={`h-full rounded-full ${(limitPercent ?? 0) >= 80 ? 'bg-amber-400' : 'bg-brand-400'}`} style={{ width: `${Math.min(100, limitPercent ?? 0)}%` }} /></div></div> : null}
+              </section> : <section className="grid grid-cols-2 gap-2">
+                <div className="min-w-0 rounded-xl border border-slate-700 bg-slate-800/50 p-3"><p className="text-[11px] leading-4 text-slate-400">{x.currentRate}</p><p className="mt-1 break-words text-sm font-semibold text-white">{formatMbps(viewerMetrics?.bitrateBps)}</p></div>
+                <div className="min-w-0 rounded-xl border border-slate-700 bg-slate-800/50 p-3"><p className="text-[11px] leading-4 text-slate-400">{x.viewerData}</p><p className="mt-1 break-words text-sm font-semibold text-white">{viewerDataMeasured ? formatDataAmount(viewerBytes) : ui.notMeasured}</p></div>
+              </section>}
+              <section className="space-y-3"><h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">{ui.diagnostics}</h3>{renderStats(!isHostCall, true)}</section>
+              <p className="text-xs leading-5 text-slate-400">{ui.statsNote} {x.mediaOnly}</p>
+            </div> : <div className="space-y-4">{isHostCall ? <div className="rounded-xl bg-white p-3">{renderPreferences(true)}</div> : <div className="space-y-3 rounded-xl border border-slate-700 p-3"><label className="flex items-start gap-2 text-sm text-slate-200"><input type="checkbox" checked={viewerEconomy} onChange={(event) => void requestViewerPreference(event.target.checked)} className="mt-1 accent-brand-500" /><span><span className="font-semibold">{x.economyViewer}</span><span className="mt-1 block text-xs leading-5 text-slate-400">{x.mediaOnly}</span></span></label><p className="text-sm text-slate-300">{x.currentRate}: {formatMbps(viewerMetrics?.bitrateBps)} · {x.viewerData}: {viewerDataMeasured ? formatDataAmount(viewerBytes) : ui.notMeasured}</p></div>}<label className="flex items-center gap-2 text-sm text-slate-200"><input type="checkbox" checked={speakerMuted} onChange={(event) => setSpeakerMuted(event.target.checked)} />{callCopy.speakers}</label><label className="block text-xs text-slate-300">{ui.volume}<input className="mt-2 w-full accent-brand-500" type="range" min="0" max="1" step="0.05" value={speakerVolume} onChange={(event) => setSpeakerVolume(Number(event.target.value))} /></label><p className="text-xs leading-5 text-slate-400">{callCopy.screenMobileNote}</p></div>}
           </aside> : null}
         </div>
 
