@@ -1586,7 +1586,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     const shareLabel = screenSharerId === selfId ? callCopy.switchScreen : callCopy.screenShare;
     const markPlayBlocked = () => setCallPlayBlocked(true);
     return (
-      <div className="fixed inset-0 z-[100] flex h-[100dvh] w-full flex-col overflow-hidden bg-slate-950 text-white" role="application" aria-label={callCopy.roomTitle}>
+      <div className="fixed inset-0 !mt-0 z-[100] flex h-[100dvh] w-full flex-col overflow-hidden bg-slate-950 text-white" role="application" aria-label={callCopy.roomTitle}>
         <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-slate-800 px-3 sm:px-5">
           <div className="min-w-0"><p className="truncate text-sm font-semibold">{room?.hostName ?? roomStatus?.hostName ?? callCopy.roomTitle}</p><p className="text-xs text-slate-400">{isHostCall && room ? formatDuration(room.startedAt, clock) : callCopy.roomTitle} · {connectedParticipants} {callCopy.participants.toLocaleLowerCase()}</p></div>
           <div className="flex shrink-0 items-center gap-2"><span className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-2.5 py-1.5 text-xs text-slate-200"><span className={`h-2 w-2 rounded-full ${hostReconnectText ? 'bg-amber-400' : phase === 'watching' || phase === 'active' ? 'bg-emerald-400' : 'animate-pulse bg-amber-400'}`} />{hostReconnectText ? ui.reconnecting : phase === 'watching' || phase === 'active' ? (isHostCall ? qualityLabel : viewerQualityLabel) : ui.connecting}</span>{isHostCall ? <Button variant="media" className="h-9 px-3" onClick={() => void copyLink()}><Copy size={15} /><span className="ml-2 hidden sm:inline">{callCopy.copyInvite}</span></Button> : null}</div>
