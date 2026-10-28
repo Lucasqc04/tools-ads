@@ -8,7 +8,8 @@ vi.mock('@upstash/redis', () => ({ Redis: vi.fn(() => redisMocks) }));
 const makeRoom = (): ScreenShareRoomRecord => ({
   id: 'a'.repeat(48), hostTokenHash: 'b'.repeat(64), status: 'active', createdAt: 1_000,
   lastHostHeartbeat: 1_000, hardExpiresAt: 3_601_000, viewerLimit: 2, maxViewerLimit: 5,
-  qualityMode: 'automatic', audioAvailable: false,
+  qualityMode: 'automatic', audioAvailable: false, hostName: 'Host', access: 'public',
+  hostCameraOn: false, hostMicrophoneOn: false, screenSharerId: 'host',
 });
 
 describe('isolated Upstash screen-share store adapter', () => {
@@ -61,13 +62,16 @@ describe('isolated Upstash screen-share store adapter', () => {
     redisMocks.eval.mockResolvedValue('unauthorized');
     const store = await import('../store');
 
-    await expect(store.joinRoom({ id: makeRoom().id, peerId: 'c'.repeat(32), tokenHash: 'd'.repeat(64), now: 2_000 })).resolves.toBe('unauthorized');
+    await expect(store.joinRoom({ id: makeRoom().id, peerId: 'c'.repeat(32), tokenHash: 'd'.repeat(64), displayName: 'Viewer', now: 2_000 })).resolves.toBe('unauthorized');
     const [script, keys, args] = redisMocks.eval.mock.calls[0] as [string, string[], unknown[]];
     expect(script).toContain('existing.tokenHash ~= ARGV[4]');
     expect(script).toContain("redis.call('SCARD'");
     expect(script).toContain("redis.call('SADD'");
     expect(script).toContain('now - tonumber(existingPeer.lastHeartbeat) > (tonumber(ARGV[3]) * 1000)');
-    expect(script.indexOf("redis.call('SCARD'")).toBeLessThan(script.indexOf("redis.call('SET', KEYS[3], ARGV[6]"));
+    const approvedSeatCheck = script.indexOf("if redis.call('SCARD', KEYS[2]) >= tonumber(room.viewerLimit)");
+    const approvedPeerWrite = script.lastIndexOf("redis.call('SET', KEYS[3], cjson.encode(peer), 'EX', tonumber(ARGV[3]), 'NX')");
+    expect(approvedSeatCheck).toBeGreaterThan(-1);
+    expect(approvedPeerWrite).toBeGreaterThan(approvedSeatCheck);
     expect(keys[0]).toContain('screenshare:{');
     expect(args[3]).toBe('d'.repeat(64));
   });
@@ -76,7 +80,7 @@ describe('isolated Upstash screen-share store adapter', () => {
     redisMocks.get.mockResolvedValue(makeRoom());
     redisMocks.eval.mockResolvedValueOnce('joined').mockResolvedValueOnce('full');
     const store = await import('../store');
-    const base = { id: makeRoom().id, tokenHash: 'd'.repeat(64), now: 2_000 };
+    const base = { id: makeRoom().id, tokenHash: 'd'.repeat(64), displayName: 'Viewer', now: 2_000 };
 
     const outcomes = await Promise.all([
       store.joinRoom({ ...base, peerId: 'c'.repeat(32) }),
@@ -108,7 +112,7 @@ describe('isolated Upstash screen-share store adapter', () => {
     redisMocks.eval.mockResolvedValueOnce('ok').mockResolvedValueOnce('ok');
     const store = await import('../store');
 
-    await expect(store.heartbeatHost({ id: makeRoom().id, tokenHash: makeRoom().hostTokenHash, now: 2_000, audioAvailable: true, qualityMode: 'automatic' })).resolves.toBe('ok');
+    await expect(store.heartbeatHost({ id: makeRoom().id, tokenHash: makeRoom().hostTokenHash, now: 2_000, audioAvailable: true, qualityMode: 'automatic', cameraOn: true, microphoneOn: true })).resolves.toBe('ok');
     await expect(store.closeRoom({ id: makeRoom().id, tokenHash: makeRoom().hostTokenHash, now: 3_000 })).resolves.toBe('ok');
     const heartbeatScript = String(redisMocks.eval.mock.calls[0][0]);
     const closeScript = String(redisMocks.eval.mock.calls[1][0]);
@@ -145,5 +149,35 @@ describe('isolated Upstash screen-share store adapter', () => {
     const hostPeersScript = String(redisMocks.eval.mock.calls[1][0]);
     expect(publicRoomScript).toContain('now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[3]) * 1000)');
     expect(hostPeersScript).toContain('now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[4]) * 1000)');
+  });
+
+  it('queues private-room visitors for host approval and atomically promotes them into a seat', async () => {
+    redisMocks.get.mockResolvedValue({ ...makeRoom(), access: 'private' });
+    redisMocks.eval.mockResolvedValueOnce('pending').mockResolvedValueOnce('approved');
+    const store = await import('../store');
+    const input = { id: makeRoom().id, peerId: 'c'.repeat(32), tokenHash: 'd'.repeat(64), displayName: 'Nova pessoa', now: 2_000 };
+
+    await expect(store.joinRoom(input)).resolves.toBe('pending');
+    await expect(store.approveViewer({ id: input.id, peerId: input.peerId, tokenHash: makeRoom().hostTokenHash, now: 3_000 })).resolves.toBe('approved');
+    const joinScript = String(redisMocks.eval.mock.calls[0][0]);
+    const approveScript = String(redisMocks.eval.mock.calls[1][0]);
+    expect(joinScript).toContain("room.access == 'private'");
+    expect(joinScript).toContain("redis.call('SADD', KEYS[4]");
+    expect(approveScript).toContain('room.hostTokenHash ~= ARGV[1]');
+    expect(approveScript).toContain('room.viewerLimit');
+    expect(approveScript).toContain("peer.admission = 'approved'");
+  });
+
+  it('locks screen sharing to one authenticated participant with an atomic Redis script', async () => {
+    redisMocks.eval.mockResolvedValueOnce('busy').mockResolvedValueOnce('c'.repeat(32));
+    const store = await import('../store');
+    const input = { id: makeRoom().id, actorId: 'c'.repeat(32), tokenHash: 'd'.repeat(64), now: 2_000 };
+
+    await expect(store.setScreenSharer({ ...input, action: 'start' })).resolves.toBe('busy');
+    await expect(store.setScreenSharer({ ...input, action: 'stop' })).resolves.toBe('c'.repeat(32));
+    const script = String(redisMocks.eval.mock.calls[0][0]);
+    expect(script).toContain("room.screenSharerId ~= actor");
+    expect(script).toContain("return 'busy'");
+    expect(redisMocks.eval.mock.calls[0][1][0]).toContain('screenshare:{');
   });
 });

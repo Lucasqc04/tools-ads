@@ -1,7 +1,9 @@
 import {
   SCREENSHARE_ROOM_TTL_SECONDS,
   isQualityMode,
+  isRoomAccess,
   isValidSecret,
+  sanitizeParticipantName,
   type ScreenShareRoomRecord,
 } from '@/lib/screenshare/protocol';
 import { createRandomHex, requestFingerprint, sha256Hex } from '@/lib/screenshare/auth';
@@ -21,6 +23,10 @@ export async function POST(request: Request) {
 
   const qualityMode = body.value.qualityMode ?? 'automatic';
   if (!isQualityMode(qualityMode)) return json({ error: 'invalid_quality_mode' }, 400);
+  const hostName = sanitizeParticipantName(body.value.hostName);
+  const access = body.value.access ?? 'public';
+  if (!hostName) return json({ error: 'invalid_display_name' }, 400);
+  if (!isRoomAccess(access)) return json({ error: 'invalid_access' }, 400);
   const configuredLimit = getConfiguredViewerLimit();
   const viewerLimit = body.value.viewerLimit === undefined ? configuredLimit : body.value.viewerLimit;
   if (!Number.isInteger(viewerLimit) || Number(viewerLimit) < 1 || Number(viewerLimit) > configuredLimit) {
@@ -46,6 +52,11 @@ export async function POST(request: Request) {
       maxViewerLimit: configuredLimit,
       qualityMode,
       audioAvailable: false,
+      hostName,
+      access,
+      hostCameraOn: body.value.hostCameraOn === true,
+      hostMicrophoneOn: body.value.hostMicrophoneOn === true,
+      screenSharerId: null,
     };
 
     if (!(await createRoom(record))) return json({ error: 'try_again' }, 503);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isQualityMode, isValidPeerId, isValidRoomId, isValidSecret, validateSignalPayload } from '../protocol';
+import { isQualityMode, isRoomAccess, isValidPeerId, isValidRoomId, isValidSecret, sanitizeParticipantName, validateSignalPayload } from '../protocol';
 
 describe('screen-share signaling validation', () => {
   it('accepts cryptographically-sized IDs and tokens only', () => {
@@ -18,5 +18,13 @@ describe('screen-share signaling validation', () => {
     expect(validateSignalPayload({ type: 'offer', negotiationId: '12345678-1234-1234', description: { type: 'offer', sdp: 'x'.repeat(80_001) } })).toBeNull();
     expect(validateSignalPayload({ type: 'quality-request', preference: 'economy' })).toEqual({ type: 'quality-request', preference: 'economy' });
     expect(validateSignalPayload({ type: 'quality-request', preference: 'force-1080p' })).toBeNull();
+  });
+
+  it('normalizes temporary participant names and validates room access choices', () => {
+    expect(sanitizeParticipantName('  Ana\nCosta  ')).toBe('AnaCosta');
+    expect(sanitizeParticipantName('😀'.repeat(40))).toBe('😀'.repeat(32));
+    expect(sanitizeParticipantName('   ')).toBeNull();
+    expect(isRoomAccess('private')).toBe(true);
+    expect(isRoomAccess('listed')).toBe(false);
   });
 });

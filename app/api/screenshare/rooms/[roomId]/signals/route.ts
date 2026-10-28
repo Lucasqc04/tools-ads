@@ -23,12 +23,20 @@ export async function POST(request: Request, { params }: RouteProps) {
   try {
     const role = body.value.role;
     const peerIdValue: unknown = role === 'viewer' ? body.value.peerId : 'host';
-    const targetValue: unknown = role === 'host' ? body.value.toPeerId : 'host';
-    if ((role === 'viewer' && (typeof peerIdValue !== 'string' || !isValidPeerId(peerIdValue))) || (role === 'host' && (typeof targetValue !== 'string' || !isValidPeerId(targetValue)))) {
+    const targetValue: unknown = role === 'host' ? body.value.toPeerId : (body.value.toPeerId ?? 'host');
+    if ((role === 'viewer' && (typeof peerIdValue !== 'string' || !isValidPeerId(peerIdValue))) ||
+      (role === 'host' && (typeof targetValue !== 'string' || !isValidPeerId(targetValue))) ||
+      (role === 'viewer' && targetValue !== 'host' && (typeof targetValue !== 'string' || !isValidPeerId(targetValue)))) {
       return json({ error: 'invalid_target' }, 400);
     }
     const peerId = peerIdValue as string;
     const target = targetValue as string;
+    if (role === 'viewer' && (signal.type === 'join' || signal.type === 'quality-request' || signal.type === 'restart-request') && target !== 'host') {
+      return json({ error: 'invalid_signal_direction' }, 400);
+    }
+    if (role === 'viewer' && signal.type === 'offer' && target === 'host') {
+      return json({ error: 'invalid_signal_direction' }, 400);
+    }
 
     const token = request.headers.get(role === 'host' ? 'x-screenshare-host-token' : 'x-screenshare-viewer-token');
     if (!isValidSecret(token)) return json({ error: 'unauthorized' }, 401);

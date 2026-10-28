@@ -34,8 +34,10 @@ export async function POST(request: Request, { params }: RouteProps) {
         now,
         audioAvailable: body.value.audioAvailable,
         qualityMode,
+        cameraOn: body.value.cameraOn === true,
+        microphoneOn: body.value.microphoneOn === true,
       });
-      if (outcome === 'ok') return json({ ok: true });
+      if (outcome === 'ok' || outcome === 'pending') return json({ ok: true, state: outcome });
       if (outcome === 'unauthorized') return json({ error: 'not_found' }, 404);
       return json({ error: 'room_ended' }, 410);
     }
@@ -55,8 +57,10 @@ export async function POST(request: Request, { params }: RouteProps) {
       tokenHash: await sha256Hex(token),
       now,
       state: state as 'connecting' | 'connected' | 'disconnected',
+      cameraOn: body.value.cameraOn === true,
+      microphoneOn: body.value.microphoneOn === true,
     });
-    if (outcome === 'ok') return json({ ok: true });
+    if (outcome === 'ok' || outcome === 'pending') return json({ ok: true, state: outcome });
     if (outcome === 'unauthorized') return json({ error: 'not_found' }, 404);
     return json({ error: 'room_ended' }, 410);
   } catch (error) {

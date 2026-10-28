@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'media' | 'mediaActive' | 'mediaDanger';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
@@ -14,6 +14,12 @@ const variantClasses: Record<ButtonVariant, string> = {
     'bg-white text-slate-900 border border-slate-300 hover:bg-slate-100 focus-visible:ring-slate-400',
   ghost:
     'bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-300',
+  media:
+    'border border-slate-700 bg-slate-800 text-white hover:bg-slate-700 focus-visible:ring-slate-300 focus-visible:ring-offset-slate-950',
+  mediaActive:
+    'border border-brand-500 bg-brand-700 text-white hover:bg-brand-600 focus-visible:ring-brand-300 focus-visible:ring-offset-slate-950',
+  mediaDanger:
+    'border border-rose-700 bg-rose-700 text-white hover:bg-rose-600 focus-visible:ring-rose-300 focus-visible:ring-offset-slate-950',
 };
 
 export function Button({

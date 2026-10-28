@@ -19,6 +19,7 @@ export type ManualQualityProfile = keyof typeof qualityProfiles;
 export type QualityMode = 'automatic' | ManualQualityProfile;
 export type RoomState = 'active' | 'recovering' | 'closed' | 'expired' | 'full';
 export type PeerState = 'connecting' | 'connected' | 'disconnected';
+export type RoomAccess = 'public' | 'private';
 
 export type ScreenShareRoomRecord = {
   id: string;
@@ -31,6 +32,11 @@ export type ScreenShareRoomRecord = {
   maxViewerLimit: number;
   qualityMode: QualityMode;
   audioAvailable: boolean;
+  hostName: string;
+  access: RoomAccess;
+  hostCameraOn: boolean;
+  hostMicrophoneOn: boolean;
+  screenSharerId: string | null;
 };
 
 export type ScreenSharePeerRecord = {
@@ -39,6 +45,10 @@ export type ScreenSharePeerRecord = {
   joinedAt: number;
   lastHeartbeat: number;
   state: PeerState;
+  displayName: string;
+  admission: 'pending' | 'approved' | 'denied';
+  cameraOn: boolean;
+  microphoneOn: boolean;
 };
 
 export type ScreenShareSignal =
@@ -110,6 +120,16 @@ export const isValidRoomId = (value: string): boolean => /^[a-f0-9]{48}$/.test(v
 export const isValidPeerId = (value: string): boolean => /^[a-f0-9]{32}$/.test(value);
 export const isValidSecret = (value: unknown): value is string =>
   typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
+
+export const sanitizeParticipantName = (value: unknown): string | null => {
+  if (typeof value !== 'string') return null;
+  const normalized = value.normalize('NFC').replace(/[\u0000-\u001f\u007f]/g, '').trim();
+  const name = Array.from(normalized).slice(0, 32).join('');
+  return name.length >= 1 ? name : null;
+};
+
+export const isRoomAccess = (value: unknown): value is RoomAccess =>
+  value === 'public' || value === 'private';
 
 export const isQualityMode = (value: unknown): value is QualityMode =>
   value === 'automatic' ||

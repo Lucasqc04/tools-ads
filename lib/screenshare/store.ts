@@ -35,6 +35,7 @@ const getRedis = (): Redis => {
 
 const roomKey = (id: string) => `screenshare:{${id}}:room`;
 const viewersKey = (id: string) => `screenshare:{${id}}:viewers`;
+const pendingKey = (id: string) => `screenshare:{${id}}:pending`;
 const viewerKey = (id: string, peerId: string) => `screenshare:{${id}}:peer:${peerId}`;
 const signalSequenceKey = (id: string) => `screenshare:{${id}}:signal-sequence`;
 const hostSignalsKey = (id: string) => `screenshare:{${id}}:signals:host`;
@@ -66,8 +67,14 @@ local existingValue = redis.call('GET', KEYS[3])
 if existingValue then
   local existing = cjson.decode(existingValue)
   if existing.tokenHash ~= ARGV[4] then return 'unauthorized' end
+  if existing.admission == 'denied' then return 'denied' end
   existing.lastHeartbeat = now
   redis.call('SET', KEYS[3], cjson.encode(existing), 'EX', tonumber(ARGV[3]))
+  if existing.admission == 'pending' then
+    redis.call('SADD', KEYS[4], ARGV[5])
+    redis.call('EXPIRE', KEYS[4], tonumber(ARGV[3]))
+    return 'pending'
+  end
   redis.call('SADD', KEYS[2], ARGV[5])
   redis.call('EXPIRE', KEYS[2], tonumber(ARGV[3]))
   return 'existing'
@@ -87,8 +94,33 @@ for _, existingPeerId in ipairs(existingPeers) do
     end
   end
 end
+local pendingPeers = redis.call('SMEMBERS', KEYS[4])
+for _, pendingPeerId in ipairs(pendingPeers) do
+  local pendingPeerKey = ARGV[7] .. pendingPeerId
+  local pendingPeerValue = redis.call('GET', pendingPeerKey)
+  if not pendingPeerValue then
+    redis.call('SREM', KEYS[4], pendingPeerId)
+  else
+    local pendingPeer = cjson.decode(pendingPeerValue)
+    if now - tonumber(pendingPeer.lastHeartbeat) > (tonumber(ARGV[3]) * 1000) then
+      redis.call('SREM', KEYS[4], pendingPeerId)
+      redis.call('DEL', pendingPeerKey)
+    end
+  end
+end
+local peer = cjson.decode(ARGV[6])
+if room.access == 'private' then
+  if redis.call('SCARD', KEYS[4]) >= math.min(20, math.max(5, tonumber(room.viewerLimit) * 3)) then return 'pending_full' end
+  peer.admission = 'pending'
+  redis.call('SET', KEYS[3], cjson.encode(peer), 'EX', tonumber(ARGV[3]), 'NX')
+  if redis.call('EXISTS', KEYS[3]) == 0 then return 'conflict' end
+  redis.call('SADD', KEYS[4], ARGV[5])
+  redis.call('EXPIRE', KEYS[4], tonumber(ARGV[3]))
+  return 'pending'
+end
 if redis.call('SCARD', KEYS[2]) >= tonumber(room.viewerLimit) then return 'full' end
-redis.call('SET', KEYS[3], ARGV[6], 'EX', tonumber(ARGV[3]), 'NX')
+peer.admission = 'approved'
+redis.call('SET', KEYS[3], cjson.encode(peer), 'EX', tonumber(ARGV[3]), 'NX')
 if redis.call('EXISTS', KEYS[3]) == 0 then return 'conflict' end
 redis.call('SADD', KEYS[2], ARGV[5])
 redis.call('EXPIRE', KEYS[2], tonumber(ARGV[3]))
@@ -103,8 +135,11 @@ local now = tonumber(ARGV[2])
 if room.hostTokenHash ~= ARGV[1] then return 'unauthorized' end
 if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now or now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[4]) then return 'expired' end
 room.lastHostHeartbeat = now
-room.audioAvailable = ARGV[3] == '1'
+if room.screenSharerId == 'host' then room.audioAvailable = ARGV[3] == '1' end
+if not room.screenSharerId or room.screenSharerId == cjson.null then room.audioAvailable = false end
 room.qualityMode = ARGV[5]
+room.hostCameraOn = ARGV[6] == '1'
+room.hostMicrophoneOn = ARGV[7] == '1'
 local ttl = math.max(1, math.min(math.floor((tonumber(room.hardExpiresAt) - now) / 1000), math.floor(tonumber(ARGV[4]) / 1000)))
 redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ttl)
 redis.call('EXPIRE', KEYS[2], ttl)
@@ -135,12 +170,20 @@ if not roomValue then return 'missing' end
 local room = cjson.decode(roomValue)
 if room.status ~= 'active' then return 'closed' end
 local peerValue = redis.call('GET', KEYS[3])
-if not peerValue or not redis.call('SISMEMBER', KEYS[2], ARGV[1]) then return 'missing_peer' end
+if not peerValue then return 'missing_peer' end
 local peer = cjson.decode(peerValue)
 if peer.tokenHash ~= ARGV[2] then return 'unauthorized' end
 peer.lastHeartbeat = tonumber(ARGV[4])
 peer.state = ARGV[3]
+peer.cameraOn = ARGV[6] == '1'
+peer.microphoneOn = ARGV[7] == '1'
 redis.call('SET', KEYS[3], cjson.encode(peer), 'EX', tonumber(ARGV[5]))
+if peer.admission == 'pending' and redis.call('SISMEMBER', KEYS[4], ARGV[1]) == 1 then
+  redis.call('EXPIRE', KEYS[4], tonumber(ARGV[5]))
+  return 'pending'
+end
+if peer.admission ~= 'approved' or redis.call('SISMEMBER', KEYS[2], ARGV[1]) == 0 then return 'missing_peer' end
+redis.call('EXPIRE', KEYS[2], tonumber(ARGV[5]))
 return 'ok'
 `;
 
@@ -156,10 +199,14 @@ local target = ARGV[3]
 if role == 'host' then
   if room.hostTokenHash ~= ARGV[4] then return 'unauthorized' end
   if target == 'host' or redis.call('SISMEMBER', KEYS[2], target) == 0 then return 'invalid_target' end
+  if not redis.call('GET', KEYS[6]) then return 'invalid_target' end
 else
-  if target ~= 'host' or redis.call('SISMEMBER', KEYS[2], peerId) == 0 then return 'unauthorized' end
+  if redis.call('SISMEMBER', KEYS[2], peerId) == 0 then return 'unauthorized' end
   local peerValue = redis.call('GET', KEYS[3])
   if not peerValue or cjson.decode(peerValue).tokenHash ~= ARGV[4] then return 'unauthorized' end
+  if target ~= 'host' then
+    if target == peerId or redis.call('SISMEMBER', KEYS[2], target) == 0 or not redis.call('GET', KEYS[6]) then return 'invalid_target' end
+  end
 end
 local sequence = redis.call('INCR', KEYS[4])
 local signal = cjson.decode(ARGV[6])
@@ -237,7 +284,12 @@ return cjson.encode({
   createdAt=room.createdAt,
   expiresAt=room.hardExpiresAt,
   qualityMode=room.qualityMode,
-  audioAvailable=room.audioAvailable
+  audioAvailable=room.audioAvailable,
+  hostName=room.hostName,
+  access=room.access,
+  hostCameraOn=room.hostCameraOn,
+  hostMicrophoneOn=room.hostMicrophoneOn,
+  screenSharerId=room.screenSharerId
 })
 `;
 
@@ -249,6 +301,7 @@ if room.hostTokenHash ~= ARGV[1] then return cjson.encode({status='unauthorized'
 local now = tonumber(ARGV[2])
 local ids = redis.call('SMEMBERS', KEYS[2])
 local peers = {}
+local pending = {}
 for _, peerId in ipairs(ids) do
   local peerKey = ARGV[3] .. peerId
   local peerValue = redis.call('GET', peerKey)
@@ -261,28 +314,183 @@ for _, peerId in ipairs(ids) do
       redis.call('DEL', peerKey)
       redis.call('DEL', ARGV[5] .. peerId)
     else
-      table.insert(peers, {id=peer.id, joinedAt=peer.joinedAt, lastHeartbeat=peer.lastHeartbeat, state=peer.state})
+      table.insert(peers, {id=peer.id, displayName=peer.displayName, joinedAt=peer.joinedAt, lastHeartbeat=peer.lastHeartbeat, state=peer.state, cameraOn=peer.cameraOn, microphoneOn=peer.microphoneOn})
     end
   end
 end
-return cjson.encode({status='ok', peers=peers})
+local requests = redis.call('SMEMBERS', KEYS[3])
+for _, peerId in ipairs(requests) do
+  local peerKey = ARGV[3] .. peerId
+  local peerValue = redis.call('GET', peerKey)
+  if not peerValue then
+    redis.call('SREM', KEYS[3], peerId)
+  else
+    local peer = cjson.decode(peerValue)
+    if now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[4]) * 1000) then
+      redis.call('SREM', KEYS[3], peerId)
+      redis.call('DEL', peerKey)
+    else
+      table.insert(pending, {id=peer.id, displayName=peer.displayName, joinedAt=peer.joinedAt, lastHeartbeat=peer.lastHeartbeat})
+    end
+  end
+end
+return cjson.encode({status='ok', host={id='host', displayName=room.hostName, cameraOn=room.hostCameraOn, microphoneOn=room.hostMicrophoneOn}, peers=peers, pending=pending, screenSharerId=room.screenSharerId, audioAvailable=room.audioAvailable})
+`;
+
+const GET_PARTICIPANTS_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return cjson.encode({status='missing'}) end
+local room = cjson.decode(roomValue)
+local peerValue = redis.call('GET', KEYS[3])
+if not peerValue or cjson.decode(peerValue).tokenHash ~= ARGV[1] or not redis.call('SISMEMBER', KEYS[2], ARGV[2]) then
+  return cjson.encode({status='unauthorized'})
+end
+local now = tonumber(ARGV[3])
+local peers = {}
+local ids = redis.call('SMEMBERS', KEYS[2])
+for _, peerId in ipairs(ids) do
+  local peerKey = ARGV[4] .. peerId
+  local value = redis.call('GET', peerKey)
+  if not value then
+    redis.call('SREM', KEYS[2], peerId)
+  else
+    local peer = cjson.decode(value)
+    if now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[5]) * 1000) then
+      redis.call('SREM', KEYS[2], peerId)
+      redis.call('DEL', peerKey)
+    else
+      table.insert(peers, {id=peer.id, displayName=peer.displayName, state=peer.state, cameraOn=peer.cameraOn, microphoneOn=peer.microphoneOn})
+    end
+  end
+end
+return cjson.encode({status='ok', host={id='host', displayName=room.hostName, cameraOn=room.hostCameraOn, microphoneOn=room.hostMicrophoneOn}, peers=peers, screenSharerId=room.screenSharerId, access=room.access, audioAvailable=room.audioAvailable})
+`;
+
+const SET_SCREEN_SHARER_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return 'missing' end
+local room = cjson.decode(roomValue)
+local actor = ARGV[1]
+if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= tonumber(ARGV[3]) then return 'closed' end
+if actor == 'host' then
+  if room.hostTokenHash ~= ARGV[2] then return 'unauthorized' end
+else
+  if not redis.call('SISMEMBER', KEYS[2], actor) then return 'unauthorized' end
+  local peerValue = redis.call('GET', KEYS[3])
+  if not peerValue or cjson.decode(peerValue).tokenHash ~= ARGV[2] then return 'unauthorized' end
+end
+if ARGV[4] == 'start' then
+  if room.screenSharerId and room.screenSharerId ~= cjson.null and room.screenSharerId ~= actor then return 'busy' end
+  room.screenSharerId = actor
+  room.audioAvailable = ARGV[5] == '1'
+else
+  if room.screenSharerId == actor then room.screenSharerId = cjson.null; room.audioAvailable = false end
+end
+local ttl = redis.call('TTL', KEYS[1])
+if ttl < 1 then ttl = math.max(1, math.floor((tonumber(room.hardExpiresAt) - tonumber(ARGV[3])) / 1000)) end
+redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ttl)
+if not room.screenSharerId or room.screenSharerId == cjson.null then return 'none' end
+return room.screenSharerId
+`;
+
+const VIEWER_ADMISSION_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return cjson.encode({status='missing'}) end
+local room = cjson.decode(roomValue)
+local peerValue = redis.call('GET', KEYS[2])
+if not peerValue then return cjson.encode({status='missing'}) end
+local peer = cjson.decode(peerValue)
+if peer.tokenHash ~= ARGV[1] or peer.id ~= ARGV[2] then return cjson.encode({status='missing'}) end
+local roomState = room.status
+local now = tonumber(ARGV[3])
+if roomState == 'active' and tonumber(room.hardExpiresAt) <= now then roomState = 'expired' end
+if roomState == 'active' and now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[4]) then roomState = 'expired' end
+if roomState == 'active' and now - tonumber(room.lastHostHeartbeat) > 30000 then roomState = 'recovering' end
+return cjson.encode({status='ok', admission=peer.admission, roomState=roomState})
+`;
+
+const APPROVE_VIEWER_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return 'missing' end
+local room = cjson.decode(roomValue)
+if room.hostTokenHash ~= ARGV[1] then return 'unauthorized' end
+local now = tonumber(ARGV[3])
+if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now then return 'closed' end
+if redis.call('SISMEMBER', KEYS[4], ARGV[2]) == 0 then return 'missing' end
+local peerValue = redis.call('GET', KEYS[3])
+if not peerValue then redis.call('SREM', KEYS[4], ARGV[2]); return 'missing' end
+local peer = cjson.decode(peerValue)
+if peer.admission ~= 'pending' then return 'conflict' end
+local activePeers = redis.call('SMEMBERS', KEYS[2])
+for _, activePeerId in ipairs(activePeers) do
+  local activePeerKey = ARGV[4] .. activePeerId
+  local activePeerValue = redis.call('GET', activePeerKey)
+  if not activePeerValue then
+    redis.call('SREM', KEYS[2], activePeerId)
+  else
+    local activePeer = cjson.decode(activePeerValue)
+    if now - tonumber(activePeer.lastHeartbeat) > (tonumber(ARGV[6]) * 1000) then
+      redis.call('SREM', KEYS[2], activePeerId)
+      redis.call('DEL', activePeerKey)
+    end
+  end
+end
+if redis.call('SCARD', KEYS[2]) >= tonumber(room.viewerLimit) then return 'full' end
+peer.admission = 'approved'
+peer.lastHeartbeat = now
+redis.call('SREM', KEYS[4], ARGV[2])
+redis.call('SADD', KEYS[2], ARGV[2])
+redis.call('SET', KEYS[3], cjson.encode(peer), 'EX', tonumber(ARGV[6]))
+redis.call('EXPIRE', KEYS[2], tonumber(ARGV[6]))
+return 'approved'
+`;
+
+const REJECT_VIEWER_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return 'missing' end
+local room = cjson.decode(roomValue)
+if room.hostTokenHash ~= ARGV[1] then return 'unauthorized' end
+if redis.call('SISMEMBER', KEYS[3], ARGV[2]) == 0 then return 'missing' end
+local peerValue = redis.call('GET', KEYS[2])
+if not peerValue then redis.call('SREM', KEYS[3], ARGV[2]); return 'missing' end
+local peer = cjson.decode(peerValue)
+peer.admission = 'denied'
+peer.lastHeartbeat = tonumber(ARGV[3])
+redis.call('SET', KEYS[2], cjson.encode(peer), 'EX', 120)
+redis.call('SREM', KEYS[3], ARGV[2])
+return 'rejected'
 `;
 
 const LEAVE_VIEWER_SCRIPT = `
 local roomValue = redis.call('GET', KEYS[1])
 local peerValue = redis.call('GET', KEYS[3])
-if not roomValue or not peerValue or not redis.call('SISMEMBER', KEYS[2], ARGV[1]) then return 'missing' end
+if not roomValue or not peerValue or (not redis.call('SISMEMBER', KEYS[2], ARGV[1]) and not redis.call('SISMEMBER', KEYS[6], ARGV[1])) then return 'missing' end
 local peer = cjson.decode(peerValue)
 if peer.tokenHash ~= ARGV[2] then return 'unauthorized' end
-redis.call('SREM', KEYS[2], ARGV[1])
-redis.call('DEL', KEYS[3])
 local room = cjson.decode(roomValue)
+if room.screenSharerId == ARGV[1] then
+  room.screenSharerId = cjson.null
+  room.audioAvailable = false
+  redis.call('SET', KEYS[1], cjson.encode(room), 'KEEPTTL')
+end
+redis.call('SREM', KEYS[2], ARGV[1])
+redis.call('SREM', KEYS[6], ARGV[1])
+redis.call('DEL', KEYS[3])
 if room.status == 'active' then
   local sequence = redis.call('INCR', KEYS[4])
   local message = cjson.encode({type='bye', fromPeerId=ARGV[1], sequence=sequence, createdAt=tonumber(ARGV[3])})
   redis.call('RPUSH', KEYS[5], message)
   redis.call('LTRIM', KEYS[5], -tonumber(ARGV[4]), -1)
   redis.call('EXPIRE', KEYS[5], tonumber(ARGV[5]))
+  local peers = redis.call('SMEMBERS', KEYS[2])
+  for _, targetPeerId in ipairs(peers) do
+    local peerSequence = redis.call('INCR', KEYS[4])
+    local peerMessage = cjson.encode({type='bye', fromPeerId=ARGV[1], sequence=peerSequence, createdAt=tonumber(ARGV[3])})
+    local peerQueue = ARGV[6] .. targetPeerId
+    redis.call('RPUSH', peerQueue, peerMessage)
+    redis.call('LTRIM', peerQueue, -tonumber(ARGV[4]), -1)
+    redis.call('EXPIRE', peerQueue, tonumber(ARGV[5]))
+  end
 end
 return 'ok'
 `;
@@ -345,13 +553,19 @@ export const joinRoom = async ({
   id,
   peerId,
   tokenHash,
+  displayName,
+  cameraOn = false,
+  microphoneOn = false,
   now,
 }: {
   id: string;
   peerId: string;
   tokenHash: string;
+  displayName: string;
+  cameraOn?: boolean;
+  microphoneOn?: boolean;
   now: number;
-}): Promise<'joined' | 'existing' | 'full' | 'missing' | 'closed' | 'expired' | 'recovering' | 'unauthorized' | 'conflict'> => {
+}): Promise<'joined' | 'existing' | 'pending' | 'pending_full' | 'denied' | 'full' | 'missing' | 'closed' | 'expired' | 'recovering' | 'unauthorized' | 'conflict'> => {
   const room = await getRedis().get<ScreenShareRoomRecord>(roomKey(id));
   if (!room) return 'missing';
   const remainingSeconds = Math.max(1, Math.ceil((room.hardExpiresAt - now) / 1000));
@@ -361,10 +575,14 @@ export const joinRoom = async ({
     joinedAt: now,
     lastHeartbeat: now,
     state: 'connecting',
+    displayName,
+    admission: 'approved',
+    cameraOn,
+    microphoneOn,
   };
   const result = await getRedis().eval(
     JOIN_ROOM_SCRIPT,
-    [roomKey(id), viewersKey(id), viewerKey(id, peerId)],
+    [roomKey(id), viewersKey(id), viewerKey(id, peerId), pendingKey(id)],
     [now, SCREENSHARE_HOST_RECOVERY_MS, Math.min(SCREENSHARE_VIEWER_LEASE_SECONDS, remainingSeconds), tokenHash, peerId, JSON.stringify(record), `screenshare:{${id}}:peer:`, `screenshare:{${id}}:signals:`],
   );
   return String(result) as Awaited<ReturnType<typeof joinRoom>>;
@@ -376,16 +594,20 @@ export const heartbeatHost = async ({
   now,
   audioAvailable,
   qualityMode,
+  cameraOn,
+  microphoneOn,
 }: {
   id: string;
   tokenHash: string;
   now: number;
   audioAvailable: boolean;
   qualityMode: QualityMode;
+  cameraOn: boolean;
+  microphoneOn: boolean;
 }): Promise<string> => String(await getRedis().eval(
   HOST_HEARTBEAT_SCRIPT,
   [roomKey(id), viewersKey(id), signalSequenceKey(id)],
-  [tokenHash, now, audioAvailable ? '1' : '0', SCREENSHARE_HOST_RECOVERY_MS, qualityMode],
+  [tokenHash, now, audioAvailable ? '1' : '0', SCREENSHARE_HOST_RECOVERY_MS, qualityMode, cameraOn ? '1' : '0', microphoneOn ? '1' : '0'],
 ));
 
 export const setRoomViewerLimit = async ({ id, tokenHash, viewerLimit, now = Date.now() }: {
@@ -405,16 +627,20 @@ export const heartbeatViewer = async ({
   tokenHash,
   now,
   state,
+  cameraOn,
+  microphoneOn,
 }: {
   id: string;
   peerId: string;
   tokenHash: string;
   now: number;
   state: PeerState;
+  cameraOn: boolean;
+  microphoneOn: boolean;
 }): Promise<string> => String(await getRedis().eval(
   VIEWER_HEARTBEAT_SCRIPT,
-  [roomKey(id), viewersKey(id), viewerKey(id, peerId)],
-  [peerId, tokenHash, state, now, SCREENSHARE_VIEWER_LEASE_SECONDS],
+  [roomKey(id), viewersKey(id), viewerKey(id, peerId), pendingKey(id)],
+  [peerId, tokenHash, state, now, SCREENSHARE_VIEWER_LEASE_SECONDS, cameraOn ? '1' : '0', microphoneOn ? '1' : '0'],
 ));
 
 export const sendSignal = async ({
@@ -439,7 +665,7 @@ export const sendSignal = async ({
   if (ttl < 1) return 'missing';
   const result = await getRedis().eval(
     SEND_SIGNAL_SCRIPT,
-    [roomKey(id), viewersKey(id), viewerKey(id, peerId), signalSequenceKey(id), queueKey],
+    [roomKey(id), viewersKey(id), viewerKey(id, peerId), signalSequenceKey(id), queueKey, viewerKey(id, target)],
     [role, peerId, target, tokenHash, now, JSON.stringify(signal), SCREENSHARE_SIGNAL_LIMIT, Math.min(SCREENSHARE_SIGNAL_TTL_SECONDS, ttl)],
   );
   const numeric = Number(result);
@@ -479,6 +705,11 @@ export type PublicRoomInfo = {
   expiresAt?: number;
   qualityMode?: QualityMode;
   audioAvailable?: boolean;
+  hostName?: string;
+  access?: 'public' | 'private';
+  hostCameraOn?: boolean;
+  hostMicrophoneOn?: boolean;
+  screenSharerId?: string | null;
 };
 
 export const getPublicRoomInfo = async (id: string, now: number): Promise<PublicRoomInfo> => {
@@ -490,20 +721,60 @@ export const getPublicRoomInfo = async (id: string, now: number): Promise<Public
   return parseScriptJson(result);
 };
 
-export type HostPeerSummary = Pick<ScreenSharePeerRecord, 'id' | 'joinedAt' | 'lastHeartbeat' | 'state'>;
+export type HostPeerSummary = Pick<ScreenSharePeerRecord, 'id' | 'displayName' | 'joinedAt' | 'lastHeartbeat' | 'state' | 'cameraOn' | 'microphoneOn'>;
+export type PendingPeerSummary = Pick<ScreenSharePeerRecord, 'id' | 'displayName' | 'joinedAt' | 'lastHeartbeat'>;
 
 export const getHostPeers = async (
   id: string,
   tokenHash: string,
   now: number,
-): Promise<{ status: string; peers: HostPeerSummary[] }> => {
+): Promise<{ status: string; host?: { id: 'host'; displayName: string; cameraOn: boolean; microphoneOn: boolean }; peers: HostPeerSummary[]; pending: PendingPeerSummary[]; screenSharerId?: string | null; audioAvailable?: boolean }> => {
   const result = await getRedis().eval(
     GET_PEERS_SCRIPT,
-    [roomKey(id), viewersKey(id)],
+    [roomKey(id), viewersKey(id), pendingKey(id)],
     [tokenHash, now, `screenshare:{${id}}:peer:`, SCREENSHARE_VIEWER_LEASE_SECONDS, `screenshare:{${id}}:signals:`],
   );
   return parseScriptJson(result);
 };
+
+export type ParticipantSummary = { id: string; displayName: string; state: PeerState; cameraOn: boolean; microphoneOn: boolean };
+export const getParticipants = async ({ id, peerId, tokenHash, now }: { id: string; peerId: string; tokenHash: string; now: number }): Promise<{
+  status: string;
+  host?: { id: 'host'; displayName: string; cameraOn: boolean; microphoneOn: boolean };
+  peers?: ParticipantSummary[];
+  screenSharerId?: string | null;
+  access?: 'public' | 'private';
+  audioAvailable?: boolean;
+}> => parseScriptJson(await getRedis().eval(
+  GET_PARTICIPANTS_SCRIPT,
+  [roomKey(id), viewersKey(id), viewerKey(id, peerId)],
+  [tokenHash, peerId, now, `screenshare:{${id}}:peer:`, SCREENSHARE_VIEWER_LEASE_SECONDS],
+));
+
+export type ViewerAdmission = { status: string; admission?: 'pending' | 'approved' | 'denied'; roomState?: string };
+export const getViewerAdmission = async ({ id, peerId, tokenHash, now }: { id: string; peerId: string; tokenHash: string; now: number }): Promise<ViewerAdmission> => parseScriptJson(await getRedis().eval(
+  VIEWER_ADMISSION_SCRIPT,
+  [roomKey(id), viewerKey(id, peerId)],
+  [tokenHash, peerId, now, SCREENSHARE_HOST_RECOVERY_MS],
+));
+
+export const approveViewer = async ({ id, peerId, tokenHash, now }: { id: string; peerId: string; tokenHash: string; now: number }): Promise<string> => String(await getRedis().eval(
+  APPROVE_VIEWER_SCRIPT,
+  [roomKey(id), viewersKey(id), viewerKey(id, peerId), pendingKey(id)],
+  [tokenHash, peerId, now, `screenshare:{${id}}:peer:`, `screenshare:{${id}}:signals:`, SCREENSHARE_VIEWER_LEASE_SECONDS],
+));
+
+export const rejectViewer = async ({ id, peerId, tokenHash, now }: { id: string; peerId: string; tokenHash: string; now: number }): Promise<string> => String(await getRedis().eval(
+  REJECT_VIEWER_SCRIPT,
+  [roomKey(id), viewerKey(id, peerId), pendingKey(id)],
+  [tokenHash, peerId, now],
+));
+
+export const setScreenSharer = async ({ id, actorId, tokenHash, action, audioAvailable = false, now }: { id: string; actorId: string; tokenHash: string; action: 'start' | 'stop'; audioAvailable?: boolean; now: number }): Promise<string> => String(await getRedis().eval(
+  SET_SCREEN_SHARER_SCRIPT,
+  [roomKey(id), viewersKey(id), viewerKey(id, actorId)],
+  [actorId, tokenHash, now, action, audioAvailable ? '1' : '0'],
+));
 
 export const leaveViewer = async ({
   id,
@@ -517,8 +788,8 @@ export const leaveViewer = async ({
   now: number;
 }): Promise<string> => String(await getRedis().eval(
   LEAVE_VIEWER_SCRIPT,
-  [roomKey(id), viewersKey(id), viewerKey(id, peerId), signalSequenceKey(id), hostSignalsKey(id)],
-  [peerId, tokenHash, now, SCREENSHARE_SIGNAL_LIMIT, SCREENSHARE_SIGNAL_TTL_SECONDS],
+  [roomKey(id), viewersKey(id), viewerKey(id, peerId), signalSequenceKey(id), hostSignalsKey(id), pendingKey(id)],
+  [peerId, tokenHash, now, SCREENSHARE_SIGNAL_LIMIT, SCREENSHARE_SIGNAL_TTL_SECONDS, `screenshare:{${id}}:signals:`],
 ));
 
 export const closeRoom = async ({ id, tokenHash, now }: { id: string; tokenHash: string; now: number }): Promise<string> =>
