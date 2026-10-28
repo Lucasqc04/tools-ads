@@ -5,7 +5,7 @@ type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'media' | 'mediaActive'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
-  shape?: 'default' | 'circle';
+  shape?: 'default' | 'circle' | 'icon';
 };
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -40,7 +40,7 @@ export function Button({
     <button
       type={type}
       className={cn(
-        `inline-flex h-10 items-center justify-center ${shape === 'circle' ? 'rounded-full px-0' : 'rounded-lg px-4'} text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`,
+        `inline-flex h-10 items-center justify-center ${shape === 'circle' ? 'rounded-full px-0' : shape === 'icon' ? 'rounded-xl px-0' : 'rounded-lg px-4'} text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`,
         variantClasses[variant],
         className,
       )}

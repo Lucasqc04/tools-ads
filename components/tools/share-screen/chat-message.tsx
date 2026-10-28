@@ -3,6 +3,7 @@
 import { Download, FileText, ImageIcon } from 'lucide-react';
 import { formatBytes } from '@/lib/file-size';
 import { fileTypeLabel, type CallChatMessage } from '@/lib/screenshare/chat-files';
+import { splitChatLinks } from '@/lib/screenshare/chat-links';
 
 export type ChatMessageCopy = {
   you: string;
@@ -20,6 +21,16 @@ type Props = {
   onPreview: (message: CallChatMessage) => void;
   onDownload: (message: CallChatMessage) => void;
 };
+
+function MessageText({ text, mine }: { text: string; mine: boolean }) {
+  return (
+    <p className="whitespace-pre-wrap break-words text-sm leading-5">
+      {splitChatLinks(text).map((part, index) => part.type === 'link'
+        ? <a key={index} href={part.value} target="_blank" rel="noopener noreferrer nofollow" className={`break-all underline underline-offset-2 ${mine ? 'font-medium text-ink-950' : 'text-accent-300 hover:text-accent-200'}`}>{part.value}</a>
+        : <span key={index}>{part.value}</span>)}
+    </p>
+  );
+}
 
 function ProgressBar({ value, mine }: { value: number; mine: boolean }) {
   return (
@@ -40,7 +51,7 @@ export function ChatMessage({ message, mine, copy, onPreview, onDownload }: Prop
     return (
       <div className={`max-w-[88%] rounded-2xl px-3 py-2 ${bubble}`}>
         <p className={`mb-0.5 text-[11px] font-semibold ${authorColor}`}>{author}</p>
-        <p className="whitespace-pre-wrap break-words text-sm leading-5">{message.text}</p>
+        <MessageText text={message.text} mine={mine} />
       </div>
     );
   }
@@ -63,22 +74,27 @@ export function ChatMessage({ message, mine, copy, onPreview, onDownload }: Prop
     );
   }
 
+  const label = fileTypeLabel(attachment.name, attachment.mime);
   const Icon = attachment.kind === 'image' ? ImageIcon : FileText;
   return (
-    <div className={`w-[min(88%,18rem)] rounded-2xl px-3 py-2 ${bubble}`}>
-      <p className={`mb-1.5 text-[11px] font-semibold ${authorColor}`}>{author}</p>
+    <div className={`w-[min(88%,18rem)] rounded-2xl px-3 py-2.5 ${bubble}`}>
+      <p className={`mb-2 text-[11px] font-semibold ${authorColor}`}>{author}</p>
       <div className="flex items-center gap-3">
-        <span aria-hidden="true" className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${mine ? 'bg-ink-950/15 text-ink-950' : 'bg-accent-500/15 text-accent-400'}`}><Icon size={22} /></span>
+        {/* The type badge is the file's identity at a glance: PDF, ZIP, PNG... */}
+        <span aria-hidden="true" className={`flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl ${mine ? 'bg-ink-950 text-accent-400' : 'bg-accent-500/15 text-accent-400'}`}>
+          <Icon size={15} />
+          <span className="max-w-full truncate px-1 text-[9px] font-bold uppercase leading-none tracking-wider">{label}</span>
+        </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium leading-5" title={attachment.name}>{attachment.name}</p>
-          <p className={`text-xs leading-4 ${subtle}`}>{fileTypeLabel(attachment.name, attachment.mime)} · {formatBytes(attachment.size)}</p>
+          <p className="truncate text-sm font-semibold leading-5" title={attachment.name}>{attachment.name}</p>
+          <p className={`text-xs leading-4 ${subtle}`}>{formatBytes(attachment.size)}</p>
         </div>
         {attachment.status === 'ready' && attachment.blob ? (
-          <button type="button" onClick={() => onDownload(message)} aria-label={`${copy.downloadFile}: ${attachment.name}`} title={copy.downloadFile} className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${mine ? 'bg-ink-950 text-white hover:bg-ink-800' : 'bg-accent-500 text-ink-950 hover:bg-accent-400'}`}><Download size={18} /></button>
+          <button type="button" onClick={() => onDownload(message)} aria-label={`${copy.downloadFile}: ${attachment.name}`} title={copy.downloadFile} className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${mine ? 'bg-ink-950 text-white hover:bg-ink-800' : 'bg-accent-500 text-ink-950 hover:bg-accent-400'}`}><Download size={18} /></button>
         ) : null}
       </div>
-      {busy ? <div className="mt-2 space-y-1"><ProgressBar value={attachment.progress} mine={mine} /><p className={`text-[11px] ${subtle}`}>{statusText} {Math.round(attachment.progress)}%</p></div> : null}
-      {attachment.status === 'failed' ? <p role="alert" className={`mt-1.5 text-[11px] font-medium ${mine ? 'text-rose-900' : 'text-rose-400'}`}>{statusText}</p> : null}
+      {busy ? <div className="mt-2.5 space-y-1"><ProgressBar value={attachment.progress} mine={mine} /><p className={`text-[11px] ${subtle}`}>{statusText} {Math.round(attachment.progress)}%</p></div> : null}
+      {attachment.status === 'failed' ? <p role="alert" className={`mt-2 text-[11px] font-medium ${mine ? 'text-rose-900' : 'text-rose-400'}`}>{statusText}</p> : null}
     </div>
   );
 }

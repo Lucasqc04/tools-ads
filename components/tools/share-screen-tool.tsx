@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ClipboardEvent, type DragEvent, type ReactNode } from 'react';
 import {
   Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Download, Expand, Flashlight, FlashlightOff, Gauge,
-  LockKeyhole, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, Paperclip, PhoneOff,
-  PictureInPicture2, ImagePlus, Send, Settings2, ShieldCheck, Shrink, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi, X,
+  LoaderCircle, LockKeyhole, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, Paperclip, PhoneOff,
+  PictureInPicture2, Send, Settings2, ShieldCheck, Shrink, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi, X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -402,8 +402,14 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const [stageControlsVisible, setStageControlsVisible] = useState(false);
   const stageControlsTimerRef = useRef<number | null>(null);
   const [photoPreview, setPhotoPreview] = useState<CallChatMessage | null>(null);
+  // Which local device is being opened or switched right now; drives the loading state.
+  const [devicePending, setDevicePending] = useState<'camera' | 'microphone' | null>(null);
+  const [chatWidth, setChatWidth] = useState(320);
+  const [chatAwayFromEnd, setChatAwayFromEnd] = useState(false);
+  const chatListRef = useRef<HTMLDivElement>(null);
+  const chatAtEndRef = useRef(true);
+  const devicePendingRef = useRef<'camera' | 'microphone' | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const photoInputRef = useRef<HTMLInputElement>(null);
   const fileReceiverRef = useRef(new ChatFileReceiver());
   const objectUrlsRef = useRef(new Set<string>());
   const progressShownRef = useRef(new Map<string, number>());
@@ -738,23 +744,29 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   recoverRef.current = recoverLocalDevices;
 
   const toggleLocalDevice = useCallback(async (kind: 'camera' | 'microphone') => {
-    if (switchingRef.current) return;
+    if (switchingRef.current || devicePendingRef.current === kind) return;
     if (kind === 'camera' ? cameraOnRef.current : microphoneOnRef.current) {
       await setLocalTrack(kind, null);
       setErrorText('');
       return;
     }
+    // Opening a device (permission, hardware start and first frame) can take a moment: show it.
+    devicePendingRef.current = kind;
+    setDevicePending(kind);
     try {
       await setLocalTrack(kind, await acquireTrack(kind));
       setErrorText('');
     } catch {
       setErrorText(callCopy.permissionError);
       if (phase === 'active' || phase === 'watching' || phase === 'connecting') notify(callCopy.permissionError);
+    } finally {
+      devicePendingRef.current = null;
+      setDevicePending(null);
     }
   }, [acquireTrack, callCopy.permissionError, notify, phase, setLocalTrack]);
 
   const switchLocalDevice = useCallback(async (kind: 'camera' | 'microphone', override: { deviceId?: string; facingMode?: FacingMode }) => {
-    if (switchingRef.current) return;
+    if (switchingRef.current || devicePendingRef.current === kind) return;
     const selection = selectionRef.current;
     if (kind === 'camera') {
       if (override.deviceId !== undefined) selection.cameraId = override.deviceId;
@@ -766,6 +778,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     }
     if (!(kind === 'camera' ? cameraOnRef.current : microphoneOnRef.current)) return;
     switchingRef.current = true;
+    devicePendingRef.current = kind;
+    setDevicePending(kind);
     try {
       // Phones can only open one camera at a time, so release the current one first.
       const stream = localMediaRef.current;
@@ -785,6 +799,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       }
     } finally {
       switchingRef.current = false;
+      devicePendingRef.current = null;
+      setDevicePending(null);
     }
   }, [acquireTrack, callCopy.deviceChangeFailed, callCopy.noOtherCamera, notify, setLocalTrack, touchDevice]);
 
@@ -2039,6 +2055,29 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     return channels.filter((channel): channel is RTCDataChannel => channel?.readyState === 'open');
   }, []);
 
+  const jumpChatToEnd = useCallback(() => {
+    const list = chatListRef.current;
+    if (!list) return;
+    list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+    chatAtEndRef.current = true;
+    setChatAwayFromEnd(false);
+  }, []);
+
+  const onChatScroll = useCallback(() => {
+    const list = chatListRef.current;
+    if (!list) return;
+    const distance = list.scrollHeight - list.scrollTop - list.clientHeight;
+    chatAtEndRef.current = distance <= 48;
+    setChatAwayFromEnd(distance > 48);
+  }, []);
+
+  // New messages follow the conversation only while the reader is already at the end.
+  useEffect(() => {
+    const list = chatListRef.current;
+    if (!list || hostCallPanel !== 'chat') return;
+    if (chatAtEndRef.current) list.scrollTop = list.scrollHeight;
+  }, [chatMessages, hostCallPanel]);
+
   const sendChat = useCallback(() => {
     const text = chatDraft.trim().slice(0, 1_000);
     if (!text) return;
@@ -2057,6 +2096,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     // Text may be queued behind a file in flight, so the limit is higher than a lone message needs.
     for (const channel of getOpenChatChannels()) if (channel.bufferedAmount < 2_000_000) channel.send(encoded);
     chatMessageIdsRef.current.add(message.id);
+    chatAtEndRef.current = true;
     setChatMessages((current) => trimChatMessages([...current, message]));
     setChatDraft('');
   }, [callCopy.you, chatDraft, getOpenChatChannels, participantName, trimChatMessages]);
@@ -2347,6 +2387,11 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     : null;
   const showingSharedScreen = focusedTileId === 'screen' && screenIsLive;
   const stageStream = showingSharedScreen ? sharedStream : focusedCameraStream;
+  const stageHasLiveVideo = Boolean(stageStream?.getVideoTracks().some((track) => track.readyState === 'live'));
+  // Explains the empty stage while our camera opens, or while a remote camera's first frame has not arrived yet.
+  const stageLoadingLabel = !showingSharedScreen && !stageHasLiveVideo
+    ? (focusedPerson?.id ?? selfId) === selfId ? (devicePending === 'camera' ? callCopy.cameraStarting : null) : focusedPerson?.cameraOn ? callCopy.videoConnecting : null
+    : null;
   pipDisplayRef.current = focusedPerson
     ? focusedPerson.id === selfId ? callCopy.you : focusedPerson.displayName
     : participantName || callCopy.roomTitle;
@@ -2564,6 +2609,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       const micOff = isSelf ? !microphoneOn : !person.microphoneOn;
       return <button type="button" aria-label={`${isSelf ? callCopy.you : person.displayName}${speaking ? ` · ${callCopy.speaking}` : ''}`} onClick={() => { setFocusedTileId(person.id); }} key={person.id} className={`relative shrink-0 overflow-hidden rounded-xl bg-ink-900 ring-2 transition hover:ring-accent-500 ${thumbSize} ${speaking ? 'ring-emerald-400' : 'ring-ink-700'}`}>
         {cameraStream ? <CallVideo stream={cameraStream} fit="cover" mirror={isSelf && mirrorOwn} className="h-full w-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center pb-6">{callIdentity(person, 'tile')}</div>}
+        {!cameraStream && (isSelf ? devicePending === 'camera' : person.cameraOn) ? <span role="status" aria-label={isSelf ? callCopy.cameraStarting : callCopy.videoConnecting} className="absolute left-1.5 top-1.5 rounded-full bg-black/70 p-1.5 text-accent-300"><LoaderCircle size={12} className="animate-spin" /></span> : null}
         <span className="absolute inset-x-1.5 bottom-1.5 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-xs"><span className="truncate">{isSelf ? callCopy.you : person.displayName}</span>{isHost ? <span className="shrink-0 rounded bg-accent-500 px-1 py-0.5 text-[9px] font-semibold text-ink-950">{callCopy.host}</span> : null}</span>
         {speaking ? <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 p-1.5 text-emerald-400"><Mic size={12} /></span> : micOff ? <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 p-1.5 text-rose-400"><MicOff size={12} /></span> : null}
       </button>;
@@ -2590,7 +2636,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
-            {touchDevice && cameraOn ? <Button shape="circle" variant="call" aria-label={callCopy.switchCamera} title={callCopy.switchCamera} onClick={flipCamera} className="h-10 w-10 p-0"><SwitchCamera size={18} /></Button> : null}
+            {touchDevice && cameraOn ? <Button shape="circle" variant="call" aria-label={callCopy.switchCamera} title={callCopy.switchCamera} onClick={flipCamera} className="h-10 w-10 p-0">{devicePending === 'camera' ? <LoaderCircle size={18} className="animate-spin" /> : <SwitchCamera size={18} />}</Button> : null}
             {torchSupported ? <Button shape="circle" variant={torchOn ? 'callActive' : 'call'} aria-label={callCopy.flash} title={callCopy.flash} onClick={() => void toggleTorch()} className="h-10 w-10 p-0">{torchOn ? <Flashlight size={18} /> : <FlashlightOff size={18} />}</Button> : null}
             {miniCallSupported ? <Button shape="circle" variant={miniCallActive ? 'callActive' : 'call'} aria-label={callCopy.miniCall} title={callCopy.miniCall} onClick={() => void openMiniCall()} className="h-10 w-10 p-0"><PictureInPicture2 size={18} /></Button> : null}
             <Button shape="circle" variant={hostCallPanel === 'participants' ? 'callActive' : 'call'} aria-label={callCopy.participants} title={callCopy.participants} onClick={() => setHostCallPanel((current) => current === 'participants' ? null : 'participants')} className="relative h-10 w-10 p-0"><UsersRound size={18} /><span title={`${connectedParticipants} ${peopleLabel}`} className={`absolute -right-0.5 -top-0.5 min-w-4 rounded-full px-1 text-[10px] font-bold leading-4 ${pendingPeers.length ? 'bg-accent-500 text-ink-950' : 'bg-ink-600 text-white'}`}>{pendingPeers.length || connectedParticipants}</span></Button>
@@ -2607,8 +2653,9 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
                     <span className={`relative inline-flex h-24 w-24 items-center justify-center rounded-full text-3xl font-semibold ${focusedPerson.id === selfId || focusedPerson.id === (roomStatus?.hostPeerId ?? 'host') ? 'bg-accent-500 text-ink-950' : 'bg-ink-700 text-white'} ${speakingPeerIds.has(focusedPerson.id) ? 'ring-2 ring-emerald-400 ring-offset-4 ring-offset-ink-950' : ''}`}>{initials(focusedPerson.displayName)}{speakingPeerIds.has(focusedPerson.id) ? <span aria-label={callCopy.speaking} className="absolute -bottom-0.5 -right-0.5 h-4 w-4 animate-pulse rounded-full border-2 border-ink-950 bg-emerald-400" /> : null}</span>
                     <span className="max-w-[80%] truncate text-lg font-medium text-white">{focusedPerson.id === selfId ? callCopy.you : focusedPerson.displayName}</span>
                     {speakingPeerIds.has(focusedPerson.id) ? <span className="text-xs font-medium text-emerald-300">{callCopy.speaking}</span> : null}
+                    {stageLoadingLabel ? <span role="status" className="inline-flex items-center gap-2 text-xs font-medium text-accent-300"><LoaderCircle size={14} className="animate-spin" />{stageLoadingLabel}</span> : null}
                   </div>
-                  : <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center"><span className="h-7 w-7 animate-spin rounded-full border-2 border-ink-600 border-t-accent-500" /><p className="max-w-sm px-5 text-sm text-ink-300">{hostReconnectText || callCopy.connectingPeople}</p></div>}
+                  : <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center"><span className="h-7 w-7 animate-spin rounded-full border-2 border-ink-600 border-t-accent-500" /><p className="max-w-sm px-5 text-sm text-ink-300">{hostReconnectText || stageLoadingLabel || callCopy.connectingPeople}</p></div>}
               {phase === 'waiting' && admissionState === 'pending' ? <div role="status" className="absolute bottom-3 left-1/2 max-w-[calc(100%-1.5rem)] -translate-x-1/2 rounded-xl bg-black/85 px-4 py-3 text-center text-sm text-white shadow-lg">{callCopy.waitingApproval}</div> : null}
               {showingSharedScreen ? <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur">{isHostCall ? qualityLabel : viewerQualityLabel}</span> : null}
               {showingSharedScreen && capturePaused ? <div role="status" className="absolute left-3 top-12 max-w-[70%] rounded-xl bg-amber-950/90 px-3 py-2 text-xs leading-5 text-amber-100">{callCopy.screenPaused}</div> : null}
@@ -2630,19 +2677,21 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
 
           {showThumbs && desktopLayout ? <div className="-my-1 flex w-48 shrink-0 flex-col gap-2 overflow-y-auto overscroll-contain px-1 py-1 [scrollbar-width:none] lg:w-60 [&::-webkit-scrollbar]:hidden">{thumbs}</div> : null}
 
-          {hostCallPanel ? <CallSheet title={panelTitle} closeLabel={callCopy.closePanel} dragHint={callCopy.dragToClose} onClose={() => setHostCallPanel(null)} fill={hostCallPanel === 'chat'}>
+          {hostCallPanel ? <CallSheet title={panelTitle} closeLabel={callCopy.closePanel} dragHint={callCopy.dragToClose} onClose={() => setHostCallPanel(null)} fill={hostCallPanel === 'chat'} width={chatWidth} onResize={hostCallPanel === 'chat' ? setChatWidth : undefined} resizeLabel={callCopy.resizeChat}>
             {hostCallPanel === 'chat' ? <div className="flex min-h-0 flex-1 flex-col gap-3">
-              <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto overscroll-contain pr-1" aria-live="polite" aria-relevant="additions text" onDragOver={(event) => event.preventDefault()} onDrop={dropChatFiles}>
-                {chatMessages.length ? chatMessages.map((message) => <ChatMessage key={message.id} message={message} mine={message.peerId === selfId} copy={callCopy} onPreview={setPhotoPreview} onDownload={downloadChatFile} />) : <p className="py-8 text-center text-sm text-ink-400">{callCopy.chatEmpty}</p>}
+              <div className="relative flex min-h-0 flex-1 flex-col">
+                <div ref={chatListRef} onScroll={onChatScroll} className="min-h-0 flex-1 space-y-2.5 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-live="polite" aria-relevant="additions text" onDragOver={(event) => event.preventDefault()} onDrop={dropChatFiles}>
+                  {chatMessages.length ? chatMessages.map((message) => <ChatMessage key={message.id} message={message} mine={message.peerId === selfId} copy={callCopy} onPreview={setPhotoPreview} onDownload={downloadChatFile} />) : <p className="py-8 text-center text-sm text-ink-400">{callCopy.chatEmpty}</p>}
+                </div>
+                {chatAwayFromEnd ? <button type="button" onClick={jumpChatToEnd} className="absolute bottom-2 left-1/2 inline-flex h-9 -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-accent-500 px-3.5 text-xs font-semibold text-ink-950 shadow-lg transition hover:bg-accent-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300"><ChevronDown size={15} aria-hidden="true" />{callCopy.jumpToLatest}</button> : null}
               </div>
               <p className="text-xs leading-5 text-ink-500">{callCopy.chatPrivacy}</p>
               <form className="flex items-center gap-1.5" onSubmit={(event) => { event.preventDefault(); sendChat(); }}>
-                <input ref={photoInputRef} type="file" accept="image/*" multiple className="hidden" onChange={pickChatFiles} tabIndex={-1} aria-hidden="true" />
+                {/* One attach button: images are previewed as photos, everything else is sent as a file. */}
                 <input ref={fileInputRef} type="file" multiple className="hidden" onChange={pickChatFiles} tabIndex={-1} aria-hidden="true" />
-                <Button variant="call" aria-label={callCopy.attachPhoto} title={callCopy.attachPhoto} onClick={() => photoInputRef.current?.click()} className="h-11 w-10 shrink-0 rounded-xl p-0"><ImagePlus size={19} /></Button>
-                <Button variant="call" aria-label={callCopy.attachFile} title={callCopy.attachFile} onClick={() => fileInputRef.current?.click()} className="h-11 w-10 shrink-0 rounded-xl p-0"><Paperclip size={19} /></Button>
+                <Button variant="call" aria-label={callCopy.attachFile} title={callCopy.attachFile} onClick={() => fileInputRef.current?.click()} shape="icon" className="h-11 w-11 shrink-0"><Paperclip size={19} /></Button>
                 <input value={chatDraft} onChange={(event) => setChatDraft(event.target.value)} onPaste={pasteChatFiles} maxLength={1_000} aria-label={callCopy.chatPlaceholder} placeholder={callCopy.chatPlaceholder} enterKeyHint="send" className="h-11 min-w-0 flex-1 rounded-xl border border-ink-700 bg-ink-950 px-3 text-base text-white placeholder:text-ink-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 sm:text-sm" />
-                <Button type="submit" variant="callActive" aria-label={callCopy.sendMessage} disabled={!chatDraft.trim()} className="h-11 w-11 shrink-0 rounded-xl p-0"><Send size={17} /></Button>
+                <Button type="submit" variant="callActive" aria-label={callCopy.sendMessage} disabled={!chatDraft.trim()} shape="icon" className="h-11 w-11 shrink-0"><Send size={17} /></Button>
               </form>
             </div> : hostCallPanel === 'participants' ? <div className="space-y-2">
               {canManageRoom ? <div className="mb-4 rounded-xl border border-ink-700 p-3"><p className="text-xs text-ink-400">{callCopy.roomPrivacy}</p><p className="mt-1 text-sm font-medium">{room?.access === 'private' || roomStatus?.access === 'private' ? callCopy.privateRoom : callCopy.publicRoom}</p><div className="mt-2 flex gap-2"><input aria-label={callCopy.copyInvite} readOnly value={inviteUrl} className="min-w-0 flex-1 rounded-lg border border-ink-700 bg-ink-950 px-2 text-xs text-ink-300" onFocus={(event) => event.currentTarget.select()} /><button type="button" onClick={() => void copyLink()} aria-label={callCopy.copyInvite} className="rounded-lg bg-ink-800 px-2 text-white hover:bg-ink-700"><Copy size={15} /></button></div></div> : null}
@@ -2686,8 +2735,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         </div>
 
         <footer className="flex shrink-0 flex-nowrap items-start justify-center gap-1.5 border-t border-ink-800 bg-ink-950 px-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-3 sm:gap-3 sm:px-4">
-          {callMediaButton(microphoneOn ? callCopy.microphone : callCopy.microphoneOff, microphoneOn, microphoneOn ? <Mic size={21} /> : <MicOff size={21} />, () => void toggleLocalDevice('microphone'), !microphoneOn, '', 'neutral')}
-          {callMediaButton(cameraOn ? callCopy.camera : callCopy.cameraOff, cameraOn, cameraOn ? <Camera size={21} /> : <CameraOff size={21} />, () => void toggleLocalDevice('camera'), !cameraOn, '', 'neutral')}
+          {callMediaButton(devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff, microphoneOn, devicePending === 'microphone' ? <LoaderCircle size={21} className="animate-spin" /> : microphoneOn ? <Mic size={21} /> : <MicOff size={21} />, () => void toggleLocalDevice('microphone'), !microphoneOn && devicePending !== 'microphone', '', 'neutral')}
+          {callMediaButton(devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff, cameraOn, devicePending === 'camera' ? <LoaderCircle size={21} className="animate-spin" /> : cameraOn ? <Camera size={21} /> : <CameraOff size={21} />, () => void toggleLocalDevice('camera'), !cameraOn && devicePending !== 'camera', '', 'neutral')}
           {callMediaButton(shareLabel, screenSharerId === selfId, <MonitorUp size={21} />, () => screenSharerId === selfId ? void stopScreenShare() : startScreenShare(), false, screenSupported || screenSharerId === selfId ? '' : 'opacity-60')}
           <div className="flex shrink-0 flex-col items-center gap-1">
             <Button shape="circle" variant={hostCallPanel === 'chat' ? 'callActive' : 'call'} aria-label={callCopy.chat} title={callCopy.chat} onClick={() => { setHostCallPanel((current) => current === 'chat' ? null : 'chat'); setUnreadChatCount(0); }} className={`relative ${callButtonSize} shrink-0 p-0`}><MessageCircle size={20} />{unreadChatCount ? <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-accent-500 px-1 text-[10px] font-bold leading-4 text-ink-950">{unreadChatCount > 9 ? '9+' : unreadChatCount}</span> : null}</Button>
@@ -2734,7 +2783,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           {phase === 'idle' && (roomStatus?.state === 'active' || roomStatus?.state === 'recovering') ? <div className="grid gap-6 p-5 md:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)] md:p-8">
             <section className="min-w-0">
               <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900">
-                {cameraOn && localMediaRef.current ? <CallVideo stream={localMediaRef.current} fit="cover" mirror={previewMirror} className="h-full w-full object-cover" /> : <div className="flex h-full flex-col items-center justify-center gap-3 px-5 text-center text-white"><span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-slate-800"><CameraOff size={27} /></span><span className="text-sm text-slate-300">{callCopy.cameraOff}</span></div>}
+                {cameraOn && localMediaRef.current ? <CallVideo stream={localMediaRef.current} fit="cover" mirror={previewMirror} className="h-full w-full object-cover" /> : <div className="flex h-full flex-col items-center justify-center gap-3 px-5 text-center text-white"><span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-slate-800"><CameraOff size={27} /></span><span className="text-sm text-slate-300">{devicePending === 'camera' ? callCopy.cameraStarting : callCopy.cameraOff}</span></div>}
                 <span className="absolute bottom-3 left-3 rounded-lg bg-slate-950/80 px-3 py-1.5 text-xs text-white">{callCopy.cameraPreview}</span>
                 {previewStatus === 'loading' ? <span role="status" className="absolute right-3 top-3 rounded-lg bg-slate-950/80 px-3 py-1.5 text-xs text-white">{ui.preparingVideo}</span> : null}
               </div>
@@ -2744,8 +2793,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
             <section className="flex min-w-0 flex-col">
               <label className="block text-sm font-medium text-slate-800">{callCopy.displayName}<input autoComplete="nickname" maxLength={32} value={participantName} onChange={(event) => setParticipantName(event.target.value)} placeholder={callCopy.displayNamePlaceholder} className="mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base sm:text-sm" /></label>
               <div className="mt-5 flex flex-wrap gap-2">
-                <Button variant={microphoneOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('microphone')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{microphoneOn ? <Mic size={16} /> : <MicOff size={16} />}</span><span className="ml-2">{microphoneOn ? callCopy.microphone : callCopy.microphoneOff}</span></Button>
-                <Button variant={cameraOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('camera')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{cameraOn ? <Camera size={16} /> : <CameraOff size={16} />}</span><span className="ml-2">{cameraOn ? callCopy.camera : callCopy.cameraOff}</span></Button>
+                <Button variant={microphoneOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('microphone')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'microphone' ? <LoaderCircle size={16} className="animate-spin" /> : microphoneOn ? <Mic size={16} /> : <MicOff size={16} />}</span><span className="ml-2">{devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff}</span></Button>
+                <Button variant={cameraOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('camera')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'camera' ? <LoaderCircle size={16} className="animate-spin" /> : cameraOn ? <Camera size={16} /> : <CameraOff size={16} />}</span><span className="ml-2">{devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff}</span></Button>
               </div>
               <div className="mt-4">{lightDevicePicker}</div>
               <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4" role="group" aria-label={callCopy.microphoneLevel}>
@@ -2804,7 +2853,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           <div className="mt-6 grid min-w-0 gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-2 md:p-5">
             <section className="min-w-0">
               <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-900">
-                {cameraOn && localMediaRef.current ? <CallVideo stream={localMediaRef.current} fit="cover" mirror={previewMirror} className="h-full w-full object-cover" /> : <div className="flex h-full flex-col items-center justify-center gap-3 px-4 text-center text-white"><span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-800"><CameraOff size={25} /></span><span className="text-sm text-slate-300">{callCopy.cameraOff}</span></div>}
+                {cameraOn && localMediaRef.current ? <CallVideo stream={localMediaRef.current} fit="cover" mirror={previewMirror} className="h-full w-full object-cover" /> : <div className="flex h-full flex-col items-center justify-center gap-3 px-4 text-center text-white"><span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-800"><CameraOff size={25} /></span><span className="text-sm text-slate-300">{devicePending === 'camera' ? callCopy.cameraStarting : callCopy.cameraOff}</span></div>}
                 <span className="absolute bottom-3 left-3 rounded-lg bg-slate-950/80 px-3 py-1.5 text-xs text-white">{callCopy.cameraPreview}</span>
               </div>
               <p className="mt-2 text-xs leading-5 text-slate-500">{callCopy.cameraPreviewHelp}</p>
@@ -2813,8 +2862,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
               <label className="block text-sm font-medium text-slate-800">{callCopy.displayName}<input autoComplete="nickname" maxLength={32} required value={participantName} onChange={(event) => setParticipantName(event.target.value)} placeholder={callCopy.displayNamePlaceholder} className="mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base sm:text-sm" /></label>
               <fieldset className="min-w-0"><legend className="mb-1.5 text-sm font-medium text-slate-800">{callCopy.roomPrivacy}</legend><div className="grid grid-cols-1 gap-2 sm:grid-cols-2"><button type="button" aria-pressed={roomAccess === 'public'} onClick={() => setRoomAccess('public')} className={`rounded-lg border px-3 py-2.5 text-left text-sm ${roomAccess === 'public' ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-300 bg-white text-slate-700'}`}><span className="block font-semibold">{callCopy.publicRoom}</span><span className="mt-1 block text-xs leading-4">{callCopy.publicRoomDescription}</span></button><button type="button" aria-pressed={roomAccess === 'private'} onClick={() => setRoomAccess('private')} className={`rounded-lg border px-3 py-2.5 text-left text-sm ${roomAccess === 'private' ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-300 bg-white text-slate-700'}`}><span className="block font-semibold">{callCopy.privateRoom}</span><span className="mt-1 block text-xs leading-4">{callCopy.privateRoomDescription}</span></button></div></fieldset>
               <div className="flex flex-wrap gap-2">
-                <Button variant={microphoneOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('microphone')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{microphoneOn ? <Mic size={16} /> : <MicOff size={16} />}</span><span className="ml-2">{microphoneOn ? callCopy.microphone : callCopy.microphoneOff}</span></Button>
-                <Button variant={cameraOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('camera')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{cameraOn ? <Camera size={16} /> : <CameraOff size={16} />}</span><span className="ml-2">{cameraOn ? callCopy.camera : callCopy.cameraOff}</span></Button>
+                <Button variant={microphoneOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('microphone')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'microphone' ? <LoaderCircle size={16} className="animate-spin" /> : microphoneOn ? <Mic size={16} /> : <MicOff size={16} />}</span><span className="ml-2">{devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff}</span></Button>
+                <Button variant={cameraOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('camera')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'camera' ? <LoaderCircle size={16} className="animate-spin" /> : cameraOn ? <Camera size={16} /> : <CameraOff size={16} />}</span><span className="ml-2">{devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff}</span></Button>
               </div>
               {lightDevicePicker}
               <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3" role="group" aria-label={callCopy.microphoneLevel}>
