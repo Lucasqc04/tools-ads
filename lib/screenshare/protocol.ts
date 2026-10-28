@@ -67,6 +67,8 @@ export type ScreenShareSignal =
       createdAt: number;
       negotiationId: string;
       description: { type: 'offer' | 'answer'; sdp: string };
+      /** Set by a host that just reloaded: the viewer must rebuild its connection instead of renegotiating. */
+      fresh?: true;
     }
   | {
       type: 'candidate';
@@ -108,6 +110,7 @@ export type UnsequencedSignal =
       type: 'offer' | 'answer';
       negotiationId: string;
       description: { type: 'offer' | 'answer'; sdp: string };
+      fresh?: true;
     }
   | {
       type: 'candidate';
@@ -181,6 +184,7 @@ export const validateSignalPayload = (value: unknown): UnsequencedSignal | null 
       type: value.type,
       negotiationId: value.negotiationId,
       description: { type: value.type, sdp: value.description.sdp },
+      ...(value.type === 'offer' && value.fresh === true ? { fresh: true as const } : {}),
     };
   }
 

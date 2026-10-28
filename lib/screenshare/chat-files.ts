@@ -21,6 +21,13 @@ export type ChatAttachment = {
   url?: string;
 };
 
+/** A short copy of the message being answered, kept with the reply so it still reads if the original is gone. */
+export type ChatReplyRef = {
+  id: string;
+  displayName: string;
+  text: string;
+};
+
 export type CallChatMessage = {
   id: string;
   peerId: string;
@@ -28,6 +35,17 @@ export type CallChatMessage = {
   text: string;
   createdAt: number;
   attachment?: ChatAttachment;
+  replyTo?: ChatReplyRef;
+};
+
+/** Validates the reply reference of an incoming message. Anything malformed is dropped, not the message. */
+export const parseReplyRef = (value: unknown): ChatReplyRef | undefined => {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const reply = value as Record<string, unknown>;
+  if (typeof reply.id !== 'string' || reply.id.length > 64) return undefined;
+  if (typeof reply.displayName !== 'string' || reply.displayName.length > 32) return undefined;
+  if (typeof reply.text !== 'string') return undefined;
+  return { id: reply.id, displayName: reply.displayName, text: reply.text.slice(0, 140) };
 };
 
 export type ChatFileMeta = {

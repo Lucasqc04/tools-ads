@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, 
 import { X } from 'lucide-react';
 
 const MIN_SHEET_WIDTH = 260;
-const MAX_SHEET_WIDTH = 560;
+const MAX_SHEET_WIDTH = 800;
 const clampSheetWidth = (width: number) => Math.min(MAX_SHEET_WIDTH, Math.max(MIN_SHEET_WIDTH, Math.round(width)));
 
 type Props = {

@@ -3,6 +3,7 @@
 import { Download, FileText, ImageIcon } from 'lucide-react';
 import { formatBytes } from '@/lib/file-size';
 import { fileTypeLabel, type CallChatMessage } from '@/lib/screenshare/chat-files';
+import { useRef, type PointerEvent as ReactPointerEvent, type MouseEvent as ReactMouseEvent } from 'react';
 import { splitChatLinks } from '@/lib/screenshare/chat-links';
 
 export type ChatMessageCopy = {
@@ -20,7 +21,12 @@ type Props = {
   copy: ChatMessageCopy;
   onPreview: (message: CallChatMessage) => void;
   onDownload: (message: CallChatMessage) => void;
+  /** Right click or long press on the message: the parent shows the copy/reply menu at this point. */
+  onOpenMenu: (message: CallChatMessage, x: number, y: number) => void;
+  replyLabel: string;
 };
+
+const LONG_PRESS_MS = 480;
 
 function MessageText({ text, mine }: { text: string; mine: boolean }) {
   return (
@@ -40,8 +46,32 @@ function ProgressBar({ value, mine }: { value: number; mine: boolean }) {
   );
 }
 
-export function ChatMessage({ message, mine, copy, onPreview, onDownload }: Props) {
+function ReplyQuote({ reply, mine, label }: { reply: NonNullable<CallChatMessage['replyTo']>; mine: boolean; label: string }) {
+  return (
+    <div className={`mb-1.5 rounded-lg border-l-2 px-2 py-1 text-xs ${mine ? 'border-ink-950/50 bg-ink-950/10 text-ink-900' : 'border-accent-500 bg-black/25 text-ink-300'}`}>
+      <p className="truncate font-semibold">{label} {reply.displayName}</p>
+      <p className="line-clamp-2 break-words">{reply.text}</p>
+    </div>
+  );
+}
+
+export function ChatMessage({ message, mine, copy, onPreview, onDownload, onOpenMenu, replyLabel }: Props) {
   const attachment = message.attachment;
+  const pressTimer = useRef<number | null>(null);
+  const clearPress = () => { if (pressTimer.current) window.clearTimeout(pressTimer.current); pressTimer.current = null; };
+  const openAt = (x: number, y: number) => onOpenMenu(message, x, y);
+  const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse') return;
+    const { clientX, clientY } = event;
+    clearPress();
+    pressTimer.current = window.setTimeout(() => { pressTimer.current = null; openAt(clientX, clientY); }, LONG_PRESS_MS);
+  };
+  const onContextMenu = (event: ReactMouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    clearPress();
+    openAt(event.clientX, event.clientY);
+  };
+  const interaction = { onPointerDown, onPointerUp: clearPress, onPointerLeave: clearPress, onPointerCancel: clearPress, onPointerMove: clearPress, onContextMenu };
   const author = mine ? copy.you : message.displayName;
   const bubble = mine ? 'ml-auto rounded-br-md bg-accent-500 text-ink-950' : 'rounded-bl-md bg-ink-800 text-white';
   const authorColor = mine ? 'text-ink-800' : 'text-accent-400';
@@ -49,8 +79,9 @@ export function ChatMessage({ message, mine, copy, onPreview, onDownload }: Prop
 
   if (!attachment) {
     return (
-      <div className={`max-w-[88%] rounded-2xl px-3 py-2 ${bubble}`}>
+      <div {...interaction} className={`max-w-[88%] select-text rounded-2xl px-3 py-2 ${bubble}`}>
         <p className={`mb-0.5 text-[11px] font-semibold ${authorColor}`}>{author}</p>
+        {message.replyTo ? <ReplyQuote reply={message.replyTo} mine={mine} label={replyLabel} /> : null}
         <MessageText text={message.text} mine={mine} />
       </div>
     );
@@ -62,7 +93,7 @@ export function ChatMessage({ message, mine, copy, onPreview, onDownload }: Prop
   // Photos are shown as a small thumbnail; tapping opens the full-size view.
   if (attachment.kind === 'image' && attachment.url && attachment.status !== 'failed') {
     return (
-      <div className={`w-fit max-w-[75%] rounded-2xl p-1.5 ${bubble}`}>
+      <div {...interaction} className={`w-fit max-w-[75%] rounded-2xl p-1.5 ${bubble}`}>
         <p className={`mb-1 px-1.5 pt-0.5 text-[11px] font-semibold ${authorColor}`}>{author}</p>
         <button type="button" onClick={() => onPreview(message)} aria-label={`${copy.viewPhoto}: ${attachment.name}`} className="relative block overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400">
           {/* eslint-disable-next-line @next/next/no-img-element -- local blob preview, not optimizable */}
@@ -77,7 +108,7 @@ export function ChatMessage({ message, mine, copy, onPreview, onDownload }: Prop
   const label = fileTypeLabel(attachment.name, attachment.mime);
   const Icon = attachment.kind === 'image' ? ImageIcon : FileText;
   return (
-    <div className={`w-[min(88%,18rem)] rounded-2xl px-3 py-2.5 ${bubble}`}>
+    <div {...interaction} className={`w-[min(88%,18rem)] rounded-2xl px-3 py-2.5 ${bubble}`}>
       <p className={`mb-2 text-[11px] font-semibold ${authorColor}`}>{author}</p>
       <div className="flex items-center gap-3">
         {/* The type badge is the file's identity at a glance: PDF, ZIP, PNG... */}

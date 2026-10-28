@@ -37,11 +37,14 @@ import {
 } from '@/lib/screenshare/devices';
 import {
   CHAT_FILE_MAX_BYTES, ChatFileReceiver, buildFileMeta, isInlineImageType, queueChannelTask, sendFileOverChannel,
-  type CallChatMessage, type ChatAttachment, type ChatFileReceiverEvent,
+  parseReplyRef, type CallChatMessage, type ChatAttachment, type ChatFileReceiverEvent,
 } from '@/lib/screenshare/chat-files';
 import { downloadBlob } from '@/lib/qr-code';
+import { playJoinSound, playMessageSound } from '@/lib/screenshare/call-sounds';
+import { clearCallSession, loadCallSession, saveCallSession, updateCallSessionCursor, type HostCallSession } from '@/lib/screenshare/session';
 import { CallSheet } from '@/components/tools/share-screen/call-sheet';
 import { ChatMessage } from '@/components/tools/share-screen/chat-message';
+import { ChatContextMenu } from '@/components/tools/share-screen/chat-context-menu';
 import { DevicePicker } from '@/components/tools/share-screen/device-picker';
 import type { AppLocale } from '@/lib/i18n/config';
 
@@ -92,6 +95,8 @@ type HostRuntime = {
   lastTrackConstraintAt: number;
   everConnected: boolean;
   closed: boolean;
+  /** Set after a reload: the next roster creates connections to viewers who are still in the room. */
+  resumeRoster?: boolean;
 };
 type ViewerMeshPeer = { id: string; pc: RTCPeerConnection; negotiationId: string; candidates: Array<{ negotiationId: string; candidate: RTCIceCandidateInit }>; transceivers: CallMediaTransceivers | null; senders: RTCRtpSender[]; senderKinds: CallMediaKind[]; chatChannel: RTCDataChannel | null; bytes: ByteCounterState; lastStatsAt: number; state: RTCPeerConnectionState };
 type ViewerRuntime = { roomId: string; peerId: string; token: string; pc: RTCPeerConnection; transceivers: CallMediaTransceivers | null; senders: RTCRtpSender[]; senderKinds: CallMediaKind[]; chatChannel: RTCDataChannel | null; meshPeers: Map<string, ViewerMeshPeer>; localStream: MediaStream | null; screenStream: MediaStream | null; cursor: number; negotiationId: string | null; candidates: Array<{ negotiationId: string; candidate: RTCIceCandidateInit }>; bytes: ByteCounterState; sessionBytes: number; lastStatsAt: number; lastAdaptation: number; heartbeatTimer: number | null; pollTimer: number | null; recoveryTimer: number | null; connected: boolean; completed: boolean; closed: boolean };
@@ -306,7 +311,8 @@ const parseChatMessage = (value: unknown): CallChatMessage | null => {
       typeof message.displayName !== 'string' || message.displayName.length > 32 ||
       typeof message.text !== 'string' || message.text.length > 1_000 || !message.text.trim() ||
       typeof message.createdAt !== 'number' || !Number.isFinite(message.createdAt)) return null;
-    return { id: message.id, peerId: message.peerId, displayName: message.displayName, text: message.text, createdAt: message.createdAt };
+    const replyTo = parseReplyRef((message as { replyTo?: unknown }).replyTo);
+    return { id: message.id, peerId: message.peerId, displayName: message.displayName, text: message.text, createdAt: message.createdAt, ...(replyTo ? { replyTo } : {}) };
   } catch {
     return null;
   }
@@ -405,9 +411,21 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   // Which local device is being opened or switched right now; drives the loading state.
   const [devicePending, setDevicePending] = useState<'camera' | 'microphone' | null>(null);
   const [chatWidth, setChatWidth] = useState(320);
+  const [replyTarget, setReplyTarget] = useState<CallChatMessage | null>(null);
+  const [chatMenu, setChatMenu] = useState<{ message: CallChatMessage; x: number; y: number } | null>(null);
   const [chatAwayFromEnd, setChatAwayFromEnd] = useState(false);
   const chatListRef = useRef<HTMLDivElement>(null);
   const chatAtEndRef = useRef(true);
+  const chatContentRef = useRef<HTMLDivElement>(null);
+  const selfIdRef = useRef('');
+  const callSoundsRef = useRef(true);
+  const [callSoundsOn, setCallSoundsOn] = useState(true);
+  // Saves server requests: polls and heartbeats run less often. Read through a ref by timers that are already running.
+  const [serverEconomy, setServerEconomy] = useState(false);
+  const serverEconomyRef = useRef(false);
+  // Joins that happen while the room is still loading its roster are not announced.
+  const joinSoundArmedAtRef = useRef(0);
+  const knownParticipantIdsRef = useRef<Set<string> | null>(null);
   const devicePendingRef = useRef<'camera' | 'microphone' | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileReceiverRef = useRef(new ChatFileReceiver());
@@ -455,6 +473,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       const { meta } = event;
       if (chatMessageIdsRef.current.has(meta.id)) return;
       chatMessageIdsRef.current.add(meta.id);
+      if (meta.peerId !== selfIdRef.current && callSoundsRef.current) playMessageSound();
       const message: CallChatMessage = {
         id: meta.id, peerId: meta.peerId, displayName: meta.displayName, text: '', createdAt: meta.createdAt,
         attachment: { name: meta.name, mime: meta.mime, size: meta.size, kind: isInlineImageType(meta.mime) ? 'image' : 'file', status: 'receiving', progress: 0 },
@@ -499,6 +518,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         const message = parseChatMessage(data);
         if (!message || chatMessageIdsRef.current.has(message.id)) return;
         chatMessageIdsRef.current.add(message.id);
+        if (message.peerId !== selfIdRef.current && callSoundsRef.current) playMessageSound();
         setChatMessages((current) => trimChatMessages([...current, message]));
         if (hostCallPanelRef.current !== 'chat') setUnreadChatCount((count) => count + 1);
         return;
@@ -520,6 +540,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     setPreferences(loaded);
     setNetwork(info);
     try { setParticipantName(localStorage.getItem('adtools.share-screen.display-name.v1') ?? ''); } catch { /* storage can be disabled */ }
+    try { setCallSoundsOn(localStorage.getItem('adtools.share-screen.sounds.v1') !== 'off'); } catch { /* storage can be disabled */ }
+    try { setServerEconomy(localStorage.getItem('adtools.share-screen.server-economy.v1') === 'on'); } catch { /* storage can be disabled */ }
     void api<{ viewerLimit: number }>('/api/screenshare/config').then(({ viewerLimit }) => {
       setViewerLimitFromConfig(viewerLimit);
       setPreferences((current) => current.viewerLimit > viewerLimit ? { ...current, viewerLimit } : current);
@@ -1013,6 +1035,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     const runtime = hostRef.current;
     if (!runtime || runtime.closed) return;
     runtime.closed = true;
+    clearCallSession();
     setPhase('ended');
     for (const peer of runtime.peers.values()) {
       peer.pc.onicecandidate = null;
@@ -1232,6 +1255,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         captureLevelSince: Date.now(), lastTrackConstraintAt: 0, everConnected: false, closed: false,
       };
       hostRef.current = runtime;
+      saveCallSession({ role: 'host', roomId: created.roomId, token, name: participantName.trim().slice(0, 32), access: roomAccess, startedAt: runtime.startedAt, cursor: 0 });
       setRoom({ roomId: created.roomId, token, roomUrl, viewerLimit: created.viewerLimit, startedAt: runtime.startedAt, audioAvailable: false, hostName: participantName, access: roomAccess, screenSharerId: null });
       setScreenSharerId(null);
       setCapturedAudio(false);
@@ -1250,6 +1274,43 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     }
   }, [callCopy.noName, cameraOn, locale, microphoneOn, network.saveData, notify, participantName, roomAccess, ui, x]);
 
+  const resumeHost = useCallback(async (session: HostCallSession) => {
+    const headers = { 'Content-Type': 'application/json', 'X-Screenshare-Host-Token': session.token };
+    try {
+      // A successful heartbeat proves the room still belongs to this token; the room keeps the host's lease for a few minutes.
+      await api(`/api/screenshare/rooms/${session.roomId}/heartbeat`, {
+        method: 'POST', headers, body: JSON.stringify({ role: 'host', audioAvailable: false, qualityMode: preferencesRef.current.dataSaver ? 'economy' : preferencesRef.current.qualityMode, cameraOn: false, microphoneOn: false }),
+      });
+      const config = await api<{ iceServers: RTCIceServer[]; viewerLimit: number }>('/api/screenshare/config');
+      // Screen capture cannot survive a reload, so release the share the room still holds for this host.
+      await api(`/api/screenshare/rooms/${session.roomId}/screen`, { method: 'POST', headers, body: JSON.stringify({ role: 'host', action: 'stop' }) }).catch(() => undefined);
+      const roomUrl = `${window.location.origin}/${locale}/share/${session.roomId}`;
+      const runtime: HostRuntime = {
+        roomId: session.roomId, token: session.token, stream: new MediaStream(), deviceStream: null, peers: new Map(), cursor: session.cursor, startedAt: session.startedAt, roomUrl,
+        audioAvailable: false, lastStatsAt: Date.now(), byteCounters: new Map(), sessionBytes: 0, screenSharerId: null, iceServers: config.iceServers,
+        lastUploadMbps: null, captureLevel: 'balanced', captureLevelSince: Date.now(), lastTrackConstraintAt: 0, everConnected: true, closed: false, resumeRoster: true,
+      };
+      hostRef.current = runtime;
+      setParticipantName((current) => current || session.name);
+      setRoom({ roomId: session.roomId, token: session.token, roomUrl, viewerLimit: config.viewerLimit, startedAt: session.startedAt, audioAvailable: false, hostName: session.name, access: session.access, screenSharerId: null });
+      setParticipants([{ id: 'host', displayName: session.name, state: 'connected', cameraOn: false, microphoneOn: false }]);
+      setPhase('active');
+      notify(callCopy.callResumed);
+    } catch (error) {
+      clearCallSession();
+      setErrorText(humanError(error, ui, x));
+      setPhase('error');
+    }
+  }, [callCopy.callResumed, locale, notify, ui, x]);
+
+  useEffect(() => {
+    if (resumeTriedRef.current || initialRoomId) return;
+    const session = loadCallSession();
+    if (!session || session.role !== 'host') return;
+    resumeTriedRef.current = true;
+    void resumeHost(session);
+  }, [initialRoomId, resumeHost]);
+
   const confirmAndStart = useCallback((economy: boolean) => {
     const nextPreferences = { ...preferencesRef.current, ...(economy ? { dataSaver: true, qualityMode: 'economy' as const } : {}) };
     if (economy) {
@@ -1267,7 +1328,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     setPreference('qualityMode', mode);
   }, [setPreference]);
 
-  const connectViewer = useCallback(async (roomId: string, preferEconomy: boolean) => {
+  const connectViewer = useCallback(async (roomId: string, preferEconomy: boolean, resume?: { peerId: string; token: string; cursor: number }) => {
     if (joinInFlightRef.current || (viewerRef.current && !viewerRef.current.closed)) return;
     if (!participantName.trim()) { setErrorText(callCopy.noName); return; }
     joinInFlightRef.current = true;
@@ -1276,8 +1337,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     setErrorText('');
     joinAbortRef.current = false;
     try {
-      const token = createRandomHex(32);
-      const peerId = createRandomHex(16);
+      const token = resume?.token ?? createRandomHex(32);
+      const peerId = resume?.peerId ?? createRandomHex(16);
       const config = await api<{ iceServers: RTCIceServer[]; viewerLimit: number }>('/api/screenshare/config');
       setViewerLimitFromConfig(config.viewerLimit);
       const pc = new RTCPeerConnection({ iceServers: config.iceServers, iceCandidatePoolSize: 2 });
@@ -1285,11 +1346,13 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       const runtime: ViewerRuntime = {
         roomId, peerId, token, pc, transceivers: null, senders: [], senderKinds: [], chatChannel: null,
         meshPeers: new Map(), localStream: localMediaRef.current, screenStream: currentScreen,
-        cursor: 0, negotiationId: null, candidates: [], bytes: new Map(), sessionBytes: 0, lastStatsAt: Date.now(), lastAdaptation: 0,
+        cursor: resume?.cursor ?? 0, negotiationId: null, candidates: [], bytes: new Map(), sessionBytes: 0, lastStatsAt: Date.now(), lastAdaptation: 0,
         heartbeatTimer: null, pollTimer: null, recoveryTimer: null, connected: false, completed: false, closed: false,
       };
       baselineRef.current = null;
       viewerRef.current = runtime;
+      saveCallSession({ role: 'viewer', roomId, peerId, token, name: participantName.trim().slice(0, 32), economy: preferEconomy, cursor: runtime.cursor });
+      if (resume) notify(callCopy.callResumed);
       setViewerPeerId(peerId);
       setViewerEconomy(preferEconomy);
       const join = await api<{ state: 'pending' | 'approved' }>('/api/screenshare/rooms/' + roomId + '/join', {
@@ -1302,7 +1365,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         const startedAt = Date.now();
         let lastPendingHeartbeat = startedAt;
         while (!runtime.closed && !joinAbortRef.current && Date.now() - startedAt < 90_000) {
-          await new Promise((resolve) => window.setTimeout(resolve, 3_000));
+          await new Promise((resolve) => window.setTimeout(resolve, serverEconomyRef.current ? 6_000 : 3_000));
           if (runtime.closed || joinAbortRef.current) break;
           const admission = await api<{ state: string; admission: 'pending' | 'approved' | 'denied' }>(`/api/screenshare/rooms/${roomId}/join?peerId=${peerId}`, {
             headers: { 'X-Screenshare-Viewer-Token': token },
@@ -1331,7 +1394,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       const schedulePoll = () => {
         if (runtime.closed) return;
         if (runtime.pollTimer) window.clearTimeout(runtime.pollTimer);
-        runtime.pollTimer = window.setTimeout(() => { runtime.pollTimer = null; void pollForNegotiation(); }, runtime.connected ? 15_000 : pollDelay);
+        runtime.pollTimer = window.setTimeout(() => { runtime.pollTimer = null; void pollForNegotiation(); }, runtime.connected ? (serverEconomyRef.current ? 60_000 : 15_000) : pollDelay);
       };
       const attachConnectionState = (connection: RTCPeerConnection, otherPeerId: string | 'host') => {
         connection.onconnectionstatechange = () => {
@@ -1369,17 +1432,26 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       };
       const pendingHostTrackEvents: RTCTrackEvent[] = [];
       const pendingMeshTrackEvents = new Map<string, RTCTrackEvent[]>();
-      runtime.pc.ontrack = (event) => {
-        if (!runtime.transceivers) {
-          pendingHostTrackEvents.push(event);
-          return;
-        }
-        attachRemoteTrack('host', runtime.transceivers, event);
+      const bindHostConnection = (connection: RTCPeerConnection) => {
+        connection.ontrack = (event) => {
+          if (!runtime.transceivers) {
+            pendingHostTrackEvents.push(event);
+            return;
+          }
+          attachRemoteTrack('host', runtime.transceivers, event);
+        };
+        connection.ondatachannel = (event) => {
+          runtime.chatChannel = event.channel;
+          bindChatChannel(event.channel);
+          // When the host's channel closes (for example, the host reloaded), poll at the reconnect pace instead of the connected pace.
+          event.channel.addEventListener('close', () => { runtime.connected = false; schedulePoll(); });
+        };
+        connection.onicecandidate = (event) => {
+          if (event.candidate && runtime.negotiationId) void sendViewerSignal(runtime, { type: 'candidate', negotiationId: runtime.negotiationId, candidate: serializeCandidate(event.candidate) }).catch(() => undefined);
+        };
+        attachConnectionState(connection, 'host');
       };
-      runtime.pc.ondatachannel = (event) => {
-        runtime.chatChannel = event.channel;
-        bindChatChannel(event.channel);
-      };
+      bindHostConnection(runtime.pc);
       const makeMeshPeer = (otherPeerId: string, createOfferTransceivers = false): ViewerMeshPeer => {
         const meshPc = new RTCPeerConnection({ iceServers: config.iceServers, iceCandidatePoolSize: 2 });
         const mesh: ViewerMeshPeer = { id: otherPeerId, pc: meshPc, negotiationId: crypto.randomUUID(), candidates: [], transceivers: null, senders: [], senderKinds: [], chatChannel: null, bytes: new Map(), lastStatsAt: Date.now(), state: meshPc.connectionState };
@@ -1433,21 +1505,32 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         await mesh.pc.setLocalDescription(offer);
         await sendViewerSignal(runtime, { type: 'offer', negotiationId: mesh.negotiationId, description: { type: 'offer', sdp: offer.sdp ?? '' } }, otherPeerId);
       };
-      runtime.pc.onicecandidate = (event) => {
-        if (event.candidate && runtime.negotiationId) void sendViewerSignal(runtime, { type: 'candidate', negotiationId: runtime.negotiationId, candidate: serializeCandidate(event.candidate) }).catch(() => undefined);
-      };
-      attachConnectionState(runtime.pc, 'host');
       await sendViewerSignal(runtime, { type: 'join' });
       if (preferEconomy) await sendViewerSignal(runtime, { type: 'quality-request', preference: 'economy' });
 
       const applySignal = async (signal: ScreenShareSignal) => {
-        if (signal.type === 'room-closed') { setErrorText(ui.roomEnded); setPhase('ended'); void closeViewer(false); return; }
+        if (signal.type === 'room-closed') {
+          clearCallSession(); setErrorText(ui.roomEnded); setPhase('ended'); void closeViewer(false); return; }
         if (signal.type === 'bye') {
           const mesh = runtime.meshPeers.get(signal.fromPeerId);
           if (mesh) { mesh.pc.close(); runtime.meshPeers.delete(signal.fromPeerId); removeRemoteParticipant(signal.fromPeerId); }
           return;
         }
         if (signal.type === 'offer' && signal.fromPeerId === 'host') {
+          if (signal.fresh) {
+            // The host restarted and has no state for the old connection. Renegotiating it does not reliably
+            // bring the data channel back, so build a clean connection for the new offer.
+            runtime.pc.onconnectionstatechange = null;
+            runtime.pc.close();
+            runtime.pc = new RTCPeerConnection({ iceServers: config.iceServers, iceCandidatePoolSize: 2 });
+            runtime.transceivers = null;
+            runtime.senders = [];
+            runtime.senderKinds = [];
+            runtime.chatChannel = null;
+            runtime.candidates = [];
+            pendingHostTrackEvents.splice(0);
+            bindHostConnection(runtime.pc);
+          }
           runtime.negotiationId = signal.negotiationId;
           await runtime.pc.setRemoteDescription(signal.description);
           if (!runtime.transceivers) {
@@ -1510,6 +1593,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
             if (result.roomState === 'expired' || result.roomState === 'closed') { void closeViewer(false); return; }
           }
           for (const signal of result.messages) { runtime.cursor = Math.max(runtime.cursor, signal.sequence); await applySignal(signal); }
+          if (!runtime.closed) updateCallSessionCursor(runtime.cursor);
           if (result.roster) await applyRoster(result.roster);
           succeeded = true;
         } catch (error) {
@@ -1534,6 +1618,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           setScreenSharerId(roster.screenSharerId);
           setRoomStatus((current) => current ? { ...current, hostPeerId: roster.hostPeerId, hostName: roster.host.displayName, screenSharerId: roster.screenSharerId, audioAvailable: roster.audioAvailable } : current);
           const activeIds = new Set(people.map((person) => person.id).filter((id) => id !== roster.hostPeerId && id !== peerId));
+          for (const [id, mesh] of runtime.meshPeers) if (mesh.pc.connectionState === 'failed' || mesh.pc.connectionState === 'closed') { mesh.pc.close(); runtime.meshPeers.delete(id); removeRemoteParticipant(id); }
           for (const person of people) {
             if (person.id === roster.hostPeerId || person.id === peerId || runtime.meshPeers.has(person.id)) continue;
             if (peerId.localeCompare(person.id) < 0) await createMeshOffer(person.id);
@@ -1542,8 +1627,11 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         } catch { /* Redis outages are covered by heartbeat leases and signaling retries. */ }
       };
       void pollForNegotiation();
+      let viewerBeats = 0;
       runtime.heartbeatTimer = window.setInterval(() => {
         if (runtime.closed) return;
+        viewerBeats += 1;
+        if (serverEconomyRef.current && viewerBeats % 2 === 1) return;
         const info = getBrowserNetwork();
         void api<{ ok: boolean }>(`/api/screenshare/rooms/${roomId}/heartbeat`, {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Screenshare-Viewer-Token': token },
@@ -1556,7 +1644,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       setPhase('connecting');
     } catch (error) {
       const code = (error as ApiError).code;
-      const message = code === 'join_rejected' ? callCopy.joinRejected : code === 'approval_timeout' ? callCopy.waitingApproval : code === 'room_full' ? callCopy.callFull : humanError(error, ui, x);
+      if (code === 'room_ended' || code === 'room_full' || code === 'join_rejected' || code === 'not_found') clearCallSession();
+    const message = code === 'join_rejected' ? callCopy.joinRejected : code === 'approval_timeout' ? callCopy.waitingApproval : code === 'room_full' ? callCopy.callFull : humanError(error, ui, x);
       if (viewerRef.current) await closeViewer(false);
       setAdmissionState(code === 'join_rejected' ? 'denied' : null);
       setErrorText(message);
@@ -1565,7 +1654,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     } finally {
       joinInFlightRef.current = false;
     }
-  }, [attachRemoteTrack, bindChatChannel, callCopy, cameraOn, closeViewer, locale, microphoneOn, participantName, removeRemoteParticipant, sendViewerSignal, ui, x]);
+  }, [attachRemoteTrack, bindChatChannel, callCopy, cameraOn, closeViewer, locale, microphoneOn, participantName, removeRemoteParticipant, sendViewerSignal, ui, x, notify]);
 
   const rejoinAfterHostTransfer = useCallback(async (runtime: HostRuntime) => {
     if (runtime.closed || hostRef.current !== runtime) return;
@@ -1604,13 +1693,24 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       } catch (error) {
         if (active) { setErrorText(humanError(error, ui, x)); setPhase((current) => current === 'connecting' ? 'error' : current); }
       } finally {
-        if (active) timer = window.setTimeout(() => { void refreshRoom(); }, 10_000);
+        if (active) timer = window.setTimeout(() => { void refreshRoom(); }, serverEconomyRef.current ? 30_000 : 10_000);
       }
     };
     setPhase('connecting');
     void refreshRoom();
     return () => { active = false; if (timer) window.clearTimeout(timer); };
   }, [initialRoomId, viewerPeerId, ui, x]);
+
+  const resumeTriedRef = useRef(false);
+
+  useEffect(() => {
+    if (resumeTriedRef.current || !initialRoomId || viewerPeerId) return;
+    const session = loadCallSession();
+    if (!session || session.role !== 'viewer' || session.roomId !== initialRoomId) return;
+    if (!['active', 'recovering'].includes(roomStatus?.state ?? '') || !participantName.trim()) return;
+    resumeTriedRef.current = true;
+    void connectViewer(session.roomId, session.economy, { peerId: session.peerId, token: session.token, cursor: session.cursor });
+  }, [connectViewer, initialRoomId, participantName, roomStatus?.state, viewerPeerId]);
 
   useEffect(() => {
     const runtime = viewerRef.current;
@@ -1624,7 +1724,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         });
         if (active) setPendingPeers(result.pending ?? []);
       } catch { /* the room owner can retry on the next roster refresh */ }
-      finally { if (active) timer = window.setTimeout(() => { void syncPending(); }, 5_000); }
+      finally { if (active) timer = window.setTimeout(() => { void syncPending(); }, serverEconomyRef.current ? 15_000 : 5_000); }
     };
     void syncPending();
     return () => { active = false; if (timer) window.clearTimeout(timer); };
@@ -1648,7 +1748,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       pollTimer = window.setTimeout(() => { pollTimer = null; void poll(); }, pollDelay);
     };
 
-    const createHostPeer = async (peerId: string, displayName = ui.spectator) => {
+    const createHostPeer = async (peerId: string, displayName = ui.spectator, fresh = false) => {
       if (runtime.peers.has(peerId) || runtime.closed) return;
       const previousViewers = runtime.peers.size;
       const startPrefs = preferencesRef.current;
@@ -1707,7 +1807,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       };
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-      await sendHostSignal(runtime, peerId, { type: 'offer', negotiationId: peer.negotiationId, description: { type: 'offer', sdp: offer.sdp ?? '' } });
+      await sendHostSignal(runtime, peerId, { type: 'offer', negotiationId: peer.negotiationId, description: { type: 'offer', sdp: offer.sdp ?? '' }, ...(fresh ? { fresh: true as const } : {}) });
       refreshPeerViews();
     };
 
@@ -1720,8 +1820,14 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         if (response.roomState === 'recovering') setHostReconnectText(ui.hostRecovering);
         for (const message of response.messages) {
           runtime.cursor = Math.max(runtime.cursor, message.sequence);
+          // After a reload, signals sent while the host was away describe connections that no longer exist
+          // (for example an old restart request). The roster creates fresh connections instead, so skip them.
+          if (runtime.resumeRoster) continue;
           const peer = runtime.peers.get(message.fromPeerId);
           if (message.type === 'join') {
+            // A viewer that joins again (for example after a reload) gets a fresh connection, not the old broken one.
+            const stale = runtime.peers.get(message.fromPeerId);
+            if (stale) { stale.pc.onconnectionstatechange = null; stale.pc.onicecandidate = null; stale.pc.close(); runtime.peers.delete(stale.id); }
             const roster = await api<{ peers: Array<{ id: string; displayName: string; cameraOn: boolean; microphoneOn: boolean }> }>(`/api/screenshare/rooms/${runtime.roomId}/peers`, { headers: { 'X-Screenshare-Host-Token': runtime.token } }).catch(() => ({ peers: [] }));
             const member = roster.peers.find((item) => item.id === message.fromPeerId);
             if (member) await createHostPeer(member.id, member.displayName);
@@ -1747,12 +1853,13 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           if (message.type === 'quality-request') { peer.economy = message.preference === 'economy'; }
         }
         if (response.roster) applyHostRoster(response.roster);
+        if (!runtime.closed) updateCallSessionCursor(runtime.cursor);
         succeeded = true;
       } catch (error) {
         if ((error as ApiError).code === 'redis_unavailable') setHostReconnectText(ui.redisUnavailable);
       } finally {
         pollInFlight = false;
-        pollDelay = succeeded ? 3_000 : Math.min(pollDelay * 2, 15_000);
+        pollDelay = succeeded ? (serverEconomyRef.current ? 6_000 : 3_000) : Math.min(pollDelay * 2, 15_000);
         schedulePoll();
       }
     };
@@ -1761,6 +1868,10 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       if (!active || runtime.closed) return;
       try {
         const activeIds = new Set(result.peers.map((item) => item.id));
+        if (runtime.resumeRoster) {
+          runtime.resumeRoster = false;
+          for (const member of result.peers) if (!runtime.peers.has(member.id)) void createHostPeer(member.id, member.displayName, true);
+        }
         setPendingPeers(result.pending ?? []);
         setScreenSharerId(result.screenSharerId ?? null);
         setRoom((current) => current ? { ...current, screenSharerId: result.screenSharerId ?? null, audioAvailable: result.audioAvailable } : current);
@@ -1922,7 +2033,12 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     void poll();
     void heartbeat();
     const statsTimer = window.setInterval(() => { void sample(); }, 2_500);
-    const heartbeatTimer = window.setInterval(() => { void heartbeat(); }, 20_000);
+    let hostBeats = 0;
+    const heartbeatTimer = window.setInterval(() => {
+      hostBeats += 1;
+      if (serverEconomyRef.current && hostBeats % 2 === 1) return;
+      void heartbeat();
+    }, 20_000);
     return () => { active = false; if (pollTimer) window.clearTimeout(pollTimer); window.clearInterval(statsTimer); window.clearInterval(heartbeatTimer); };
   }, [attachRemoteTrack, bindChatChannel, cameraOn, endHost, locale, microphoneOn, network.type, participantName, phase, removeRemoteParticipant, room?.roomId, sendHostSignal, notify, rejoinAfterHostTransfer, setPreference, ui, x]);
 
@@ -2078,6 +2194,18 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     if (chatAtEndRef.current) list.scrollTop = list.scrollHeight;
   }, [chatMessages, hostCallPanel]);
 
+  // Content can grow without a new message (images finish loading, a file card changes size), so keep the end in view too.
+  useEffect(() => {
+    const content = chatContentRef.current;
+    const list = chatListRef.current;
+    if (!content || !list || hostCallPanel !== 'chat' || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => {
+      if (chatAtEndRef.current) list.scrollTop = list.scrollHeight;
+    });
+    observer.observe(content);
+    return () => observer.disconnect();
+  }, [hostCallPanel]);
+
   const sendChat = useCallback(() => {
     const text = chatDraft.trim().slice(0, 1_000);
     if (!text) return;
@@ -2085,12 +2213,14 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     const viewer = viewerRef.current;
     const peerId = host ? 'host' : viewer?.peerId;
     if (!peerId) return;
+    const replyTo = replyTarget ? { id: replyTarget.id, displayName: replyTarget.peerId === peerId ? callCopy.you : replyTarget.displayName, text: (replyTarget.attachment?.name ?? replyTarget.text).slice(0, 140) } : undefined;
     const message: CallChatMessage = {
       id: crypto.randomUUID(),
       peerId,
       displayName: participantName.trim().slice(0, 32) || callCopy.you,
       text,
       createdAt: Date.now(),
+      ...(replyTo ? { replyTo } : {}),
     };
     const encoded = JSON.stringify({ type: 'chat', ...message });
     // Text may be queued behind a file in flight, so the limit is higher than a lone message needs.
@@ -2099,7 +2229,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     chatAtEndRef.current = true;
     setChatMessages((current) => trimChatMessages([...current, message]));
     setChatDraft('');
-  }, [callCopy.you, chatDraft, getOpenChatChannels, participantName, trimChatMessages]);
+    setReplyTarget(null);
+  }, [callCopy.you, chatDraft, getOpenChatChannels, participantName, replyTarget, trimChatMessages]);
 
   const sendChatFiles = useCallback(async (files: File[]) => {
     const peerId = hostRef.current ? 'host' : viewerRef.current?.peerId;
@@ -2151,6 +2282,12 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     if (files.length) void sendChatFiles(files);
   }, [sendChatFiles]);
 
+  const copyChatMessage = useCallback(async (message: CallChatMessage) => {
+    const text = message.attachment?.name ?? message.text;
+    try { await navigator.clipboard.writeText(text); notify(ui.copied); }
+    catch { notify(ui.genericError); }
+  }, [notify, ui.copied, ui.genericError]);
+
   const downloadChatFile = useCallback((message: CallChatMessage) => {
     if (message.attachment?.blob) downloadBlob(message.attachment.blob, message.attachment.name);
   }, []);
@@ -2163,6 +2300,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   }, [photoPreview]);
 
   const leaveViewerCall = useCallback(async () => {
+    clearCallSession();
     const runtime = viewerRef.current;
     if (runtime && roomStatus?.hostPeerId === runtime.peerId) {
       try {
@@ -2303,6 +2441,21 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [fullscreen, inCall]);
   const selfId = isHostCall ? 'host' : viewerPeerId;
+  selfIdRef.current = selfId;
+  callSoundsRef.current = callSoundsOn;
+  serverEconomyRef.current = serverEconomy;
+  useEffect(() => {
+    if (inCall) joinSoundArmedAtRef.current = Date.now() + 4_000;
+    else knownParticipantIdsRef.current = null;
+  }, [inCall]);
+  useEffect(() => {
+    if (!inCall) return;
+    const ids = new Set(participants.map((person) => person.id).filter((id) => id !== selfId));
+    const previous = knownParticipantIdsRef.current;
+    knownParticipantIdsRef.current = ids;
+    if (!previous || Date.now() < joinSoundArmedAtRef.current || !callSoundsOn) return;
+    if ([...ids].some((id) => !previous.has(id))) playJoinSound();
+  }, [callSoundsOn, inCall, participants, selfId]);
   useEffect(() => {
     if (!inCall || typeof window.AudioContext !== 'function') {
       setSpeakingPeerIds((current) => current.size ? new Set() : current);
@@ -2681,11 +2834,17 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
             {hostCallPanel === 'chat' ? <div className="flex min-h-0 flex-1 flex-col gap-3">
               <div className="relative flex min-h-0 flex-1 flex-col">
                 <div ref={chatListRef} onScroll={onChatScroll} className="min-h-0 flex-1 space-y-2.5 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-live="polite" aria-relevant="additions text" onDragOver={(event) => event.preventDefault()} onDrop={dropChatFiles}>
-                  {chatMessages.length ? chatMessages.map((message) => <ChatMessage key={message.id} message={message} mine={message.peerId === selfId} copy={callCopy} onPreview={setPhotoPreview} onDownload={downloadChatFile} />) : <p className="py-8 text-center text-sm text-ink-400">{callCopy.chatEmpty}</p>}
+                  <div ref={chatContentRef} className="space-y-2.5">
+                    {chatMessages.length ? chatMessages.map((message) => <ChatMessage key={message.id} message={message} mine={message.peerId === selfId} copy={callCopy} onPreview={setPhotoPreview} onDownload={downloadChatFile} onOpenMenu={(target, x, y) => setChatMenu({ message: target, x, y })} replyLabel={callCopy.replyingTo} />) : <p className="py-8 text-center text-sm text-ink-400">{callCopy.chatEmpty}</p>}
+                  </div>
                 </div>
                 {chatAwayFromEnd ? <button type="button" onClick={jumpChatToEnd} className="absolute bottom-2 left-1/2 inline-flex h-9 -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-accent-500 px-3.5 text-xs font-semibold text-ink-950 shadow-lg transition hover:bg-accent-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300"><ChevronDown size={15} aria-hidden="true" />{callCopy.jumpToLatest}</button> : null}
               </div>
               <p className="text-xs leading-5 text-ink-500">{callCopy.chatPrivacy}</p>
+              {replyTarget ? <div className="flex items-center gap-2 rounded-xl border border-ink-700 bg-ink-800 py-2 pl-3 pr-1.5 text-xs text-ink-300">
+                <span className="min-w-0 flex-1 truncate"><span className="font-semibold text-accent-300">{callCopy.replyingTo} {replyTarget.peerId === selfId ? callCopy.you : replyTarget.displayName}</span>: {replyTarget.attachment?.name ?? replyTarget.text}</span>
+                <button type="button" onClick={() => setReplyTarget(null)} aria-label={callCopy.cancelReply} title={callCopy.cancelReply} className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-ink-400 transition hover:bg-ink-700 hover:text-white"><X size={15} /></button>
+              </div> : null}
               <form className="flex items-center gap-1.5" onSubmit={(event) => { event.preventDefault(); sendChat(); }}>
                 {/* One attach button: images are previewed as photos, everything else is sent as a file. */}
                 <input ref={fileInputRef} type="file" multiple className="hidden" onChange={pickChatFiles} tabIndex={-1} aria-hidden="true" />
@@ -2721,6 +2880,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
                   onCamera={(id) => void switchLocalDevice('camera', { deviceId: id })} onMicrophone={(id) => void switchLocalDevice('microphone', { deviceId: id })} onSpeaker={setSpeakerId} onFacing={(facingMode) => void switchLocalDevice('camera', { deviceId: '', facingMode })} onMirror={setMirrorSelf} />
               </section>
               <section className="space-y-3 border-t border-ink-700 pt-4">
+                <label className="flex items-center gap-2 text-sm text-ink-300"><input type="checkbox" className="accent-accent-500" checked={serverEconomy} onChange={(event) => { setServerEconomy(event.target.checked); try { localStorage.setItem('adtools.share-screen.server-economy.v1', event.target.checked ? 'on' : 'off'); } catch { /* storage can be disabled */ } }} />{callCopy.serverEconomy}</label>
+                <label className="flex items-center gap-2 text-sm text-ink-300"><input type="checkbox" className="accent-accent-500" checked={callSoundsOn} onChange={(event) => { setCallSoundsOn(event.target.checked); try { localStorage.setItem('adtools.share-screen.sounds.v1', event.target.checked ? 'on' : 'off'); } catch { /* storage can be disabled */ } }} />{callCopy.callSounds}</label>
                 <label className="flex items-center gap-2 text-sm text-ink-300"><input type="checkbox" className="accent-accent-500" checked={speakerMuted} onChange={(event) => setSpeakerMuted(event.target.checked)} />{callCopy.speakers}</label>
                 <label className="block text-xs text-ink-300">{ui.volume}<input className="mt-2 w-full accent-accent-500" type="range" min="0" max="1" step="0.05" value={speakerVolume} onChange={(event) => setSpeakerVolume(Number(event.target.value))} /></label>
               </section>
@@ -2739,7 +2900,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           {callMediaButton(devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff, cameraOn, devicePending === 'camera' ? <LoaderCircle size={21} className="animate-spin" /> : cameraOn ? <Camera size={21} /> : <CameraOff size={21} />, () => void toggleLocalDevice('camera'), !cameraOn && devicePending !== 'camera', '', 'neutral')}
           {callMediaButton(shareLabel, screenSharerId === selfId, <MonitorUp size={21} />, () => screenSharerId === selfId ? void stopScreenShare() : startScreenShare(), false, screenSupported || screenSharerId === selfId ? '' : 'opacity-60')}
           <div className="flex shrink-0 flex-col items-center gap-1">
-            <Button shape="circle" variant={hostCallPanel === 'chat' ? 'callActive' : 'call'} aria-label={callCopy.chat} title={callCopy.chat} onClick={() => { setHostCallPanel((current) => current === 'chat' ? null : 'chat'); setUnreadChatCount(0); }} className={`relative ${callButtonSize} shrink-0 p-0`}><MessageCircle size={20} />{unreadChatCount ? <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-accent-500 px-1 text-[10px] font-bold leading-4 text-ink-950">{unreadChatCount > 9 ? '9+' : unreadChatCount}</span> : null}</Button>
+            <Button shape="circle" variant={hostCallPanel === 'chat' ? 'callActive' : 'call'} aria-label={callCopy.chat} title={callCopy.chat} onClick={() => { chatAtEndRef.current = true; setHostCallPanel((current) => current === 'chat' ? null : 'chat'); setUnreadChatCount(0); }} className={`relative ${callButtonSize} shrink-0 p-0`}><MessageCircle size={20} />{unreadChatCount ? <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-accent-500 px-1 text-[10px] font-bold leading-4 text-ink-950">{unreadChatCount > 9 ? '9+' : unreadChatCount}</span> : null}</Button>
             <span className="hidden max-w-20 truncate text-[10px] text-ink-400 sm:block">{callCopy.chat}</span>
           </div>
           {callMediaButton(callCopy.options, hostCallPanel === 'settings', <Settings2 size={20} />, () => setHostCallPanel((current) => current === 'settings' ? null : 'settings'))}
@@ -2764,6 +2925,10 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
             <img src={photoPreview.attachment.url} alt={photoPreview.attachment.name} className="h-full w-full object-contain" onClick={(event) => event.stopPropagation()} />
           </div>
         </div> : null}
+        {chatMenu ? <ChatContextMenu x={chatMenu.x} y={chatMenu.y} copyLabel={callCopy.copyMessage} replyLabel={callCopy.replyMessage}
+          onClose={() => setChatMenu(null)}
+          onCopy={() => { void copyChatMessage(chatMenu.message); setChatMenu(null); }}
+          onReply={() => { setReplyTarget(chatMenu.message); setChatMenu(null); }} /> : null}
         {toast ? <div role="status" aria-live="polite" className="fixed bottom-28 left-1/2 z-[110] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl border border-ink-700 bg-ink-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div> : null}
       </div>
     );
