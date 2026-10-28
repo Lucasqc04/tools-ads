@@ -1,12 +1,32 @@
 import { sha256Hex } from '@/lib/screenshare/auth';
 import { getSignalRateLimit, isValidPeerId, isValidRoomId, isValidSecret, isViewerSignalDirectionValid, validateSignalPayload } from '@/lib/screenshare/protocol';
-import { consumeRateLimit, pollSignals, sendSignal } from '@/lib/screenshare/store';
+import { consumeRateLimit, getHostPeers, getParticipants, pollSignals, sendSignal } from '@/lib/screenshare/store';
 import { isRecord, json, readJsonBody, serverError } from '@/lib/screenshare/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 type RouteProps = { params: Promise<{ roomId: string }> };
+
+/**
+ * Roster piggybacks on the signal poll (`?roster=1`) so one function call
+ * replaces the separate participants/peers polls. A roster failure must not
+ * fail the signal poll, so it degrades to `null` and the client keeps its state.
+ */
+const loadRoster = async (role: 'host' | 'viewer', roomId: string, peerId: string, tokenHash: string, now: number) => {
+  try {
+    if (role === 'host') {
+      const result = await getHostPeers(roomId, tokenHash, now);
+      if (result.status === 'unauthorized' || result.status === 'missing') return null;
+      return { host: result.host, hostPeerId: result.hostPeerId, peers: result.peers, pending: result.pending, screenSharerId: result.screenSharerId ?? null, audioAvailable: result.audioAvailable ?? false };
+    }
+    const result = await getParticipants({ id: roomId, peerId, tokenHash, now });
+    if (result.status !== 'ok') return null;
+    return { host: result.host, hostPeerId: result.hostPeerId, peers: result.peers, screenSharerId: result.screenSharerId ?? null, access: result.access, audioAvailable: result.audioAvailable ?? false };
+  } catch {
+    return null;
+  }
+};
 
 export async function POST(request: Request, { params }: RouteProps) {
   const { roomId } = await params;
@@ -78,6 +98,7 @@ export async function GET(request: Request, { params }: RouteProps) {
   const role = url.searchParams.get('role');
   const peerId = url.searchParams.get('peerId') ?? 'host';
   const after = Number(url.searchParams.get('after') ?? '0');
+  const includeRoster = url.searchParams.get('roster') === '1';
   if ((role !== 'host' && role !== 'viewer') || (role === 'viewer' && !isValidPeerId(peerId)) || !Number.isSafeInteger(after) || after < 0) {
     return json({ error: 'invalid_request' }, 400);
   }
@@ -90,17 +111,20 @@ export async function GET(request: Request, { params }: RouteProps) {
     if (!(await consumeRateLimit(`screenshare:rate:poll:${rateIdentity}`, 60, 100))) {
       return json({ error: 'rate_limited' }, 429);
     }
+    const tokenHash = await sha256Hex(token);
+    const now = Date.now();
     const result = await pollSignals({
       id: roomId,
       role,
       peerId,
-      tokenHash: await sha256Hex(token),
+      tokenHash,
       after,
-      now: Date.now(),
+      now,
     });
     if (result.status === 'unauthorized') return json({ error: 'not_found' }, 404);
     if (result.status === 'missing') return json({ error: 'not_found' }, 404);
-    return json(result);
+    if (!includeRoster) return json(result);
+    return json({ ...result, roster: await loadRoster(role, roomId, peerId, tokenHash, now) });
   } catch (error) {
     return serverError(error);
   }
