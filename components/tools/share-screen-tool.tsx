@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ClipboardEvent, type DragEvent, type ReactNode } from 'react';
 import {
-  Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Flashlight, FlashlightOff, Gauge,
-  LockKeyhole, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, PhoneOff,
-  PictureInPicture2, Send, Settings2, ShieldCheck, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi,
+  Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Download, Expand, Flashlight, FlashlightOff, Gauge,
+  LockKeyhole, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, Paperclip, PhoneOff,
+  PictureInPicture2, ImagePlus, Send, Settings2, ShieldCheck, Shrink, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi, X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -35,7 +35,13 @@ import {
   shouldMirrorPreview, supportsOutputSelection,
   type DetectedFacing, type FacingMode, type MediaDeviceOption,
 } from '@/lib/screenshare/devices';
+import {
+  CHAT_FILE_MAX_BYTES, ChatFileReceiver, buildFileMeta, isInlineImageType, queueChannelTask, sendFileOverChannel,
+  type CallChatMessage, type ChatAttachment, type ChatFileReceiverEvent,
+} from '@/lib/screenshare/chat-files';
+import { downloadBlob } from '@/lib/qr-code';
 import { CallSheet } from '@/components/tools/share-screen/call-sheet';
+import { ChatMessage } from '@/components/tools/share-screen/chat-message';
 import { DevicePicker } from '@/components/tools/share-screen/device-picker';
 import type { AppLocale } from '@/lib/i18n/config';
 
@@ -94,7 +100,6 @@ type ParticipantView = { id: string; displayName: string; state: string; cameraO
 type RemoteMedia = { camera?: MediaStream; screen?: MediaStream; microphone?: MediaStream; screenAudio?: MediaStream };
 type RoomView = { roomId: string; token: string; roomUrl: string; viewerLimit: number; startedAt: number; audioAvailable: boolean; hostName: string; access: 'public' | 'private'; screenSharerId: string | null };
 type ViewerRoom = { state: string; viewerCount: number; viewerLimit: number; audioAvailable: boolean; createdAt?: number; qualityMode?: QualityMode; hostName?: string; hostPeerId?: string; access?: 'public' | 'private'; screenSharerId?: string | null; hostCameraOn?: boolean; hostMicrophoneOn?: boolean };
-type CallChatMessage = { id: string; peerId: string; displayName: string; text: string; createdAt: number };
 type CallMediaSession = {
   setActionHandler: (action: string, handler: ((details?: unknown) => void) | null) => void;
   setCameraActive?: (active: boolean) => void;
@@ -390,6 +395,16 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const [screenSupported, setScreenSupported] = useState(true);
   const [touchDevice, setTouchDevice] = useState(false);
   const [outputSupported, setOutputSupported] = useState(false);
+  const [desktopLayout, setDesktopLayout] = useState(false);
+  const [stageExpanded, setStageExpanded] = useState(false);
+  const [stageControlsVisible, setStageControlsVisible] = useState(false);
+  const stageControlsTimerRef = useRef<number | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<CallChatMessage | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const fileReceiverRef = useRef(new ChatFileReceiver());
+  const objectUrlsRef = useRef(new Set<string>());
+  const progressShownRef = useRef(new Map<string, number>());
   const joinAbortRef = useRef(false);
   const joinInFlightRef = useRef(false);
   const startInFlightRef = useRef(false);
@@ -413,14 +428,81 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   remoteMediaRef.current = remoteMedia;
   hostCallPanelRef.current = hostCallPanel;
 
-  const bindChatChannel = useCallback((channel: RTCDataChannel) => {
-    channel.onmessage = (event) => {
-      const message = parseChatMessage(event.data);
-      if (!message || chatMessageIdsRef.current.has(message.id)) return;
-      chatMessageIdsRef.current.add(message.id);
-      setChatMessages((current) => [...current, message].sort((a, b) => a.createdAt - b.createdAt).slice(-200));
+  /** Keeps the newest messages and releases the preview URLs of the ones that fall out of the list. */
+  const trimChatMessages = useCallback((list: CallChatMessage[]) => {
+    const ordered = [...list].sort((a, b) => a.createdAt - b.createdAt);
+    for (const dropped of ordered.slice(0, -200)) {
+      const url = dropped.attachment?.url;
+      if (url) { URL.revokeObjectURL(url); objectUrlsRef.current.delete(url); }
+    }
+    return ordered.slice(-200);
+  }, []);
+
+  const patchAttachment = useCallback((id: string, patch: Partial<ChatAttachment>) => {
+    setChatMessages((current) => current.map((message) => message.id === id && message.attachment ? { ...message, attachment: { ...message.attachment, ...patch } } : message));
+  }, []);
+
+  const applyFileEvent = useCallback((event: ChatFileReceiverEvent) => {
+    if (event.type === 'start') {
+      const { meta } = event;
+      if (chatMessageIdsRef.current.has(meta.id)) return;
+      chatMessageIdsRef.current.add(meta.id);
+      const message: CallChatMessage = {
+        id: meta.id, peerId: meta.peerId, displayName: meta.displayName, text: '', createdAt: meta.createdAt,
+        attachment: { name: meta.name, mime: meta.mime, size: meta.size, kind: isInlineImageType(meta.mime) ? 'image' : 'file', status: 'receiving', progress: 0 },
+      };
+      setChatMessages((current) => trimChatMessages([...current, message]));
       if (hostCallPanelRef.current !== 'chat') setUnreadChatCount((count) => count + 1);
+    } else if (event.type === 'progress') {
+      const last = progressShownRef.current.get(event.id) ?? 0;
+      if (event.percent - last < 3 && event.percent < 100) return;
+      progressShownRef.current.set(event.id, event.percent);
+      patchAttachment(event.id, { progress: event.percent });
+    } else if (event.type === 'done') {
+      progressShownRef.current.delete(event.meta.id);
+      const url = isInlineImageType(event.meta.mime) ? URL.createObjectURL(event.blob) : undefined;
+      if (url) objectUrlsRef.current.add(url);
+      patchAttachment(event.meta.id, { status: 'ready', progress: 100, blob: event.blob, url });
+    } else {
+      progressShownRef.current.delete(event.id);
+      patchAttachment(event.id, { status: 'failed' });
+    }
+  }, [patchAttachment, trimChatMessages]);
+
+  const bindChatChannel = useCallback((channel: RTCDataChannel) => {
+    // Chunks must arrive synchronously and in order, so ask for ArrayBuffers instead of Blobs.
+    channel.binaryType = 'arraybuffer';
+    channel.bufferedAmountLowThreshold = 256 * 1024;
+    channel.addEventListener('close', () => {
+      const event = fileReceiverRef.current.abort(channel);
+      if (event) applyFileEvent(event);
+    });
+    channel.onmessage = (event) => {
+      const data: unknown = event.data;
+      if (data instanceof ArrayBuffer) {
+        const result = fileReceiverRef.current.handleBinary(channel, data);
+        if (result) applyFileEvent(result);
+        return;
+      }
+      if (typeof data !== 'string' || data.length > 4_000) return;
+      let parsed: unknown;
+      try { parsed = JSON.parse(data); } catch { return; }
+      if ((parsed as { type?: unknown } | null)?.type === 'chat') {
+        const message = parseChatMessage(data);
+        if (!message || chatMessageIdsRef.current.has(message.id)) return;
+        chatMessageIdsRef.current.add(message.id);
+        setChatMessages((current) => trimChatMessages([...current, message]));
+        if (hostCallPanelRef.current !== 'chat') setUnreadChatCount((count) => count + 1);
+        return;
+      }
+      const result = fileReceiverRef.current.handleText(channel, parsed);
+      if (result) applyFileEvent(result);
     };
+  }, [applyFileEvent, trimChatMessages]);
+
+  useEffect(() => {
+    const urls = objectUrlsRef.current;
+    return () => { urls.forEach((url) => URL.revokeObjectURL(url)); urls.clear(); };
   }, []);
 
   useEffect(() => {
@@ -714,6 +796,20 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     mediaDevices?.addEventListener?.('devicechange', refreshDevices);
     return () => mediaDevices?.removeEventListener?.('devicechange', refreshDevices);
   }, [refreshDevices]);
+
+  useEffect(() => {
+    const query = window.matchMedia('(min-width: 768px)');
+    const update = () => setDesktopLayout(query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+
+  const revealStageControls = useCallback(() => {
+    setStageControlsVisible(true);
+    if (stageControlsTimerRef.current) window.clearTimeout(stageControlsTimerRef.current);
+    stageControlsTimerRef.current = window.setTimeout(() => setStageControlsVisible(false), 3_500);
+  }, []);
 
   useEffect(() => {
     let timer: number | null = null;
@@ -1939,6 +2035,16 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     } catch (error) { notify(humanError(error, ui, x)); }
   }, [notify, roomStatus?.hostPeerId, ui, x]);
 
+  const getOpenChatChannels = useCallback(() => {
+    const host = hostRef.current;
+    const viewer = viewerRef.current;
+    const channels = [
+      ...(host ? Array.from(host.peers.values(), (peer) => peer.chatChannel) : []),
+      ...(viewer ? [viewer.chatChannel, ...Array.from(viewer.meshPeers.values(), (peer) => peer.chatChannel)] : []),
+    ];
+    return channels.filter((channel): channel is RTCDataChannel => channel?.readyState === 'open');
+  }, []);
+
   const sendChat = useCallback(() => {
     const text = chatDraft.trim().slice(0, 1_000);
     if (!text) return;
@@ -1954,17 +2060,73 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       createdAt: Date.now(),
     };
     const encoded = JSON.stringify({ type: 'chat', ...message });
-    const channels = [
-      ...(host ? Array.from(host.peers.values(), (peer) => peer.chatChannel) : []),
-      ...(viewer ? [viewer.chatChannel, ...Array.from(viewer.meshPeers.values(), (peer) => peer.chatChannel)] : []),
-    ];
-    for (const channel of channels) {
-      if (channel?.readyState === 'open' && channel.bufferedAmount < 100_000) channel.send(encoded);
-    }
+    // Text may be queued behind a file in flight, so the limit is higher than a lone message needs.
+    for (const channel of getOpenChatChannels()) if (channel.bufferedAmount < 2_000_000) channel.send(encoded);
     chatMessageIdsRef.current.add(message.id);
-    setChatMessages((current) => [...current, message].slice(-200));
+    setChatMessages((current) => trimChatMessages([...current, message]));
     setChatDraft('');
-  }, [callCopy.you, chatDraft, participantName]);
+  }, [callCopy.you, chatDraft, getOpenChatChannels, participantName, trimChatMessages]);
+
+  const sendChatFiles = useCallback(async (files: File[]) => {
+    const peerId = hostRef.current ? 'host' : viewerRef.current?.peerId;
+    if (!peerId) return;
+    for (const file of files.slice(0, 10)) {
+      if (file.size <= 0) continue;
+      if (file.size > CHAT_FILE_MAX_BYTES) { notify(callCopy.chatFileTooLarge); continue; }
+      const channels = getOpenChatChannels();
+      if (!channels.length) { notify(callCopy.chatNobodyConnected); return; }
+      const meta = buildFileMeta(file, { id: crypto.randomUUID(), peerId, displayName: participantName.trim().slice(0, 32) || callCopy.you, createdAt: Date.now() }, 'arquivo');
+      const inline = isInlineImageType(meta.mime);
+      const url = inline ? URL.createObjectURL(file) : undefined;
+      if (url) objectUrlsRef.current.add(url);
+      chatMessageIdsRef.current.add(meta.id);
+      setChatMessages((current) => trimChatMessages([...current, {
+        id: meta.id, peerId, displayName: meta.displayName, text: '', createdAt: meta.createdAt,
+        attachment: { name: meta.name, mime: meta.mime, size: meta.size, kind: inline ? 'image' : 'file', status: 'sending', progress: 0, blob: file, url },
+      }]));
+      const sent = channels.map(() => 0);
+      let shown = 0;
+      const results = await Promise.allSettled(channels.map((channel, index) => queueChannelTask(channel, () => sendFileOverChannel(channel, file, meta, (bytes) => {
+        sent[index] = bytes;
+        const percent = (sent.reduce((total, value) => total + value, 0) / (meta.size * channels.length)) * 100;
+        if (percent - shown >= 3) { shown = percent; patchAttachment(meta.id, { progress: percent }); }
+      }))));
+      const delivered = results.some((result) => result.status === 'fulfilled');
+      patchAttachment(meta.id, { status: delivered ? 'ready' : 'failed', progress: delivered ? 100 : 0 });
+      if (delivered) trackEvent('file_uploaded', { tool: TOOL_ID.shareScreen, locale, format: inline ? 'image' : 'file', method: 'chat' });
+      else trackEvent('tool_error', { tool: TOOL_ID.shareScreen, locale, error_type: 'network_error' });
+    }
+  }, [callCopy.chatFileTooLarge, callCopy.chatNobodyConnected, callCopy.you, getOpenChatChannels, locale, notify, participantName, patchAttachment, trimChatMessages]);
+
+  const pickChatFiles = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    if (files.length) void sendChatFiles(files);
+  }, [sendChatFiles]);
+
+  const pasteChatFiles = useCallback((event: ClipboardEvent<HTMLInputElement>) => {
+    const files = Array.from(event.clipboardData.files);
+    if (!files.length) return;
+    event.preventDefault();
+    void sendChatFiles(files);
+  }, [sendChatFiles]);
+
+  const dropChatFiles = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    if (files.length) void sendChatFiles(files);
+  }, [sendChatFiles]);
+
+  const downloadChatFile = useCallback((message: CallChatMessage) => {
+    if (message.attachment?.blob) downloadBlob(message.attachment.blob, message.attachment.name);
+  }, []);
+
+  useEffect(() => {
+    if (!photoPreview) return;
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') setPhotoPreview(null); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [photoPreview]);
 
   const leaveViewerCall = useCallback(async () => {
     const runtime = viewerRef.current;
@@ -2387,7 +2549,32 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     const shareLabel = screenSharerId === selfId ? callCopy.stopScreen : callCopy.screenShare;
     const mirrorOwn = shouldMirrorPreview(cameraFacing, mirrorSelf);
     const stageIsOwnCamera = !showingSharedScreen && focusedPerson?.id === selfId;
-    const tileCount = participants.length + (screenIsLive ? 1 : 0);
+    // Whatever is already big on the stage does not repeat in the thumbnails.
+    const stagePersonId = showingSharedScreen ? null : focusedPerson?.id ?? null;
+    const thumbPeople = participants.filter((person) => person.id !== stagePersonId);
+    const thumbHasScreen = screenIsLive && !showingSharedScreen;
+    const showThumbs = !stageExpanded && thumbPeople.length + (thumbHasScreen ? 1 : 0) > 0;
+    const speakingOther = participants.find((person) => person.id !== selfId && person.id !== stagePersonId && speakingPeerIds.has(person.id));
+    const thumbSize = desktopLayout ? 'aspect-video w-full' : 'h-[5.5rem] w-32';
+    const screenThumb = (
+      <button type="button" key="screen-thumb" onClick={() => setFocusedTileId('screen')} className={`relative shrink-0 overflow-hidden rounded-xl bg-ink-900 ring-2 ring-ink-700 transition hover:ring-accent-500 ${thumbSize}`}>
+        <CallVideo stream={sharedStream} className="h-full w-full object-contain" />
+        <span className="absolute inset-x-1.5 bottom-1.5 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-xs"><MonitorUp size={12} className="shrink-0 text-accent-400" /><span className="truncate">{callCopy.screenTile}</span></span>
+      </button>
+    );
+    const personThumb = (person: ParticipantView) => {
+      const isSelf = person.id === selfId;
+      const cameraStream = person.cameraOn ? isSelf ? ownCameraStream : remoteMedia[person.id]?.camera : null;
+      const isHost = person.id === (roomStatus?.hostPeerId ?? 'host');
+      const speaking = speakingPeerIds.has(person.id);
+      const micOff = isSelf ? !microphoneOn : !person.microphoneOn;
+      return <button type="button" aria-label={`${isSelf ? callCopy.you : person.displayName}${speaking ? ` · ${callCopy.speaking}` : ''}`} onClick={() => { setFocusedTileId(person.id); }} key={person.id} className={`relative shrink-0 overflow-hidden rounded-xl bg-ink-900 ring-2 transition hover:ring-accent-500 ${thumbSize} ${speaking ? 'ring-emerald-400' : 'ring-ink-700'}`}>
+        {cameraStream ? <CallVideo stream={cameraStream} fit="cover" mirror={isSelf && mirrorOwn} className="h-full w-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center pb-6">{callIdentity(person, 'tile')}</div>}
+        <span className="absolute inset-x-1.5 bottom-1.5 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-xs"><span className="truncate">{isSelf ? callCopy.you : person.displayName}</span>{isHost ? <span className="shrink-0 rounded bg-accent-500 px-1 py-0.5 text-[9px] font-semibold text-ink-950">{callCopy.host}</span> : null}</span>
+        {speaking ? <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 p-1.5 text-emerald-400"><Mic size={12} /></span> : micOff ? <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 p-1.5 text-rose-400"><MicOff size={12} /></span> : null}
+      </button>;
+    };
+    const thumbs = <>{thumbHasScreen ? screenThumb : null}{thumbPeople.map(personThumb)}</>;
     const peopleLabel = connectedParticipants === 1 ? callCopy.person : callCopy.people;
     const panelTitle = hostCallPanel === 'chat' ? callCopy.chat : hostCallPanel === 'participants' ? `${callCopy.participants} (${connectedParticipants})` : hostCallPanel === 'settings' ? callCopy.options : ui.diagnostics;
     const callConnected = !hostReconnectText && (phase === 'watching' || phase === 'active');
@@ -2418,9 +2605,9 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
 
         <div className="relative flex min-h-0 flex-1 gap-3 px-2 pb-2 sm:px-4 sm:pb-3">
           <main className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
-            <section id="screenshare-call-stage" className="relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl bg-black ring-1 ring-inset ring-white/10">
+            <section id="screenshare-call-stage" onClick={revealStageControls} className="group relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl bg-black ring-1 ring-inset ring-white/10">
               {stageStream?.getVideoTracks().some((track) => track.readyState === 'live')
-                ? <CallVideo stream={stageStream} fit={showingSharedScreen ? 'contain' : 'cover'} mirror={stageIsOwnCamera && mirrorOwn} className={`h-full w-full ${showingSharedScreen ? 'object-contain' : 'object-cover'}`} onPlayBlocked={markPlayBlocked} />
+                ? <CallVideo stream={stageStream} fit={showingSharedScreen ? 'contain' : 'cover'} mirror={stageIsOwnCamera && mirrorOwn} className={`h-full w-full ${showingSharedScreen ? 'object-contain' : 'object-cover md:object-contain'}`} onPlayBlocked={markPlayBlocked} />
                 : focusedPerson
                   ? <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-ink-950">
                     <span className={`relative inline-flex h-24 w-24 items-center justify-center rounded-full text-3xl font-semibold ${focusedPerson.id === selfId || focusedPerson.id === (roomStatus?.hostPeerId ?? 'host') ? 'bg-accent-500 text-ink-950' : 'bg-ink-700 text-white'} ${speakingPeerIds.has(focusedPerson.id) ? 'ring-2 ring-emerald-400 ring-offset-4 ring-offset-ink-950' : ''}`}>{initials(focusedPerson.displayName)}{speakingPeerIds.has(focusedPerson.id) ? <span aria-label={callCopy.speaking} className="absolute -bottom-0.5 -right-0.5 h-4 w-4 animate-pulse rounded-full border-2 border-ink-950 bg-emerald-400" /> : null}</span>
@@ -2430,43 +2617,39 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
                   : <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center"><span className="h-7 w-7 animate-spin rounded-full border-2 border-ink-600 border-t-accent-500" /><p className="max-w-sm px-5 text-sm text-ink-300">{hostReconnectText || callCopy.connectingPeople}</p></div>}
               {phase === 'waiting' && admissionState === 'pending' ? <div role="status" className="absolute bottom-3 left-1/2 max-w-[calc(100%-1.5rem)] -translate-x-1/2 rounded-xl bg-black/85 px-4 py-3 text-center text-sm text-white shadow-lg">{callCopy.waitingApproval}</div> : null}
               {showingSharedScreen ? <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur">{isHostCall ? qualityLabel : viewerQualityLabel}</span> : null}
-              {showingSharedScreen && capturePaused ? <div role="status" className="absolute right-3 top-3 max-w-[70%] rounded-xl bg-amber-950/90 px-3 py-2 text-xs leading-5 text-amber-100">{callCopy.screenPaused}</div> : null}
+              {showingSharedScreen && capturePaused ? <div role="status" className="absolute left-3 top-12 max-w-[70%] rounded-xl bg-amber-950/90 px-3 py-2 text-xs leading-5 text-amber-100">{callCopy.screenPaused}</div> : null}
               {showingSharedScreen
                 ? <div className="absolute bottom-3 left-3 flex max-w-[calc(100%-1.5rem)] items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 text-xs text-white backdrop-blur"><MonitorUp size={14} className="shrink-0 text-accent-400" /><span className="truncate">{sharedBy ?? focusedPerson?.displayName ?? myPerson.displayName} · {callCopy.screenShare}</span></div>
                 : focusedPerson ? <div className="absolute bottom-3 left-3 flex max-w-[calc(100%-1.5rem)] items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 text-sm text-white backdrop-blur"><span className="truncate">{focusedPerson.id === selfId ? callCopy.you : focusedPerson.displayName}</span>{focusedPerson.id === (roomStatus?.hostPeerId ?? 'host') ? <span className="shrink-0 rounded-full bg-accent-500 px-1.5 py-0.5 text-[10px] font-semibold text-ink-950">{callCopy.host}</span> : null}{speakingPeerIds.has(focusedPerson.id) ? <Mic size={14} className="shrink-0 animate-pulse text-emerald-400" /> : (focusedPerson.id === selfId ? microphoneOn : focusedPerson.microphoneOn) ? <Mic size={14} className="shrink-0" /> : <MicOff size={14} className="shrink-0 text-rose-400" />}</div> : null}
+              {speakingOther ? <button type="button" title={callCopy.speakingNow} onClick={(event) => { event.stopPropagation(); setFocusedTileId(speakingOther.id); }} className="absolute right-3 top-3 flex max-w-[60%] items-center gap-2 rounded-full bg-black/70 py-1 pl-1 pr-3 text-xs text-white backdrop-blur transition hover:bg-black/85">
+                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent-500 text-[10px] font-bold text-ink-950">{initials(speakingOther.displayName)}</span>
+                <span className="truncate">{speakingOther.displayName}</span><Mic size={13} className="shrink-0 animate-pulse text-emerald-400" />
+              </button> : null}
+              {participants.length > 1 || screenIsLive ? <button type="button" aria-label={stageExpanded ? callCopy.collapseStage : callCopy.expandStage} title={stageExpanded ? callCopy.collapseStage : callCopy.expandStage} onClick={(event) => { event.stopPropagation(); setStageExpanded((value) => !value); }} className={`absolute bottom-3 right-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur transition hover:bg-accent-500 hover:text-ink-950 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${stageControlsVisible ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>{stageExpanded ? <Shrink size={18} /> : <Expand size={18} />}</button> : null}
               {callPlayBlocked ? <button type="button" onClick={() => { setSpeakerMuted(false); setPlayAudioSignal((value) => value + 1); setCallPlayBlocked(false); }} className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-xl bg-accent-500 px-4 py-2.5 text-sm font-semibold text-ink-950 shadow-lg">{ui.playWithSound}</button> : null}
             </section>
 
-            {tileCount > 1 ? <div className="-mx-1 shrink-0 overflow-x-auto overscroll-x-contain px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <div className="mx-auto flex w-max gap-2">
-                {screenIsLive ? <button type="button" aria-pressed={showingSharedScreen} onClick={() => setFocusedTileId('screen')} className={`relative h-[5.5rem] w-32 shrink-0 overflow-hidden rounded-xl bg-ink-900 ring-2 transition sm:h-24 sm:w-40 ${showingSharedScreen ? 'ring-accent-500' : 'ring-ink-700'}`}>
-                  <CallVideo stream={sharedStream} className="h-full w-full object-contain" />
-                  <span className="absolute inset-x-1.5 bottom-1.5 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-xs"><MonitorUp size={12} className="shrink-0 text-accent-400" /><span className="truncate">{callCopy.screenTile}</span></span>
-                </button> : null}
-                {participants.map((person) => {
-                  const isSelf = person.id === selfId;
-                  const cameraStream = person.cameraOn ? isSelf ? ownCameraStream : remoteMedia[person.id]?.camera : null;
-                  const isHost = person.id === (roomStatus?.hostPeerId ?? 'host');
-                  const speaking = speakingPeerIds.has(person.id);
-                  const selected = focusedPerson?.id === person.id && !showingSharedScreen;
-                  const micOff = isSelf ? !microphoneOn : !person.microphoneOn;
-                  return <button type="button" aria-label={`${isSelf ? callCopy.you : person.displayName}${speaking ? ` · ${callCopy.speaking}` : ''}`} aria-pressed={selected} onClick={() => setFocusedTileId(person.id)} key={person.id} className={`relative h-[5.5rem] w-32 shrink-0 overflow-hidden rounded-xl bg-ink-900 ring-2 transition sm:h-24 sm:w-40 ${speaking ? 'ring-emerald-400' : selected ? 'ring-accent-500' : 'ring-ink-700'}`}>
-                    {cameraStream ? <CallVideo stream={cameraStream} fit="cover" mirror={isSelf && mirrorOwn} className="h-full w-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center pb-6">{callIdentity(person, 'tile')}</div>}
-                    <span className="absolute inset-x-1.5 bottom-1.5 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-xs"><span className="truncate">{isSelf ? callCopy.you : person.displayName}</span>{isHost ? <span className="shrink-0 rounded bg-accent-500 px-1 py-0.5 text-[9px] font-semibold text-ink-950">{callCopy.host}</span> : null}</span>
-                    {speaking ? <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 p-1.5 text-emerald-400"><Mic size={12} /></span> : micOff ? <span className="absolute right-1.5 top-1.5 rounded-full bg-black/70 p-1.5 text-rose-400"><MicOff size={12} /></span> : null}
-                  </button>;
-                })}
-              </div>
+            {showThumbs && !desktopLayout ? <div className="-mx-1 shrink-0 overflow-x-auto overscroll-x-contain px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="mx-auto flex w-max gap-2">{thumbs}</div>
             </div> : null}
           </main>
 
+          {showThumbs && desktopLayout ? <div className="-my-1 flex w-48 shrink-0 flex-col gap-2 overflow-y-auto overscroll-contain px-1 py-1 [scrollbar-width:none] lg:w-60 [&::-webkit-scrollbar]:hidden">{thumbs}</div> : null}
+
           {hostCallPanel ? <CallSheet title={panelTitle} closeLabel={callCopy.closePanel} dragHint={callCopy.dragToClose} onClose={() => setHostCallPanel(null)} fill={hostCallPanel === 'chat'}>
             {hostCallPanel === 'chat' ? <div className="flex min-h-0 flex-1 flex-col gap-3">
-              <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto overscroll-contain pr-1" aria-live="polite" aria-relevant="additions text">
-                {chatMessages.length ? chatMessages.map((message) => <div key={message.id} className={`max-w-[88%] rounded-2xl px-3 py-2 ${message.peerId === selfId ? 'ml-auto rounded-br-md bg-accent-500 text-ink-950' : 'rounded-bl-md bg-ink-800 text-white'}`}><p className={`mb-0.5 text-[11px] font-semibold ${message.peerId === selfId ? 'text-ink-800' : 'text-accent-400'}`}>{message.peerId === selfId ? callCopy.you : message.displayName}</p><p className="whitespace-pre-wrap break-words text-sm leading-5">{message.text}</p></div>) : <p className="py-8 text-center text-sm text-ink-400">{callCopy.chatEmpty}</p>}
+              <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto overscroll-contain pr-1" aria-live="polite" aria-relevant="additions text" onDragOver={(event) => event.preventDefault()} onDrop={dropChatFiles}>
+                {chatMessages.length ? chatMessages.map((message) => <ChatMessage key={message.id} message={message} mine={message.peerId === selfId} copy={callCopy} onPreview={setPhotoPreview} onDownload={downloadChatFile} />) : <p className="py-8 text-center text-sm text-ink-400">{callCopy.chatEmpty}</p>}
               </div>
               <p className="text-xs leading-5 text-ink-500">{callCopy.chatPrivacy}</p>
-              <form className="flex gap-2" onSubmit={(event) => { event.preventDefault(); sendChat(); }}><input value={chatDraft} onChange={(event) => setChatDraft(event.target.value)} maxLength={1_000} aria-label={callCopy.chatPlaceholder} placeholder={callCopy.chatPlaceholder} enterKeyHint="send" className="h-11 min-w-0 flex-1 rounded-xl border border-ink-700 bg-ink-950 px-3 text-base text-white placeholder:text-ink-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 sm:text-sm" /><Button type="submit" variant="callActive" aria-label={callCopy.sendMessage} disabled={!chatDraft.trim()} className="h-11 w-11 shrink-0 rounded-xl p-0"><Send size={17} /></Button></form>
+              <form className="flex items-center gap-1.5" onSubmit={(event) => { event.preventDefault(); sendChat(); }}>
+                <input ref={photoInputRef} type="file" accept="image/*" multiple className="hidden" onChange={pickChatFiles} tabIndex={-1} aria-hidden="true" />
+                <input ref={fileInputRef} type="file" multiple className="hidden" onChange={pickChatFiles} tabIndex={-1} aria-hidden="true" />
+                <Button variant="call" aria-label={callCopy.attachPhoto} title={callCopy.attachPhoto} onClick={() => photoInputRef.current?.click()} className="h-11 w-10 shrink-0 rounded-xl p-0"><ImagePlus size={19} /></Button>
+                <Button variant="call" aria-label={callCopy.attachFile} title={callCopy.attachFile} onClick={() => fileInputRef.current?.click()} className="h-11 w-10 shrink-0 rounded-xl p-0"><Paperclip size={19} /></Button>
+                <input value={chatDraft} onChange={(event) => setChatDraft(event.target.value)} onPaste={pasteChatFiles} maxLength={1_000} aria-label={callCopy.chatPlaceholder} placeholder={callCopy.chatPlaceholder} enterKeyHint="send" className="h-11 min-w-0 flex-1 rounded-xl border border-ink-700 bg-ink-950 px-3 text-base text-white placeholder:text-ink-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 sm:text-sm" />
+                <Button type="submit" variant="callActive" aria-label={callCopy.sendMessage} disabled={!chatDraft.trim()} className="h-11 w-11 shrink-0 rounded-xl p-0"><Send size={17} /></Button>
+              </form>
             </div> : hostCallPanel === 'participants' ? <div className="space-y-2">
               {canManageRoom ? <div className="mb-4 rounded-xl border border-ink-700 p-3"><p className="text-xs text-ink-400">{callCopy.roomPrivacy}</p><p className="mt-1 text-sm font-medium">{room?.access === 'private' || roomStatus?.access === 'private' ? callCopy.privateRoom : callCopy.publicRoom}</p><div className="mt-2 flex gap-2"><input aria-label={callCopy.copyInvite} readOnly value={inviteUrl} className="min-w-0 flex-1 rounded-lg border border-ink-700 bg-ink-950 px-2 text-xs text-ink-300" onFocus={(event) => event.currentTarget.select()} /><button type="button" onClick={() => void copyLink()} aria-label={callCopy.copyInvite} className="rounded-lg bg-ink-800 px-2 text-white hover:bg-ink-700"><Copy size={15} /></button></div></div> : null}
               {pendingPeers.length ? <div className="mb-3"><p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-400">{callCopy.pendingRequests}</p>{pendingPeers.map((peer) => <div key={peer.id} className="mb-2 rounded-xl bg-ink-800 p-3"><p className="truncate text-sm font-medium">{peer.displayName}</p><p className="mb-3 mt-1 text-xs text-ink-400">{callCopy.approvalRequest}</p><div className="flex gap-2"><Button variant="callActive" className="h-8 flex-1 px-2 text-xs" onClick={() => void moderateViewer(peer.id, 'approve')}>{callCopy.approve}</Button><Button variant="call" className="h-8 px-2 text-xs" onClick={() => void moderateViewer(peer.id, 'reject')}>{callCopy.reject}</Button></div></div>)}</div> : null}
@@ -2525,6 +2708,19 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         <canvas ref={pipCanvasRef} width={320} height={180} aria-hidden="true" className="pointer-events-none fixed left-[-10000px] top-0 h-[180px] w-[320px]" />
         <video ref={pipVideoRef} autoPlay playsInline muted aria-hidden="true" className="pointer-events-none fixed left-[-10000px] top-0 h-[180px] w-[320px] opacity-0" />
         {remoteAudioEntries.map((entry) => <CallAudio key={entry.key} stream={entry.stream} muted={speakerMuted} volume={speakerVolume} playSignal={playAudioSignal} sinkId={speakerId} onBlocked={markPlayBlocked} />)}
+        {photoPreview?.attachment?.url ? <div role="dialog" aria-modal="true" aria-label={photoPreview.attachment.name} className="fixed inset-0 z-[120] flex flex-col bg-black/95" onClick={() => setPhotoPreview(null)}>
+          <div className="flex shrink-0 items-center justify-between gap-3 p-3 pt-[max(0.75rem,env(safe-area-inset-top))]" onClick={(event) => event.stopPropagation()}>
+            <p className="min-w-0 truncate text-sm font-medium text-white">{photoPreview.attachment.name}</p>
+            <div className="flex shrink-0 gap-2">
+              <Button shape="circle" variant="call" aria-label={callCopy.downloadFile} title={callCopy.downloadFile} onClick={() => downloadChatFile(photoPreview)} className="h-10 w-10 p-0"><Download size={18} /></Button>
+              <Button shape="circle" variant="call" aria-label={callCopy.closePhoto} title={callCopy.closePhoto} onClick={() => setPhotoPreview(null)} className="h-10 w-10 p-0"><X size={18} /></Button>
+            </div>
+          </div>
+          <div className="relative min-h-0 flex-1 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            {/* eslint-disable-next-line @next/next/no-img-element -- local blob preview */}
+            <img src={photoPreview.attachment.url} alt={photoPreview.attachment.name} className="h-full w-full object-contain" onClick={(event) => event.stopPropagation()} />
+          </div>
+        </div> : null}
         {toast ? <div role="status" aria-live="polite" className="fixed bottom-28 left-1/2 z-[110] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl border border-ink-700 bg-ink-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div> : null}
       </div>
     );
