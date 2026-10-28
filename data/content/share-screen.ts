@@ -44,7 +44,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
         title: 'Uma chamada simples para conversar e mostrar a tela',
         paragraphs: [
           'Cada pessoa entra com um nome temporário e pode ligar ou desligar o microfone e a câmera durante a conversa. O anfitrião escolhe se qualquer pessoa com o link pode entrar ou se precisa aprovar cada pedido. O link não aparece em uma lista pública; quem o recebe pode encaminhá-lo, então use a sala privada quando quiser controlar a entrada.',
-          'Uma pessoa por vez pode compartilhar a tela. O apresentador pode parar ou trocar a fonte pelo controle de tela, enquanto qualquer participante pode sair da chamada. O microfone e a câmera são opcionais e só pedem permissão quando ativados. No celular, assistir costuma funcionar bem; apresentar depende do suporte de captura de tela na versão do navegador e do sistema operacional.',
+          'Uma pessoa por vez pode compartilhar a tela. O apresentador pode parar ou trocar a fonte pelo controle de tela, enquanto qualquer participante pode sair da chamada. O chat envia mensagens diretamente entre as conexões e não guarda o histórico. Se quem criou a sala sair, o controle passa automaticamente para outra pessoa ativa, priorizando a conexão disponível mais forte e Wi-Fi quando o navegador informa esse dado. No celular, assistir costuma funcionar bem; apresentar depende do suporte de captura de tela na versão do navegador e do sistema operacional.',
         ],
         list: [
           'Converse com uma equipe enquanto revisam uma apresentação ou página.',
@@ -86,7 +86,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
       { question: 'Posso controlar quem entra na chamada?', answer: 'Sim. Escolha uma sala pública por link ou uma sala privada, em que o anfitrião aprova cada solicitação antes da entrada.' },
       { question: 'Quantas pessoas podem compartilhar a tela?', answer: 'Somente uma pessoa por vez. Quando a tela está livre, qualquer participante pode iniciar o seletor do navegador. Quem está compartilhando pode parar a própria transmissão; o anfitrião pode encerrar a chamada.' },
       { question: 'O vídeo ou a captura são enviados ao servidor?', answer: 'Não. Redis guarda apenas dados temporários de sala e sinalização. O vídeo e o áudio seguem diretamente entre os navegadores quando a rede permite.' },
-      { question: 'A ferramenta grava a chamada ou compartilha o áudio do computador?', answer: 'O site não grava a chamada. O áudio do sistema ou da aba pode ser compartilhado quando o navegador e a fonte escolhida oferecem essa opção; microfone e áudio recebido podem ser silenciados localmente.' },
+      { question: 'As mensagens do chat ficam salvas?', answer: 'Não. As mensagens seguem diretamente pelas conexões entre participantes e ficam somente na tela durante a chamada. O servidor não armazena o histórico do chat.' },
     ],
   },
   en: {
@@ -117,7 +117,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
         title: 'A simple call for talking and showing a screen',
         paragraphs: [
           'Each person joins with a temporary display name and can turn their microphone and camera on or off during the call. The host chooses whether anyone with the invite can join or whether each request needs approval. The link is not listed publicly, so use a private room when you need to control entry.',
-          'Only one person can share a screen at a time. The presenter can stop or switch the source with the screen control, and anyone can leave the call. Camera and microphone are optional and request permission only when enabled. Watching often works well on phones; presenting depends on screen-capture support in the browser version and operating system.',
+          'Only one person can share a screen at a time. The presenter can stop or switch the source with the screen control, and anyone can leave the call. Chat messages travel directly between connections and the history is not saved. If the person who created the room leaves, control passes automatically to another active participant, preferring the strongest reported connection and Wi-Fi when the browser exposes that detail. Watching often works well on phones; presenting depends on screen-capture support in the browser version and operating system.',
         ],
         list: [
           'Talk with a team while reviewing a presentation or webpage.',
@@ -159,7 +159,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
       { question: 'Can I control who joins the call?', answer: 'Yes. Choose an open room for anyone with the link or a private room where the host approves each join request.' },
       { question: 'How many people can share a screen?', answer: 'One person at a time. When sharing is stopped, any participant can start the browser picker. The person sharing can stop their own stream; the host can end the call.' },
       { question: 'Is my video or capture uploaded to the server?', answer: 'No. Redis stores temporary room and signaling data only. Video and audio travel directly between browsers when the network allows it.' },
-      { question: 'Does the site record the call or share system audio?', answer: 'The site does not record the call. Tab or system audio can be shared when the browser and selected source support it; participants can mute their local playback.' },
+      { question: 'Are chat messages saved?', answer: 'No. Messages travel directly between participants and stay on screen only during the call. The server does not store chat history.' },
     ],
   },
   es: {
@@ -190,7 +190,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
         title: 'Una llamada sencilla para hablar y mostrar la pantalla',
         paragraphs: [
           'Cada persona entra con un nombre temporal y puede activar o desactivar su micrófono y cámara durante la llamada. El anfitrión elige si cualquiera con el enlace puede entrar o si debe aprobar cada solicitud. El enlace no se publica en un directorio; usa una sala privada si necesitas controlar la entrada.',
-          'Solo una persona puede compartir la pantalla a la vez. Quien presenta puede detener o cambiar la fuente desde el control de pantalla, y cualquier participante puede salir de la llamada. Cámara y micrófono son opcionales y solicitan permiso solo al activarlos. En móviles, mirar suele funcionar bien; presentar depende del soporte de captura de pantalla del navegador, su versión y el sistema operativo.',
+          'Solo una persona puede compartir la pantalla a la vez. Quien presenta puede detener o cambiar la fuente desde el control de pantalla, y cualquier participante puede salir de la llamada. El chat envía mensajes directamente entre conexiones y no guarda el historial. Si quien creó la sala se va, el control pasa automáticamente a otra persona activa, dando prioridad a la mejor conexión disponible y al Wi-Fi cuando el navegador informa ese dato. En móviles, mirar suele funcionar bien; presentar depende del soporte de captura de pantalla del navegador, su versión y el sistema operativo.',
         ],
         list: [
           'Habla con un equipo mientras revisáis una presentación o página.',
@@ -232,7 +232,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
       { question: '¿Puedo controlar quién entra en la llamada?', answer: 'Sí. Elige una sala pública por enlace o una sala privada en la que el anfitrión aprueba cada solicitud.' },
       { question: '¿Cuántas personas pueden compartir pantalla?', answer: 'Solo una persona a la vez. Cuando la pantalla queda libre, cualquier participante puede iniciar el selector del navegador. Quien comparte puede detener su propia transmisión; el anfitrión puede finalizar la llamada.' },
       { question: '¿Se sube mi vídeo o captura al servidor?', answer: 'No. Redis solo guarda datos temporales de sala y señalización. El vídeo y el audio viajan directamente entre navegadores cuando la red lo permite.' },
-      { question: '¿Se graba la llamada o se puede compartir el audio del sistema?', answer: 'El sitio no graba la llamada. El audio de una pestaña o del sistema se puede compartir si el navegador y la fuente elegida lo permiten; cada persona puede silenciar la reproducción local.' },
+      { question: '¿Se guardan los mensajes del chat?', answer: 'No. Los mensajes viajan directamente entre participantes y solo aparecen en pantalla durante la llamada. El servidor no almacena el historial del chat.' },
     ],
   },
   zh: {
@@ -246,7 +246,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
     h1: '通过链接共享电脑屏幕',
     intro: '在浏览器中批准屏幕捕获，复制房间链接，即可直接向最多五位观众传输画面。',
     contentBlocks: [
-      { title: '链接共享如何工作', paragraphs: ['开始直播时，浏览器会让你选择要共享的屏幕、窗口或标签页。工具创建一个临时房间和观看链接。观众在浏览器中打开链接，并与主持人自动协商独立的 WebRTC 连接。', 'Redis 只保存临时房间状态，并在连接建立期间交换信令。视频和兼容的音频通过 WebRTC P2P 在浏览器之间传输，不经过 Redis、Next.js 应用或媒体服务器。'] },
+      { title: '链接共享如何工作', paragraphs: ['开始直播时，浏览器会让你选择要共享的屏幕、窗口或标签页。工具创建一个临时房间和观看链接。观众在浏览器中打开链接，并与主持人自动协商独立的 WebRTC 连接。', 'Redis 只保存临时房间状态，并在连接建立期间交换信令。视频和兼容的音频通过 WebRTC P2P 在浏览器之间传输，不经过 Redis、Next.js 应用或媒体服务器。房间创建者离开时，系统会自动把管理权交给另一位活跃参与者，并优先考虑网络状况较好的连接；浏览器报告网络类型时会优先 Wi-Fi。'] },
       { title: '质量、音频与连接诊断', paragraphs: ['自动模式以均衡目标开始，并根据连接状态调整捕获分辨率。浏览器支持时，每位观众的码率限制会单独调整。分辨率和帧率是目标值，不是保证值。', '诊断面板只显示浏览器实际提供的 RTT、丢包、码率和接收分辨率。RTT 是连接往返时间，并不等于端到端视频延迟。'] },
       { title: '隐私和直连限制', paragraphs: ['网站不会录制直播。房间链接在房间有效期间可以观看，请只分享给预期的观众，并在结束后关闭房间。浏览器是否能捕获系统或标签页音频取决于设备和选择的来源。', 'WebRTC 使用 ICE 和 STUN 寻找连接路径。直连参与者可能获得连接信息，包括 IP 地址；P2P 不等于 IP 匿名。本版本不包含 TURN 中继，严格的防火墙或 NAT 可能阻止连接。房间和信令会自动过期。'] },
       { title: '流量消耗和会话上限', paragraphs: ['每位观众都有独立连接，因此主持人会为每个人发送一份媒体流。5 Mbps 的视频流每位观众每小时约使用 2.25 GB，五位观众约使用 11.25 GB；估算的网络开销会单独显示。实际码率会随屏幕内容、网络和浏览器变化。上传预算是编码器目标，不是严格的总流量上限。', '工具默认设置 1 GB 会话上限并在达到时自动结束。你可以改为 500 MB、2 GB、5 GB、自定义数值或不限。计数依据浏览器报告的 WebRTC 媒体字节，不包括运营商总流量、网络开销或其他应用。如果浏览器不提供字节计数，应用会显示无法测量，也无法自动执行上限。'] },
@@ -255,7 +255,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
       { question: '别人如何观看我的屏幕？', answer: '开始捕获后复制房间链接。观众在另一个浏览器打开链接，WebRTC 会自动协商连接。' },
       { question: '视频会上传到服务器吗？', answer: '不会。Redis 仅保存临时房间和信令数据；网络允许时，视频和音频直接在浏览器之间传输。' },
       { question: '需要安装应用或注册吗？', answer: '不需要。主持人通过兼容浏览器的屏幕选择器授权捕获，观众打开链接即可观看。' },
-      { question: '为什么某些网络无法连接？', answer: '本版本使用 STUN 和 WebRTC P2P，没有 TURN 中继。VPN、企业防火墙或严格的 NAT 可能阻止直连。' },
+      { question: '聊天消息会保存吗？', answer: '不会。聊天通过参与者之间的连接直接发送，只在通话期间显示；服务器不会保存聊天记录。' },
     ],
   },
 };

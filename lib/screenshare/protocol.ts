@@ -1,8 +1,11 @@
 export const SCREENSHARE_NAMESPACE = 'screenshare';
-export const SCREENSHARE_ROOM_TTL_SECONDS = 60 * 60;
+// Active rooms renew this lease on each host heartbeat. A longer idle window
+// lets calls survive mobile browser suspension without leaving abandoned rooms
+// around forever.
+export const SCREENSHARE_ROOM_TTL_SECONDS = 12 * 60 * 60;
 export const SCREENSHARE_SIGNAL_TTL_SECONDS = 60 * 60;
-export const SCREENSHARE_VIEWER_LEASE_SECONDS = 60;
-export const SCREENSHARE_HOST_RECOVERY_MS = 90_000;
+export const SCREENSHARE_VIEWER_LEASE_SECONDS = 180;
+export const SCREENSHARE_HOST_RECOVERY_MS = 180_000;
 export const SCREENSHARE_SIGNAL_LIMIT = 128;
 export const SCREENSHARE_MAX_BODY_BYTES = 120_000;
 export const SCREENSHARE_MAX_VIEWERS_DEFAULT = 5;
@@ -24,6 +27,7 @@ export type RoomAccess = 'public' | 'private';
 export type ScreenShareRoomRecord = {
   id: string;
   hostTokenHash: string;
+  hostPeerId?: string;
   status: 'active' | 'closed';
   createdAt: number;
   lastHostHeartbeat: number;
@@ -49,6 +53,9 @@ export type ScreenSharePeerRecord = {
   admission: 'pending' | 'approved' | 'denied';
   cameraOn: boolean;
   microphoneOn: boolean;
+  networkType?: 'wifi' | 'cellular' | 'ethernet' | 'unknown';
+  downlinkMbps?: number | null;
+  rttMs?: number | null;
 };
 
 export type ScreenShareSignal =

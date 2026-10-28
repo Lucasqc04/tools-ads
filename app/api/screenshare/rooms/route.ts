@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     const record: ScreenShareRoomRecord = {
       id,
       hostTokenHash: await sha256Hex(hostToken),
+      hostPeerId: 'host',
       status: 'active',
       createdAt: now,
       lastHostHeartbeat: now,

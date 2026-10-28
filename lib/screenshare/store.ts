@@ -2,6 +2,7 @@ import { Redis } from '@upstash/redis';
 import {
   SCREENSHARE_HOST_RECOVERY_MS,
   SCREENSHARE_MAX_VIEWERS_DEFAULT,
+  SCREENSHARE_ROOM_TTL_SECONDS,
   SCREENSHARE_SIGNAL_LIMIT,
   SCREENSHARE_SIGNAL_TTL_SECONDS,
   SCREENSHARE_VIEWER_LEASE_SECONDS,
@@ -55,6 +56,40 @@ redis.call('SET', KEYS[2], '0', 'EX', tonumber(ARGV[2]))
 return 1
 `;
 
+const ELECT_HOST_FUNCTION = `
+local function bestNextHost(peersKey, peerPrefix, excludePeerId, now, leaseSeconds)
+  local ids = redis.call('SMEMBERS', peersKey)
+  local best = nil
+  local bestScore = -1000000000
+  for _, peerId in ipairs(ids) do
+    local key = peerPrefix .. peerId
+    local value = redis.call('GET', key)
+    if not value then
+      redis.call('SREM', peersKey, peerId)
+    else
+      local peer = cjson.decode(value)
+      if now - tonumber(peer.lastHeartbeat) > (leaseSeconds * 1000) then
+        redis.call('SREM', peersKey, peerId)
+        redis.call('DEL', key)
+      elseif peerId ~= excludePeerId and peer.admission == 'approved' then
+        local score = peer.state == 'connected' and 300000 or 0
+        if peer.networkType == 'ethernet' then score = score + 1100000
+        elseif peer.networkType == 'wifi' then score = score + 1000000
+        elseif peer.networkType == 'cellular' then score = score - 100000
+        end
+        score = score + math.min(tonumber(peer.downlinkMbps) or 0, 500) * 1000
+        score = score - math.min(tonumber(peer.rttMs) or 1000, 1000) * 100
+        if score > bestScore or (score == bestScore and (not best or peerId < best.id)) then
+          best = peer
+          bestScore = score
+        end
+      end
+    end
+  end
+  return best
+end
+`;
+
 const JOIN_ROOM_SCRIPT = `
 local roomValue = redis.call('GET', KEYS[1])
 if not roomValue then return 'missing' end
@@ -62,7 +97,6 @@ local room = cjson.decode(roomValue)
 local now = tonumber(ARGV[1])
 if room.status ~= 'active' then return 'closed' end
 if tonumber(room.hardExpiresAt) <= now then return 'expired' end
-if now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[2]) then return 'recovering' end
 local existingValue = redis.call('GET', KEYS[3])
 if existingValue then
   local existing = cjson.decode(existingValue)
@@ -133,14 +167,15 @@ if not roomValue then return 'missing' end
 local room = cjson.decode(roomValue)
 local now = tonumber(ARGV[2])
 if room.hostTokenHash ~= ARGV[1] then return 'unauthorized' end
-if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now or now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[4]) then return 'expired' end
+if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now then return 'expired' end
 room.lastHostHeartbeat = now
+room.hardExpiresAt = now + (tonumber(ARGV[8]) * 1000)
 if room.screenSharerId == 'host' then room.audioAvailable = ARGV[3] == '1' end
 if not room.screenSharerId or room.screenSharerId == cjson.null then room.audioAvailable = false end
 room.qualityMode = ARGV[5]
 room.hostCameraOn = ARGV[6] == '1'
 room.hostMicrophoneOn = ARGV[7] == '1'
-local ttl = math.max(1, math.min(math.floor((tonumber(room.hardExpiresAt) - now) / 1000), math.floor(tonumber(ARGV[4]) / 1000)))
+local ttl = tonumber(ARGV[8])
 redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ttl)
 redis.call('EXPIRE', KEYS[2], ttl)
 redis.call('EXPIRE', KEYS[3], ttl)
@@ -153,7 +188,7 @@ if not roomValue then return 'missing' end
 local room = cjson.decode(roomValue)
 local now = tonumber(ARGV[2])
 if room.hostTokenHash ~= ARGV[1] then return 'unauthorized' end
-if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now or now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[4]) then return 'closed' end
+if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now then return 'closed' end
 local requested = tonumber(ARGV[3])
 local maximum = tonumber(room.maxViewerLimit or room.viewerLimit)
 if requested < 1 or requested > maximum then return 'invalid' end
@@ -164,7 +199,7 @@ redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ttl)
 return 'ok'
 `;
 
-const VIEWER_HEARTBEAT_SCRIPT = `
+const VIEWER_HEARTBEAT_SCRIPT = `${ELECT_HOST_FUNCTION}
 local roomValue = redis.call('GET', KEYS[1])
 if not roomValue then return 'missing' end
 local room = cjson.decode(roomValue)
@@ -177,6 +212,9 @@ peer.lastHeartbeat = tonumber(ARGV[4])
 peer.state = ARGV[3]
 peer.cameraOn = ARGV[6] == '1'
 peer.microphoneOn = ARGV[7] == '1'
+peer.networkType = ARGV[8]
+peer.downlinkMbps = tonumber(ARGV[9])
+peer.rttMs = tonumber(ARGV[10])
 redis.call('SET', KEYS[3], cjson.encode(peer), 'EX', tonumber(ARGV[5]))
 if peer.admission == 'pending' and redis.call('SISMEMBER', KEYS[4], ARGV[1]) == 1 then
   redis.call('EXPIRE', KEYS[4], tonumber(ARGV[5]))
@@ -184,7 +222,78 @@ if peer.admission == 'pending' and redis.call('SISMEMBER', KEYS[4], ARGV[1]) == 
 end
 if peer.admission ~= 'approved' or redis.call('SISMEMBER', KEYS[2], ARGV[1]) == 0 then return 'missing_peer' end
 redis.call('EXPIRE', KEYS[2], tonumber(ARGV[5]))
+local now = tonumber(ARGV[4])
+if (room.hostPeerId or 'host') == ARGV[1] then
+  room.lastHostHeartbeat = now
+  room.hardExpiresAt = now + (tonumber(ARGV[13]) * 1000)
+  room.hostName = peer.displayName
+  room.hostCameraOn = peer.cameraOn == true
+  room.hostMicrophoneOn = peer.microphoneOn == true
+  local ownerTtl = tonumber(ARGV[13])
+  redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ownerTtl)
+  redis.call('EXPIRE', KEYS[2], ownerTtl)
+  redis.call('EXPIRE', KEYS[4], ownerTtl)
+end
+if now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[11]) then
+  local candidate = bestNextHost(KEYS[2], ARGV[12], room.hostPeerId or 'host', now, tonumber(ARGV[5]))
+  if not candidate then
+    room.status = 'closed'
+    room.closedAt = now
+    redis.call('SET', KEYS[1], cjson.encode(room), 'EX', 120)
+    return 'closed'
+  end
+  local previousHostId = room.hostPeerId or 'host'
+  room.hostPeerId = candidate.id
+  room.hostTokenHash = candidate.tokenHash
+  room.hostName = candidate.displayName
+  room.hostCameraOn = candidate.cameraOn == true
+  room.hostMicrophoneOn = candidate.microphoneOn == true
+  room.lastHostHeartbeat = now
+  room.hardExpiresAt = now + (tonumber(ARGV[13]) * 1000)
+  if room.screenSharerId == previousHostId then
+    room.screenSharerId = cjson.null
+    room.audioAvailable = false
+  end
+  local ttl = tonumber(ARGV[13])
+  redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ttl)
+  redis.call('EXPIRE', KEYS[2], ttl)
+  redis.call('EXPIRE', KEYS[4], ttl)
+  return candidate.id == ARGV[1] and 'promoted' or 'ok'
+end
 return 'ok'
+`;
+
+const HANDOFF_HOST_SCRIPT = `${ELECT_HOST_FUNCTION}
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return cjson.encode({status='missing'}) end
+local room = cjson.decode(roomValue)
+if room.hostTokenHash ~= ARGV[1] then return cjson.encode({status='unauthorized'}) end
+local now = tonumber(ARGV[2])
+if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now then return cjson.encode({status='closed'}) end
+local previousHostId = room.hostPeerId or 'host'
+local candidate = bestNextHost(KEYS[2], ARGV[3], previousHostId, now, tonumber(ARGV[4]))
+if not candidate then
+  room.status = 'closed'
+  room.closedAt = now
+  redis.call('SET', KEYS[1], cjson.encode(room), 'EX', 120)
+  return cjson.encode({status='closed'})
+end
+room.hostPeerId = candidate.id
+room.hostTokenHash = candidate.tokenHash
+room.hostName = candidate.displayName
+room.hostCameraOn = candidate.cameraOn == true
+room.hostMicrophoneOn = candidate.microphoneOn == true
+room.lastHostHeartbeat = now
+room.hardExpiresAt = now + (tonumber(ARGV[5]) * 1000)
+if room.screenSharerId == previousHostId then
+  room.screenSharerId = cjson.null
+  room.audioAvailable = false
+end
+local ttl = tonumber(ARGV[5])
+redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ttl)
+redis.call('EXPIRE', KEYS[2], ttl)
+redis.call('EXPIRE', KEYS[3], ttl)
+return cjson.encode({status='transferred', hostPeerId=candidate.id, hostName=candidate.displayName})
 `;
 
 const SEND_SIGNAL_SCRIPT = `
@@ -244,8 +353,7 @@ end
 local state = room.status
 local now = tonumber(ARGV[5])
 if state == 'active' and tonumber(room.hardExpiresAt) <= now then state = 'expired' end
-if state == 'active' and now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[6]) then state = 'expired' end
-if state == 'active' and now - tonumber(room.lastHostHeartbeat) > 30000 then state = 'recovering' end
+if state == 'active' and now - tonumber(room.lastHostHeartbeat) > 120000 then state = 'recovering' end
 return cjson.encode({status='ok', roomState=state, messages=messages, oldestSequence=oldest, viewerLimit=room.viewerLimit})
 `;
 
@@ -274,8 +382,7 @@ for _, peerId in ipairs(peers) do
 end
 local state = room.status
 if state == 'active' and tonumber(room.hardExpiresAt) <= now then state = 'expired' end
-if state == 'active' and now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[5]) then state = 'expired' end
-if state == 'active' and now - tonumber(room.lastHostHeartbeat) > 30000 then state = 'recovering' end
+if state == 'active' and now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[5]) then state = 'recovering' end
 return cjson.encode({
   status='ok',
   state=state,
@@ -286,6 +393,7 @@ return cjson.encode({
   qualityMode=room.qualityMode,
   audioAvailable=room.audioAvailable,
   hostName=room.hostName,
+  hostPeerId=room.hostPeerId or 'host',
   access=room.access,
   hostCameraOn=room.hostCameraOn,
   hostMicrophoneOn=room.hostMicrophoneOn,
@@ -314,7 +422,9 @@ for _, peerId in ipairs(ids) do
       redis.call('DEL', peerKey)
       redis.call('DEL', ARGV[5] .. peerId)
     else
-      table.insert(peers, {id=peer.id, displayName=peer.displayName, joinedAt=peer.joinedAt, lastHeartbeat=peer.lastHeartbeat, state=peer.state, cameraOn=peer.cameraOn, microphoneOn=peer.microphoneOn})
+      if peerId ~= (room.hostPeerId or 'host') then
+        table.insert(peers, {id=peer.id, displayName=peer.displayName, joinedAt=peer.joinedAt, lastHeartbeat=peer.lastHeartbeat, state=peer.state, cameraOn=peer.cameraOn, microphoneOn=peer.microphoneOn})
+      end
     end
   end
 end
@@ -334,7 +444,7 @@ for _, peerId in ipairs(requests) do
     end
   end
 end
-return cjson.encode({status='ok', host={id='host', displayName=room.hostName, cameraOn=room.hostCameraOn, microphoneOn=room.hostMicrophoneOn}, peers=peers, pending=pending, screenSharerId=room.screenSharerId, audioAvailable=room.audioAvailable})
+return cjson.encode({status='ok', host={id=room.hostPeerId or 'host', displayName=room.hostName, cameraOn=room.hostCameraOn, microphoneOn=room.hostMicrophoneOn}, peers=peers, pending=pending, hostPeerId=room.hostPeerId or 'host', screenSharerId=room.screenSharerId, audioAvailable=room.audioAvailable})
 `;
 
 const GET_PARTICIPANTS_SCRIPT = `
@@ -358,12 +468,12 @@ for _, peerId in ipairs(ids) do
     if now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[5]) * 1000) then
       redis.call('SREM', KEYS[2], peerId)
       redis.call('DEL', peerKey)
-    else
+    elseif peerId ~= (room.hostPeerId or 'host') then
       table.insert(peers, {id=peer.id, displayName=peer.displayName, state=peer.state, cameraOn=peer.cameraOn, microphoneOn=peer.microphoneOn})
     end
   end
 end
-return cjson.encode({status='ok', host={id='host', displayName=room.hostName, cameraOn=room.hostCameraOn, microphoneOn=room.hostMicrophoneOn}, peers=peers, screenSharerId=room.screenSharerId, access=room.access, audioAvailable=room.audioAvailable})
+return cjson.encode({status='ok', host={id=room.hostPeerId or 'host', displayName=room.hostName, cameraOn=room.hostCameraOn, microphoneOn=room.hostMicrophoneOn}, peers=peers, hostPeerId=room.hostPeerId or 'host', screenSharerId=room.screenSharerId, access=room.access, audioAvailable=room.audioAvailable})
 `;
 
 const SET_SCREEN_SHARER_SCRIPT = `
@@ -404,8 +514,7 @@ if peer.tokenHash ~= ARGV[1] or peer.id ~= ARGV[2] then return cjson.encode({sta
 local roomState = room.status
 local now = tonumber(ARGV[3])
 if roomState == 'active' and tonumber(room.hardExpiresAt) <= now then roomState = 'expired' end
-if roomState == 'active' and now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[4]) then roomState = 'expired' end
-if roomState == 'active' and now - tonumber(room.lastHostHeartbeat) > 30000 then roomState = 'recovering' end
+if roomState == 'active' and now - tonumber(room.lastHostHeartbeat) > 120000 then roomState = 'recovering' end
 return cjson.encode({status='ok', admission=peer.admission, roomState=roomState})
 `;
 
@@ -537,10 +646,7 @@ export const consumeRateLimit = async (key: string, windowSeconds: number, limit
 };
 
 export const createRoom = async (record: ScreenShareRoomRecord): Promise<boolean> => {
-  const ttl = Math.max(1, Math.min(
-    Math.ceil((record.hardExpiresAt - Date.now()) / 1000),
-    Math.ceil(SCREENSHARE_HOST_RECOVERY_MS / 1_000),
-  ));
+  const ttl = Math.max(1, Math.ceil((record.hardExpiresAt - Date.now()) / 1000));
   const result = await getRedis().eval(
     CREATE_ROOM_SCRIPT,
     [roomKey(record.id), signalSequenceKey(record.id)],
@@ -607,7 +713,7 @@ export const heartbeatHost = async ({
 }): Promise<string> => String(await getRedis().eval(
   HOST_HEARTBEAT_SCRIPT,
   [roomKey(id), viewersKey(id), signalSequenceKey(id)],
-  [tokenHash, now, audioAvailable ? '1' : '0', SCREENSHARE_HOST_RECOVERY_MS, qualityMode, cameraOn ? '1' : '0', microphoneOn ? '1' : '0'],
+  [tokenHash, now, audioAvailable ? '1' : '0', SCREENSHARE_HOST_RECOVERY_MS, qualityMode, cameraOn ? '1' : '0', microphoneOn ? '1' : '0', SCREENSHARE_ROOM_TTL_SECONDS],
 ));
 
 export const setRoomViewerLimit = async ({ id, tokenHash, viewerLimit, now = Date.now() }: {
@@ -629,6 +735,9 @@ export const heartbeatViewer = async ({
   state,
   cameraOn,
   microphoneOn,
+  networkType,
+  downlinkMbps,
+  rttMs,
 }: {
   id: string;
   peerId: string;
@@ -637,10 +746,19 @@ export const heartbeatViewer = async ({
   state: PeerState;
   cameraOn: boolean;
   microphoneOn: boolean;
+  networkType: 'wifi' | 'cellular' | 'ethernet' | 'unknown';
+  downlinkMbps: number | null;
+  rttMs: number | null;
 }): Promise<string> => String(await getRedis().eval(
   VIEWER_HEARTBEAT_SCRIPT,
   [roomKey(id), viewersKey(id), viewerKey(id, peerId), pendingKey(id)],
-  [peerId, tokenHash, state, now, SCREENSHARE_VIEWER_LEASE_SECONDS, cameraOn ? '1' : '0', microphoneOn ? '1' : '0'],
+  [peerId, tokenHash, state, now, SCREENSHARE_VIEWER_LEASE_SECONDS, cameraOn ? '1' : '0', microphoneOn ? '1' : '0', networkType, downlinkMbps ?? 0, rttMs ?? 1000, SCREENSHARE_HOST_RECOVERY_MS, `screenshare:{${id}}:peer:`, SCREENSHARE_ROOM_TTL_SECONDS],
+));
+
+export const handoffHost = async ({ id, tokenHash, now }: { id: string; tokenHash: string; now: number }): Promise<{ status: string; hostPeerId?: string; hostName?: string }> => parseScriptJson(await getRedis().eval(
+  HANDOFF_HOST_SCRIPT,
+  [roomKey(id), viewersKey(id), signalSequenceKey(id)],
+  [tokenHash, now, `screenshare:{${id}}:peer:`, SCREENSHARE_VIEWER_LEASE_SECONDS, SCREENSHARE_ROOM_TTL_SECONDS],
 ));
 
 export const sendSignal = async ({
@@ -706,6 +824,7 @@ export type PublicRoomInfo = {
   qualityMode?: QualityMode;
   audioAvailable?: boolean;
   hostName?: string;
+  hostPeerId?: string;
   access?: 'public' | 'private';
   hostCameraOn?: boolean;
   hostMicrophoneOn?: boolean;
@@ -728,7 +847,7 @@ export const getHostPeers = async (
   id: string,
   tokenHash: string,
   now: number,
-): Promise<{ status: string; host?: { id: 'host'; displayName: string; cameraOn: boolean; microphoneOn: boolean }; peers: HostPeerSummary[]; pending: PendingPeerSummary[]; screenSharerId?: string | null; audioAvailable?: boolean }> => {
+): Promise<{ status: string; host?: { id: string; displayName: string; cameraOn: boolean; microphoneOn: boolean }; hostPeerId?: string; peers: HostPeerSummary[]; pending: PendingPeerSummary[]; screenSharerId?: string | null; audioAvailable?: boolean }> => {
   const result = await getRedis().eval(
     GET_PEERS_SCRIPT,
     [roomKey(id), viewersKey(id), pendingKey(id)],
@@ -740,7 +859,8 @@ export const getHostPeers = async (
 export type ParticipantSummary = { id: string; displayName: string; state: PeerState; cameraOn: boolean; microphoneOn: boolean };
 export const getParticipants = async ({ id, peerId, tokenHash, now }: { id: string; peerId: string; tokenHash: string; now: number }): Promise<{
   status: string;
-  host?: { id: 'host'; displayName: string; cameraOn: boolean; microphoneOn: boolean };
+  host?: { id: string; displayName: string; cameraOn: boolean; microphoneOn: boolean };
+  hostPeerId?: string;
   peers?: ParticipantSummary[];
   screenSharerId?: string | null;
   access?: 'public' | 'private';

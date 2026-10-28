@@ -21,7 +21,7 @@ export async function GET(request: Request, { params }: RouteProps) {
     const result = await getHostPeers(roomId, await sha256Hex(token), Date.now());
     if (result.status === 'unauthorized') return json({ error: 'not_found' }, 404);
     if (result.status === 'missing') return json({ error: 'not_found' }, 404);
-    return json({ host: result.host, peers: result.peers, pending: result.pending, screenSharerId: result.screenSharerId, audioAvailable: result.audioAvailable });
+    return json({ host: result.host, hostPeerId: result.hostPeerId, peers: result.peers, pending: result.pending, screenSharerId: result.screenSharerId, audioAvailable: result.audioAvailable });
   } catch (error) {
     return serverError(error);
   }

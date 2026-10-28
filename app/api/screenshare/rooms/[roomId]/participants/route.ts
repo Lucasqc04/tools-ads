@@ -21,7 +21,7 @@ export async function GET(request: Request, { params }: RouteProps) {
     if (!(await consumeRateLimit(`screenshare:rate:participants:${roomId}:${peerId}`, 60, 40))) return json({ error: 'rate_limited' }, 429);
     const result = await getParticipants({ id: roomId, peerId, tokenHash: await sha256Hex(token), now: Date.now() });
     if (result.status !== 'ok') return json({ error: 'not_found' }, 404);
-    return json({ host: result.host, peers: result.peers, screenSharerId: result.screenSharerId, access: result.access, audioAvailable: result.audioAvailable });
+    return json({ host: result.host, hostPeerId: result.hostPeerId, peers: result.peers, screenSharerId: result.screenSharerId, access: result.access, audioAvailable: result.audioAvailable });
   } catch (error) {
     return serverError(error);
   }

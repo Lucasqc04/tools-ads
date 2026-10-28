@@ -11,7 +11,7 @@ type PageProps = Readonly<{ params: Promise<{ locale: string; roomId: string }> 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale: localeParam } = await params;
   const locale = resolveLocale(localeParam);
-  const title = locale === 'en' ? 'Watch a screen broadcast' : locale === 'es' ? 'Ver una transmisión de pantalla' : locale === 'zh' ? '观看屏幕直播' : 'Assistir a uma transmissão de tela';
+  const title = locale === 'en' ? 'Join the call · Chamada' : locale === 'es' ? 'Unirse a la llamada · Chamada' : locale === 'zh' ? '加入通话 · Chamada' : 'Entrar na chamada · Chamada';
   return { title, robots: { index: false, follow: false } };
 }
 

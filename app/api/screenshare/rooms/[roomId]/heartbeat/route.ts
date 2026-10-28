@@ -59,8 +59,11 @@ export async function POST(request: Request, { params }: RouteProps) {
       state: state as 'connecting' | 'connected' | 'disconnected',
       cameraOn: body.value.cameraOn === true,
       microphoneOn: body.value.microphoneOn === true,
+      networkType: body.value.networkType === 'wifi' || body.value.networkType === 'cellular' || body.value.networkType === 'ethernet' ? body.value.networkType : 'unknown',
+      downlinkMbps: typeof body.value.downlinkMbps === 'number' && Number.isFinite(body.value.downlinkMbps) ? Math.max(0, Math.min(500, body.value.downlinkMbps)) : null,
+      rttMs: typeof body.value.rttMs === 'number' && Number.isFinite(body.value.rttMs) ? Math.max(0, Math.min(10_000, body.value.rttMs)) : null,
     });
-    if (outcome === 'ok' || outcome === 'pending') return json({ ok: true, state: outcome });
+    if (outcome === 'ok' || outcome === 'pending' || outcome === 'promoted') return json({ ok: true, state: outcome });
     if (outcome === 'unauthorized') return json({ error: 'not_found' }, 404);
     return json({ error: 'room_ended' }, 410);
   } catch (error) {
