@@ -33,6 +33,10 @@ import {
   gamerUsernamePlatformPages,
 } from '@/data/gamer-username-platform-pages';
 import { getGtaSeoLocalePathMap, gtaSeoPages } from '@/data/gta/gta-seo-pages';
+import {
+  getVideoDownloaderPlatformLocalePathMap,
+  videoDownloaderPlatformPages,
+} from '@/data/video-downloader-pages';
 import { getToolAliasStaticParamsByLocale } from '@/data/tool-alias-pages';
 import { getToolLocalePathMap, toolsRegistry } from '@/data/tools-registry';
 import {
@@ -227,6 +231,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
   });
 
+  const videoDownloaderRoutes: MetadataRoute.Sitemap = videoDownloaderPlatformPages.flatMap((page) => {
+    const pathMap = getVideoDownloaderPlatformLocalePathMap(page);
+
+    return locales.map((locale) => ({
+      url: makeAbsoluteUrl(pathMap[locale]),
+      lastModified: contentLastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.74,
+      alternates: buildAlternates(pathMap),
+    }));
+  });
+
   const toolAliasRoutes: MetadataRoute.Sitemap = locales.flatMap((locale) =>
     getToolAliasStaticParamsByLocale(locale).map(({ platformPageSlug }) => ({
       url: makeAbsoluteUrl(localizePath(locale, `/${platformPageSlug}`)),
@@ -259,6 +275,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...multiplicationTableRoutes,
     ...keyboardShortcutsAppRoutes,
     ...gamerUsernamePlatformRoutes,
+    ...videoDownloaderRoutes,
     ...toolAliasRoutes,
     ...gtaSeoRoutes,
   ]);

@@ -71,8 +71,8 @@ describe('ChatFileReceiver', () => {
     const done = receiver.handleText(channel, { type: 'file-done', id: meta.id });
     expect(done?.type).toBe('done');
     if (done?.type === 'done') {
-      expect(done.blob.size).toBe(payload.length);
-      expect(done.blob.type).toBe('application/octet-stream');
+      expect(done.blob?.size).toBe(payload.length);
+      expect(done.blob?.type).toBe('application/octet-stream');
     }
   });
 
@@ -80,7 +80,7 @@ describe('ChatFileReceiver', () => {
     const receiver = new ChatFileReceiver();
     const { meta } = run(receiver, 'p.png', 'image/png');
     const done = receiver.handleText(channel, { type: 'file-done', id: meta.id });
-    expect(done?.type === 'done' && done.blob.type).toBe('image/png');
+    expect(done?.type === 'done' && done.blob?.type).toBe('image/png');
   });
 
   it('fails when bytes are missing or overflow', () => {
@@ -123,3 +123,31 @@ describe('queueChannelTask', () => {
     expect(order).toEqual(['a', 'b']);
   });
 });
+
+describe('ChatFileReceiver streaming', () => {
+  it('hands over the chunks received so far and keeps no more in memory', () => {
+    const receiver = new ChatFileReceiver();
+    const channel = {};
+    const payload = new Uint8Array(CHAT_FILE_CHUNK_SIZE * 2).map((_, index) => index % 251);
+    const meta = buildFileMeta({ name: 'big.bin', size: payload.length, type: '' }, sender);
+    receiver.handleText(channel, { type: 'file-meta', ...meta });
+    receiver.handleBinary(channel, payload.slice(0, CHAT_FILE_CHUNK_SIZE).buffer);
+    const buffered = receiver.beginStreaming(channel);
+    expect(buffered).toHaveLength(1);
+    const later = receiver.handleBinary(channel, payload.slice(CHAT_FILE_CHUNK_SIZE).buffer);
+    expect(later).toMatchObject({ type: 'progress', percent: 100 });
+    const done = receiver.handleText(channel, { type: 'file-done', id: meta.id });
+    expect(done).toEqual({ type: 'done', meta, blob: null });
+  });
+
+  it('reports a streamed file as failed when bytes are missing', () => {
+    const receiver = new ChatFileReceiver();
+    const channel = {};
+    const meta = buildFileMeta({ name: 'big.bin', size: 10, type: '' }, sender);
+    receiver.handleText(channel, { type: 'file-meta', ...meta });
+    receiver.beginStreaming(channel);
+    receiver.handleBinary(channel, new ArrayBuffer(4));
+    expect(receiver.handleText(channel, { type: 'file-done', id: meta.id })).toEqual({ type: 'failed', id: meta.id });
+  });
+});
+

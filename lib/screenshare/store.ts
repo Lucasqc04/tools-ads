@@ -3,6 +3,7 @@ import {
   SCREENSHARE_HOST_RECOVERY_MS,
   SCREENSHARE_MAX_VIEWERS_DEFAULT,
   SCREENSHARE_ROOM_TTL_SECONDS,
+  SCREENSHARE_TRANSFER_TTL_SECONDS,
   SCREENSHARE_SIGNAL_LIMIT,
   SCREENSHARE_SIGNAL_TTL_SECONDS,
   SCREENSHARE_VIEWER_LEASE_SECONDS,
@@ -39,6 +40,7 @@ const viewersKey = (id: string) => `screenshare:{${id}}:viewers`;
 const pendingKey = (id: string) => `screenshare:{${id}}:pending`;
 const viewerKey = (id: string, peerId: string) => `screenshare:{${id}}:peer:${peerId}`;
 const signalSequenceKey = (id: string) => `screenshare:{${id}}:signal-sequence`;
+const transferKey = (id: string) => `screenshare:{${id}}:transfer`;
 const hostSignalsKey = (id: string) => `screenshare:{${id}}:signals:host`;
 const peerSignalsKey = (id: string, peerId: string) => `screenshare:{${id}}:signals:${peerId}`;
 
@@ -261,6 +263,70 @@ if now - tonumber(room.lastHostHeartbeat) > tonumber(ARGV[11]) then
   return candidate.id == ARGV[1] and 'promoted' or 'ok'
 end
 return 'ok'
+`;
+
+/**
+ * The host asks one approved viewer to take over. Only one request can be open
+ * at a time: a new request replaces the previous one.
+ */
+const TRANSFER_REQUEST_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return 'missing' end
+local room = cjson.decode(roomValue)
+if room.hostTokenHash ~= ARGV[1] then return 'unauthorized' end
+if room.status ~= 'active' then return 'closed' end
+if (room.hostPeerId or 'host') == ARGV[2] then return 'self' end
+if redis.call('SISMEMBER', KEYS[2], ARGV[2]) == 0 then return 'not_member' end
+local peerValue = redis.call('GET', KEYS[3])
+if not peerValue then return 'not_member' end
+if cjson.decode(peerValue).admission ~= 'approved' then return 'not_member' end
+redis.call('SET', KEYS[4], ARGV[2], 'EX', tonumber(ARGV[4]))
+return 'ok'
+`;
+
+const TRANSFER_CANCEL_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return 'missing' end
+if cjson.decode(roomValue).hostTokenHash ~= ARGV[1] then return 'unauthorized' end
+redis.call('DEL', KEYS[2])
+return 'ok'
+`;
+
+/**
+ * The invited viewer answers. Accepting makes them the room's host: the room's
+ * host token becomes their own, so the previous host's next heartbeat fails and
+ * that device rejoins as a viewer.
+ */
+const TRANSFER_RESPOND_SCRIPT = `
+local transferValue = redis.call('GET', KEYS[2])
+if not transferValue then return 'expired' end
+if transferValue ~= ARGV[2] then return 'unauthorized' end
+local peerValue = redis.call('GET', KEYS[3])
+if not peerValue then return 'unauthorized' end
+local peer = cjson.decode(peerValue)
+if peer.tokenHash ~= ARGV[1] or peer.admission ~= 'approved' then return 'unauthorized' end
+redis.call('DEL', KEYS[2])
+if ARGV[3] ~= '1' then return 'declined' end
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return 'missing' end
+local room = cjson.decode(roomValue)
+if room.status ~= 'active' then return 'closed' end
+local now = tonumber(ARGV[4])
+local previousHostId = room.hostPeerId or 'host'
+room.hostPeerId = ARGV[2]
+room.hostTokenHash = peer.tokenHash
+room.hostName = peer.displayName
+room.hostCameraOn = peer.cameraOn == true
+room.hostMicrophoneOn = peer.microphoneOn == true
+room.lastHostHeartbeat = now
+room.hardExpiresAt = now + (tonumber(ARGV[5]) * 1000)
+if room.screenSharerId == previousHostId then
+  room.screenSharerId = cjson.null
+  room.audioAvailable = false
+end
+redis.call('SET', KEYS[1], cjson.encode(room), 'EX', tonumber(ARGV[5]))
+redis.call('EXPIRE', KEYS[4], tonumber(ARGV[5]))
+return 'transferred'
 `;
 
 const HANDOFF_HOST_SCRIPT = `${ELECT_HOST_FUNCTION}
@@ -753,6 +819,24 @@ export const heartbeatViewer = async ({
   VIEWER_HEARTBEAT_SCRIPT,
   [roomKey(id), viewersKey(id), viewerKey(id, peerId), pendingKey(id)],
   [peerId, tokenHash, state, now, SCREENSHARE_VIEWER_LEASE_SECONDS, cameraOn ? '1' : '0', microphoneOn ? '1' : '0', networkType, downlinkMbps ?? 0, rttMs ?? 1000, SCREENSHARE_HOST_RECOVERY_MS, `screenshare:{${id}}:peer:`, SCREENSHARE_ROOM_TTL_SECONDS],
+));
+
+export const requestHostTransfer = async ({ id, tokenHash, peerId, now }: { id: string; tokenHash: string; peerId: string; now: number }): Promise<string> => String(await getRedis().eval(
+  TRANSFER_REQUEST_SCRIPT,
+  [roomKey(id), viewersKey(id), viewerKey(id, peerId), transferKey(id)],
+  [tokenHash, peerId, now, SCREENSHARE_TRANSFER_TTL_SECONDS],
+));
+
+export const cancelHostTransfer = async ({ id, tokenHash }: { id: string; tokenHash: string }): Promise<string> => String(await getRedis().eval(
+  TRANSFER_CANCEL_SCRIPT,
+  [roomKey(id), transferKey(id)],
+  [tokenHash],
+));
+
+export const respondHostTransfer = async ({ id, peerId, tokenHash, accept, now }: { id: string; peerId: string; tokenHash: string; accept: boolean; now: number }): Promise<string> => String(await getRedis().eval(
+  TRANSFER_RESPOND_SCRIPT,
+  [roomKey(id), transferKey(id), viewerKey(id, peerId), viewersKey(id)],
+  [tokenHash, peerId, accept ? '1' : '0', now, SCREENSHARE_ROOM_TTL_SECONDS],
 ));
 
 export const handoffHost = async ({ id, tokenHash, now }: { id: string; tokenHash: string; now: number }): Promise<{ status: string; hostPeerId?: string; hostName?: string }> => parseScriptJson(await getRedis().eval(

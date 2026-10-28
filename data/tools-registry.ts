@@ -114,6 +114,12 @@ import {
   videoCompressionIntro,
 } from '@/data/content/video-compression';
 import {
+  getVideoDownloaderContent,
+  videoDownloaderContentBlocks,
+  videoDownloaderFaq,
+  videoDownloaderIntro,
+} from '@/data/content/video-downloader';
+import {
   audioEditorContentBlocks,
   audioEditorFaq,
   audioEditorIntro,
@@ -1043,6 +1049,33 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: videoCompressionFaq,
     contentBlocks: videoCompressionContentBlocks,
     relatedToolIds: ['extrair-audio-de-video', 'image-compression', 'image-converter'],
+  },
+  {
+    id: 'video-downloader',
+    slug: 'video-downloader',
+    name: 'Baixar Vídeo de Link Público (X e Pinterest)',
+    shortDescription:
+      'Cole o link de um post público do X (Twitter) ou do Pinterest, escolha a qualidade e salve o vídeo no aparelho, sem cadastro.',
+    category: 'utility',
+    primaryKeyword: 'baixar vídeo online grátis',
+    secondaryKeywords: [
+      'baixar vídeo pelo link',
+      'baixador de vídeos online',
+      'salvar vídeo do twitter e pinterest',
+      'baixar vídeo sem aplicativo',
+      'extrair áudio mp3 de vídeo',
+    ],
+    searchIntent:
+      'Pessoas que têm o link de um vídeo público e querem salvar o arquivo no celular ou no computador, escolhendo a qualidade.',
+    seoTitle: 'Baixar Vídeo Online Grátis | X (Twitter) e Pinterest',
+    seoDescription:
+      'Cole o link de um vídeo público do X ou do Pinterest, veja as qualidades disponíveis e baixe direto no navegador. Grátis, sem cadastro e sem instalar nada.',
+    h1: 'Baixar Vídeo Online Grátis: Cole o Link e Escolha a Qualidade',
+    intro: videoDownloaderIntro,
+    canonicalPath: '/tools/video-downloader',
+    faq: videoDownloaderFaq,
+    contentBlocks: videoDownloaderContentBlocks,
+    relatedToolIds: ['video-compression', 'extrair-audio-de-video', 'image-converter', 'transcricao-de-audio-e-video'],
   },
   {
     id: 'extrair-audio-de-video',
@@ -2297,6 +2330,16 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
 
   if (tool.id === 'conversor-unix-timestamp') {
     const localized = getUnixTimestampContent(locale);
+
+    return {
+      ...tool,
+      ...localized,
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'video-downloader') {
+    const localized = getVideoDownloaderContent(locale);
 
     return {
       ...tool,

@@ -4,6 +4,8 @@ export const SCREENSHARE_NAMESPACE = 'screenshare';
 // around forever.
 export const SCREENSHARE_ROOM_TTL_SECONDS = 12 * 60 * 60;
 export const SCREENSHARE_SIGNAL_TTL_SECONDS = 60 * 60;
+/** How long a host-transfer request waits for an answer before it expires. */
+export const SCREENSHARE_TRANSFER_TTL_SECONDS = 30;
 export const SCREENSHARE_VIEWER_LEASE_SECONDS = 180;
 export const SCREENSHARE_HOST_RECOVERY_MS = 180_000;
 export const SCREENSHARE_SIGNAL_LIMIT = 128;
@@ -60,6 +62,8 @@ export type ScreenSharePeerRecord = {
 
 export type ScreenShareSignal =
   | { type: 'join'; fromPeerId: string; sequence: number; createdAt: number }
+  | { type: 'transfer-request'; fromPeerId: string; sequence: number; createdAt: number }
+  | { type: 'transfer-response'; fromPeerId: string; sequence: number; createdAt: number; accepted: boolean }
   | {
       type: 'offer' | 'answer';
       fromPeerId: string;
@@ -105,6 +109,8 @@ export type ScreenShareSignal =
 
 export type UnsequencedSignal =
   | { type: 'join' | 'restart-request' | 'bye' }
+  | { type: 'transfer-request' }
+  | { type: 'transfer-response'; accepted: boolean }
   | { type: 'quality-request'; preference: 'economy' | 'automatic' }
   | {
       type: 'offer' | 'answer';
@@ -162,6 +168,9 @@ export const validateSignalPayload = (value: unknown): UnsequencedSignal | null 
   if (value.type === 'join' || value.type === 'restart-request' || value.type === 'bye') {
     return { type: value.type };
   }
+
+  if (value.type === 'transfer-request') return { type: 'transfer-request' };
+  if (value.type === 'transfer-response' && typeof value.accepted === 'boolean') return { type: 'transfer-response', accepted: value.accepted };
 
   if (value.type === 'quality-request' && (value.preference === 'economy' || value.preference === 'automatic')) {
     return { type: 'quality-request', preference: value.preference };

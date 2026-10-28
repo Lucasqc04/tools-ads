@@ -2,7 +2,7 @@
 
 import { Download, FileText, ImageIcon } from 'lucide-react';
 import { formatBytes } from '@/lib/file-size';
-import { fileTypeLabel, type CallChatMessage } from '@/lib/screenshare/chat-files';
+import { CHAT_FILE_LARGE_BYTES, fileTypeLabel, type CallChatMessage } from '@/lib/screenshare/chat-files';
 import { useRef, type PointerEvent as ReactPointerEvent, type MouseEvent as ReactMouseEvent } from 'react';
 import { splitChatLinks } from '@/lib/screenshare/chat-links';
 
@@ -13,6 +13,9 @@ export type ChatMessageCopy = {
   chatFileFailed: string;
   downloadFile: string;
   viewPhoto: string;
+  chatLargeReceiverBody: string;
+  chatSaveToDisk: string;
+  chatSavedToDisk: string;
 };
 
 type Props = {
@@ -24,6 +27,9 @@ type Props = {
   /** Right click or long press on the message: the parent shows the copy/reply menu at this point. */
   onOpenMenu: (message: CallChatMessage, x: number, y: number) => void;
   replyLabel: string;
+  /** Offered for large incoming files when the browser can write straight to disk. */
+  canSaveToDisk: boolean;
+  onSaveToDisk: (message: CallChatMessage) => void;
 };
 
 const LONG_PRESS_MS = 480;
@@ -55,7 +61,7 @@ function ReplyQuote({ reply, mine, label }: { reply: NonNullable<CallChatMessage
   );
 }
 
-export function ChatMessage({ message, mine, copy, onPreview, onDownload, onOpenMenu, replyLabel }: Props) {
+export function ChatMessage({ message, mine, copy, onPreview, onDownload, onOpenMenu, replyLabel, canSaveToDisk, onSaveToDisk }: Props) {
   const attachment = message.attachment;
   const pressTimer = useRef<number | null>(null);
   const clearPress = () => { if (pressTimer.current) window.clearTimeout(pressTimer.current); pressTimer.current = null; };
@@ -124,6 +130,11 @@ export function ChatMessage({ message, mine, copy, onPreview, onDownload, onOpen
           <button type="button" onClick={() => onDownload(message)} aria-label={`${copy.downloadFile}: ${attachment.name}`} title={copy.downloadFile} className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${mine ? 'bg-ink-950 text-white hover:bg-ink-800' : 'bg-accent-500 text-ink-950 hover:bg-accent-400'}`}><Download size={18} /></button>
         ) : null}
       </div>
+      {attachment.status === 'receiving' && attachment.size > CHAT_FILE_LARGE_BYTES && !attachment.onDisk ? <div className="mt-2.5 space-y-2">
+        <p className="text-xs leading-5 text-amber-200">{copy.chatLargeReceiverBody.replace('{size}', formatBytes(attachment.size))}</p>
+        {canSaveToDisk ? <button type="button" onClick={() => onSaveToDisk(message)} className="inline-flex h-9 w-full items-center justify-center rounded-lg bg-accent-500 text-xs font-semibold text-ink-950 transition hover:bg-accent-400">{copy.chatSaveToDisk}</button> : null}
+      </div> : null}
+      {attachment.onDisk && attachment.status !== 'failed' ? <p className={`mt-2 text-[11px] font-medium ${mine ? 'text-ink-800' : 'text-emerald-300'}`}>{copy.chatSavedToDisk}</p> : null}
       {busy ? <div className="mt-2.5 space-y-1"><ProgressBar value={attachment.progress} mine={mine} /><p className={`text-[11px] ${subtle}`}>{statusText} {Math.round(attachment.progress)}%</p></div> : null}
       {attachment.status === 'failed' ? <p role="alert" className={`mt-2 text-[11px] font-medium ${mine ? 'text-rose-900' : 'text-rose-400'}`}>{statusText}</p> : null}
     </div>

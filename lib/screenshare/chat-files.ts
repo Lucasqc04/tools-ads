@@ -1,7 +1,9 @@
 import { waitForDataChannelDrain } from '@/lib/transfer';
 
 export const CHAT_FILE_CHUNK_SIZE = 64 * 1024;
-export const CHAT_FILE_MAX_BYTES = 50 * 1024 * 1024;
+export const CHAT_FILE_MAX_BYTES = 200 * 1024 * 1024;
+/** Above this size the sender is asked to confirm and the receiver is offered saving straight to disk. */
+export const CHAT_FILE_LARGE_BYTES = 100 * 1024 * 1024;
 const CHAT_FILE_BUFFER_LIMIT = 256 * 1024;
 
 /** Only raster formats are previewed inline; SVG and everything else is offered as a download. */
@@ -19,6 +21,8 @@ export type ChatAttachment = {
   blob?: Blob;
   /** Object URL used for the inline preview. */
   url?: string;
+  /** Written straight to a file on disk, so there is no blob to download again. */
+  onDisk?: boolean;
 };
 
 /** A short copy of the message being answered, kept with the reply so it still reads if the original is gone. */
@@ -119,17 +123,18 @@ export const parseFileMeta = (value: unknown): ChatFileMeta | null => {
 };
 
 export type ChatFileReceiverEvent =
-  | { type: 'start'; meta: ChatFileMeta }
-  | { type: 'progress'; id: string; percent: number }
-  | { type: 'done'; meta: ChatFileMeta; blob: Blob }
+  | { type: 'start'; meta: ChatFileMeta; channel: object }
+  | { type: 'progress'; id: string; percent: number; chunk: ArrayBuffer }
+  | { type: 'done'; meta: ChatFileMeta; blob: Blob | null }
   | { type: 'failed'; id: string };
 
-type IncomingFile = { meta: ChatFileMeta; chunks: ArrayBuffer[]; received: number };
+type IncomingFile = { meta: ChatFileMeta; chunks: ArrayBuffer[]; received: number; streamed: boolean };
 
 /**
  * Reassembles files arriving on chat data channels. A channel is ordered and
  * its sender sends one file at a time, so a binary chunk always belongs to the
- * file announced last on that same channel.
+ * file announced last on that same channel. A file can switch to streaming
+ * (see beginStreaming): from then on its chunks go to the caller, not to memory.
  */
 export class ChatFileReceiver {
   private incoming = new WeakMap<object, IncomingFile>();
@@ -140,14 +145,15 @@ export class ChatFileReceiver {
     if (type === 'file-meta') {
       const meta = parseFileMeta(parsed);
       if (!meta) return null;
-      this.incoming.set(channel, { meta, chunks: [], received: 0 });
-      return { type: 'start', meta };
+      this.incoming.set(channel, { meta, chunks: [], received: 0, streamed: false });
+      return { type: 'start', meta, channel };
     }
     if (type === 'file-done') {
       const state = this.incoming.get(channel);
       if (!state || (parsed as { id?: unknown }).id !== state.meta.id) return null;
       this.incoming.delete(channel);
-      if (state.received !== state.meta.size || state.chunks.length !== state.meta.chunks) return { type: 'failed', id: state.meta.id };
+      if (state.received !== state.meta.size || (!state.streamed && state.chunks.length !== state.meta.chunks)) return { type: 'failed', id: state.meta.id };
+      if (state.streamed) return { type: 'done', meta: state.meta, blob: null };
       const mime = isInlineImageType(state.meta.mime) ? state.meta.mime : GENERIC_MIME;
       return { type: 'done', meta: state.meta, blob: new Blob(state.chunks, { type: mime }) };
     }
@@ -161,9 +167,22 @@ export class ChatFileReceiver {
       this.incoming.delete(channel);
       return { type: 'failed', id: state.meta.id };
     }
-    state.chunks.push(chunk);
+    if (!state.streamed) state.chunks.push(chunk);
     state.received += chunk.byteLength;
-    return { type: 'progress', id: state.meta.id, percent: Math.min(100, (state.received / state.meta.size) * 100) };
+    return { type: 'progress', id: state.meta.id, percent: Math.min(100, (state.received / state.meta.size) * 100), chunk };
+  }
+
+  /**
+   * Switches the file on this channel to streaming and returns the chunks that
+   * arrived so far, so the caller can write them first. Later chunks are not kept.
+   */
+  beginStreaming(channel: object): ArrayBuffer[] | null {
+    const state = this.incoming.get(channel);
+    if (!state || state.streamed) return null;
+    state.streamed = true;
+    const chunks = state.chunks;
+    state.chunks = [];
+    return chunks;
   }
 
   /** The channel closed: whatever was still arriving will never finish. */
@@ -174,6 +193,35 @@ export class ChatFileReceiver {
     return { type: 'failed', id: state.meta.id };
   }
 }
+
+export type DiskWriter = {
+  write: (chunk: ArrayBuffer) => Promise<void>;
+  close: () => Promise<void>;
+  abort: () => Promise<void>;
+};
+
+type SavePickerWindow = Window & {
+  showSaveFilePicker?: (options?: { suggestedName?: string }) => Promise<{
+    createWritable: () => Promise<{ write: (data: ArrayBuffer) => Promise<void>; close: () => Promise<void>; abort: () => Promise<void> }>;
+  }>;
+};
+
+/** Saving straight to disk needs the File System Access API, which is available in desktop Chromium only. */
+export const supportsDiskSave = (): boolean =>
+  typeof window !== 'undefined' && typeof (window as SavePickerWindow).showSaveFilePicker === 'function';
+
+/** Asks the user where to save; resolves to null when the picker is cancelled or unavailable. Must run from a click. */
+export const openDiskWriter = async (suggestedName: string): Promise<DiskWriter | null> => {
+  const picker = (window as SavePickerWindow).showSaveFilePicker;
+  if (!picker) return null;
+  try {
+    const handle = await picker({ suggestedName });
+    const stream = await handle.createWritable();
+    return { write: (chunk) => stream.write(chunk), close: () => stream.close(), abort: () => stream.abort() };
+  } catch {
+    return null;
+  }
+};
 
 const channelQueues = new WeakMap<object, Promise<unknown>>();
 

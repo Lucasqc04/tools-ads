@@ -26,7 +26,7 @@ import {
   loadShareScreenPreferences, SHARE_SCREEN_PREFERENCES_KEY, type ShareScreenPreferences,
 } from '@/lib/screenshare/preferences';
 import { getBrowserNetworkInformation, classifyBrowserNetwork, type BrowserNetworkInfo } from '@/lib/screenshare/network-info';
-import { qualityProfiles, type QualityMode, type ScreenShareSignal, type UnsequencedSignal } from '@/lib/screenshare/protocol';
+import { qualityProfiles, SCREENSHARE_TRANSFER_TTL_SECONDS, type QualityMode, type ScreenShareSignal, type UnsequencedSignal } from '@/lib/screenshare/protocol';
 import { getShareScreenUi } from '@/data/i18n/share-screen-ui';
 import { getShareScreenCallCopy } from '@/data/i18n/share-screen-call';
 import { bindCallMediaTracks, createCallMediaTransceivers, getDisplayMediaOptions, getRemoteTrackKind, mapCallMediaTransceivers, type CallMediaKind, type CallMediaTransceivers } from '@/lib/screenshare/media';
@@ -36,10 +36,11 @@ import {
   type DetectedFacing, type FacingMode, type MediaDeviceOption,
 } from '@/lib/screenshare/devices';
 import {
-  CHAT_FILE_MAX_BYTES, ChatFileReceiver, buildFileMeta, isInlineImageType, queueChannelTask, sendFileOverChannel,
+  CHAT_FILE_LARGE_BYTES, CHAT_FILE_MAX_BYTES, ChatFileReceiver, buildFileMeta, isInlineImageType, openDiskWriter, queueChannelTask, sendFileOverChannel, supportsDiskSave, type DiskWriter,
   parseReplyRef, type CallChatMessage, type ChatAttachment, type ChatFileReceiverEvent,
 } from '@/lib/screenshare/chat-files';
 import { downloadBlob } from '@/lib/qr-code';
+import { formatBytes } from '@/lib/file-size';
 import { playJoinSound, playMessageSound } from '@/lib/screenshare/call-sounds';
 import { clearCallSession, loadCallSession, saveCallSession, updateCallSessionCursor, type HostCallSession } from '@/lib/screenshare/session';
 import { CallSheet } from '@/components/tools/share-screen/call-sheet';
@@ -413,6 +414,9 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const [chatWidth, setChatWidth] = useState(320);
   const [replyTarget, setReplyTarget] = useState<CallChatMessage | null>(null);
   const [chatMenu, setChatMenu] = useState<{ message: CallChatMessage; x: number; y: number } | null>(null);
+  // Host side: a request waiting for the chosen viewer. Viewer side: a request addressed to this viewer.
+  const [pendingTransfer, setPendingTransfer] = useState<{ peerId: string; name: string; expiresAt: number } | null>(null);
+  const [incomingTransfer, setIncomingTransfer] = useState<{ expiresAt: number } | null>(null);
   const [chatAwayFromEnd, setChatAwayFromEnd] = useState(false);
   const chatListRef = useRef<HTMLDivElement>(null);
   const chatAtEndRef = useRef(true);
@@ -431,6 +435,10 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const fileReceiverRef = useRef(new ChatFileReceiver());
   const objectUrlsRef = useRef(new Set<string>());
   const progressShownRef = useRef(new Map<string, number>());
+  // Channel each incoming file arrives on, and the disk writes queued for files saved straight to disk.
+  const incomingChannelsRef = useRef(new Map<string, object>());
+  const diskSinksRef = useRef(new Map<string, { writer: DiskWriter; chain: Promise<void>; failed: boolean }>());
+  const [largeFiles, setLargeFiles] = useState<{ files: File[]; size: number } | null>(null);
   const joinAbortRef = useRef(false);
   const joinInFlightRef = useRef(false);
   const startInFlightRef = useRef(false);
@@ -468,11 +476,29 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     setChatMessages((current) => current.map((message) => message.id === id && message.attachment ? { ...message, attachment: { ...message.attachment, ...patch } } : message));
   }, []);
 
+  /** Runs one disk write after the previous one, so chunks land in order. A failed write marks the file failed. */
+  const queueDiskWrite = useCallback((id: string, task: (writer: DiskWriter) => Promise<void>) => {
+    const sink = diskSinksRef.current.get(id);
+    if (!sink) return;
+    sink.chain = sink.chain.then(() => task(sink.writer)).catch(() => { sink.failed = true; });
+  }, []);
+
+  const closeDiskSink = useCallback((id: string) => {
+    const sink = diskSinksRef.current.get(id);
+    if (!sink) return;
+    diskSinksRef.current.delete(id);
+    sink.chain = sink.chain
+      .then(() => (sink.failed ? sink.writer.abort() : sink.writer.close()))
+      .then(() => patchAttachment(id, { status: sink.failed ? 'failed' : 'ready', progress: sink.failed ? 0 : 100 }))
+      .catch(() => patchAttachment(id, { status: 'failed', progress: 0 }));
+  }, [patchAttachment]);
+
   const applyFileEvent = useCallback((event: ChatFileReceiverEvent) => {
     if (event.type === 'start') {
       const { meta } = event;
       if (chatMessageIdsRef.current.has(meta.id)) return;
       chatMessageIdsRef.current.add(meta.id);
+      incomingChannelsRef.current.set(meta.id, event.channel);
       if (meta.peerId !== selfIdRef.current && callSoundsRef.current) playMessageSound();
       const message: CallChatMessage = {
         id: meta.id, peerId: meta.peerId, displayName: meta.displayName, text: '', createdAt: meta.createdAt,
@@ -481,20 +507,43 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       setChatMessages((current) => trimChatMessages([...current, message]));
       if (hostCallPanelRef.current !== 'chat') setUnreadChatCount((count) => count + 1);
     } else if (event.type === 'progress') {
+      if (diskSinksRef.current.has(event.id)) queueDiskWrite(event.id, (writer) => writer.write(event.chunk));
       const last = progressShownRef.current.get(event.id) ?? 0;
       if (event.percent - last < 3 && event.percent < 100) return;
       progressShownRef.current.set(event.id, event.percent);
       patchAttachment(event.id, { progress: event.percent });
     } else if (event.type === 'done') {
       progressShownRef.current.delete(event.meta.id);
-      const url = isInlineImageType(event.meta.mime) ? URL.createObjectURL(event.blob) : undefined;
+      incomingChannelsRef.current.delete(event.meta.id);
+      if (diskSinksRef.current.has(event.meta.id)) { closeDiskSink(event.meta.id); return; }
+      const url = event.blob && isInlineImageType(event.meta.mime) ? URL.createObjectURL(event.blob) : undefined;
       if (url) objectUrlsRef.current.add(url);
-      patchAttachment(event.meta.id, { status: 'ready', progress: 100, blob: event.blob, url });
+      patchAttachment(event.meta.id, { status: 'ready', progress: 100, blob: event.blob ?? undefined, url });
     } else {
       progressShownRef.current.delete(event.id);
+      incomingChannelsRef.current.delete(event.id);
+      const sink = diskSinksRef.current.get(event.id);
+      if (sink) { diskSinksRef.current.delete(event.id); void sink.writer.abort().catch(() => undefined); }
       patchAttachment(event.id, { status: 'failed' });
     }
-  }, [patchAttachment, trimChatMessages]);
+  }, [closeDiskSink, patchAttachment, queueDiskWrite, trimChatMessages]);
+
+  /**
+   * The receiver picks a location and the file streams there from now on. Chunks already
+   * received are written first, so nothing is lost by asking late.
+   */
+  const saveIncomingToDisk = useCallback(async (message: CallChatMessage) => {
+    const attachment = message.attachment;
+    const channel = incomingChannelsRef.current.get(message.id);
+    if (!attachment || !channel || diskSinksRef.current.has(message.id)) return;
+    const writer = await openDiskWriter(attachment.name);
+    if (!writer) return;
+    const buffered = fileReceiverRef.current.beginStreaming(channel);
+    if (!buffered) { await writer.abort().catch(() => undefined); return; }
+    diskSinksRef.current.set(message.id, { writer, chain: Promise.resolve(), failed: false });
+    for (const chunk of buffered) queueDiskWrite(message.id, (target) => target.write(chunk));
+    patchAttachment(message.id, { onDisk: true });
+  }, [patchAttachment, queueDiskWrite]);
 
   const bindChatChannel = useCallback((channel: RTCDataChannel) => {
     // Chunks must arrive synchronously and in order, so ask for ArrayBuffers instead of Blobs.
@@ -996,7 +1045,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     });
   }, []);
 
-  const closeViewer = useCallback(async (signalBye = true) => {
+  const closeViewer = useCallback(async (signalBye = true, leaveRoom = true) => {
     const runtime = viewerRef.current;
     if (!runtime || runtime.closed) return;
     runtime.closed = true;
@@ -1023,7 +1072,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     setScreenSharerId(null);
     setParticipants([]);
     setRemoteMedia({});
-    try {
+    if (leaveRoom) try {
       await api(`/api/screenshare/rooms/${runtime.roomId}/leave`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Screenshare-Viewer-Token': runtime.token },
         body: JSON.stringify({ peerId: runtime.peerId }),
@@ -1554,6 +1603,10 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           else runtime.candidates.push({ negotiationId: signal.negotiationId, candidate: signal.candidate });
           return;
         }
+        if (signal.type === 'transfer-request' && signal.fromPeerId === 'host') {
+          setIncomingTransfer({ expiresAt: Date.now() + SCREENSHARE_TRANSFER_TTL_SECONDS * 1000 });
+          return;
+        }
         if (signal.fromPeerId === 'host') return;
         let mesh = runtime.meshPeers.get(signal.fromPeerId);
         if (signal.type === 'offer') {
@@ -1833,6 +1886,11 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
             if (member) await createHostPeer(member.id, member.displayName);
             continue;
           }
+          if (message.type === 'transfer-response') {
+            setPendingTransfer(null);
+            if (!message.accepted) notify(callCopy.transferDeclined);
+            continue;
+          }
           if (!peer) continue;
           if (message.type === 'bye') { peer.pc.close(); runtime.peers.delete(peer.id); removeRemoteParticipant(peer.id); refreshPeerViews(); continue; }
           if (message.type === 'answer' && message.negotiationId === peer.negotiationId) {
@@ -2040,7 +2098,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       void heartbeat();
     }, 20_000);
     return () => { active = false; if (pollTimer) window.clearTimeout(pollTimer); window.clearInterval(statsTimer); window.clearInterval(heartbeatTimer); };
-  }, [attachRemoteTrack, bindChatChannel, cameraOn, endHost, locale, microphoneOn, network.type, participantName, phase, removeRemoteParticipant, room?.roomId, sendHostSignal, notify, rejoinAfterHostTransfer, setPreference, ui, x]);
+  }, [attachRemoteTrack, bindChatChannel, cameraOn, endHost, locale, microphoneOn, network.type, participantName, phase, removeRemoteParticipant, room?.roomId, sendHostSignal, notify, rejoinAfterHostTransfer, setPreference, ui, x, callCopy]);
 
   useEffect(() => {
     const runtime = viewerRef.current;
@@ -2263,24 +2321,31 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     }
   }, [callCopy.chatFileTooLarge, callCopy.chatNobodyConnected, callCopy.you, getOpenChatChannels, locale, notify, participantName, patchAttachment, trimChatMessages]);
 
+  /** Large files wait for the sender's confirmation: they can freeze the receiver's device. */
+  const queueChatFiles = useCallback((files: File[]) => {
+    if (!files.length) return;
+    const large = files.filter((file) => file.size > CHAT_FILE_LARGE_BYTES);
+    if (large.length) { setLargeFiles({ files, size: Math.max(...large.map((file) => file.size)) }); return; }
+    void sendChatFiles(files);
+  }, [sendChatFiles]);
+
   const pickChatFiles = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
     event.target.value = '';
-    if (files.length) void sendChatFiles(files);
-  }, [sendChatFiles]);
+    queueChatFiles(files);
+  }, [queueChatFiles]);
 
   const pasteChatFiles = useCallback((event: ClipboardEvent<HTMLInputElement>) => {
     const files = Array.from(event.clipboardData.files);
     if (!files.length) return;
     event.preventDefault();
-    void sendChatFiles(files);
-  }, [sendChatFiles]);
+    queueChatFiles(files);
+  }, [queueChatFiles]);
 
   const dropChatFiles = useCallback((event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    const files = Array.from(event.dataTransfer.files);
-    if (files.length) void sendChatFiles(files);
-  }, [sendChatFiles]);
+    queueChatFiles(Array.from(event.dataTransfer.files));
+  }, [queueChatFiles]);
 
   const copyChatMessage = useCallback(async (message: CallChatMessage) => {
     const text = message.attachment?.name ?? message.text;
@@ -2320,6 +2385,58 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     setAdmissionState(null);
   }, [callCopy.hostTransferred, closeViewer, notify, roomStatus?.hostPeerId, ui, x]);
 
+  const requestHostTransfer = useCallback(async (peerId: string, name: string) => {
+    const host = hostRef.current;
+    if (!host) return;
+    try {
+      const result = await api<{ ok: boolean; expiresAt: number }>(`/api/screenshare/rooms/${host.roomId}/transfer`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Screenshare-Host-Token': host.token },
+        body: JSON.stringify({ action: 'request', peerId }),
+      });
+      setPendingTransfer({ peerId, name, expiresAt: result.expiresAt });
+    } catch (error) { notify(humanError(error, ui, x)); }
+  }, [notify, ui, x]);
+
+  const cancelHostTransfer = useCallback(async () => {
+    const host = hostRef.current;
+    setPendingTransfer(null);
+    if (!host) return;
+    await api(`/api/screenshare/rooms/${host.roomId}/transfer`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Screenshare-Host-Token': host.token },
+      body: JSON.stringify({ action: 'cancel' }),
+    }).catch(() => undefined);
+  }, []);
+
+  /** The invited viewer answers. Accepting turns this connection into the room's host, with the same token. */
+  const respondHostTransfer = useCallback(async (accept: boolean) => {
+    const viewer = viewerRef.current;
+    setIncomingTransfer(null);
+    if (!viewer) return;
+    try {
+      const result = await api<{ status: string }>(`/api/screenshare/rooms/${viewer.roomId}/transfer/respond`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Screenshare-Viewer-Token': viewer.token },
+        body: JSON.stringify({ peerId: viewer.peerId, accept }),
+      });
+      if (result.status === 'expired') { notify(callCopy.transferExpired); return; }
+      if (result.status !== 'transferred') return;
+      const session: HostCallSession = {
+        role: 'host', roomId: viewer.roomId, token: viewer.token, name: participantName.trim().slice(0, 32) || callCopy.you,
+        access: roomStatus?.access ?? 'public', startedAt: Date.now(), cursor: viewer.cursor,
+      };
+      saveCallSession(session);
+      // Keep the seat in the room: this same peer is now the host.
+      await closeViewer(false, false);
+      await resumeHost(session);
+      notify(callCopy.transferAccepted);
+    } catch (error) { notify(humanError(error, ui, x)); }
+  }, [callCopy, closeViewer, notify, participantName, resumeHost, roomStatus?.access, ui, x]);
+
+  // Requests expire on their own; clear them locally when the time runs out.
+  useEffect(() => {
+    if (pendingTransfer && clock >= pendingTransfer.expiresAt) { setPendingTransfer(null); notify(callCopy.transferExpired); }
+    if (incomingTransfer && clock >= incomingTransfer.expiresAt) setIncomingTransfer(null);
+  }, [callCopy.transferExpired, clock, incomingTransfer, notify, pendingTransfer]);
+
   const fullscreen = useCallback(() => {
     const element = document.getElementById('screenshare-call-root');
     if (!element) return;
@@ -2354,61 +2471,77 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   ];
   const roomStateText = statusCopy(roomStatus?.state ?? '', ui);
 
-  const renderPreferences = (isLive = false) => (
-    <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="block text-sm font-medium text-slate-800">
-          <span>{ui.qualityLabel}</span>
-          <select className="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm" value={preferences.qualityMode} onChange={(event) => void changeQuality(event.target.value as QualityMode)}>
+  const renderPreferences = (isLive = false, dark = false) => {
+    const tone = dark
+      ? { section: 'border-ink-700', title: 'text-ink-400', label: 'text-ink-200', hint: 'text-ink-400', box: 'border-ink-700 bg-ink-950/60', check: 'accent-accent-500', checkText: 'text-ink-200', select: 'border-ink-700 bg-ink-950 text-white focus:border-accent-500 focus:ring-accent-500/30' }
+      : { section: 'border-slate-200', title: 'text-slate-500', label: 'text-slate-800', hint: 'text-slate-500', box: 'border-slate-200 bg-white', check: 'accent-brand-600', checkText: 'text-slate-800', select: 'border-slate-300 bg-white text-slate-900 focus:border-brand-400 focus:ring-brand-500/30' };
+    const control = `h-11 w-full min-w-0 rounded-lg border px-3 text-base focus:outline-none focus:ring-2 sm:text-sm ${tone.select}`;
+    const field = (label: string, input: ReactNode) => (
+      <label className={`block min-w-0 space-y-1.5 text-sm font-medium ${tone.label}`}><span>{label}</span>{input}</label>
+    );
+    const section = (title: string, children: ReactNode) => (
+      <section className={`min-w-0 space-y-4 border-t pt-5 first:border-t-0 first:pt-0 ${tone.section}`}>
+        <h4 className={`text-xs font-semibold uppercase tracking-wide ${tone.title}`}>{title}</h4>
+        {children}
+      </section>
+    );
+    const toggle = (checked: boolean, onChange: (value: boolean) => void, title: string, detail?: string) => (
+      <label className={`flex min-w-0 cursor-pointer items-start gap-3 rounded-xl border p-3 ${tone.box}`}>
+        <input type="checkbox" className={`mt-0.5 h-4 w-4 shrink-0 ${tone.check}`} checked={checked} onChange={(event) => onChange(event.target.checked)} />
+        <span className={`min-w-0 text-sm ${tone.checkText}`}>
+          <span className="block font-semibold">{title}</span>
+          {detail ? <span className={`mt-0.5 block text-xs leading-5 ${tone.hint}`}>{detail}</span> : null}
+        </span>
+      </label>
+    );
+    return (
+      <div className="min-w-0 space-y-6">
+        {section(callCopy.prefSectionQuality, <>
+          {field(ui.qualityLabel, <select className={`mt-1.5 ${control}`} value={preferences.qualityMode} onChange={(event) => void changeQuality(event.target.value as QualityMode)}>
             {qualityOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-          </select>
-        </label>
-        <label className="block text-sm font-medium text-slate-800">
-          <span>{x.uploadBudget}</span>
-          <select className="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm" value={preferences.uploadBudgetPreset} onChange={(event) => {
-            const preset = event.target.value as ShareScreenPreferences['uploadBudgetPreset'];
-            setPreferences((current) => ({ ...current, uploadBudgetPreset: preset, uploadBudgetMbps: getUploadBudgetForPreset(preset) ?? current.uploadBudgetMbps }));
-          }}>
-            <option value="economy">{x.budgetEconomy}</option><option value="moderate">{x.budgetModerate}</option><option value="balanced">{x.budgetBalanced}</option><option value="performance">{x.budgetHigh}</option><option value="custom">{x.budgetCustom}</option>
-          </select>
-          {preferences.uploadBudgetPreset === 'custom' ? <input aria-label={x.uploadBudget} className="mt-2 h-10 w-full rounded-lg border border-slate-300 bg-white px-3" type="number" min="1" max="200" value={preferences.uploadBudgetMbps} onChange={(event) => setPreference('uploadBudgetMbps', Math.max(1, Math.min(200, Number(event.target.value) || 1)))} /> : null}
-        </label>
-        <label className="block text-sm font-medium text-slate-800">
-          <span>{x.viewerLimit}</span>
-          <select className="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm" value={preferences.viewerLimit} onChange={(event) => isLive ? void changeViewerLimit(Number(event.target.value)) : setPreference('viewerLimit', Number(event.target.value))}>
+          </select>)}
+          {field(x.uploadBudget, <div className="mt-1.5 space-y-2">
+            <select className={control} value={preferences.uploadBudgetPreset} onChange={(event) => {
+              const preset = event.target.value as ShareScreenPreferences['uploadBudgetPreset'];
+              setPreferences((current) => ({ ...current, uploadBudgetPreset: preset, uploadBudgetMbps: getUploadBudgetForPreset(preset) ?? current.uploadBudgetMbps }));
+            }}>
+              <option value="economy">{x.budgetEconomy}</option><option value="moderate">{x.budgetModerate}</option><option value="balanced">{x.budgetBalanced}</option><option value="performance">{x.budgetHigh}</option><option value="custom">{x.budgetCustom}</option>
+            </select>
+            {preferences.uploadBudgetPreset === 'custom' ? <input aria-label={x.uploadBudget} className={control} type="number" min="1" max="200" value={preferences.uploadBudgetMbps} onChange={(event) => setPreference('uploadBudgetMbps', Math.max(1, Math.min(200, Number(event.target.value) || 1)))} /> : null}
+          </div>)}
+        </>)}
+        {section(callCopy.prefSectionLimits, <>
+          {field(x.viewerLimit, <select className={`mt-1.5 ${control}`} value={preferences.viewerLimit} onChange={(event) => isLive ? void changeViewerLimit(Number(event.target.value)) : setPreference('viewerLimit', Number(event.target.value))}>
             {Array.from({ length: Math.min(viewerLimitFromConfig, 20) }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count} / {viewerLimitFromConfig} {x.maximumViewers}</option>)}
-          </select>
-        </label>
-        <label className="block text-sm font-medium text-slate-800">
-          <span>{x.sessionDataLimit}</span>
-          <select className="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm" value={preferences.sessionLimitPreset} onChange={(event) => {
-            const preset = event.target.value as ShareScreenPreferences['sessionLimitPreset'];
-            setPreferences((current) => ({ ...current, sessionLimitPreset: preset, sessionLimitBytes: getSessionLimitForPreset(preset) }));
-          }}>
-            <option value="500mb">500 MB</option><option value="1gb">1 GB</option><option value="2gb">2 GB</option><option value="5gb">5 GB</option><option value="custom">{x.custom}</option><option value="unlimited">{x.unlimited}</option>
-          </select>
-          {preferences.sessionLimitPreset === 'custom' ? <input aria-label={x.sessionDataLimit} className="mt-2 h-10 w-full rounded-lg border border-slate-300 bg-white px-3" type="number" min="1" max="100000" placeholder="MB" value={preferences.sessionLimitBytes ? Math.round(preferences.sessionLimitBytes / 1_000_000) : ''} onChange={(event) => setPreference('sessionLimitBytes', Math.max(1, Number(event.target.value) || 1) * 1_000_000)} /> : null}
-        </label>
-        <label className="block text-sm font-medium text-slate-800">
-          <span>{x.alertPolicy}</span>
-          <select className="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm" value={preferences.alertPolicy} onChange={(event) => setPreference('alertPolicy', event.target.value as ShareScreenPreferences['alertPolicy'])}>
+          </select>)}
+          {field(x.sessionDataLimit, <div className="mt-1.5 space-y-2">
+            <select className={control} value={preferences.sessionLimitPreset} onChange={(event) => {
+              const preset = event.target.value as ShareScreenPreferences['sessionLimitPreset'];
+              setPreferences((current) => ({ ...current, sessionLimitPreset: preset, sessionLimitBytes: getSessionLimitForPreset(preset) }));
+            }}>
+              <option value="500mb">500 MB</option><option value="1gb">1 GB</option><option value="2gb">2 GB</option><option value="5gb">5 GB</option><option value="custom">{x.custom}</option><option value="unlimited">{x.unlimited}</option>
+            </select>
+            {preferences.sessionLimitPreset === 'custom' ? <input aria-label={x.sessionDataLimit} className={control} type="number" min="1" max="100000" placeholder="MB" value={preferences.sessionLimitBytes ? Math.round(preferences.sessionLimitBytes / 1_000_000) : ''} onChange={(event) => setPreference('sessionLimitBytes', Math.max(1, Number(event.target.value) || 1) * 1_000_000)} /> : null}
+          </div>)}
+          {field(x.alertPolicy, <select className={`mt-1.5 ${control}`} value={preferences.alertPolicy} onChange={(event) => setPreference('alertPolicy', event.target.value as ShareScreenPreferences['alertPolicy'])}>
             <option value="warn">{x.warnOnly}</option><option value="reduce">{x.reduceQuality}</option><option value="stop">{x.stopAtLimit}</option>
-          </select>
-        </label>
-        <label className="block text-sm font-medium text-slate-800">
-          <span>{x.contentType}</span>
-          <select className="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm" value={preferences.contentPreference} onChange={(event) => setPreference('contentPreference', event.target.value as ShareScreenPreferences['contentPreference'])}>
+          </select>)}
+        </>)}
+        {section(callCopy.prefSectionContent, <>
+          {field(x.contentType, <select className={`mt-1.5 ${control}`} value={preferences.contentPreference} onChange={(event) => setPreference('contentPreference', event.target.value as ShareScreenPreferences['contentPreference'])}>
             <option value="automatic">{x.automatic}</option><option value="text">{x.textWork}</option><option value="motion">{x.videoGames}</option>
-          </select>
-        </label>
+          </select>)}
+          <p className={`text-xs leading-5 ${tone.hint}`}>{x.contentHintNote}</p>
+        </>)}
+        {section(callCopy.prefSectionData, <>
+          {toggle(preferences.dataSaver, (value) => setPreference('dataSaver', value), x.dataSaver, ui.qualityEconomy)}
+          {toggle(preferences.limitedConnection, (value) => setPreference('limitedConnection', value), x.limitedConnection)}
+          {isLive && budgetShortfall ? <p role="status" className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm leading-5 text-amber-950">{x.budgetWarning}</p> : null}
+          <p className={`text-xs leading-5 ${tone.hint}`}>{x.supportedCodecs}: {codecs.length ? codecs.join(', ') : '—'}. {ui.qualityLimited}</p>
+        </>)}
       </div>
-      <label className="flex items-start gap-2 text-sm text-slate-700"><input type="checkbox" checked={preferences.dataSaver} onChange={(event) => setPreference('dataSaver', event.target.checked)} className="mt-1 accent-brand-600" /><span><span className="font-semibold text-slate-900">{x.dataSaver}</span><span className="mt-0.5 block">{ui.qualityEconomy}</span></span></label>
-      <label className="flex items-start gap-2 text-sm text-slate-700"><input type="checkbox" checked={preferences.limitedConnection} onChange={(event) => setPreference('limitedConnection', event.target.checked)} className="mt-1 accent-brand-600" /><span>{x.limitedConnection}</span></label>
-      <p className="text-xs leading-5 text-slate-600">{x.contentHintNote}</p>
-      {isLive && budgetShortfall ? <p role="status" className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">{x.budgetWarning}</p> : null}
-      <p className="text-xs text-slate-600">{x.supportedCodecs}: {codecs.length ? codecs.join(', ') : '—'}. {ui.qualityLimited}</p>
-    </div>
-  );
+    );
+  };
 
   const renderStats = (viewer = false, dark = false) => {
     const metrics = viewer ? viewerMetrics : hostMetrics;
@@ -2425,7 +2558,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     return <div className="grid min-w-0 grid-cols-2 gap-2">{rows.map(([label, value]) => <div key={label} className={`min-w-0 rounded-xl border p-3 ${dark ? 'border-slate-700 bg-slate-800/70' : 'border-slate-200 bg-white'}`}><p className={`text-[11px] leading-4 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p><p className={`mt-1 break-words text-sm font-semibold leading-5 ${dark ? 'text-slate-100' : 'text-slate-900'}`}>{value}</p></div>)}</div>;
   };
 
-  const isHostCall = Boolean(room && !initialRoomId && !rejoinRoomId);
+  const isHostCall = Boolean(room && hostRef.current && !hostRef.current.closed);
   const isViewerCall = Boolean((initialRoomId || rejoinRoomId) && viewerPeerId && ['waiting', 'connecting', 'watching'].includes(phase));
   const viewerIsRoomHost = Boolean(isViewerCall && roomStatus?.hostPeerId === viewerPeerId);
   const canManageRoom = isHostCall || viewerIsRoomHost;
@@ -2835,12 +2968,19 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
               <div className="relative flex min-h-0 flex-1 flex-col">
                 <div ref={chatListRef} onScroll={onChatScroll} className="min-h-0 flex-1 space-y-2.5 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-live="polite" aria-relevant="additions text" onDragOver={(event) => event.preventDefault()} onDrop={dropChatFiles}>
                   <div ref={chatContentRef} className="space-y-2.5">
-                    {chatMessages.length ? chatMessages.map((message) => <ChatMessage key={message.id} message={message} mine={message.peerId === selfId} copy={callCopy} onPreview={setPhotoPreview} onDownload={downloadChatFile} onOpenMenu={(target, x, y) => setChatMenu({ message: target, x, y })} replyLabel={callCopy.replyingTo} />) : <p className="py-8 text-center text-sm text-ink-400">{callCopy.chatEmpty}</p>}
+                    {chatMessages.length ? chatMessages.map((message) => <ChatMessage key={message.id} message={message} mine={message.peerId === selfId} copy={callCopy} onPreview={setPhotoPreview} onDownload={downloadChatFile} onOpenMenu={(target, x, y) => setChatMenu({ message: target, x, y })} replyLabel={callCopy.replyingTo} canSaveToDisk={supportsDiskSave()} onSaveToDisk={(target) => void saveIncomingToDisk(target)} />) : <p className="py-8 text-center text-sm text-ink-400">{callCopy.chatEmpty}</p>}
                   </div>
                 </div>
                 {chatAwayFromEnd ? <button type="button" onClick={jumpChatToEnd} className="absolute bottom-2 left-1/2 inline-flex h-9 -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-accent-500 px-3.5 text-xs font-semibold text-ink-950 shadow-lg transition hover:bg-accent-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300"><ChevronDown size={15} aria-hidden="true" />{callCopy.jumpToLatest}</button> : null}
               </div>
-              <p className="text-xs leading-5 text-ink-500">{callCopy.chatPrivacy}</p>
+              {largeFiles ? <div role="alertdialog" aria-label={callCopy.chatLargeTitle} className="rounded-xl border border-accent-500/40 bg-accent-500/10 p-3 text-sm text-ink-200">
+                <p className="font-semibold text-white">{callCopy.chatLargeTitle}</p>
+                <p className="mt-1 text-xs leading-5">{callCopy.chatLargeSenderBody.replace('{size}', formatBytes(largeFiles.size))}</p>
+                <div className="mt-3 flex gap-2">
+                  <button type="button" onClick={() => { const files = largeFiles.files; setLargeFiles(null); void sendChatFiles(files); }} className="inline-flex h-9 flex-1 items-center justify-center rounded-lg bg-accent-500 text-xs font-semibold text-ink-950 transition hover:bg-accent-400">{callCopy.chatLargeSend}</button>
+                  <button type="button" onClick={() => setLargeFiles(null)} className="inline-flex h-9 flex-1 items-center justify-center rounded-lg bg-ink-700 text-xs font-semibold text-white transition hover:bg-ink-600">{callCopy.chatLargeCancel}</button>
+                </div>
+              </div> : null}
               {replyTarget ? <div className="flex items-center gap-2 rounded-xl border border-ink-700 bg-ink-800 py-2 pl-3 pr-1.5 text-xs text-ink-300">
                 <span className="min-w-0 flex-1 truncate"><span className="font-semibold text-accent-300">{callCopy.replyingTo} {replyTarget.peerId === selfId ? callCopy.you : replyTarget.displayName}</span>: {replyTarget.attachment?.name ?? replyTarget.text}</span>
                 <button type="button" onClick={() => setReplyTarget(null)} aria-label={callCopy.cancelReply} title={callCopy.cancelReply} className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-ink-400 transition hover:bg-ink-700 hover:text-white"><X size={15} /></button>
@@ -2853,9 +2993,10 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
                 <Button type="submit" variant="callActive" aria-label={callCopy.sendMessage} disabled={!chatDraft.trim()} shape="icon" className="h-11 w-11 shrink-0"><Send size={17} /></Button>
               </form>
             </div> : hostCallPanel === 'participants' ? <div className="space-y-2">
+              {isHostCall && pendingTransfer ? <div role="status" className="mb-3 flex items-center justify-between gap-2 rounded-xl border border-accent-500/40 bg-accent-500/10 p-3 text-sm text-ink-200"><span className="min-w-0 truncate">{callCopy.transferWaiting} · {Math.max(0, Math.ceil((pendingTransfer.expiresAt - clock) / 1000))}s</span><button type="button" onClick={() => void cancelHostTransfer()} className="shrink-0 rounded-lg bg-ink-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-ink-600">{callCopy.transferCancel}</button></div> : null}
               {canManageRoom ? <div className="mb-4 rounded-xl border border-ink-700 p-3"><p className="text-xs text-ink-400">{callCopy.roomPrivacy}</p><p className="mt-1 text-sm font-medium">{room?.access === 'private' || roomStatus?.access === 'private' ? callCopy.privateRoom : callCopy.publicRoom}</p><div className="mt-2 flex gap-2"><input aria-label={callCopy.copyInvite} readOnly value={inviteUrl} className="min-w-0 flex-1 rounded-lg border border-ink-700 bg-ink-950 px-2 text-xs text-ink-300" onFocus={(event) => event.currentTarget.select()} /><button type="button" onClick={() => void copyLink()} aria-label={callCopy.copyInvite} className="rounded-lg bg-ink-800 px-2 text-white hover:bg-ink-700"><Copy size={15} /></button></div></div> : null}
               {pendingPeers.length ? <div className="mb-3"><p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-400">{callCopy.pendingRequests}</p>{pendingPeers.map((peer) => <div key={peer.id} className="mb-2 rounded-xl bg-ink-800 p-3"><p className="truncate text-sm font-medium">{peer.displayName}</p><p className="mb-3 mt-1 text-xs text-ink-400">{callCopy.approvalRequest}</p><div className="flex gap-2"><Button variant="callActive" className="h-8 flex-1 px-2 text-xs" onClick={() => void moderateViewer(peer.id, 'approve')}>{callCopy.approve}</Button><Button variant="call" className="h-8 px-2 text-xs" onClick={() => void moderateViewer(peer.id, 'reject')}>{callCopy.reject}</Button></div></div>)}</div> : null}
-              {participants.map((person) => <div key={person.id} className="flex items-center gap-3 rounded-xl bg-ink-800 px-3 py-2.5">{callIdentity(person)}<div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{person.id === selfId ? callCopy.you : person.displayName}</p><p className={`text-xs ${speakingPeerIds.has(person.id) ? 'font-medium text-emerald-300' : 'text-ink-400'}`}>{speakingPeerIds.has(person.id) ? callCopy.speaking : person.id === (roomStatus?.hostPeerId ?? 'host') ? callCopy.host : person.state === 'connected' ? ui.stable : ui.connecting}</p></div>{speakingPeerIds.has(person.id) ? <Mic size={15} className="animate-pulse text-emerald-400" /> : person.microphoneOn ? <Mic size={15} className="text-ink-300" /> : <MicOff size={15} className="text-ink-500" />}</div>)}
+              {participants.map((person) => <div key={person.id} className="flex items-center gap-3 rounded-xl bg-ink-800 px-3 py-2.5">{callIdentity(person)}<div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{person.id === selfId ? callCopy.you : person.displayName}</p><p className={`text-xs ${speakingPeerIds.has(person.id) ? 'font-medium text-emerald-300' : 'text-ink-400'}`}>{speakingPeerIds.has(person.id) ? callCopy.speaking : person.id === (roomStatus?.hostPeerId ?? 'host') ? callCopy.host : person.state === 'connected' ? ui.stable : ui.connecting}</p></div>{speakingPeerIds.has(person.id) ? <Mic size={15} className="animate-pulse text-emerald-400" /> : person.microphoneOn ? <Mic size={15} className="text-ink-300" /> : <MicOff size={15} className="text-ink-500" />}{isHostCall && person.id !== selfId ? <button type="button" onClick={() => void requestHostTransfer(person.id, person.displayName)} disabled={Boolean(pendingTransfer)} className="shrink-0 rounded-lg bg-ink-700 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-ink-600 disabled:cursor-not-allowed disabled:text-ink-500">{callCopy.transferHost}</button> : null}</div>)}
               {participants.length <= 1 ? <p className="px-2 py-3 text-sm text-ink-400">{callCopy.waitingForPeople}</p> : null}
             </div> : hostCallPanel === 'stats' ? <div className="space-y-4">
               {isHostCall ? <section className="rounded-2xl border border-ink-700 bg-ink-900 p-3">
@@ -2887,7 +3028,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
               </section>
               <section className="space-y-3 border-t border-ink-700 pt-4">
                 {isHostCall
-                  ? <details className="group rounded-xl border border-ink-700"><summary className="cursor-pointer list-none px-3 py-3 text-sm font-medium text-white">{ui.advanced}</summary><div className="p-3 pt-0">{renderPreferences(true)}</div></details>
+                  ? <details className="group rounded-xl border border-ink-700"><summary className="cursor-pointer list-none px-3 py-3 text-sm font-medium text-white">{ui.advanced}</summary><div className="p-3 pt-0">{renderPreferences(true, true)}</div></details>
                   : <div className="space-y-2 rounded-xl border border-ink-700 p-3"><label className="flex items-start gap-2 text-sm text-ink-300"><input type="checkbox" checked={viewerEconomy} onChange={(event) => void requestViewerPreference(event.target.checked)} className="mt-1 accent-accent-500" /><span><span className="font-semibold text-white">{x.economyViewer}</span><span className="mt-1 block text-xs leading-5 text-ink-400">{x.mediaOnly}</span></span></label><p className="text-sm text-ink-300">{x.currentRate}: {formatMbps(viewerMetrics?.bitrateBps)} · {x.viewerData}: {viewerDataMeasured ? formatDataAmount(viewerBytes) : ui.notMeasured}</p></div>}
                 <p className="text-xs leading-5 text-ink-400">{screenSupported ? callCopy.screenMobileNote : callCopy.screenMobileUnsupported}</p>
               </section>
@@ -2929,6 +3070,14 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           onClose={() => setChatMenu(null)}
           onCopy={() => { void copyChatMessage(chatMenu.message); setChatMenu(null); }}
           onReply={() => { setReplyTarget(chatMenu.message); setChatMenu(null); }} /> : null}
+        {incomingTransfer ? <div role="alertdialog" aria-label={callCopy.transferRequest} className="fixed left-1/2 top-16 z-[125] w-[min(92vw,22rem)] -translate-x-1/2 rounded-2xl border border-accent-500/50 bg-ink-900 p-4 shadow-2xl">
+          <p className="text-sm font-semibold text-white">{callCopy.transferRequest}</p>
+          <p className="mt-1 text-xs text-ink-400">{Math.max(0, Math.ceil((incomingTransfer.expiresAt - clock) / 1000))}s</p>
+          <div className="mt-3 flex gap-2">
+            <button type="button" onClick={() => void respondHostTransfer(true)} className="inline-flex h-10 flex-1 items-center justify-center rounded-xl bg-accent-500 text-sm font-semibold text-ink-950 transition hover:bg-accent-400">{callCopy.transferAccept}</button>
+            <button type="button" onClick={() => void respondHostTransfer(false)} className="inline-flex h-10 flex-1 items-center justify-center rounded-xl bg-ink-700 text-sm font-semibold text-white transition hover:bg-ink-600">{callCopy.transferDecline}</button>
+          </div>
+        </div> : null}
         {toast ? <div role="status" aria-live="polite" className="fixed bottom-28 left-1/2 z-[110] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl border border-ink-700 bg-ink-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div> : null}
       </div>
     );
@@ -3051,9 +3200,10 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
               }}><MonitorUp size={17} /><span className="ml-2">{ui.startButton}</span></Button> : null}
               {phase === 'starting' ? <Button className="mt-5" disabled><span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent" />{ui.preparingVideo}</Button> : null}
             </div>
-            <div className="space-y-3"><button type="button" className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-4 py-3 text-left text-sm font-semibold text-slate-800" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(!settingsOpen)}><span className="inline-flex items-center gap-2"><Gauge size={17} />{ui.advanced}</span><ChevronDown size={16} className={settingsOpen ? 'rotate-180 transition' : 'transition'} /></button>{settingsOpen ? <div className="space-y-3">{renderPreferences()}<p className="px-1 text-xs leading-5 text-slate-500">{x.dataUseNotice}</p></div> : <p className="px-1 text-xs leading-5 text-slate-500">{x.dataUseNotice}</p>}<details className="rounded-lg border border-slate-200 p-3 text-sm"><summary className="cursor-pointer font-semibold text-slate-900">{x.usageEstimate}</summary><p className="mt-2 text-slate-700">{roomEstimate.totalMbps.toFixed(1)} Mbps · {roomEstimate.totalGBPerHour.toFixed(2)} GB/h</p><p className="mt-1 text-xs text-slate-500">{roomEstimate.mediaGBPerHour.toFixed(2)} GB/h mídia + {roomEstimate.overheadGBPerHour.toFixed(2)} GB/h {x.overhead}</p><p className="mt-2 text-xs leading-5 text-slate-500">{audioEstimateNotice[locale]}</p><p className="mt-3 text-xs leading-5 text-slate-500">{ui.p2pPrivacy}</p></details></div>
+            <div className="space-y-3"><button type="button" className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-4 py-3 text-left text-sm font-semibold text-slate-800" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(!settingsOpen)}><span className="inline-flex items-center gap-2"><Gauge size={17} />{ui.advanced}</span><ChevronDown size={16} className={settingsOpen ? 'rotate-180 transition' : 'transition'} /></button><p className="px-1 text-xs leading-5 text-slate-500">{x.dataUseNotice}</p><details className="rounded-lg border border-slate-200 p-3 text-sm"><summary className="cursor-pointer font-semibold text-slate-900">{x.usageEstimate}</summary><p className="mt-2 text-slate-700">{roomEstimate.totalMbps.toFixed(1)} Mbps · {roomEstimate.totalGBPerHour.toFixed(2)} GB/h</p><p className="mt-1 text-xs text-slate-500">{roomEstimate.mediaGBPerHour.toFixed(2)} GB/h mídia + {roomEstimate.overheadGBPerHour.toFixed(2)} GB/h {x.overhead}</p><p className="mt-2 text-xs leading-5 text-slate-500">{audioEstimateNotice[locale]}</p><p className="mt-3 text-xs leading-5 text-slate-500">{ui.p2pPrivacy}</p></details></div>
           </div>
         </Card>
+        {settingsOpen ? <Card className="mt-5 p-5 md:p-7"><h3 className="mb-5 font-bold text-slate-900">{ui.advanced}</h3>{renderPreferences(false)}<p className="mt-5 text-xs leading-5 text-slate-500">{x.dataUseNotice}</p></Card> : null}
         {errorText && phase !== 'error' ? <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{errorText}</p> : null}
       </>}
       {toast ? <div role="status" aria-live="polite" className="fixed bottom-4 left-1/2 z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div> : null}

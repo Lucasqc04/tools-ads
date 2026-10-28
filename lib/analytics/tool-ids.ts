@@ -31,6 +31,7 @@ export const TOOL_ID = {
   instagramImageOptimizer: 'instagram_image_optimizer',
   chromaBackgroundRemover: 'remover_fundo_imagem',
   videoCompression: 'video_compression',
+  videoDownloader: 'video_downloader',
   audioExtractor: 'extrair_audio_de_video',
   timelapseCreator: 'timelapse_creator',
   audioBlaster: 'audio_blaster',
