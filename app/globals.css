@@ -42,6 +42,20 @@ a {
   @apply text-slate-900;
 }
 
+[data-tool-workspace] > [data-ui-card='true'] {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  border-width: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+[data-tool-workspace] > [data-ui-card='true'] > header:first-child:has(> h3) {
+  display: none;
+}
+
 .markdown-viewer-prose {
   @apply break-words text-sm leading-7 text-slate-700 md:text-base;
 }

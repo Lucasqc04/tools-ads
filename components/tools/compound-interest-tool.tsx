@@ -896,6 +896,7 @@ export function CompoundInterestTool({ locale = 'pt-br' }: CompoundInterestToolP
         query.set('inf', inflationInput);
       }
 
+      query.set('expanded', '1');
       const link = `${globalThis.location.origin}${globalThis.location.pathname}?${query.toString()}`;
       await navigator.clipboard.writeText(link);
       trackEvent('result_shared', { tool: TOOL_ID.compoundInterest, locale, method: 'copy_link' });

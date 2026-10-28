@@ -109,6 +109,8 @@ export type SiteDictionary = {
   };
   toolShell: {
     useToolTitle: string;
+    expandTool: string;
+    backToPage: string;
     contentTitle: string;
     faqTitle: string;
     relatedToolsTitle: string;
@@ -359,6 +361,8 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     },
     toolShell: {
       useToolTitle: 'Use a ferramenta',
+      expandTool: 'Expandir ferramenta',
+      backToPage: 'Voltar à página',
       contentTitle: 'Guia rápido e contexto de uso',
       faqTitle: 'Perguntas frequentes',
       relatedToolsTitle: 'Outras ferramentas úteis',
@@ -612,6 +616,8 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     },
     toolShell: {
       useToolTitle: 'Use this tool',
+      expandTool: 'Expand tool',
+      backToPage: 'Back to page',
       contentTitle: 'Quick guide and practical context',
       faqTitle: 'Frequently asked questions',
       relatedToolsTitle: 'Other useful tools',
@@ -866,6 +872,8 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     },
     toolShell: {
       useToolTitle: 'Usa la herramienta',
+      expandTool: 'Expandir herramienta',
+      backToPage: 'Volver a la página',
       contentTitle: 'Guía rápida y contexto de uso',
       faqTitle: 'Preguntas frecuentes',
       relatedToolsTitle: 'Otras herramientas útiles',
@@ -1116,6 +1124,8 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     },
     toolShell: {
       useToolTitle: '使用该工具',
+      expandTool: '展开工具',
+      backToPage: '返回页面',
       contentTitle: '快速指南与实用说明',
       faqTitle: '常见问题',
       relatedToolsTitle: '其他实用工具',

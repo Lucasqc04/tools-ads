@@ -8,6 +8,7 @@ import { RelatedTools } from '@/components/shared/related-tools';
 import { TrustNote } from '@/components/shared/trust-note';
 import { ZhTranslationNotice } from '@/components/shared/zh-translation-notice';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
+import { ToolPageExperience } from '@/components/tools/tool-page-experience';
 import {
   getRelatedToolAliasPages,
   toLocalizedToolAliasLink,
@@ -24,6 +25,7 @@ type ToolPageShellProps = {
   afterToolSection?: ReactNode;
   afterContentSection?: ReactNode;
   locale?: AppLocale;
+  enableFocusMode?: boolean;
 };
 
 export function ToolPageShell({
@@ -34,6 +36,7 @@ export function ToolPageShell({
   afterToolSection,
   afterContentSection,
   locale = 'pt-br',
+  enableFocusMode,
 }: ToolPageShellProps) {
   const dictionary = getDictionary(locale);
   const toolsPrefix = `/${locale}/tools/`;
@@ -89,71 +92,75 @@ export function ToolPageShell({
     title: dictionary.toolShell.trustTitle,
     text: dictionary.toolShell.trustText,
   };
+  const shouldEnableFocusMode = enableFocusMode ?? tool.id !== 'descobrir-ip-publico';
 
   return (
     <Container className="py-5 md:py-8">
       <ToolViewTracker toolId={tool.id} locale={locale} />
-      <Breadcrumbs
-        items={[
-          { name: dictionary.common.home, href: localizePath(locale, '/') },
-          { name: dictionary.common.tools, href: localizePath(locale, '/tools') },
-          { name: tool.name },
-        ]}
+      <ToolPageExperience
+        toolName={tool.name}
+        useToolTitle={dictionary.toolShell.useToolTitle}
+        expandLabel={dictionary.toolShell.expandTool}
+        backLabel={dictionary.toolShell.backToPage}
+        enableFocusMode={shouldEnableFocusMode}
+        breadcrumbs={
+          <Breadcrumbs
+            items={[
+              { name: dictionary.common.home, href: localizePath(locale, '/') },
+              { name: dictionary.common.tools, href: localizePath(locale, '/tools') },
+              { name: tool.name },
+            ]}
+          />
+        }
+        header={
+          <header className="max-w-reading space-y-2">
+            <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl">{tool.h1}</h1>
+            <p className="text-sm leading-6 text-slate-700 md:text-base md:leading-7">{tool.intro}</p>
+          </header>
+        }
+        beforeToolSection={
+          <>
+            <ZhTranslationNotice locale={locale} toolId={tool.id} />
+            {beforeToolSection ? <div className="mt-6 md:mt-8">{beforeToolSection}</div> : null}
+          </>
+        }
+        toolUi={toolUi}
+        afterToolSection={afterToolSection}
+        supportingContent={
+          <>
+            {/* Ads temporariamente desativados
+            <div className="flex justify-center">
+              <MediumRectangleAd />
+            </div>
+            */}
+
+            <ContentBlocks
+              blocks={tool.contentBlocks}
+              title={dictionary.toolShell.contentTitle}
+            />
+
+            <Faq items={tool.faq} title={dictionary.toolShell.faqTitle} />
+
+            <RelatedTools
+              tools={relatedTools.slice(0, intentLinks.length ? 2 : 4)}
+              locale={locale}
+            />
+
+            <ToolAliasLinks
+              title={intentSectionCopy[locale].title}
+              description={intentSectionCopy[locale].description}
+              links={intentLinks}
+            />
+
+            {afterContentSection ? afterContentSection : null}
+
+            <TrustNote
+              title={trustNote.title}
+              text={trustNote.text}
+            />
+          </>
+        }
       />
-
-      <header className="max-w-reading space-y-2">
-        <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl">{tool.h1}</h1>
-        <p className="text-sm leading-6 text-slate-700 md:text-base md:leading-7">{tool.intro}</p>
-      </header>
-
-      <div className="mt-6 md:mt-8">
-        <ZhTranslationNotice locale={locale} toolId={tool.id} />
-
-        {beforeToolSection ? <div className="mb-6 md:mb-8">{beforeToolSection}</div> : null}
-
-        <main className="space-y-6 md:space-y-8">
-          <section aria-labelledby="tool-interface-title" className="space-y-3">
-            <h2 id="tool-interface-title" className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
-              {dictionary.toolShell.useToolTitle}
-            </h2>
-            {toolUi}
-          </section>
-
-          {afterToolSection ? afterToolSection : null}
-
-          {/* Ads temporariamente desativados
-          <div className="flex justify-center">
-            <MediumRectangleAd />
-          </div>
-          */}
-
-          <ContentBlocks
-            blocks={tool.contentBlocks}
-            title={dictionary.toolShell.contentTitle}
-          />
-
-          <Faq items={tool.faq} title={dictionary.toolShell.faqTitle} />
-
-          <RelatedTools
-            tools={relatedTools.slice(0, intentLinks.length ? 2 : 4)}
-            locale={locale}
-          />
-
-          <ToolAliasLinks
-            title={intentSectionCopy[locale].title}
-            description={intentSectionCopy[locale].description}
-            links={intentLinks}
-          />
-
-          {afterContentSection ? afterContentSection : null}
-
-          <TrustNote
-            title={trustNote.title}
-            text={trustNote.text}
-          />
-        </main>
-      </div>
-
     </Container>
   );
 }

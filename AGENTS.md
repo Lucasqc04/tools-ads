@@ -31,13 +31,28 @@ Toda ferramenta DEVE seguir esta estrutura:
 
 1. TÍTULO PRINCIPAL (H1)
 2. DESCRIÇÃO CURTA (logo abaixo do título)
-3. TOOL (interface funcional)
+3. ACESSO CLARO À TOOL (interface funcional na mesma rota)
 4. BLOCO DE CONTEÚDO EXPLICATIVO
 5. FAQ
 6. LINKS INTERNOS (discretos)
 7. RODAPÉ
 
 NUNCA criar página apenas com input + botão.
+
+### 2.1. PADRÃO DE EXPERIÊNCIA: PÁGINA E MODO FOCO
+
+Por padrão, toda ferramenta deve ter uma página de entrada enxuta e um modo de uso focado, ambos na mesma rota e URL canônica:
+
+- Na entrada, mostrar navegação discreta, H1, uma descrição curta e uma ação principal clara, como “Usar ferramenta” ou “Começar agora”.
+- Ao acionar essa ação, mudar a interface para o modo foco: priorizar a ferramenta, ocupar melhor a largura disponível e ocultar temporariamente o conteúdo editorial que não ajuda na tarefa naquele momento.
+- Oferecer uma ação visível para voltar às informações da página. Sempre que possível, preservar o estado e os dados já inseridos ao alternar os modos.
+- A troca de modo deve acontecer na mesma rota, sem redirecionar para uma segunda página ou criar outra URL indexável.
+- O modo focado pode ser compartilhado com o parâmetro `?expanded=1`. Esse parâmetro representa apenas estado de interface: não deve alterar title, description, canonical, hreflang, indexação ou sitemap. O canonical deve continuar apontando para a rota sem o parâmetro, e qualquer outro parâmetro funcional da ferramenta deve ser preservado.
+- A ferramenta e o conteúdo SEO devem pertencer à mesma página. A página de entrada não pode ser apenas uma chamada para uma ferramenta que só existe em outra rota.
+- Manter H1, introdução e conteúdo explicativo no HTML inicial renderizado no servidor. O texto longo deve ficar abaixo da área inicial da ferramenta ou em seções recolhíveis, sem dominar a primeira tela.
+- Não é obrigatório envolver a interface inteira da ferramenta em um card. Usar a largura disponível de forma responsiva e aplicar superfícies apenas onde ajudarem a organizar controles ou resultados.
+
+Ferramentas realmente simples podem abrir diretamente com a interface, sem uma etapa redundante de “Começar agora”, quando a tarefa couber com clareza na primeira tela, tiver poucos controles e não precisar de uma área separada para etapas, previews ou resultados. Ferramentas com múltiplas etapas, upload, controles avançados ou resultados que precisem de mais espaço devem usar o modo foco. Essa exceção não remove título, descrição, conteúdo explicativo, FAQ, metadados ou os demais requisitos da página.
 
 - TRADUÇÕES (OBRIGATÓRIO): Toda nova ferramenta deve fornecer traduções obrigatórias para pelo menos as seguintes localidades: `pt-br`, `en` e `es`. Isso inclui: strings de UI, `h1`, `intro`, `seoTitle`, `seoDescription`, `contentBlocks` e `faq`. As traduções devem ser registradas no sistema de i18n do projeto (por exemplo `data/i18n/tool-translations.ts`) e/ou em arquivos de conteúdo localizados em `data/content/` seguindo o padrão do projeto.
 
@@ -175,12 +190,15 @@ Priorizar:
 
 Toda tool deve seguir padrão:
 
-- título grande
-- descrição curta
-- card da ferramenta centralizado
+- título claro e responsivo
+- descrição curta, sem ocupar a maior parte da primeira tela
+- ferramenta fácil de encontrar e usar, com modo foco conforme a seção 2.1
+- área da ferramenta dimensionada para seus controles, sem exigir um card centralizado como moldura
 - espaçamento consistente
 - botões claros
 - inputs bem definidos
+
+Priorizar uma primeira tela compacta, especialmente no mobile. Não colocar grandes blocos de texto antes da ação principal e não comprimir uma ferramenta larga dentro de cards estreitos ou de cards aninhados. O conteúdo explicativo, exemplos e FAQ continuam na mesma página, abaixo da ferramenta ou em seções recolhíveis.
 
 ## 11. PADRÃO DE COMPONENTES
 
@@ -364,16 +382,19 @@ Revisar mobile, performance, usabilidade e consistência visual
 Cada página de ferramenta deve seguir, em geral, esta ordem visual:
 
 1. Breadcrumbs ou navegação discreta
-2. Hero da ferramenta
+2. Hero compacto da ferramenta
    - H1
    - descrição curta
-3. Bloco principal da tool
-4. Primeiro espaço de anúncio discreto
-5. Conteúdo explicativo
+   - ação principal para abrir o modo foco, quando aplicável
+3. Ferramenta funcional na mesma rota, em área ampla e responsiva
+4. Primeiro espaço de anúncio discreto, sem confusão com controles ou navegação
+5. Conteúdo explicativo, exemplos e limitações
 6. FAQ
 7. Links internos leves para ferramentas relacionadas
 8. Segundo espaço de anúncio discreto
 9. Rodapé
+
+O modo foco deve privilegiar a tarefa e reduzir distrações. Ao voltar, restaurar a página informativa sem exigir outra navegação. Ferramentas simples podem mostrar sua interface diretamente, sem modo foco, quando uma etapa extra não trouxer benefício real.
 
 A página NÃO deve parecer vazia.
 A página NÃO deve parecer apenas um formulário.
@@ -861,7 +882,8 @@ Não criar paleta, tema ou estilo de componente por preferência individual.
 Antes de implementar ou alterar uma interface:
 - comparar com pelo menos uma ferramenta existente de fluxo ou categoria semelhante
 - identificar os componentes compartilhados e os padrões de layout usados nela
-- reaproveitar `Card`, `Button`, `Input`, `Select`, upload e demais componentes existentes
+- reaproveitar `Button`, `Input`, `Select`, upload e demais componentes existentes
+- usar `Card` quando ele ajudar a agrupar conteúdo; não envolver automaticamente a ferramenta inteira em um card nem criar cards aninhados
 - usar os tokens definidos em `tailwind.config.ts` e os estilos dos componentes em `components/ui/`
 
 Regras de cor:

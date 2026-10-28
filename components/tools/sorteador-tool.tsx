@@ -946,6 +946,7 @@ export function SorteadorTool({ locale = "pt-br" }: SorteadorToolProps) {
       query.set("wheel", useRoulette ? "1" : "0");
       query.set("weights", useWeights ? "1" : "0");
       query.set("countdown", String(countdownSeconds));
+      query.set("expanded", "1");
       const shareUrl = `${globalThis.location.origin}${globalThis.location.pathname}?${query.toString()}`;
       await navigator.clipboard.writeText(shareUrl);
       trackEvent('result_shared', { tool: TOOL_ID.sorteador, locale, method: 'copy_link' });

@@ -8,6 +8,7 @@ type CardProps = HTMLAttributes<HTMLDivElement> & {
 export function Card({ className, padding = 'default', ...props }: CardProps) {
   return (
     <div
+      data-ui-card="true"
       className={cn(
         'rounded-xl border border-slate-200 bg-white shadow-card',
         padding === 'default' && 'p-4 md:p-5',

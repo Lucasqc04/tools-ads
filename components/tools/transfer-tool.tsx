@@ -1355,7 +1355,14 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       });
 
       // Limpa URL para não repetir o preenchimento ao recarregar
-      window.history.replaceState({}, '', window.location.pathname);
+      const cleanedUrl = new URL(window.location.href);
+      cleanedUrl.searchParams.delete('share_text');
+      cleanedUrl.searchParams.delete('share_type');
+      window.history.replaceState(
+        window.history.state,
+        '',
+        `${cleanedUrl.pathname}${cleanedUrl.search}${cleanedUrl.hash}`,
+      );
     } catch (error) {
       console.error('Erro ao processar dados compartilhados:', error);
     }
@@ -1402,7 +1409,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       return '';
     }
 
-    return `${window.location.origin}${window.location.pathname}`;
+    return `${window.location.origin}${window.location.pathname}?expanded=1`;
   };
 
   const getCameraLabel = (label: string, index: number): string => {
@@ -2398,7 +2405,13 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
       return;
     }
 
-    window.history.replaceState({}, '', window.location.pathname);
+    const cleanedUrl = new URL(window.location.href);
+    cleanedUrl.hash = '';
+    window.history.replaceState(
+      window.history.state,
+      '',
+      `${cleanedUrl.pathname}${cleanedUrl.search}`,
+    );
 
     const assembled = addPacketToAssembly(null, parsed.packet);
 

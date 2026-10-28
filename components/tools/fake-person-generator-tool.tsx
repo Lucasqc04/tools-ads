@@ -795,6 +795,7 @@ export function FakePersonGeneratorTool({ locale = 'pt-br' }: FakePersonGenerato
         query.set('seed', normalizedOptions.seed);
       }
 
+      query.set('expanded', '1');
       const link = `${globalThis.location.origin}${globalThis.location.pathname}?${query.toString()}`;
       await copyText('share-link', link, 'share_link');
     } catch {

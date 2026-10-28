@@ -732,6 +732,7 @@ export function TransferLinkRoom({ locale, initialRoomId }: Props) {
       runtimeRef.current = runtime;
       const url = new URL(window.location.href);
       url.searchParams.set('room', created.roomId);
+      url.searchParams.set('expanded', '1');
       setRoomId(created.roomId);
       setRoomUrl(url.toString());
       setRole('host');
@@ -787,6 +788,7 @@ export function TransferLinkRoom({ locale, initialRoomId }: Props) {
       });
       const url = new URL(window.location.href);
       url.searchParams.set('room', roomId);
+      url.searchParams.set('expanded', '1');
       setRoomUrl(url.toString());
       setRole('viewer');
       setParticipants([
