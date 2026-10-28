@@ -19,7 +19,7 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
   'pt-br': {
     name: 'Transferencia Entre Dispositivos',
     shortDescription:
-      'Transfira texto, links, Pix, JSON, comandos e arquivos entre celular e PC com QR Code e canal P2P WebRTC, sem login e com processamento local.',
+      'Transfira texto, links, Pix, JSON, comandos e arquivos entre celular e PC por QR Code ou link com WebRTC P2P, sem login.',
     primaryKeyword: 'transferir arquivo entre celular e pc por qr code',
     secondaryKeywords: [
       'transferir texto por qr code',
@@ -41,13 +41,13 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       'Transfira texto rapido por QR Code e arquivos por WebRTC P2P entre celular e PC. Sem cadastro, sem login e com processamento local no navegador.',
     h1: 'Transferir Texto e Arquivos Entre Celular e PC por QR Code e P2P',
     intro:
-      'Use um modo rapido para links, Pix, senhas e textos curtos via QR Code ou conecte dois navegadores com WebRTC para enviar arquivos e textos maiores diretamente entre os dispositivos.',
+      'Use QR Code para passar conteudo curto ou crie uma sala por link para conectar navegadores e enviar arquivos maiores com WebRTC.',
     contentBlocks: [
       {
         title: 'Dois modos para problemas diferentes',
         paragraphs: [
           'Esta ferramenta foi pensada para dois cenarios comuns. O primeiro e copiar conteudo pequeno, como links, chaves Pix, comandos de terminal, tokens temporarios e JSON curto. Nesse caso, o proprio QR Code ja carrega o conteudo ou um fragmento de URL processado no navegador.',
-          'O segundo cenario e enviar dados maiores, como arquivos, PDFs, imagens, ZIPs leves ou blocos longos de texto. A pagina cria um pareamento manual entre os dois dispositivos usando QR Code e depois envia o conteudo por WebRTC DataChannel.',
+          'Para arquivos, PDFs, imagens e outros dados maiores, crie uma sala e compartilhe o link. Os navegadores trocam as informacoes de conexao pela sala e enviam o arquivo por WebRTC DataChannel. O pareamento manual por QR segue disponivel como alternativa.',
         ],
       },
       {
@@ -66,14 +66,14 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       {
         title: 'Como funciona o envio grande por WebRTC P2P',
         paragraphs: [
-          'No modo avancado, um dispositivo gera uma offer WebRTC, o outro responde com uma answer e os dois lados abrem um canal de dados. Esse canal e criptografado pelo proprio stack WebRTC e, quando a conectividade permite, o conteudo segue direto entre os navegadores.',
+          'No modo por link, o remetente cria uma sala e a outra pessoa entra pelo navegador. A sala coordena a offer e a answer WebRTC; depois, cada arquivo segue pelo DataChannel entre os dispositivos conectados. Tambem e possivel usar o pareamento manual por QR.',
           'A conexao pode usar STUN apenas para descobrir a melhor rota entre os peers. Nao existe relay TURN nesta implementacao. Isso preserva a ideia de conexao direta, mas tambem significa que algumas redes mais restritas podem nao fechar a conexao.',
         ],
       },
       {
         title: 'Privacidade, limites e o que nao prometer',
         paragraphs: [
-          'O texto do modo simples e tratado no navegador. No modo P2P, o payload principal vai pelo DataChannel apos o pareamento manual. Ainda assim, a conectividade real depende da rede, NAT e firewall de cada lado. Sem TURN, alguns cenarios entre redes fechadas podem falhar.',
+          'O texto curto e tratado no navegador. Na sala por link, o servidor coordena a conexao e mantem dados temporarios de sinalizacao; o arquivo nao e armazenado nele e segue pelo DataChannel. A conectividade ainda depende da rede, NAT e firewall. Sem TURN, alguns cenarios podem falhar.',
           'Tambem e importante lembrar que QR Code tem limite pratico de tamanho. Se voce estiver tentando empacotar muito conteudo no modo simples, a ferramenta vai dividir em partes ou sugerir migracao para o P2P.',
         ],
       },
@@ -82,7 +82,7 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       {
         question: 'Essa ferramenta envia meus dados para servidor?',
         answer:
-          'O modo simples processa o conteudo localmente no navegador. No modo P2P, o payload principal e enviado pelo canal WebRTC entre os dispositivos. Pode haver uso de STUN para descoberta de rota, mas nao ha relay TURN nesta implementacao.',
+          'O modo simples processa o conteudo localmente. No modo por link, o servidor coordena a sala e a conexao, mas nao recebe nem armazena o arquivo. O conteudo segue por WebRTC entre os navegadores. Pode haver STUN para descoberta de rota; esta implementacao nao inclui relay TURN.',
       },
       {
         question: 'Funciona para arquivos grandes?',
@@ -128,13 +128,13 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       'Send short text by QR Code or connect two browsers with WebRTC P2P for larger files and text. No sign-up, no login, local-first workflow.',
     h1: 'Transfer Text and Files Between Phone and PC with QR Code and P2P',
     intro:
-      'Use a fast QR mode for links and short text, or pair two browsers with WebRTC to send larger files and longer text directly between devices.',
+      'Use QR codes for short content, or create a room link to connect browsers and send larger files over WebRTC.',
     contentBlocks: [
       {
         title: 'Two modes for two different jobs',
         paragraphs: [
           'The simple mode is designed for short payloads such as links, temporary passwords, Pix payloads, crypto addresses, terminal commands, and compact JSON. The QR itself carries the content or a client-side URL fragment.',
-          'The advanced mode handles larger text and files. It uses QR codes only for the initial handshake and then moves the main payload through a WebRTC DataChannel.',
+          'For larger files, create a room and share its link. The browsers exchange connection details through the room, then transfer files over a WebRTC DataChannel. Manual QR pairing remains available as an alternative.',
         ],
       },
       {
@@ -147,14 +147,14 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       {
         title: 'How the WebRTC transfer works',
         paragraphs: [
-          'One device creates a WebRTC offer, the other responds with an answer, and both browsers open a direct data channel. Files are sent in chunks so the receiving browser can reconstruct them safely.',
+          'The sender creates a room and the recipient opens its link. The room coordinates the WebRTC offer and answer; each file then travels over a DataChannel between connected devices. Manual QR pairing is also available.',
           'This implementation can use STUN for route discovery, but it does not include a TURN relay. That keeps the tool closer to direct transfer, while also meaning some restrictive networks may fail to connect.',
         ],
       },
       {
         title: 'Privacy and practical limits',
         paragraphs: [
-          'Short-text QR processing stays local in the browser. In P2P mode, the main payload travels through the browser data channel after manual pairing. Network topology still matters, and direct connectivity is not guaranteed on every firewall or NAT setup.',
+          'Short QR content is processed in the browser. The link room coordinates the connection and temporarily handles signaling data; it does not store the file. Network topology still matters, and direct connectivity is not guaranteed on every firewall or NAT setup.',
           'QR capacity is also finite. If a payload becomes too large, splitting or switching to P2P is the correct fallback.',
         ],
       },
@@ -163,7 +163,7 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       {
         question: 'Does this tool upload my content to a server?',
         answer:
-          'Short QR mode is processed locally in the browser. In P2P mode, the main payload goes through WebRTC between the devices. Optional STUN may be used for route discovery, but there is no TURN relay in this implementation.',
+          'Short QR content is processed locally. For link transfers, the server coordinates the room and connection but does not receive or store the file. The payload travels over WebRTC between browsers. STUN may help discover a route; this implementation has no TURN relay.',
       },
       {
         question: 'Do I need an account or app?',
@@ -204,13 +204,13 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       'Envía texto corto por QR Code o conecta dos navegadores con WebRTC P2P para archivos y textos mas grandes. Sin registro y con flujo local.',
     h1: 'Transferir Texto y Archivos Entre Celular y PC con QR Code y P2P',
     intro:
-      'Usa un modo rapido por QR para enlaces y textos cortos, o conecta dos navegadores con WebRTC para enviar archivos y textos largos entre dispositivos.',
+      'Usa QR para contenido corto o crea una sala con enlace para conectar navegadores y enviar archivos por WebRTC.',
     contentBlocks: [
       {
         title: 'Dos modos para dos necesidades',
         paragraphs: [
           'El modo simple sirve para enlaces, claves Pix, contraseñas temporales, comandos y texto corto. El propio QR lleva el contenido o un fragmento procesado del lado del cliente.',
-          'El modo avanzado usa QR solo para emparejar los dispositivos y luego mueve el contenido grande por un canal WebRTC DataChannel.',
+          'Para archivos grandes, crea una sala y comparte el enlace. Los navegadores intercambian los datos de conexion mediante la sala y transfieren los archivos por WebRTC DataChannel. El emparejamiento manual por QR sigue disponible.',
         ],
       },
       {
@@ -223,14 +223,14 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       {
         title: 'Como funciona la transferencia WebRTC',
         paragraphs: [
-          'Un dispositivo crea una offer, el otro responde con una answer y ambos navegadores abren un canal de datos directo. Los archivos se envian en chunks para reconstruirlos con seguridad en el destino.',
+          'El remitente crea una sala y la otra persona abre el enlace. La sala coordina la offer y la answer WebRTC; despues, cada archivo viaja por un DataChannel entre los dispositivos conectados. Tambien se puede usar el emparejamiento manual por QR.',
           'Esta implementacion puede usar STUN para descubrir la ruta, pero no incluye TURN relay. Eso mantiene el enfoque directo, aunque algunas redes cerradas pueden fallar.',
         ],
       },
       {
         title: 'Privacidad y limites reales',
         paragraphs: [
-          'El modo QR simple se procesa localmente. En modo P2P, el payload principal viaja por el canal WebRTC despues del emparejamiento manual. Aun asi, la red y el firewall influyen en el resultado final.',
+          'El contenido corto por QR se procesa en el navegador. La sala por enlace coordina la conexion y gestiona temporalmente la senalizacion, pero no guarda los archivos. La red y el firewall pueden afectar la conexion directa.',
           'La capacidad del QR es limitada. Si el contenido se vuelve demasiado grande, la salida correcta es dividirlo o migrar al modo P2P.',
         ],
       },
@@ -239,7 +239,7 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       {
         question: 'Se suben mis datos a un servidor?',
         answer:
-          'El modo QR corto se procesa localmente en el navegador. En modo P2P, el payload principal viaja entre los dispositivos por WebRTC. Puede haber STUN para descubrir ruta, pero no hay TURN relay en esta implementacion.',
+          'El contenido corto por QR se procesa localmente. En las transferencias por enlace, el servidor coordina la sala y la conexion, pero no recibe ni guarda el archivo. El contenido viaja por WebRTC entre los navegadores. Puede usarse STUN; esta implementacion no tiene relay TURN.',
       },
       {
         question: 'Necesito cuenta o app?',
@@ -280,13 +280,13 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       'Send short text by QR Code or connect two browsers with WebRTC P2P for larger files and text. No sign-up, no login, local-first workflow.',
     h1: 'Transfer Text and Files Between Phone and PC with QR Code and P2P',
     intro:
-      'Use a fast QR mode for links and short text, or pair two browsers with WebRTC to send larger files and longer text directly between devices.',
+      'Use QR codes for short content, or create a room link to connect browsers and send larger files over WebRTC.',
     contentBlocks: [
       {
         title: 'Two modes for two different jobs',
         paragraphs: [
           'The simple mode is designed for short payloads such as links, temporary passwords, Pix payloads, crypto addresses, terminal commands, and compact JSON. The QR itself carries the content or a client-side URL fragment.',
-          'The advanced mode handles larger text and files. It uses QR codes only for the initial handshake and then moves the main payload through a WebRTC DataChannel.',
+          'For larger files, create a room and share its link. The browsers exchange connection details through the room, then transfer files over a WebRTC DataChannel. Manual QR pairing remains available as an alternative.',
         ],
       },
       {
@@ -299,14 +299,14 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       {
         title: 'How the WebRTC transfer works',
         paragraphs: [
-          'One device creates a WebRTC offer, the other responds with an answer, and both browsers open a direct data channel. Files are sent in chunks so the receiving browser can reconstruct them safely.',
+          'The sender creates a room and the recipient opens its link. The room coordinates the WebRTC offer and answer; each file then travels over a DataChannel between connected devices. Manual QR pairing is also available.',
           'This implementation can use STUN for route discovery, but it does not include a TURN relay. That keeps the tool closer to direct transfer, while also meaning some restrictive networks may fail to connect.',
         ],
       },
       {
         title: 'Privacy and practical limits',
         paragraphs: [
-          'Short-text QR processing stays local in the browser. In P2P mode, the main payload travels through the browser data channel after manual pairing. Network topology still matters, and direct connectivity is not guaranteed on every firewall or NAT setup.',
+          'Short QR content is processed in the browser. The link room coordinates the connection and temporarily handles signaling data; it does not store the file. Network topology still matters, and direct connectivity is not guaranteed on every firewall or NAT setup.',
           'QR capacity is also finite. If a payload becomes too large, splitting or switching to P2P is the correct fallback.',
         ],
       },
@@ -315,7 +315,7 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       {
         question: 'Does this tool upload my content to a server?',
         answer:
-          'Short QR mode is processed locally in the browser. In P2P mode, the main payload goes through WebRTC between the devices. Optional STUN may be used for route discovery, but there is no TURN relay in this implementation.',
+          'Short QR content is processed locally. For link transfers, the server coordinates the room and connection but does not receive or store the file. The payload travels over WebRTC between browsers. STUN may help discover a route; this implementation has no TURN relay.',
       },
       {
         question: 'Do I need an account or app?',

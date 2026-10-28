@@ -76,6 +76,17 @@ export const createTransferId = (): string => {
   return Array.from(bytes, (item) => item.toString(16).padStart(2, '0')).join('');
 };
 
+export const createTransferSecret = (byteLength: number): string => {
+  if (!Number.isInteger(byteLength) || byteLength < 1 || byteLength > 64) {
+    throw new Error('Tamanho invalido para o segredo da transferencia.');
+  }
+
+  const bytes = new Uint8Array(byteLength);
+  crypto.getRandomValues(bytes);
+
+  return Array.from(bytes, (item) => item.toString(16).padStart(2, '0')).join('');
+};
+
 export const compressTransferPayload = (rawContent: string): string =>
   compressToEncodedURIComponent(rawContent);
 

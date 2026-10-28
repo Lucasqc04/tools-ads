@@ -22,6 +22,7 @@ import { formatBytes } from '@/lib/file-size';
 import type { AppLocale } from '@/lib/i18n/config';
 import { downloadBlob } from '@/lib/qr-code';
 import { trackEvent, TOOL_ID } from '@/lib/analytics';
+import { TransferLinkRoom } from '@/components/tools/transfer-link-room';
 import {
   addPacketToAssembly,
   buildUint8Chunks,
@@ -106,11 +107,13 @@ const SIGNAL_RAW_TAG_REGEX = /\n?\[ADTOOLS_PART:\d+\/\d+\]$/;
 const uiByLocale = {
   'pt-br': {
     simpleTab: 'QR rapido',
-    p2pTab: 'Arquivo ou texto grande P2P',
+    p2pTab: 'Arquivos por link',
+    p2pLinkMode: 'Enviar por link',
+    p2pManualMode: 'Pareamento manual por QR',
     simpleIntro:
       'Use QR para links, Pix, senhas temporarias, JSON curto e comandos pequenos. O destino pode ler pela camera, pela propria pagina ou por imagem.',
     p2pIntro:
-      'Use WebRTC DataChannel para arquivos e textos maiores. O pareamento acontece por QR manual e depois o envio segue direto entre os navegadores.',
+      'Crie uma sala e compartilhe um link. Os arquivos seguem direto entre os navegadores; o pareamento manual por QR continua disponível como alternativa.',
     simpleWriteTitle: '1. Gerar QR neste dispositivo',
     simpleReadTitle: '2. Ler QR do outro dispositivo aqui',
     simpleInputLabel: 'Texto, link, Pix, JSON ou comando curto',
@@ -311,11 +314,13 @@ const uiByLocale = {
   },
   en: {
     simpleTab: 'Quick QR',
-    p2pTab: 'Large file or text P2P',
+    p2pTab: 'File transfer',
+    p2pLinkMode: 'Send with a link',
+    p2pManualMode: 'Manual QR pairing',
     simpleIntro:
       'Use QR for links, Pix payloads, temporary passwords, compact JSON, and short commands. The other device can scan with the camera, inside this page, or from an image.',
     p2pIntro:
-      'Use WebRTC DataChannel for larger files and text. QR is only used for the manual handshake and the payload then moves directly between browsers.',
+      'Create a room and share its link. Files travel directly between browsers; manual QR pairing remains available as an alternative.',
     simpleWriteTitle: '1. Generate QR on this device',
     simpleReadTitle: '2. Read the other device QR here',
     simpleInputLabel: 'Short text, link, Pix payload, JSON, or command',
@@ -513,11 +518,13 @@ const uiByLocale = {
   },
   es: {
     simpleTab: 'QR rapido',
-    p2pTab: 'Archivo o texto grande P2P',
+    p2pTab: 'Archivos por enlace',
+    p2pLinkMode: 'Enviar con enlace',
+    p2pManualMode: 'Emparejamiento manual por QR',
     simpleIntro:
       'Usa QR para enlaces, payloads Pix, contrasenas temporales, JSON pequeno y comandos cortos. El otro dispositivo puede leerlo con la camara, en esta pagina o desde una imagen.',
     p2pIntro:
-      'Usa WebRTC DataChannel para archivos y textos grandes. El QR solo sirve para el emparejamiento y luego el payload va directo entre navegadores.',
+      'Crea una sala y comparte el enlace. Los archivos viajan directamente entre navegadores; el emparejamiento manual por QR sigue disponible como alternativa.',
     simpleWriteTitle: '1. Generar QR en este dispositivo',
     simpleReadTitle: '2. Leer aqui el QR del otro dispositivo',
     simpleInputLabel: 'Texto corto, enlace, Pix, JSON o comando',
@@ -717,11 +724,13 @@ const uiByLocale = {
   },
   zh: {
     simpleTab: 'Quick QR',
-    p2pTab: 'Large file or text P2P',
+    p2pTab: '文件传输',
+    p2pLinkMode: '通过链接发送',
+    p2pManualMode: '二维码手动配对',
     simpleIntro:
       'Use QR for links, Pix payloads, temporary passwords, compact JSON, and short commands. The other device can scan with the camera, inside this page, or from an image.',
     p2pIntro:
-      'Use WebRTC DataChannel for larger files and text. QR is only used for the manual handshake and the payload then moves directly between browsers.',
+      '创建房间并分享链接，文件会在浏览器之间直接传输；也可以使用二维码手动配对。',
     simpleWriteTitle: '1. Generate QR on this device',
     simpleReadTitle: '2. Read the other device QR here',
     simpleInputLabel: 'Short text, link, Pix payload, JSON, or command',
@@ -922,6 +931,8 @@ const uiByLocale = {
   {
     simpleTab: string;
     p2pTab: string;
+    p2pLinkMode: string;
+    p2pManualMode: string;
     simpleIntro: string;
     p2pIntro: string;
     simpleWriteTitle: string;
@@ -1262,9 +1273,11 @@ const isMetaMessage = (value: unknown): value is IncomingTransferMetaMessage =>
 export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const searchParams = useSearchParams();
   const ui = useMemo(() => uiByLocale[locale] ?? uiByLocale['pt-br'], [locale]);
+  const initialRoomId = searchParams.get('room');
 
   const [zxing, setZxing] = useState<ZxingModule | null>(null);
-  const [toolMode, setToolMode] = useState<ToolMode>('simple');
+  const [toolMode, setToolMode] = useState<ToolMode>(() => initialRoomId ? 'p2p' : 'simple');
+  const [p2pTransportMode, setP2pTransportMode] = useState<'link' | 'manual'>('link');
   const [simpleInput, setSimpleInput] = useState('');
   const [simpleGenerated, setSimpleGenerated] = useState<GeneratedTransfer | null>(null);
   const [simplePartIndex, setSimplePartIndex] = useState(0);
@@ -1302,6 +1315,13 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const [signalRawJson, setSignalRawJson] = useState<string | null>(null);
   const [nfcNotice, setNfcNotice] = useState<Notice | null>(null);
   const [nfcActive, setNfcActive] = useState(false);
+
+  useEffect(() => {
+    if (initialRoomId) {
+      setToolMode('p2p');
+      setP2pTransportMode('link');
+    }
+  }, [initialRoomId]);
 
   // Detecta dados compartilhados via Web Share Target API
   useEffect(() => {
@@ -1368,7 +1388,9 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const hasSimpleReceived = simpleReceivedText.trim().length > 0;
   const hasP2PReceived = Boolean(receivedTransfer);
   const showTopNotice =
-    toolMode === 'simple' ? !hasSimpleReceived : !hasP2PReceived;
+    toolMode === 'simple'
+      ? !hasSimpleReceived
+      : p2pTransportMode === 'manual' && !hasP2PReceived;
   const isReceiveFlow = p2pRole === 'receive';
   const isSignalBusy =
     busyAction === 'offer' ||
@@ -3120,6 +3142,40 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
 
           <p className="text-sm leading-6 text-slate-600">{ui.p2pIntro}</p>
 
+          <div className="flex flex-wrap gap-2" role="group" aria-label={ui.p2pTab}>
+            <button
+              type="button"
+              aria-pressed={p2pTransportMode === 'link'}
+              onClick={() => setP2pTransportMode('link')}
+              className={cn(
+                'rounded-full px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+                p2pTransportMode === 'link'
+                  ? 'bg-brand-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200',
+              )}
+            >
+              {ui.p2pLinkMode}
+            </button>
+            <button
+              type="button"
+              aria-pressed={p2pTransportMode === 'manual'}
+              onClick={() => setP2pTransportMode('manual')}
+              className={cn(
+                'rounded-full px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+                p2pTransportMode === 'manual'
+                  ? 'bg-brand-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200',
+              )}
+            >
+              {ui.p2pManualMode}
+            </button>
+          </div>
+
+          <div className={p2pTransportMode === 'link' ? '' : 'hidden'}>
+            <TransferLinkRoom locale={locale} initialRoomId={initialRoomId} />
+          </div>
+
+          <div className={cn('space-y-6', p2pTransportMode === 'manual' ? '' : 'hidden')}>
           {renderConnectivitySelector()}
 
           <SectionCard title={ui.p2pRoleTitle}>
@@ -3470,6 +3526,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
               </SectionCard>
             </div>
           )}
+          </div>
         </div>
       )}
     </Card>
