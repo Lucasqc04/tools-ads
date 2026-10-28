@@ -108,12 +108,12 @@ const uiByLocale = {
   'pt-br': {
     simpleTab: 'QR rapido',
     p2pTab: 'Arquivos por link',
-    p2pLinkMode: 'Enviar por link',
-    p2pManualMode: 'Pareamento manual por QR',
+    p2pLinkMode: 'Sala por link',
+    p2pManualMode: 'QR manual',
     simpleIntro:
       'Use QR para links, Pix, senhas temporarias, JSON curto e comandos pequenos. O destino pode ler pela camera, pela propria pagina ou por imagem.',
     p2pIntro:
-      'Crie uma sala e compartilhe um link. Os arquivos seguem direto entre os navegadores; o pareamento manual por QR continua disponível como alternativa.',
+      'Crie uma sala por link para todos enviarem e receberem arquivos diretamente. O pareamento manual por QR continua disponível como alternativa.',
     simpleWriteTitle: '1. Gerar QR neste dispositivo',
     simpleReadTitle: '2. Ler QR do outro dispositivo aqui',
     simpleInputLabel: 'Texto, link, Pix, JSON ou comando curto',
@@ -315,12 +315,12 @@ const uiByLocale = {
   en: {
     simpleTab: 'Quick QR',
     p2pTab: 'File transfer',
-    p2pLinkMode: 'Send with a link',
-    p2pManualMode: 'Manual QR pairing',
+    p2pLinkMode: 'Link room',
+    p2pManualMode: 'Manual QR',
     simpleIntro:
       'Use QR for links, Pix payloads, temporary passwords, compact JSON, and short commands. The other device can scan with the camera, inside this page, or from an image.',
     p2pIntro:
-      'Create a room and share its link. Files travel directly between browsers; manual QR pairing remains available as an alternative.',
+      'Create a room link so everyone can send and receive files directly. Manual QR pairing remains available as an alternative.',
     simpleWriteTitle: '1. Generate QR on this device',
     simpleReadTitle: '2. Read the other device QR here',
     simpleInputLabel: 'Short text, link, Pix payload, JSON, or command',
@@ -519,12 +519,12 @@ const uiByLocale = {
   es: {
     simpleTab: 'QR rapido',
     p2pTab: 'Archivos por enlace',
-    p2pLinkMode: 'Enviar con enlace',
-    p2pManualMode: 'Emparejamiento manual por QR',
+    p2pLinkMode: 'Sala por enlace',
+    p2pManualMode: 'QR manual',
     simpleIntro:
       'Usa QR para enlaces, payloads Pix, contrasenas temporales, JSON pequeno y comandos cortos. El otro dispositivo puede leerlo con la camara, en esta pagina o desde una imagen.',
     p2pIntro:
-      'Crea una sala y comparte el enlace. Los archivos viajan directamente entre navegadores; el emparejamiento manual por QR sigue disponible como alternativa.',
+      'Crea una sala con un enlace para que todos envíen y reciban archivos directamente. El emparejamiento manual por QR sigue disponible como alternativa.',
     simpleWriteTitle: '1. Generar QR en este dispositivo',
     simpleReadTitle: '2. Leer aqui el QR del otro dispositivo',
     simpleInputLabel: 'Texto corto, enlace, Pix, JSON o comando',
@@ -725,12 +725,12 @@ const uiByLocale = {
   zh: {
     simpleTab: 'Quick QR',
     p2pTab: '文件传输',
-    p2pLinkMode: '通过链接发送',
+    p2pLinkMode: '链接房间',
     p2pManualMode: '二维码手动配对',
     simpleIntro:
       'Use QR for links, Pix payloads, temporary passwords, compact JSON, and short commands. The other device can scan with the camera, inside this page, or from an image.',
     p2pIntro:
-      '创建房间并分享链接，文件会在浏览器之间直接传输；也可以使用二维码手动配对。',
+      '创建房间链接后，所有人都可以直接发送和接收文件；也可以使用二维码手动配对。',
     simpleWriteTitle: '1. Generate QR on this device',
     simpleReadTitle: '2. Read the other device QR here',
     simpleInputLabel: 'Short text, link, Pix payload, JSON, or command',
@@ -1276,7 +1276,7 @@ export function TransferTool({ locale = 'pt-br' }: TransferToolProps) {
   const initialRoomId = searchParams.get('room');
 
   const [zxing, setZxing] = useState<ZxingModule | null>(null);
-  const [toolMode, setToolMode] = useState<ToolMode>(() => initialRoomId ? 'p2p' : 'simple');
+  const [toolMode, setToolMode] = useState<ToolMode>('p2p');
   const [p2pTransportMode, setP2pTransportMode] = useState<'link' | 'manual'>('link');
   const [simpleInput, setSimpleInput] = useState('');
   const [simpleGenerated, setSimpleGenerated] = useState<GeneratedTransfer | null>(null);
