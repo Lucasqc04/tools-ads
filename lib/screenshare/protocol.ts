@@ -119,6 +119,11 @@ export const isViewerSignalDirectionValid = (signal: UnsequencedSignal, target: 
   return true;
 };
 
+export const getSignalRateLimit = (role: 'host' | 'viewer', signal: UnsequencedSignal): { bucket: 'candidate' | 'signal'; limit: number } => ({
+  bucket: signal.type === 'candidate' ? 'candidate' : 'signal',
+  limit: signal.type === 'candidate' ? 600 : role === 'host' ? 180 : 120,
+});
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 

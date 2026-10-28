@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isQualityMode, isRoomAccess, isValidPeerId, isValidRoomId, isValidSecret, isViewerSignalDirectionValid, sanitizeParticipantName, validateSignalPayload } from '../protocol';
+import { getSignalRateLimit, isQualityMode, isRoomAccess, isValidPeerId, isValidRoomId, isValidSecret, isViewerSignalDirectionValid, sanitizeParticipantName, validateSignalPayload } from '../protocol';
 
 describe('screen-share signaling validation', () => {
   it('accepts cryptographically-sized IDs and tokens only', () => {
@@ -27,6 +27,15 @@ describe('screen-share signaling validation', () => {
     expect(isViewerSignalDirectionValid({ type: 'join' }, 'host')).toBe(true);
     expect(isViewerSignalDirectionValid({ type: 'join' }, 'a'.repeat(32))).toBe(false);
     expect(isViewerSignalDirectionValid({ type: 'quality-request', preference: 'economy' }, 'a'.repeat(32))).toBe(false);
+  });
+
+  it('gives trickled ICE candidates a separate bounded rate budget', () => {
+    const candidate = { type: 'candidate', negotiationId: '12345678-1234-1234', candidate: { candidate: 'candidate:1' } } as const;
+    const offer = { type: 'offer', negotiationId: '12345678-1234-1234', description: { type: 'offer', sdp: 'v=0' } } as const;
+    expect(getSignalRateLimit('viewer', candidate)).toEqual({ bucket: 'candidate', limit: 600 });
+    expect(getSignalRateLimit('host', candidate)).toEqual({ bucket: 'candidate', limit: 600 });
+    expect(getSignalRateLimit('viewer', offer)).toEqual({ bucket: 'signal', limit: 120 });
+    expect(getSignalRateLimit('host', offer)).toEqual({ bucket: 'signal', limit: 180 });
   });
 
   it('normalizes temporary participant names and validates room access choices', () => {

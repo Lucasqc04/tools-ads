@@ -1,5 +1,5 @@
 import { sha256Hex } from '@/lib/screenshare/auth';
-import { isValidPeerId, isValidRoomId, isValidSecret, isViewerSignalDirectionValid, validateSignalPayload } from '@/lib/screenshare/protocol';
+import { getSignalRateLimit, isValidPeerId, isValidRoomId, isValidSecret, isViewerSignalDirectionValid, validateSignalPayload } from '@/lib/screenshare/protocol';
 import { consumeRateLimit, pollSignals, sendSignal } from '@/lib/screenshare/store';
 import { isRecord, json, readJsonBody, serverError } from '@/lib/screenshare/http';
 
@@ -46,7 +46,8 @@ export async function POST(request: Request, { params }: RouteProps) {
     }
 
     const rateIdentity = role === 'host' ? `host:${roomId}` : `viewer:${roomId}:${peerId}`;
-    if (!(await consumeRateLimit(`screenshare:rate:signal:${rateIdentity}`, 60, role === 'host' ? 180 : 120))) {
+    const rate = getSignalRateLimit(role, signal);
+    if (!(await consumeRateLimit(`screenshare:rate:${rate.bucket}:${rateIdentity}`, 60, rate.limit))) {
       return json({ error: 'rate_limited' }, 429);
     }
 
