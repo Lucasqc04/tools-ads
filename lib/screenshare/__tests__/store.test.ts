@@ -66,6 +66,7 @@ describe('isolated Upstash screen-share store adapter', () => {
     expect(script).toContain('existing.tokenHash ~= ARGV[4]');
     expect(script).toContain("redis.call('SCARD'");
     expect(script).toContain("redis.call('SADD'");
+    expect(script).toContain('now - tonumber(existingPeer.lastHeartbeat) > (tonumber(ARGV[3]) * 1000)');
     expect(script.indexOf("redis.call('SCARD'")).toBeLessThan(script.indexOf("redis.call('SET', KEYS[3], ARGV[6]"));
     expect(keys[0]).toContain('screenshare:{');
     expect(args[3]).toBe('d'.repeat(64));
@@ -129,5 +130,20 @@ describe('isolated Upstash screen-share store adapter', () => {
     expect(script).toContain('room.viewerLimit = requested');
     expect(keys[0]).toContain('screenshare:{');
     expect(args[2]).toBe(1);
+  });
+
+  it('compares viewer heartbeat timestamps in milliseconds for room counts and host peer cleanup', async () => {
+    redisMocks.eval
+      .mockResolvedValueOnce('{"status":"ok","viewerCount":1}')
+      .mockResolvedValueOnce('{"status":"ok","peers":[]}');
+    const store = await import('../store');
+
+    await expect(store.getPublicRoomInfo(makeRoom().id, 62_000)).resolves.toMatchObject({ viewerCount: 1 });
+    await expect(store.getHostPeers(makeRoom().id, makeRoom().hostTokenHash, 62_000)).resolves.toMatchObject({ peers: [] });
+
+    const publicRoomScript = String(redisMocks.eval.mock.calls[0][0]);
+    const hostPeersScript = String(redisMocks.eval.mock.calls[1][0]);
+    expect(publicRoomScript).toContain('now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[3]) * 1000)');
+    expect(hostPeersScript).toContain('now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[4]) * 1000)');
   });
 });

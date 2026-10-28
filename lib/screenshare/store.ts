@@ -80,7 +80,7 @@ for _, existingPeerId in ipairs(existingPeers) do
     redis.call('SREM', KEYS[2], existingPeerId)
   else
     local existingPeer = cjson.decode(existingPeerValue)
-    if now - tonumber(existingPeer.lastHeartbeat) > tonumber(ARGV[3]) then
+    if now - tonumber(existingPeer.lastHeartbeat) > (tonumber(ARGV[3]) * 1000) then
       redis.call('SREM', KEYS[2], existingPeerId)
       redis.call('DEL', existingPeerKey)
       redis.call('DEL', ARGV[8] .. existingPeerId)
@@ -216,7 +216,7 @@ for _, peerId in ipairs(peers) do
     redis.call('SREM', KEYS[2], peerId)
   else
     local peer = cjson.decode(peerValue)
-    if now - tonumber(peer.lastHeartbeat) > tonumber(ARGV[3]) then
+    if now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[3]) * 1000) then
       redis.call('SREM', KEYS[2], peerId)
       redis.call('DEL', peerKey)
       redis.call('DEL', ARGV[4] .. peerId)
@@ -256,7 +256,7 @@ for _, peerId in ipairs(ids) do
     redis.call('SREM', KEYS[2], peerId)
   else
     local peer = cjson.decode(peerValue)
-    if now - tonumber(peer.lastHeartbeat) > tonumber(ARGV[4]) then
+    if now - tonumber(peer.lastHeartbeat) > (tonumber(ARGV[4]) * 1000) then
       redis.call('SREM', KEYS[2], peerId)
       redis.call('DEL', peerKey)
       redis.call('DEL', ARGV[5] .. peerId)
