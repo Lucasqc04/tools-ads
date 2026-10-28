@@ -76,6 +76,7 @@ export type ShareScreenUi = {
   watchDescription: string;
   preparingVideo: string;
   waitingForHost: string;
+  watchReady: string;
   playWithSound: string;
   mute: string;
   unmute: string;
@@ -95,7 +96,7 @@ export const shareScreenUi: Record<AppLocale, ShareScreenUi> = {
     startTitle: 'Sua tela, compartilhada em segundos.',
     startDescription: 'Escolha o que mostrar. Depois, envie um link para que outras pessoas assistam em tempo real.',
     startButton: 'Iniciar transmissão',
-    startShort: 'Compartilhar minha tela',
+    startShort: 'Assistir agora',
     advanced: 'Qualidade da transmissão',
     qualityLabel: 'Qualidade',
     qualityAutomatic: 'Automática · recomendada',
@@ -166,6 +167,7 @@ export const shareScreenUi: Record<AppLocale, ShareScreenUi> = {
     watchDescription: 'Conexão direta com quem está apresentando.',
     preparingVideo: 'Preparando conexão segura…',
     waitingForHost: 'Aguardando o apresentador iniciar a transmissão…',
+    watchReady: 'Transmissão pronta. Toque em “Assistir agora” para conectar.',
     playWithSound: 'Iniciar reprodução com áudio',
     mute: 'Silenciar',
     unmute: 'Ativar áudio',
@@ -183,7 +185,7 @@ export const shareScreenUi: Record<AppLocale, ShareScreenUi> = {
     startTitle: 'Your screen, shared in seconds.',
     startDescription: 'Choose what to show, then send a link so others can watch live.',
     startButton: 'Start broadcast',
-    startShort: 'Share my screen',
+    startShort: 'Watch now',
     advanced: 'Broadcast quality',
     qualityLabel: 'Quality',
     qualityAutomatic: 'Automatic · recommended',
@@ -254,6 +256,7 @@ export const shareScreenUi: Record<AppLocale, ShareScreenUi> = {
     watchDescription: 'Direct connection to the presenter.',
     preparingVideo: 'Preparing a secure connection…',
     waitingForHost: 'Waiting for the presenter to start…',
+    watchReady: 'The broadcast is ready. Select “Watch now” to connect.',
     playWithSound: 'Start playback with audio',
     mute: 'Mute',
     unmute: 'Turn on audio',
@@ -271,7 +274,7 @@ export const shareScreenUi: Record<AppLocale, ShareScreenUi> = {
     startTitle: 'Tu pantalla, compartida en segundos.',
     startDescription: 'Elige qué mostrar y envía un enlace para que otras personas lo vean en directo.',
     startButton: 'Iniciar transmisión',
-    startShort: 'Compartir mi pantalla',
+    startShort: 'Ver ahora',
     advanced: 'Calidad de la transmisión',
     qualityLabel: 'Calidad',
     qualityAutomatic: 'Automática · recomendada',
@@ -342,6 +345,7 @@ export const shareScreenUi: Record<AppLocale, ShareScreenUi> = {
     watchDescription: 'Conexión directa con quien presenta.',
     preparingVideo: 'Preparando conexión segura…',
     waitingForHost: 'Esperando a que empiece la transmisión…',
+    watchReady: 'La transmisión está lista. Selecciona «Ver ahora» para conectarte.',
     playWithSound: 'Iniciar reproducción con audio',
     mute: 'Silenciar',
     unmute: 'Activar audio',
@@ -359,7 +363,7 @@ export const shareScreenUi: Record<AppLocale, ShareScreenUi> = {
     startTitle: '几秒钟分享你的屏幕。',
     startDescription: '选择要展示的内容，然后发送链接让他人实时观看。',
     startButton: '开始直播',
-    startShort: '共享我的屏幕',
+    startShort: '立即观看',
     advanced: '直播画质',
     qualityLabel: '画质',
     qualityAutomatic: '自动 · 推荐',
@@ -430,6 +434,7 @@ export const shareScreenUi: Record<AppLocale, ShareScreenUi> = {
     watchDescription: '与主持人直接连接。',
     preparingVideo: '正在准备安全连接…',
     waitingForHost: '等待主持人开始直播…',
+    watchReady: '直播已就绪。点击“立即观看”以连接。',
     playWithSound: '开启声音播放',
     mute: '静音',
     unmute: '开启声音',
