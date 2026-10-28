@@ -29,7 +29,7 @@ import { getBrowserNetworkInformation, classifyBrowserNetwork, type BrowserNetwo
 import { qualityProfiles, type QualityMode, type ScreenShareSignal, type UnsequencedSignal } from '@/lib/screenshare/protocol';
 import { getShareScreenUi } from '@/data/i18n/share-screen-ui';
 import { getShareScreenCallCopy } from '@/data/i18n/share-screen-call';
-import { bindCallMediaTracks, createCallMediaTransceivers, getDisplayMediaOptions, getRemoteTrackKind, type CallMediaKind, type CallMediaTransceivers } from '@/lib/screenshare/media';
+import { bindCallMediaTracks, createCallMediaTransceivers, getDisplayMediaOptions, getRemoteTrackKind, mapCallMediaTransceivers, type CallMediaKind, type CallMediaTransceivers } from '@/lib/screenshare/media';
 import type { AppLocale } from '@/lib/i18n/config';
 
 type Props = { locale?: AppLocale; initialRoomId?: string };
@@ -941,11 +941,16 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           runtime.negotiationId = signal.negotiationId;
           await runtime.pc.setRemoteDescription(signal.description);
           if (!runtime.transceivers) {
-            runtime.transceivers = await bindCallMediaTracks(runtime.pc, runtime.localStream, runtime.screenStream);
+            const transceivers = mapCallMediaTransceivers(runtime.pc);
+            if (!transceivers) throw new Error('The remote offer does not contain the expected media sections.');
+            runtime.transceivers = transceivers;
             const kinds: CallMediaKind[] = ['microphone', 'camera', 'screen', 'screenAudio'];
             runtime.senderKinds = kinds;
             runtime.senders = kinds.map((kind) => runtime.transceivers![kind].sender);
+            // Register before replaceTrack yields: ontrack may fire immediately after
+            // setRemoteDescription and otherwise the initial host media is discarded.
             runtime.pc.ontrack = (event) => attachRemoteTrack('host', runtime.transceivers!, event);
+            await bindCallMediaTracks(runtime.pc, runtime.localStream, runtime.screenStream);
           }
           for (const candidate of runtime.candidates.splice(0).filter((item) => item.negotiationId === signal.negotiationId)) await runtime.pc.addIceCandidate(candidate.candidate).catch(() => undefined);
           const answer = await runtime.pc.createAnswer();
@@ -964,7 +969,12 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           if (!mesh) mesh = makeMeshPeer(signal.fromPeerId);
           mesh.negotiationId = signal.negotiationId;
           await mesh.pc.setRemoteDescription(signal.description);
-          if (!mesh.transceivers) setMeshTransceivers(mesh, await bindCallMediaTracks(mesh.pc, runtime.localStream, runtime.screenStream));
+          if (!mesh.transceivers) {
+            const transceivers = mapCallMediaTransceivers(mesh.pc);
+            if (!transceivers) throw new Error('The remote offer does not contain the expected media sections.');
+            setMeshTransceivers(mesh, transceivers);
+            await bindCallMediaTracks(mesh.pc, runtime.localStream, runtime.screenStream);
+          }
           for (const candidate of mesh.candidates.splice(0).filter((item) => item.negotiationId === signal.negotiationId)) await mesh.pc.addIceCandidate(candidate.candidate).catch(() => undefined);
           const answer = await mesh.pc.createAnswer();
           await mesh.pc.setLocalDescription(answer);
