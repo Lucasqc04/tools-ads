@@ -78,6 +78,13 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'ammo-grenade-limit-total-5',
       'sv-grenade-trajectory-preview-on',
       'sv-grenade-trajectory-prac-trailtime-10',
+      'sv-grenade-trajectory-time-spectator-10',
+      'cl-grenadecrosshair-smoke-1',
+      'cl-grenadecrosshair-flash-1',
+      'cl-grenadecrosshair-fire-1',
+      'cl-grenadecrosshair-explosive-1',
+      'cl-grenadecrosshair-decoy-1',
+      'cl-grenadecrosshair-keepusercrosshair-1',
       'sv-showimpacts-on',
       'sv-showimpacts-time-10',
       'bind-v-noclip',
@@ -187,6 +194,8 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'bot-add-ct',
       'bot-stop-1',
       'bot-dont-shoot-1',
+      'bot-freeze-1',
+      'bot-ignore-enemies-1',
       'bot-place',
       'mp-respawn-on-death-ct-1',
       'mp-respawn-on-death-t-1',
@@ -210,6 +219,40 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       zh: {
         title: 'Bot 训练',
         description: '配置静态 Bot,在可控场景下练习预瞄、探头和站位调整。',
+      },
+    },
+  },
+  {
+    id: 'private-scrim-rules',
+    category: 'practice',
+    commandIds: [
+      'mp-c4timer-40',
+      'mp-maxrounds-30',
+      'mp-overtime-enable-1',
+      'mp-overtime-maxrounds-6',
+      'mp-overtime-startmoney-10000',
+      'mp-team-timeout-max-4',
+      'mp-team-timeout-time-30',
+    ],
+    locales: {
+      'pt-br': {
+        title: 'Regras de scrim privada',
+        description:
+          'Ajusta overtime, dinheiro da prorrogacao, limite de rounds e pausas taticas em um servidor controlado por voce.',
+      },
+      en: {
+        title: 'Private scrim rules',
+        description:
+          'Sets overtime, overtime money, round limit, and team timeouts on a server you control.',
+      },
+      es: {
+        title: 'Reglas para scrim privada',
+        description:
+          'Ajusta overtime, dinero de prorroga, limite de rondas y tiempos muertos en un servidor que controlas.',
+      },
+      zh: {
+        title: '私人训练赛规则',
+        description: '在你控制的服务器中设置加时赛、加时赛资金、回合上限和团队暂停。',
       },
     },
   },

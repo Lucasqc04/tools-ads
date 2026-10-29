@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { cs2Commands } from '@/data/cs2/commands';
+import { cs2CommandCatalogMetadata, cs2Commands } from '@/data/cs2/commands';
 import { cs2CommandPresets } from '@/data/cs2/command-presets';
 import {
   cs2SharedUiCopyByLocale,
@@ -145,6 +145,17 @@ export function Cs2ToolSuite({ locale, toolId }: Readonly<Cs2ToolSuiteProps>) {
 
         <p className="text-sm text-slate-600">
           <strong className="text-slate-900">{filteredCommands.length}</strong> {copy.resultsLabel}
+        </p>
+        <p className="text-xs leading-5 text-slate-500">
+          {copy.currentBuildAdditionsNote.replace('{build}', cs2CommandCatalogMetadata.installedBuild)}{' '}
+          <a
+            href={cs2CommandCatalogMetadata.valveUpdateNotesUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium text-brand-700 underline underline-offset-2"
+          >
+            {copy.valvePatchNotesLabel}
+          </a>
         </p>
 
         <Cs2CommandList commands={filteredCommands} locale={locale} copy={copy} />

@@ -7,6 +7,7 @@ import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { cs2CrosshairPlayers, type Cs2PlayerRole } from '@/data/cs2/crosshair-players';
 import { getCs2CrosshairCodesContent } from '@/data/content/cs2-crosshair-codes';
+import { Cs2CrosshairSettingsGenerator } from '@/components/tools/cs2-crosshair-settings-generator';
 import type { AppLocale } from '@/lib/i18n/config';
 import {
   filterCs2Players,
@@ -95,6 +96,8 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
         <h3 className="text-base font-semibold text-amber-900">{content.ui.cautionTitle}</h3>
         <p className="text-sm leading-6 text-amber-900">{content.ui.cautionText}</p>
       </section>
+
+      <Cs2CrosshairSettingsGenerator locale={locale} copy={content.ui} />
 
       <section className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
         <h3 className="font-semibold text-slate-900">{content.ui.importTitle}</h3>
@@ -221,6 +224,9 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
 
               {hasCode ? (
                 <div className="space-y-2 rounded-xl border border-brand-200 bg-brand-50 p-3">
+                  {player.shareCodeStatus === 'pre-update' ? (
+                    <p className="text-xs leading-5 text-amber-900">{content.ui.legacyCodeNote}</p>
+                  ) : null}
                   <pre className="overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-brand-100 bg-white p-3 font-mono text-xs text-slate-900">
                     {player.crosshairCode}
                   </pre>
@@ -239,7 +245,9 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
 
               <footer className="space-y-1 text-xs text-slate-600">
                 <p>
-                  {content.ui.updatedLabel}: {dateFormatter.format(new Date(player.lastCheckedAt))}
+                  {content.ui.updatedLabel}: {dateFormatter.format(
+                    new Date(`${player.lastCheckedAt}T12:00:00`),
+                  )}
                 </p>
                 {player.sourceName ? (
                   <p>

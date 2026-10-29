@@ -190,13 +190,18 @@ export function Cs2CommandCard({
   const localized = command.locales[locale];
 
   return (
-    <article className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+    <article className="min-w-0 space-y-3 rounded-xl border border-slate-200 bg-white p-4">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <h4 className="text-sm font-semibold text-slate-900">{localized.name}</h4>
         <Cs2SafetyBadge command={command} copy={copy} />
       </header>
 
       <p className="text-sm leading-6 text-slate-700">{localized.description}</p>
+      {command.verifiedInBuild ? (
+        <p className="text-xs text-slate-500">
+          {copy.verifiedBuildLabel}: {command.verifiedInBuild}
+        </p>
+      ) : null}
 
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
         <p className="mb-2 text-xs font-semibold text-slate-700">{copy.commandLabel}</p>
@@ -362,7 +367,7 @@ export function Cs2PresetCard({
   const preview = getCommandsForPreset(preset).slice(0, 8);
 
   return (
-    <article className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+    <article className="min-w-0 space-y-3 rounded-xl border border-slate-200 bg-white p-4">
       <header>
         <h4 className="text-base font-semibold text-slate-900">{localized.title}</h4>
         <p className="mt-1 text-sm leading-6 text-slate-700">{localized.description}</p>

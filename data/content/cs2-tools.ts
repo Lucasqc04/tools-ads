@@ -85,6 +85,9 @@ export type Cs2SharedUiCopy = {
   autoexecIncludeFun: string;
   autoexecCrosshairLabel: string;
   autoexecCrosshairPlaceholder: string;
+  verifiedBuildLabel: string;
+  currentBuildAdditionsNote: string;
+  valvePatchNotesLabel: string;
 };
 
 const safeWarning: Record<AppLocale, string> = {
@@ -186,7 +189,11 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     autoexecIncludeFun: 'Incluir fun.cfg',
     autoexecCrosshairLabel: 'Bloco opcional de crosshair',
     autoexecCrosshairPlaceholder:
-      'Cole comandos de mira aqui (ex.: cl_crosshairstyle 4, cl_crosshairsize 2)',
+      'Cole comandos atuais de mira aqui (ex.: cl_crosshair_thickness 1, cl_crosshair_length 8, cl_crosshair_gap 4)',
+    verifiedBuildLabel: 'Comando encontrado no cliente instalado (CL)',
+    currentBuildAdditionsNote:
+      'Novos comandos conferidos no cliente instalado (CL {build}) em 29/10/2026.',
+    valvePatchNotesLabel: 'Notas oficiais da Valve',
   },
   en: {
     searchLabel: 'Search command',
@@ -261,7 +268,11 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     autoexecIncludeFun: 'Include fun.cfg',
     autoexecCrosshairLabel: 'Optional crosshair block',
     autoexecCrosshairPlaceholder:
-      'Paste crosshair commands here (e.g., cl_crosshairstyle 4, cl_crosshairsize 2)',
+      'Paste current crosshair commands here (e.g., cl_crosshair_thickness 1, cl_crosshair_length 8, cl_crosshair_gap 4)',
+    verifiedBuildLabel: 'Command found in installed client (CL)',
+    currentBuildAdditionsNote:
+      'New command entries checked against the installed client (CL {build}) on Oct 29, 2026.',
+    valvePatchNotesLabel: 'Valve official update notes',
   },
   es: {
     searchLabel: 'Buscar comando',
@@ -336,7 +347,11 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     autoexecIncludeFun: 'Incluir fun.cfg',
     autoexecCrosshairLabel: 'Bloque opcional de crosshair',
     autoexecCrosshairPlaceholder:
-      'Pega comandos de mira aqui (ej.: cl_crosshairstyle 4, cl_crosshairsize 2)',
+      'Pega comandos actuales de mira (ej.: cl_crosshair_thickness 1, cl_crosshair_length 8, cl_crosshair_gap 4)',
+    verifiedBuildLabel: 'Comando encontrado en el cliente instalado (CL)',
+    currentBuildAdditionsNote:
+      'Nuevos comandos comprobados en el cliente instalado (CL {build}) el 29/10/2026.',
+    valvePatchNotesLabel: 'Notas oficiales de Valve',
   },
   zh: {
     searchLabel: '搜索指令',
@@ -411,7 +426,10 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     autoexecIncludeFun: '包含 fun.cfg',
     autoexecCrosshairLabel: '可选的准星设置',
     autoexecCrosshairPlaceholder:
-      '在此粘贴准星指令(例如:cl_crosshairstyle 4、cl_crosshairsize 2)',
+      '粘贴当前准星指令(例如:cl_crosshair_thickness 1、cl_crosshair_length 8、cl_crosshair_gap 4)',
+    verifiedBuildLabel: '已在安装的客户端 (CL) 中找到此指令',
+    currentBuildAdditionsNote: '新增指令已于 2026 年 10 月 29 日在已安装客户端 (CL {build}) 中核对。',
+    valvePatchNotesLabel: 'Valve 官方更新说明',
   },
 };
 

@@ -17,6 +17,7 @@ export type Cs2PlayerCrosshair = {
   team?: string;
   role?: Cs2PlayerRole;
   crosshairCode?: string;
+  shareCodeStatus?: 'pre-update' | 'current';
   crosshairCommands?: string[];
   sensitivity?: number;
   dpi?: number;
@@ -1559,6 +1560,7 @@ for (const extra of extraCs2CrosshairCodes) {
 export const cs2CrosshairPlayers: Cs2PlayerCrosshair[] = [...mergedSeedPlayers]
   .map((player) => ({
     ...player,
+    shareCodeStatus: player.crosshairCode ? 'pre-update' : undefined,
     edpi: computeEdpi(player.sensitivity, player.dpi),
   }))
   .sort((a, b) => a.displayName.localeCompare(b.displayName));

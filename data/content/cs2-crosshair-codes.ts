@@ -24,6 +24,16 @@ export type Cs2CrosshairCodesUiCopy = {
   cautionTitle: string;
   cautionText: string;
   sourceLabel: string;
+  legacyCodeNote: string;
+  pixelGeneratorTitle: string;
+  pixelGeneratorHelp: string;
+  thicknessLabel: string;
+  lengthLabel: string;
+  gapLabel: string;
+  gapHelp: string;
+  copySettings: string;
+  copiedSettings: string;
+  officialUpdateLink: string;
 };
 
 export type Cs2CrosshairCodesLocaleContent = {
@@ -66,7 +76,7 @@ const ptBrContent: Cs2CrosshairCodesLocaleContent = {
       title: 'Como usar esta base de miras no CS2',
       paragraphs: [
         'Esta pagina foi pensada para quem quer testar miras de pro players sem perder tempo em listas confusas. Voce pode buscar pelo nome do jogador, aplicar filtros por funcao e copiar o codigo no mesmo card.',
-        'Muitos jogadores ainda procuram por termos de CS:GO. Em setembro de 2026, a Valve adicionou o estilo Static Quadrant e a cor de contorno e alterou o formato de compartilhamento. Os codigos desta base sao anteriores a essas mudancas e ainda precisam ser confirmados no jogo atual.',
+        'Em 23 de setembro de 2026, a Valve passou a medir espessura e comprimento em pixels; o exemplo oficial usa gap 4. Em 30 de setembro, adicionou opcoes de mira e mudou o formato do codigo compartilhado. Os codigos desta base foram checados em maio e ainda nao foram revalidados depois dessas mudancas.',
         'Depois de importar, use o codigo como base e ajuste tamanho, gap, espessura e cor para o seu monitor e estilo de jogo. A melhor mira e a que voce consegue ler com clareza em qualquer mapa e situacao de combate.',
       ],
     },
@@ -85,7 +95,7 @@ const ptBrContent: Cs2CrosshairCodesLocaleContent = {
     {
       title: 'Limites e avisos importantes',
       paragraphs: [
-        'Jogadores profissionais podem mudar configuracoes com frequencia por fase, campeonato, monitor ou preferencia pessoal. A base foi checada em 27 de maio de 2026, antes das mudancas de mira de setembro; os codigos ainda precisam ser confirmados no formato atual do CS2.',
+        'Jogadores profissionais podem mudar configuracoes por campeonato, monitor ou preferencia pessoal. A base de codigos foi checada em 27 de maio de 2026, antes das mudancas oficiais de setembro. Use o gerador em pixels desta pagina para criar ajustes atuais e confira os codigos antigos no cliente antes de importar.',
         'Quando um codigo nao estiver confirmado com seguranca, ele fica marcado com confianca baixa. Nessas situacoes, use como referencia inicial e valide com outras fontes antes de tratar como configuracao definitiva.',
         'Tudo aqui e focado em praticidade para treino e melhoria de consistencia. O codigo nao substitui fundamentos como posicionamento, pre-fire, controle de spray e leitura de timing.',
       ],
@@ -102,7 +112,7 @@ const ptBrContent: Cs2CrosshairCodesLocaleContent = {
     {
       question: 'Como importar um codigo de mira no CS2?',
       answer:
-        'Abra Settings > Crosshair/Scopes > Share or Import. A Valve alterou o formato em setembro de 2026; este codigo e anterior a mudanca e ainda nao foi revalidado no cliente atual. Confirme antes de usar.',
+        'Abra Settings > Crosshair/Scopes > Share or Import. A Valve mudou o formato do codigo compartilhado em 30 de setembro de 2026. Os codigos antigos desta base ainda nao foram revalidados no cliente atual; para criar uma configuracao nova, use o gerador em pixels e aplique os comandos no console.',
     },
     {
       question: 'Esses codigos tambem funcionam para quem busca CS:GO crosshair?',
@@ -155,8 +165,21 @@ const ptBrContent: Cs2CrosshairCodesLocaleContent = {
     },
     cautionTitle: 'Aviso importante',
     cautionText:
-      'A Valve adicionou novos ajustes de mira e mudou o formato de compartilhamento em setembro de 2026. Os codigos desta base foram checados antes dessa atualizacao; confirme cada um no CS2 atual antes de usar.',
+      'A Valve mudou espessura e comprimento para unidades em pixels em 23 de setembro de 2026 e alterou o formato de compartilhamento em 30 de setembro. Estes codigos foram checados antes dessas atualizacoes.',
     sourceLabel: 'Fonte',
+    legacyCodeNote:
+      'Codigo anterior a atualizacao de setembro de 2026. Ele ainda nao foi revalidado no formato atual do CS2.',
+    pixelGeneratorTitle: 'Gerador de mira no sistema atual de pixels',
+    pixelGeneratorHelp:
+      'A Valve agora mede espessura e comprimento em pixels. O exemplo oficial usa 1 px de espessura, 8 px de comprimento e gap 4. O jogo redimensiona os valores se a resolucao mudar.',
+    thicknessLabel: 'Espessura (px)',
+    lengthLabel: 'Comprimento (px)',
+    gapLabel: 'Gap',
+    gapHelp:
+      'O gap negativo e permitido no estilo dinamico classico. Este gerador nao altera o estilo da sua mira.',
+    copySettings: 'Copiar comandos',
+    copiedSettings: 'Comandos copiados',
+    officialUpdateLink: 'Notas oficiais da Valve',
   },
 };
 
@@ -185,7 +208,7 @@ const enContent: Cs2CrosshairCodesLocaleContent = {
       title: 'Use this CS2 crosshair database in a practical way',
       paragraphs: [
         'This page is built for speed. Instead of jumping across outdated screenshots, you can search by player name, filter by role, and copy the crosshair code from the same card.',
-        'Many players still search for CS:GO crosshair terms. In September 2026, Valve added the Static Quadrant style and an outline-color option, and changed the share-code format. These entries predate those changes and still need confirmation in the current game.',
+        'On September 23, 2026, Valve changed crosshair thickness and length to pixel units; its official example uses gap 4. On September 30, it added crosshair options and changed the share-code format. This database was checked in May and has not been revalidated after those updates.',
         'After importing, adjust details like thickness, size, and color for your monitor and resolution. A pro code is a strong baseline, but the final crosshair should match your own visual comfort.',
       ],
     },
@@ -204,7 +227,7 @@ const enContent: Cs2CrosshairCodesLocaleContent = {
     {
       title: 'Important limitations and update notes',
       paragraphs: [
-        'Professional players may update their settings due to tournaments, monitors, or personal preference. This database was checked on May 27, 2026, before September crosshair changes; codes still need confirmation in the current CS2 format.',
+        'Professional players may update their settings for tournaments, monitors, or personal preference. This code list was checked on May 27, 2026, before Valve’s September updates. Use the pixel-settings generator on this page to create current settings, and confirm older share codes in the client before importing them.',
         'When a code is not fully validated, we keep confidence as medium or low. Treat these entries as a starting point and confirm with additional reliable sources.',
         'A crosshair code helps with clarity, but aim performance still depends on positioning, crosshair placement discipline, spray control, and decision-making under pressure.',
       ],
@@ -221,7 +244,7 @@ const enContent: Cs2CrosshairCodesLocaleContent = {
     {
       question: 'How do I import a crosshair code in CS2?',
       answer:
-        'Open Settings > Crosshair/Scopes > Share or Import. Valve changed the format in September 2026; this entry predates that change and has not been revalidated in the current client. Confirm it before use.',
+        'Open Settings > Crosshair/Scopes > Share or Import. Valve changed the share-code format on September 30, 2026. Codes in this list have not been revalidated in the current client; use the pixel-settings generator to create a new setup and apply its commands in console.',
     },
     {
       question: 'Do these codes work for CS:GO crosshair searches too?',
@@ -276,6 +299,19 @@ const enContent: Cs2CrosshairCodesLocaleContent = {
     cautionText:
       'Valve added crosshair options and changed the share-code format in September 2026. These codes were checked before that update; confirm each one in the current game before using it.',
     sourceLabel: 'Source',
+    legacyCodeNote:
+      'This code predates the September 2026 update and has not been revalidated in the current CS2 format.',
+    pixelGeneratorTitle: 'Crosshair generator for the current pixel system',
+    pixelGeneratorHelp:
+      'Valve now measures thickness and length in pixels. Its official example uses 1 px thickness, 8 px length, and gap 4. The game rescales the values when your resolution changes.',
+    thicknessLabel: 'Thickness (px)',
+    lengthLabel: 'Length (px)',
+    gapLabel: 'Gap',
+    gapHelp:
+      'Negative gaps are allowed with the classic dynamic style. This generator does not change your crosshair style.',
+    copySettings: 'Copy commands',
+    copiedSettings: 'Commands copied',
+    officialUpdateLink: 'Valve official update notes',
   },
 };
 
@@ -304,7 +340,7 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
       title: 'Como aprovechar esta base de miras en CS2',
       paragraphs: [
         'La pagina esta enfocada en accion rapida: buscas el jugador, aplicas filtros y copias el codigo desde el mismo bloque sin pasos innecesarios.',
-        'Muchos usuarios siguen buscando terminos de CS:GO. En septiembre de 2026, Valve agrego el estilo Static Quadrant, una opcion de color para el contorno y cambio el formato compartido. Estos codigos son anteriores a esos cambios y deben confirmarse en el juego actual.',
+        'El 23 de septiembre de 2026, Valve paso a medir grosor y longitud en pixeles; el ejemplo oficial usa gap 4. El 30 de septiembre agrego opciones de mira y cambio el formato compartido. Estos codigos son anteriores a esos cambios y aun no se revalidaron.',
         'Despues de importar, conviene ajustar color, grosor, gap y tamano segun tu resolucion y visibilidad. Un codigo profesional es una base util, no un ajuste final obligatorio.',
       ],
     },
@@ -323,7 +359,7 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
     {
       title: 'Limites y notas de actualizacion',
       paragraphs: [
-        'Los profesionales cambian su configuracion con el tiempo. La base se reviso el 27 de mayo de 2026, antes de los cambios de mira de septiembre; los codigos todavia deben confirmarse en el formato actual de CS2.',
+        'El 23 de septiembre de 2026, Valve paso a medir el grosor y la longitud en pixeles; el ejemplo oficial usa gap 4. El 30 de septiembre agrego opciones de mira y cambio el formato del codigo compartido. Esta base se reviso en mayo y no fue revalidada despues de esas actualizaciones.',
         'Si un codigo no esta totalmente confirmado, queda marcado con confianza media o baja para que lo uses como referencia inicial y no como dato absoluto.',
         'Recuerda que la mira no reemplaza fundamentos de juego: colocacion de crosshair, control de spray, timing y toma de decisiones.',
       ],
@@ -340,7 +376,7 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
     {
       question: 'Como importo un codigo de mira en CS2?',
       answer:
-        'Abre Settings > Crosshair/Scopes > Share or Import. Valve cambio el formato en septiembre de 2026; este codigo es anterior y todavia no fue revalidado en el cliente actual. Confirmalo antes de usarlo.',
+        'Abre Settings > Crosshair/Scopes > Share or Import. Valve cambio el formato del codigo compartido el 30 de septiembre de 2026. Estos codigos todavia no se revalidaron en el cliente actual; usa el generador en pixeles para crear nuevos ajustes y aplicarlos en la consola.',
     },
     {
       question: 'Estos codigos tambien sirven para busquedas de CS:GO crosshair?',
@@ -393,8 +429,21 @@ const esContent: Cs2CrosshairCodesLocaleContent = {
     },
     cautionTitle: 'Aviso importante',
     cautionText:
-      'Valve agrego opciones de mira y cambio el formato de los codigos en septiembre de 2026. Estos codigos se revisaron antes del cambio; confirma cada uno en el juego actual antes de usarlo.',
+      'Valve cambio grosor y longitud a unidades en pixeles el 23 de septiembre de 2026 y cambio el formato compartido el 30 de septiembre. Estos codigos se revisaron antes de esas actualizaciones.',
     sourceLabel: 'Fuente',
+    legacyCodeNote:
+      'Este codigo es anterior a la actualizacion de septiembre de 2026 y no fue revalidado en el formato actual de CS2.',
+    pixelGeneratorTitle: 'Generador de mira para el sistema actual de pixeles',
+    pixelGeneratorHelp:
+      'Valve ahora mide grosor y longitud en pixeles. El ejemplo oficial usa 1 px de grosor, 8 px de longitud y gap 4. El juego reescala los valores si cambia la resolucion.',
+    thicknessLabel: 'Grosor (px)',
+    lengthLabel: 'Longitud (px)',
+    gapLabel: 'Gap',
+    gapHelp:
+      'El gap negativo se permite con el estilo dinamico clasico. Este generador no cambia el estilo de tu mira.',
+    copySettings: 'Copiar comandos',
+    copiedSettings: 'Comandos copiados',
+    officialUpdateLink: 'Notas oficiales de Valve',
   },
 };
 
@@ -423,7 +472,7 @@ const zhContent: Cs2CrosshairCodesLocaleContent = {
       title: '如何高效使用这个 CS2 准星数据库',
       paragraphs: [
         '本页面专为速度而设计。你无需在过时的截图之间来回切换,只需按玩家姓名搜索、按位置筛选,并在同一张卡片中复制准星代码。',
-        '很多玩家仍会搜索 CS:GO 准星相关词汇。Valve 于 2026 年 9 月新增 Static Quadrant 样式和准星轮廓颜色选项,并更改了分享代码格式。本数据库中的代码早于这些变化,仍需在当前游戏中确认。',
+        'Valve 于 2026 年 9 月 23 日将准星粗细和长度改为像素单位,官方示例中的间距为 4;9 月 30 日增加准星选项并更改分享代码格式。本数据库中的代码早于这些变化,尚未重新验证。',
         '导入之后,请根据你的显示器和分辨率调整粗细、大小和颜色等细节。职业选手的代码是一个不错的起点,但最终的准星应该符合你自己的视觉舒适度。',
       ],
     },
@@ -442,7 +491,7 @@ const zhContent: Cs2CrosshairCodesLocaleContent = {
     {
       title: '重要限制与更新说明',
       paragraphs: [
-        '职业选手可能因赛事、更换显示器或个人偏好调整设置。本数据库最后检查于 2026 年 5 月 27 日,早于 9 月的准星更新;这些代码仍需在当前 CS2 格式中确认。',
+        'Valve 于 2026 年 9 月 23 日将准星粗细和长度改为像素单位;官方示例中的间距为 4。9 月 30 日又增加了准星选项并更改了分享代码格式。本数据库在 5 月检查过,尚未根据这些更新重新验证。',
         '当某个代码尚未被完全验证时,我们会将其标记为中等或较低可信度。这类信息请当作初步参考,并结合其他可靠来源加以确认。',
         '准星代码有助于提升清晰度,但实际的瞄准表现仍然取决于走位、准星预瞄习惯、压枪控制和高压下的判断力。',
       ],
@@ -459,7 +508,7 @@ const zhContent: Cs2CrosshairCodesLocaleContent = {
     {
       question: '如何在 CS2 中导入准星代码?',
       answer:
-        '进入 Settings > Crosshair/Scopes > Share or Import。Valve 于 2026 年 9 月更改了分享代码格式;本条目早于该更新,尚未在当前客户端重新验证,请先确认再使用。',
+        '进入 Settings > Crosshair/Scopes > Share or Import。Valve 于 2026 年 9 月 30 日更改了分享代码格式。本列表中的代码尚未在当前客户端重新验证;你可以用像素设置生成器创建新配置并在控制台中应用。',
     },
     {
       question: '这些代码也适用于搜索 CS:GO 准星的玩家吗?',
@@ -509,8 +558,18 @@ const zhContent: Cs2CrosshairCodesLocaleContent = {
     },
     cautionTitle: '重要提示',
     cautionText:
-      'Valve 于 2026 年 9 月新增准星选项并更改分享代码格式。这些代码在更新前检查过;使用前请在当前游戏中逐一确认。',
+      'Valve 于 2026 年 9 月 23 日将准星粗细和长度改为像素单位,并于 9 月 30 日更改分享代码格式。这些代码在更新前检查过。',
     sourceLabel: '来源',
+    legacyCodeNote: '此代码早于 2026 年 9 月更新,尚未按当前 CS2 格式重新验证。',
+    pixelGeneratorTitle: '当前像素准星设置生成器',
+    pixelGeneratorHelp: 'Valve 现在以像素为单位调整准星粗细和长度。官方示例为粗细 1 px、长度 8 px、间距 4。更改分辨率时,游戏会重新缩放这些数值。',
+    thicknessLabel: '粗细(px)',
+    lengthLabel: '长度(px)',
+    gapLabel: '间距',
+    gapHelp: '经典动态样式允许负间距。本生成器不会更改你的准星样式。',
+    copySettings: '复制指令',
+    copiedSettings: '指令已复制',
+    officialUpdateLink: 'Valve 官方更新说明',
   },
 };
 
