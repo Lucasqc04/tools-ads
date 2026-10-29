@@ -201,3 +201,23 @@ a {
   max-width: 100%;
   height: auto;
 }
+
+@media (max-width: 639px) {
+  .whiteboard-canvas .App-toolbar--mobile > .Stack_horizontal {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .whiteboard-canvas .App-toolbar--mobile > .Stack_horizontal::-webkit-scrollbar {
+    display: none;
+  }
+
+  .whiteboard-canvas .App-toolbar--mobile > .Stack_horizontal > * {
+    flex-shrink: 0;
+  }
+}

@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject, type PointerEvent as ReactPointerEvent } from 'react';
-import { Eye, EyeOff, PenLine } from 'lucide-react';
+import { Eye, EyeOff, PenLine, ZoomIn, ZoomOut } from 'lucide-react';
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import type { AppState, BinaryFileData, BinaryFiles, ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import { getShareScreenCallCopy } from '@/data/i18n/share-screen-call';
@@ -21,6 +21,10 @@ const MAX_SCENE_ELEMENTS = 25_000;
 const MAX_FILE_CHARS = 7 * 1024 * 1024;
 const CHANNEL_BUFFER_LIMIT = 256 * 1024;
 const sharedBoardId = 'shared';
+const MIN_BOARD_ZOOM = 0.1;
+const MAX_BOARD_ZOOM = 30;
+const BOARD_ZOOM_STEP = 0.1;
+const normalizeBoardZoom = (value: number): AppState['zoom']['value'] => value as AppState['zoom']['value'];
 
 type BoardPerson = { id: string; displayName: string };
 type ElementAuthor = { id: string; name: string };
@@ -89,6 +93,7 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
   const [inspectedElementId, setInspectedElementId] = useState<string | null>(null);
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
   const [syncWarning, setSyncWarning] = useState(false);
+  const [zoomPercent, setZoomPercent] = useState(100);
   const scenesRef = useRef<Map<string, BoardScene> | null>(null);
   if (!scenesRef.current) scenesRef.current = new Map([[sharedBoardId, emptyScene()]]);
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
@@ -107,6 +112,9 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
   const warnedFilesRef = useRef(new Set<string>());
   const pointerFrameRef = useRef<number | null>(null);
   const lastPointerInspectRef = useRef(0);
+  const activeCanvasPointersRef = useRef(new Map<number, string>());
+  const pendingCanvasSyncRef = useRef(new Set<string>());
+  const fittedBoardsRef = useRef(new Set<string>());
   selectedBoardIdRef.current = selectedBoardId;
   identityRef.current = { selfId, selfName };
   notifyRef.current = notify;
@@ -146,8 +154,88 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
     apiRef.current = api;
     apiBoardIdRef.current = boardId;
     if (Object.keys(latest.files).length) api.addFiles(Object.values(latest.files));
-    if (latest.elements.length) api.updateScene({ elements: latest.elements, captureUpdate: 'NEVER' });
+    if (latest.elements.length) {
+      api.updateScene({ elements: latest.elements, captureUpdate: 'NEVER' });
+      api.scrollToContent(latest.elements, { fitToContent: true, animate: false });
+      fittedBoardsRef.current.add(boardId);
+    }
+    setZoomPercent(Math.round(api.getAppState().zoom.value * 100));
+    pendingCanvasSyncRef.current.delete(boardId);
   }, [getScene]);
+
+  const syncSceneToCanvas = useCallback((boardId: string) => {
+    const api = apiRef.current;
+    if (!api || apiBoardIdRef.current !== boardId) return;
+    if (Array.from(activeCanvasPointersRef.current.values()).includes(boardId) || api.getAppState().editingTextElement) {
+      pendingCanvasSyncRef.current.add(boardId);
+      return;
+    }
+    const scene = getScene(boardId);
+    if (Object.keys(scene.files).length) api.addFiles(Object.values(scene.files));
+    api.updateScene({ elements: scene.elements, captureUpdate: 'NEVER' });
+    if (scene.elements.some((element) => !element.isDeleted) && !fittedBoardsRef.current.has(boardId)) {
+      api.scrollToContent(scene.elements, { fitToContent: true, animate: false });
+      fittedBoardsRef.current.add(boardId);
+    }
+    pendingCanvasSyncRef.current.delete(boardId);
+  }, [getScene]);
+
+  const changeZoom = useCallback((direction: -1 | 1) => {
+    const api = apiRef.current;
+    if (!api) return;
+    const state = api.getAppState();
+    const currentZoom = state.zoom.value;
+    const nextZoom = Math.max(MIN_BOARD_ZOOM, Math.min(MAX_BOARD_ZOOM, currentZoom + direction * BOARD_ZOOM_STEP));
+    if (nextZoom === currentZoom) return;
+    api.updateScene({
+      appState: {
+        zoom: { value: normalizeBoardZoom(nextZoom) },
+        scrollX: state.scrollX + (state.width / 2 / nextZoom) - (state.width / 2 / currentZoom),
+        scrollY: state.scrollY + (state.height / 2 / nextZoom) - (state.height / 2 / currentZoom),
+      },
+    });
+    setZoomPercent(Math.round(nextZoom * 100));
+  }, []);
+
+  const resetZoom = useCallback(() => {
+    const api = apiRef.current;
+    if (!api) return;
+    const state = api.getAppState();
+    const currentZoom = state.zoom.value;
+    if (currentZoom !== 1) {
+      api.updateScene({
+        appState: {
+          zoom: { value: normalizeBoardZoom(1) },
+          scrollX: state.scrollX + (state.width / 2) - (state.width / 2 / currentZoom),
+          scrollY: state.scrollY + (state.height / 2) - (state.height / 2 / currentZoom),
+        },
+      });
+    }
+    setZoomPercent(100);
+  }, []);
+
+  const handleScrollChange = useCallback((_scrollX: number, _scrollY: number, zoom: AppState['zoom']) => {
+    const nextZoom = Math.round(zoom.value * 100);
+    setZoomPercent((current) => current === nextZoom ? current : nextZoom);
+  }, []);
+
+  const schedulePendingCanvasSync = useCallback((boardId: string) => {
+    if (!pendingCanvasSyncRef.current.has(boardId)) return;
+    window.requestAnimationFrame(() => syncSceneToCanvas(boardId));
+  }, [syncSceneToCanvas]);
+
+  const trackCanvasPointerDown = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!(event.target instanceof Element) || !event.target.closest('.excalidraw')) return;
+    activeCanvasPointersRef.current.set(event.pointerId, selectedBoardIdRef.current);
+  }, []);
+
+  const trackCanvasPointerEnd = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    const boardId = activeCanvasPointersRef.current.get(event.pointerId);
+    if (!boardId) return;
+    activeCanvasPointersRef.current.delete(event.pointerId);
+    if (Array.from(activeCanvasPointersRef.current.values()).includes(boardId)) return;
+    schedulePendingCanvasSync(boardId);
+  }, [schedulePendingCanvasSync]);
 
   const sendTransfer = useCallback(async (channel: RTCDataChannel, payload: BoardPayload) => {
     const serialized = JSON.stringify(payload);
@@ -245,10 +333,12 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
     const next: BoardScene = { elements: orderedElements(elements, order), files, order, orderClock, orderSender };
     scenesRef.current!.set(payload.boardId, next);
     if (openRef.current && apiRef.current && apiBoardIdRef.current === payload.boardId) {
-      if (changedFiles.length) apiRef.current.addFiles(changedFiles);
-      if (payload.kind !== 'file') apiRef.current.updateScene({ elements: next.elements, captureUpdate: 'NEVER' });
+      pendingCanvasSyncRef.current.add(payload.boardId);
+      syncSceneToCanvas(payload.boardId);
+    } else {
+      pendingCanvasSyncRef.current.add(payload.boardId);
     }
-  }, [getScene]);
+  }, [getScene, syncSceneToCanvas]);
 
   const handleIncomingMessage = useCallback((channel: RTCDataChannel, value: unknown, remotePeerId: string) => {
     if (typeof value !== 'object' || value === null) return false;
@@ -352,7 +442,6 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
       const old = previous.get(element.id);
       return !old || JSON.stringify(element) !== JSON.stringify(old);
     });
-    const authorshipChanged = changedElements.some((element) => JSON.stringify(element) !== JSON.stringify(elements.find((original) => original.id === element.id)));
     const mergedFiles = { ...scene.files, ...files };
     const changedFiles = Object.values(files).filter((file) => {
       const old = scene.files[file.id];
@@ -379,6 +468,7 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
         return element ? elementAuthor(element)?.name : undefined;
       }).filter((name): name is string => Boolean(name));
       setAuthorNames(authors);
+      schedulePendingCanvasSync(boardId);
       return;
     }
     const orderClock = orderChanged ? scene.orderClock + 1 : scene.orderClock;
@@ -388,13 +478,10 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
       orderClock, orderSender,
     };
     scenesRef.current!.set(boardId, nextScene);
+    if (nextElements.some((element) => !element.isDeleted)) fittedBoardsRef.current.add(boardId);
     if (!unsharedFileIdsRef.current.size) {
       setSyncWarning(false);
       warnedBoardsRef.current.delete(boardId);
-    }
-    const api = apiRef.current;
-    if (api && apiBoardIdRef.current === boardId && authorshipChanged) {
-      api.updateScene({ elements: nextScene.elements, captureUpdate: 'NEVER' });
     }
     const pending = pendingPatchesRef.current.get(boardId) ?? { elements: new Map<string, ExcalidrawElement>(), files: new Map<string, BinaryFileData>() };
     shareableElements.forEach((element) => pending.elements.set(element.id, element));
@@ -410,12 +497,8 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
       return element ? elementAuthor(element)?.name : undefined;
     }).filter((name): name is string => Boolean(name));
     setAuthorNames(names);
-  }, [canEdit, copy.whiteboardSyncTooLarge, flushPatch, getScene, setAuthorNames]);
-
-  const updateSelectedAuthors = useCallback((elements: readonly ExcalidrawElement[], ids: Record<string, boolean>) => {
-    const selected = elements.filter((element) => ids[element.id]);
-    setAuthorNames(selected.map((element) => elementAuthor(element)?.name).filter((name): name is string => Boolean(name)));
-  }, [setAuthorNames]);
+    schedulePendingCanvasSync(boardId);
+  }, [canEdit, copy.whiteboardSyncTooLarge, flushPatch, getScene, schedulePendingCanvasSync, setAuthorNames]);
 
   const inspectAt = useCallback((clientX: number, clientY: number, target: EventTarget | null) => {
     if (!(target instanceof Element) || !target.closest('.excalidraw')) return;
@@ -429,9 +512,9 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
     const x = (clientX - offsetLeft) / scale - scrollX;
     const y = (clientY - offsetTop) / scale - scrollY;
     const tolerance = 8 / scale;
-    const element = [...api.getSceneElements()].reverse().find((item) => !item.isDeleted && x >= item.x - tolerance && x <= item.x + item.width + tolerance && y >= item.y - tolerance && y <= item.y + item.height + tolerance);
+    const element = [...getScene(selectedBoardIdRef.current).elements].reverse().find((item) => !item.isDeleted && x >= item.x - tolerance && x <= item.x + item.width + tolerance && y >= item.y - tolerance && y <= item.y + item.height + tolerance);
     setInspectedElementId((current) => current === (element?.id ?? null) ? current : element?.id ?? null);
-  }, []);
+  }, [getScene]);
 
   const inspectAtFrame = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
     const { clientX, clientY, target } = event;
@@ -466,7 +549,7 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
 
   if (!open) return <div className="hidden" aria-hidden="true" />;
 
-  return <div className="absolute inset-0 z-20 flex min-h-0 min-w-0 flex-col overflow-hidden bg-ink-950 text-white" onPointerMoveCapture={inspectAtFrame} onPointerLeave={() => { setInspectedElementId(null); if (pointerFrameRef.current !== null) window.cancelAnimationFrame(pointerFrameRef.current); pointerFrameRef.current = null; }} onContextMenuCapture={inspectContextMenu}>
+  return <div className="absolute inset-0 z-20 flex min-h-0 min-w-0 flex-col overflow-hidden bg-ink-950 text-white" onPointerDownCapture={trackCanvasPointerDown} onPointerUpCapture={trackCanvasPointerEnd} onPointerCancelCapture={trackCanvasPointerEnd} onPointerMoveCapture={inspectAtFrame} onPointerLeave={() => { setInspectedElementId(null); if (pointerFrameRef.current !== null) window.cancelAnimationFrame(pointerFrameRef.current); pointerFrameRef.current = null; }} onContextMenuCapture={inspectContextMenu}>
     <header className="flex min-h-11 shrink-0 items-center gap-2 border-b border-ink-800 bg-ink-950 px-2.5 sm:px-3">
       <PenLine size={16} className="shrink-0 text-accent-400" aria-hidden="true" />
       <span className="shrink-0 text-sm font-semibold">{copy.whiteboard}</span>
@@ -487,7 +570,8 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
         </div>;
       })}
     </nav>
-    <div className="relative min-h-0 min-w-0 flex-1 bg-white">
+    <div className="whiteboard-canvas relative min-h-0 min-w-0 flex-1 overflow-hidden bg-white">
+      <div className="absolute inset-0 min-h-0 min-w-0">
       <Excalidraw
         key={selectedBoardId}
         theme="light"
@@ -495,8 +579,21 @@ export function Whiteboard({ open, locale, selfId, selfName, participants, getCh
         viewModeEnabled={!canEdit}
         initialData={initialData}
         excalidrawAPI={handleExcalidrawAPI}
-        onChange={(elements, appState, files) => { handleChange(elements, appState, files); updateSelectedAuthors(elements, appState.selectedElementIds); }}
+        onChange={handleChange}
+        onScrollChange={handleScrollChange}
       />
+      </div>
+      <div className="absolute bottom-14 right-2 z-10 flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-sm sm:right-3" aria-label={copy.whiteboard}>
+        <button type="button" aria-label={copy.whiteboardZoomOut} title={copy.whiteboardZoomOut} onClick={() => changeZoom(-1)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+          <ZoomOut size={18} aria-hidden="true" />
+        </button>
+        <button type="button" aria-label={copy.whiteboardResetZoom} title={copy.whiteboardResetZoom} onClick={resetZoom} className="min-w-12 rounded-lg px-1 text-center text-xs font-semibold tabular-nums text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+          {zoomPercent}%
+        </button>
+        <button type="button" aria-label={copy.whiteboardZoomIn} title={copy.whiteboardZoomIn} onClick={() => changeZoom(1)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+          <ZoomIn size={18} aria-hidden="true" />
+        </button>
+      </div>
     </div>
     <footer className="flex min-h-8 shrink-0 items-center border-t border-ink-800 bg-ink-950 px-3 py-1.5">
       {authorNames.length ? <span className="max-w-full truncate rounded-full bg-ink-800 px-2.5 py-1 text-[10px] font-medium text-ink-100">{copy.whiteboardCreatedBy.replace('{name}', authorNames.join(', '))}</span>
