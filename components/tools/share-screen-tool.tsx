@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, ty
 import {
   Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Download, Expand, Flashlight, FlashlightOff, Gauge, MoreHorizontal,
   LoaderCircle, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, Paperclip, PhoneOff,
-  PictureInPicture2, Send, Settings2, Shrink, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi, X,
+  PenLine, PictureInPicture2, Send, Settings2, Shrink, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi, X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -46,6 +46,7 @@ import { clearCallSession, loadCallSession, saveCallSession, updateCallSessionCu
 import { CallSheet } from '@/components/tools/share-screen/call-sheet';
 import { ChatMessage } from '@/components/tools/share-screen/chat-message';
 import { ChatContextMenu } from '@/components/tools/share-screen/chat-context-menu';
+import { Whiteboard, type BoardMessageHandlerRef } from '@/components/tools/share-screen/whiteboard';
 import { DevicePicker } from '@/components/tools/share-screen/device-picker';
 import type { AppLocale } from '@/lib/i18n/config';
 
@@ -346,6 +347,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const [participantAudioMenu, setParticipantAudioMenu] = useState<string | null>(null);
   const [screenSharerId, setScreenSharerId] = useState<string | null>(null);
   const [hostCallPanel, setHostCallPanel] = useState<'participants' | 'settings' | 'stats' | 'chat' | null>(null);
+  const [whiteboardOpen, setWhiteboardOpen] = useState(false);
+  const [whiteboardMounted, setWhiteboardMounted] = useState(false);
   const [chatMessages, setChatMessages] = useState<CallChatMessage[]>([]);
   const [chatDraft, setChatDraft] = useState('');
   const [unreadChatCount, setUnreadChatCount] = useState(0);
@@ -412,6 +415,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const chatAtEndRef = useRef(true);
   const chatContentRef = useRef<HTMLDivElement>(null);
   const selfIdRef = useRef('');
+  const whiteboardMessageHandlerRef = useRef<BoardMessageHandlerRef['current']>(null);
   const callSoundsRef = useRef(true);
   const [callSoundsOn, setCallSoundsOn] = useState(true);
   // Saves server requests: polls and heartbeats run less often. Read through a ref by timers that are already running.
@@ -535,7 +539,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     patchAttachment(message.id, { onDisk: true });
   }, [patchAttachment, queueDiskWrite]);
 
-  const bindChatChannel = useCallback((channel: RTCDataChannel) => {
+  const bindChatChannel = useCallback((channel: RTCDataChannel, remotePeerId: string) => {
     // Chunks must arrive synchronously and in order, so ask for ArrayBuffers instead of Blobs.
     channel.binaryType = 'arraybuffer';
     channel.bufferedAmountLowThreshold = 256 * 1024;
@@ -550,10 +554,15 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         if (result) applyFileEvent(result);
         return;
       }
-      if (typeof data !== 'string' || data.length > 4_000) return;
+      if (typeof data !== 'string' || data.length > 16_000) return;
       let parsed: unknown;
       try { parsed = JSON.parse(data); } catch { return; }
-      if ((parsed as { type?: unknown } | null)?.type === 'chat') {
+      const messageType = (parsed as { type?: unknown } | null)?.type;
+      if (messageType === 'board-chunk' || messageType === 'board-sync-request') {
+        whiteboardMessageHandlerRef.current?.(channel, parsed, remotePeerId);
+        return;
+      }
+      if (messageType === 'chat') {
         const message = parseChatMessage(data);
         if (!message || chatMessageIdsRef.current.has(message.id)) return;
         chatMessageIdsRef.current.add(message.id);
@@ -1473,7 +1482,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         };
         connection.ondatachannel = (event) => {
           runtime.chatChannel = event.channel;
-          bindChatChannel(event.channel);
+          bindChatChannel(event.channel, 'host');
           // When the host's channel closes (for example, the host reloaded), poll at the reconnect pace instead of the connected pace.
           event.channel.addEventListener('close', () => { runtime.connected = false; schedulePoll(); });
         };
@@ -1487,7 +1496,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         const meshPc = new RTCPeerConnection({ iceServers: config.iceServers, iceCandidatePoolSize: 2 });
         const mesh: ViewerMeshPeer = { id: otherPeerId, pc: meshPc, negotiationId: crypto.randomUUID(), candidates: [], transceivers: null, senders: [], senderKinds: [], chatChannel: null, bytes: new Map(), lastStatsAt: Date.now(), state: meshPc.connectionState };
         runtime.meshPeers.set(otherPeerId, mesh);
-        meshPc.ondatachannel = (event) => { mesh.chatChannel = event.channel; bindChatChannel(event.channel); };
+        meshPc.ondatachannel = (event) => { mesh.chatChannel = event.channel; bindChatChannel(event.channel, otherPeerId); };
         meshPc.ontrack = (event) => {
           if (!mesh.transceivers) {
             const pending = pendingMeshTrackEvents.get(otherPeerId) ?? [];
@@ -1499,7 +1508,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         };
         if (createOfferTransceivers) {
           mesh.chatChannel = meshPc.createDataChannel(CHAT_CHANNEL_LABEL, { ordered: true });
-          bindChatChannel(mesh.chatChannel);
+          bindChatChannel(mesh.chatChannel, otherPeerId);
           const tracks = runtime.localStream?.getTracks() ?? [];
           const shared = runtime.screenStream;
           setMeshTransceivers(mesh, createCallMediaTransceivers(
@@ -1808,8 +1817,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       const peer: HostPeer = { id: peerId, displayName, cameraOn: false, microphoneOn: false, pc, senders, senderKinds, transceivers, chatChannel: null, negotiationId: crypto.randomUUID(), candidates: [], metrics: null, state: pc.connectionState, economy: false, lastAdaptation: 0, restartCount: 0, byteCounters: new Map(), lastStatsAt: Date.now(), baseline: null, congestionSince: null, stableSince: null, appliedBitrate: Math.min(estimateProfileBps, initialAllocation.bitrateBps) };
       runtime.peers.set(peerId, peer);
       peer.chatChannel = pc.createDataChannel(CHAT_CHANNEL_LABEL, { ordered: true });
-      bindChatChannel(peer.chatChannel);
-      pc.ondatachannel = (event) => bindChatChannel(event.channel);
+      bindChatChannel(peer.chatChannel, peerId);
+      pc.ondatachannel = (event) => bindChatChannel(event.channel, peerId);
       const afterEstimate = estimateUploadTraffic(estimateProfileBps + extraCameraBps, previousViewers + 1, undefined, outgoingAudioBps).totalMbps;
       if (afterEstimate > startPrefs.uploadBudgetMbps && (network.type === 'cellular' || startPrefs.limitedConnection || startPrefs.dataSaver || network.type === 'unknown') && Date.now() - lastBudgetNoticeRef.current > 60_000) {
         lastBudgetNoticeRef.current = Date.now();
@@ -2201,15 +2210,16 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     } catch (error) { notify(humanError(error, ui, x)); }
   }, [notify, roomStatus?.hostPeerId, ui, x]);
 
-  const getOpenChatChannels = useCallback(() => {
+  const getChatChannels = useCallback(() => {
     const host = hostRef.current;
     const viewer = viewerRef.current;
     const channels = [
       ...(host ? Array.from(host.peers.values(), (peer) => peer.chatChannel) : []),
       ...(viewer ? [viewer.chatChannel, ...Array.from(viewer.meshPeers.values(), (peer) => peer.chatChannel)] : []),
     ];
-    return channels.filter((channel): channel is RTCDataChannel => channel?.readyState === 'open');
+    return channels.filter((channel): channel is RTCDataChannel => Boolean(channel && channel.readyState !== 'closed'));
   }, []);
+  const getOpenChatChannels = useCallback(() => getChatChannels().filter((channel) => channel.readyState === 'open'), [getChatChannels]);
 
   const jumpChatToEnd = useCallback(() => {
     const list = chatListRef.current;
@@ -2546,6 +2556,11 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const canManageRoom = isHostCall || viewerIsRoomHost;
   const inCall = isHostCall && phase === 'active' || isViewerCall;
   useEffect(() => {
+    if (inCall) return;
+    setWhiteboardOpen(false);
+    setWhiteboardMounted(false);
+  }, [inCall]);
+  useEffect(() => {
     if (!inCall) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'F12') return;
@@ -2860,7 +2875,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     const stagePersonId = showingSharedScreen ? null : focusedPerson?.id ?? null;
     const thumbPeople = participants.filter((person) => person.id !== stagePersonId);
     const thumbHasScreen = screenIsLive && !showingSharedScreen;
-    const showThumbs = !stageExpanded && thumbPeople.length + (thumbHasScreen ? 1 : 0) > 0;
+    const showThumbs = !whiteboardOpen && !stageExpanded && thumbPeople.length + (thumbHasScreen ? 1 : 0) > 0;
     const speakingOther = participants.find((person) => person.id !== selfId && person.id !== stagePersonId && speakingPeerIds.has(person.id));
     const thumbSize = desktopLayout ? 'aspect-video w-full' : 'h-[5.5rem] w-32';
     const screenThumb = (
@@ -2914,6 +2929,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         <div className="relative flex min-h-0 flex-1 gap-3 px-2 pb-2 sm:px-4 sm:pb-3">
           <main className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
             <section id="screenshare-call-stage" onClick={revealStageControls} className="group relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-2xl bg-black ring-1 ring-inset ring-white/10">
+              {!whiteboardOpen ? <>
               {stageStream?.getVideoTracks().some((track) => track.readyState === 'live')
                 ? <CallVideo stream={stageStream} fit={showingSharedScreen ? 'contain' : 'cover'} mirror={stageIsOwnCamera && mirrorOwn} className={`h-full w-full ${showingSharedScreen ? 'object-contain' : 'object-cover md:object-contain'}`} onPlayBlocked={markPlayBlocked} />
                 : focusedPerson
@@ -2936,6 +2952,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
               </button> : null}
               {participants.length > 1 || screenIsLive ? <button type="button" aria-label={stageExpanded ? callCopy.collapseStage : callCopy.expandStage} title={stageExpanded ? callCopy.collapseStage : callCopy.expandStage} onClick={(event) => { event.stopPropagation(); setStageExpanded((value) => !value); }} className={`absolute bottom-3 right-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur transition hover:bg-accent-500 hover:text-ink-950 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${stageControlsVisible ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>{stageExpanded ? <Shrink size={18} /> : <Expand size={18} />}</button> : null}
               {callPlayBlocked ? <button type="button" onClick={() => { setSpeakerMuted(false); setPlayAudioSignal((value) => value + 1); setCallPlayBlocked(false); }} className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-xl bg-accent-500 px-4 py-2.5 text-sm font-semibold text-ink-950 shadow-lg">{ui.playWithSound}</button> : null}
+              </> : null}
+              {whiteboardMounted ? <Whiteboard open={whiteboardOpen} locale={locale} selfId={selfId} selfName={participantName.trim().slice(0, 32) || callCopy.you} participants={participants.map((person) => ({ id: person.id, displayName: person.displayName }))} getChannels={getChatChannels} messageHandlerRef={whiteboardMessageHandlerRef} notify={notify} /> : null}
             </section>
 
             {showThumbs && !desktopLayout ? <div className="-mx-1 shrink-0 overflow-x-auto overscroll-x-contain px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -3036,10 +3054,14 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           </CallSheet> : null}
         </div>
 
-        <footer className="flex shrink-0 flex-nowrap items-start justify-center gap-1.5 border-t border-ink-800 bg-ink-950 px-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-3 sm:gap-3 sm:px-4">
+        <footer className="flex shrink-0 flex-nowrap items-start justify-start gap-1 overflow-x-auto overscroll-x-contain border-t border-ink-800 bg-ink-950 px-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:justify-center sm:gap-3 sm:px-4">
           {callMediaButton(devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff, microphoneOn, devicePending === 'microphone' ? <LoaderCircle size={21} className="animate-spin" /> : microphoneOn ? <Mic size={21} /> : <MicOff size={21} />, () => void toggleLocalDevice('microphone'), !microphoneOn && devicePending !== 'microphone', '', 'neutral')}
           {callMediaButton(devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff, cameraOn, devicePending === 'camera' ? <LoaderCircle size={21} className="animate-spin" /> : cameraOn ? <Camera size={21} /> : <CameraOff size={21} />, () => void toggleLocalDevice('camera'), !cameraOn && devicePending !== 'camera', '', 'neutral')}
           {callMediaButton(shareLabel, screenSharerId === selfId, <MonitorUp size={21} />, () => screenSharerId === selfId ? void stopScreenShare() : startScreenShare(), false, screenSupported || screenSharerId === selfId ? '' : 'opacity-60')}
+          {callMediaButton(callCopy.whiteboard, whiteboardOpen, <PenLine size={20} />, () => {
+            if (!whiteboardOpen) { setWhiteboardMounted(true); setHostCallPanel(null); setWhiteboardOpen(true); }
+            else setWhiteboardOpen(false);
+          })}
           <div className="flex shrink-0 flex-col items-center gap-1">
             <Button shape="circle" variant={hostCallPanel === 'chat' ? 'callActive' : 'call'} aria-label={callCopy.chat} title={callCopy.chat} onClick={() => { chatAtEndRef.current = true; setHostCallPanel((current) => current === 'chat' ? null : 'chat'); setUnreadChatCount(0); }} className={`relative ${callButtonSize} shrink-0 p-0`}><MessageCircle size={20} />{unreadChatCount ? <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-accent-500 px-1 text-[10px] font-bold leading-4 text-ink-950">{unreadChatCount > 9 ? '9+' : unreadChatCount}</span> : null}</Button>
             <span className="hidden max-w-20 truncate text-[10px] text-ink-400 sm:block">{callCopy.chat}</span>
