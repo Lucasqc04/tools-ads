@@ -26,6 +26,7 @@ export type Cs2PlayerCrosshair = {
   sourceName?: string;
   sourceUrl?: string;
   lastCheckedAt: string;
+  lastUsedAt?: string;
   confidence: Cs2CrosshairConfidence;
   warnings?: string[];
   notes?: string;
@@ -1557,10 +1558,151 @@ for (const extra of extraCs2CrosshairCodes) {
   });
 }
 
+type CurrentCrosshairUpdate = readonly [
+  player: string,
+  code: string,
+  checkedAt: string,
+  source: 'team-post' | 'public-settings',
+  team?: string,
+];
+
+const currentCrosshairUpdates = [
+  ['donk', 'CSBCYxZTb4QsweoRtJStpRzipduzZreoRod84Di4co3sRd', '2026-09-29', 'team-post', 'Team Spirit'],
+  ['sh1ro', 'CSbao2Ya9aThreGNSy9MAGXMC68d4XFs3Rmhr2M5QhC3ze', '2026-09-29', 'team-post', 'Team Spirit'],
+  ['tN1R', 'CSbao2Ya9aThreGNSy9MAGXMC68d4XFs3Rmhr2M5QhC3ze', '2026-09-29', 'team-post', 'Team Spirit'],
+  ['zont1x', 'CSwiiMO3ZJsikJUAEYtLHfaYNqrU9q4HuWu9GajHqKOcrf', '2026-09-29', 'team-post', 'Team Spirit'],
+  ['magixx', 'CSDsoMpjDYHwnTKypHujHnOV2PF3CwVOo73bzaEDGCq5mS', '2026-09-29', 'team-post', 'Team Spirit'],
+  ['ZywOo', 'CSUKNSLrOFfLsRm77fFrbL6cV7ozzQfEvv5tyXaGTMtnQi', '2026-10-04', 'public-settings', 'Vitality'],
+  ['m0NESY', 'CSkcw24bZeeBpUFbRLFoCxBcVOWkht8FzqNPoC83qusjsb', '2026-10-04', 'public-settings', 'Falcons'],
+  ['NiKo', 'CSJnSKAsiuWpFyvPercz3xbDb8PBi6pZDxh89zAHH7PxLV', '2026-10-04', 'public-settings', 'Falcons'],
+  ['ropz', 'CSXwetwoJqtbyDPnN2RnmBaapDRRwZXC5hXLxyDOwO9wVO', '2026-10-04', 'public-settings', 'Vitality'],
+  ['s1mple', 'CSrhA8Lyc2zBPSKnuXwqi86kDdfri67Ko9RrrjUQMRxyZd', '2026-10-03', 'public-settings', 'BC.Game'],
+  ['b1t', 'CSKzyVzczbvbKx4KsAGTAVhjDsFVjpdKeOvhvXaGTMtnQi', '2026-10-04', 'public-settings', 'Natus Vincere'],
+  ['Twistzz', 'CSM8bQNFu9ufcyfjkB8iPLsAVcXUZAoMShG5TE5QACUAVR', '2026-10-02', 'public-settings', 'FaZe Clan'],
+  ['frozen', 'CSY6qLhfT3OdQ4xsvd67qqOscxRyu5vZU43d96NcByotYi', '2026-10-02', 'public-settings', 'FaZe Clan'],
+  ['device', 'CSc67qJYrFrGFTqBH9OBqDiDM9zTCfxUkaCrC7NcByotYi', '2026-10-03', 'public-settings', '100 Thieves'],
+  ['jL', 'CSHtXbh3HDbUfGTMTBPNpqiKFdjCZkKYTp7zzxUnUKjJ2d', '2026-10-01', 'public-settings', 'Team Vitality (stand-in)'],
+  ['Spinx', 'CSv4JA76njqvFLCWrQNc9jho6z3MAWE6b4RfoJrNQqXJ8G', '2026-10-06', 'public-settings', 'MOUZ'],
+  ['XANTARES', 'CSr8XH3ABQA9e3OhKRkhitHVxT9WfJ7kMX47QxJ7BDWKUU', '2026-10-11', 'public-settings', 'Aurora'],
+  ['kyousuke', 'CShhV3sKDTBQ4XM2G6YrBTfc69o58FBEJoSjjuAY463Z9h', '2026-10-10', 'public-settings', 'Falcons'],
+  ['molodoy', 'CSS4EDvTAKNewC26JwrJUBSEWU4HDfBBrZaNAnyoqw3EJf', '2026-10-10', 'public-settings', 'FURIA'],
+  ['apEX', 'CSC79Rt9DrS2WzYne8bRUQYKN5SNwhQ4uaXoVkrcO6dkzf', '2026-10-11', 'public-settings', 'Team Vitality'],
+  ['mezii', 'CS8OkpTRXeSvSKz9wBbqytHoVndwpsiEbUezr2Z6mreseL', '2026-10-11', 'public-settings', 'Team Vitality'],
+  ['EliGE', 'CSHZJzpymA3szruK8EAVrJxJNGMOoaiYFC5q7UvLHJOcxJ', '2026-09-28', 'public-settings', 'Team Liquid'],
+] as const satisfies readonly CurrentCrosshairUpdate[];
+
+for (const [playerName, code, checkedAt, source, team] of currentCrosshairUpdates) {
+  const normalizedPlayer = normalizeForMatch(playerName);
+  const existingIndex = mergedSeedPlayers.findIndex((player) => {
+    if (normalizeForMatch(player.displayName) === normalizedPlayer) {
+      return true;
+    }
+
+    return player.aliases.some((alias) => normalizeForMatch(alias) === normalizedPlayer);
+  });
+  const update = {
+    crosshairCode: code,
+    shareCodeStatus: 'current' as const,
+    sourceName:
+      source === 'team-post'
+        ? 'Team Spirit X post; current code converted by Betrefs'
+        : 'Betrefs; current code generated from public player settings',
+    sourceUrl: 'https://betrefs.gg/cs2-crosshair-codes',
+    lastCheckedAt: checkedAt,
+    confidence: 'medium' as const,
+    ...(team ? { team } : {}),
+  };
+
+  if (existingIndex >= 0) {
+    mergedSeedPlayers[existingIndex] = {
+      ...mergedSeedPlayers[existingIndex],
+      ...update,
+    };
+    continue;
+  }
+
+  const slug = toSlug(playerName);
+  mergedSeedPlayers.push({
+    id: slug,
+    slug,
+    aliases: [],
+    displayName: playerName,
+    ...update,
+    warnings: sharedWarnings,
+  });
+}
+
+type LatestMatchCrosshair = readonly [player: string, code: string, lastUsedAt: string];
+
+// Current-format codes copied from each player's latest tracked match on CSstats.
+// Older CSGO- codes on that page are intentionally omitted so current entries stay import-ready.
+const latestMatchCrosshairs = [
+  ['donk', 'CSGf8YDobjep5Bk3LiFQUu8ZupRL26TnO4diZ9Z9EcVeyk', '2026-10-20'],
+  ['kyousuke', 'CSdKWPM6qOvUZV5kanG5Uvv6G2eDzxQRnKbdaPSraAM82a', '2026-10-25'],
+  ['m0NESY', 'CSb7uHXB989YebCcoiuafDiUKZntFPoXCVySN5sMcwOAYF', '2026-10-24'],
+  ['NiKo', 'CS4rk5QbqZ9Hkbo4RZENU6GMn48e3MnDOyhaN7XKRe3Wab', '2026-10-13'],
+  ['makazze', 'CScfBAWYK32VeaqUwfBNfQcEvhFOsaefFSTmW4BbaCVbRe', '2026-10-28'],
+  ['dem0n', 'CSTmehNuE5vTA9nAsnd92Aumh8QTExGGNf3DXKHn44s6id', '2026-10-28'],
+  ['magixx', 'CSztEhEt9QadbRnTfWZswHPP2fXDit2bUu4RfNTJbPWndP', '2026-10-20'],
+  ['zont1x', 'CSjUSNNAY5RBt2uVjLwEDEBz9ZBtWnA8Of6HWRuZpSjtxH', '2026-10-26'],
+  ['sh1ro', 'CSc4JnfsuC6964VDkzsq2qeRWFsVqKrbyDELxvfncUD6id', '2026-10-25'],
+  ['tN1R', 'CSHMaMsuZ4tkuSMkpx6ajXU9XyuWcjcxMG5nKQKj8STPGH', '2026-10-25'],
+  ['TeSeS', 'CSG3DBmqjFHtaXi7rbWyNaJLbbnMV3DWmUrr4S322dNzvP', '2026-10-28'],
+  ['apEX', 'CSwQ9twv239CyPj4jYzMtxdXLhWUtL5UzTYC4DE2uKT4PF', '2026-10-09'],
+  ['flameZ', 'CSCTWJSVydL9ecJ292AFNuNd7tj4qfJTDzV34iQqryCjhj', '2026-10-28'],
+  ['mezii', 'CSb7uHXB989YebCcoiuafDiUKZntFPoXCVySN5sMcwOAYF', '2026-10-28'],
+  ['FalleN', 'CSaGZfHaBrr5bU6mQbnXniJFEmwP6KF9yUfeiOwFiBThYD', '2026-10-22'],
+  ['molodoy', 'CS2FiEE2R8adYwabVpOWsYLQUnGORd6o2A7PZbeiLZKGhF', '2026-10-24'],
+  ['HeavyGod', 'CSmvCoRjzt9i8m9x72zRBjhLtjOpHd4uMBRetab6kzJrKZ', '2026-10-23'],
+  ['matys', 'CSm43VmEBCc6AHJ84Pp7tesm6jTUFpvMkUGhQckhSjhRhk', '2026-10-08'],
+  ['NertZ', 'CSJoXEA5vzVjAqDyjpTXhHLOR2fcCm98Gf69qseHV5bq8E', '2026-10-27'],
+  ['r1nkle', 'CSjVbYTjhXB7ox4RbL3LFxe8AfU3Nc7ki3H9dWzxLXAmHC', '2026-10-24'],
+] as const satisfies readonly LatestMatchCrosshair[];
+
+for (const [playerName, code, lastUsedAt] of latestMatchCrosshairs) {
+  const normalizedPlayer = normalizeForMatch(playerName);
+  const existingIndex = mergedSeedPlayers.findIndex((player) => {
+    if (normalizeForMatch(player.displayName) === normalizedPlayer) {
+      return true;
+    }
+
+    return player.aliases.some((alias) => normalizeForMatch(alias) === normalizedPlayer);
+  });
+  const update = {
+    crosshairCode: code,
+    shareCodeStatus: 'current' as const,
+    sourceName: 'CSstats; code from latest recorded match',
+    sourceUrl: 'https://csstats.gg/crosshairs',
+    lastCheckedAt: '2026-10-29',
+    lastUsedAt,
+    confidence: 'high' as const,
+  };
+
+  if (existingIndex >= 0) {
+    mergedSeedPlayers[existingIndex] = {
+      ...mergedSeedPlayers[existingIndex],
+      ...update,
+    };
+    continue;
+  }
+
+  const slug = toSlug(playerName);
+  mergedSeedPlayers.push({
+    id: slug,
+    slug,
+    aliases: [],
+    displayName: playerName,
+    ...update,
+    warnings: sharedWarnings,
+  });
+}
+
 export const cs2CrosshairPlayers: Cs2PlayerCrosshair[] = [...mergedSeedPlayers]
   .map((player) => ({
     ...player,
-    shareCodeStatus: player.crosshairCode ? 'pre-update' : undefined,
+    shareCodeStatus: player.crosshairCode
+      ? (player.shareCodeStatus ?? 'pre-update')
+      : undefined,
     edpi: computeEdpi(player.sensitivity, player.dpi),
   }))
   .sort((a, b) => a.displayName.localeCompare(b.displayName));

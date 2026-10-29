@@ -226,6 +226,8 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
                 <div className="space-y-2 rounded-xl border border-brand-200 bg-brand-50 p-3">
                   {player.shareCodeStatus === 'pre-update' ? (
                     <p className="text-xs leading-5 text-amber-900">{content.ui.legacyCodeNote}</p>
+                  ) : player.shareCodeStatus === 'current' ? (
+                    <p className="text-xs leading-5 text-brand-800">{content.ui.currentCodeNote}</p>
                   ) : null}
                   <pre className="overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-brand-100 bg-white p-3 font-mono text-xs text-slate-900">
                     {player.crosshairCode}
@@ -249,9 +251,28 @@ export function Cs2CrosshairCodesTool({ locale = 'pt-br' }: Readonly<Cs2Crosshai
                     new Date(`${player.lastCheckedAt}T12:00:00`),
                   )}
                 </p>
+                {player.lastUsedAt ? (
+                  <p>
+                    {content.ui.lastUsedLabel}: {dateFormatter.format(
+                      new Date(`${player.lastUsedAt}T12:00:00`),
+                    )}
+                  </p>
+                ) : null}
                 {player.sourceName ? (
                   <p>
-                    {content.ui.sourceLabel}: {player.sourceName}
+                    {content.ui.sourceLabel}:{' '}
+                    {player.sourceUrl ? (
+                      <a
+                        href={player.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-brand-700 underline underline-offset-2"
+                      >
+                        {player.sourceName}
+                      </a>
+                    ) : (
+                      player.sourceName
+                    )}
                   </p>
                 ) : null}
                 {player.warnings?.[0] ? <p>{player.warnings[0]}</p> : null}

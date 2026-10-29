@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ClipboardEvent, type DragEvent, type ReactNode } from 'react';
 import {
-  Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Download, Expand, Flashlight, FlashlightOff, Gauge,
-  LoaderCircle, LockKeyhole, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, Paperclip, PhoneOff,
-  PictureInPicture2, Send, Settings2, ShieldCheck, Shrink, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi, X,
+  Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Download, Expand, Flashlight, FlashlightOff, Gauge, MoreHorizontal,
+  LoaderCircle, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, Paperclip, PhoneOff,
+  PictureInPicture2, Send, Settings2, Shrink, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi, X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -282,18 +282,6 @@ const statusCopy = (state: string, ui: ReturnType<typeof getShareScreenUi>) => {
   return '';
 };
 const getBrowserNetwork = (): BrowserNetworkInfo => classifyBrowserNetwork(getBrowserNetworkInformation());
-const getConfirmationKey = (preferences: ShareScreenPreferences, networkType: string) => JSON.stringify({
-  qualityMode: preferences.qualityMode,
-  dataSaver: preferences.dataSaver,
-  viewers: preferences.viewerLimit,
-  budget: preferences.uploadBudgetMbps,
-  sessionLimit: preferences.sessionLimitBytes,
-  alertPolicy: preferences.alertPolicy,
-  contentPreference: preferences.contentPreference,
-  limited: preferences.limitedConnection,
-  networkType,
-});
-
 const CHAT_CHANNEL_LABEL = 'chamada-chat-v1';
 
 const viewerConnectionState = (runtime: ViewerRuntime): 'connecting' | 'connected' | 'disconnected' => {
@@ -338,7 +326,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const baselineRef = useRef<StatsBaseline | null>(null);
   const [preferences, setPreferences] = useState<ShareScreenPreferences>(defaultShareScreenPreferences);
   const [network, setNetwork] = useState<BrowserNetworkInfo>({ type: 'unknown', typeWasReported: false, effectiveType: null, saveData: null, downlinkMbps: null, rttMs: null, available: false });
-  const [phase, setPhase] = useState<'idle' | 'confirm' | 'starting' | 'active' | 'waiting' | 'connecting' | 'watching' | 'error' | 'ended'>('idle');
+  const [phase, setPhase] = useState<'idle' | 'starting' | 'active' | 'waiting' | 'connecting' | 'watching' | 'error' | 'ended'>('idle');
   const [rejoinRoomId, setRejoinRoomId] = useState('');
   const [room, setRoom] = useState<RoomView | null>(null);
   const [roomStatus, setRoomStatus] = useState<ViewerRoom | null>(null);
@@ -353,6 +341,9 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const [cameraOn, setCameraOn] = useState(false);
   const [microphoneOn, setMicrophoneOn] = useState(false);
   const [speakerMuted, setSpeakerMuted] = useState(false);
+  const [participantVolumes, setParticipantVolumes] = useState<Record<string, number>>({});
+  const [mutedParticipantIds, setMutedParticipantIds] = useState<Set<string>>(() => new Set());
+  const [participantAudioMenu, setParticipantAudioMenu] = useState<string | null>(null);
   const [screenSharerId, setScreenSharerId] = useState<string | null>(null);
   const [hostCallPanel, setHostCallPanel] = useState<'participants' | 'settings' | 'stats' | 'chat' | null>(null);
   const [chatMessages, setChatMessages] = useState<CallChatMessage[]>([]);
@@ -373,7 +364,6 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const [clock, setClock] = useState(Date.now());
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [rememberConfirmation, setRememberConfirmation] = useState(false);
   const [viewerEconomy, setViewerEconomy] = useState(false);
   const [capturedAudio, setCapturedAudio] = useState(false);
   const [budgetShortfall, setBudgetShortfall] = useState(false);
@@ -1028,8 +1018,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     ].filter(Boolean);
     return hints.length ? `${type} · ${hints.join(' · ')}` : type;
   }, [network, x]);
-  const risk = network.type === 'cellular' || preferences.limitedConnection || network.saveData === true || network.type === 'unknown';
-  const riskMessage = network.type === 'cellular' ? x.cellularRisk : preferences.limitedConnection ? x.limitedRisk : network.saveData ? x.saveData : x.unknownRisk;
+  const connectionSummary = !network.typeWasReported ? x.unknown : network.type === 'wifi' ? x.wifi : network.type === 'cellular' ? x.cellular : network.type === 'ethernet' ? x.ethernet : x.unknown;
+  const showNetworkNotice = network.type === 'cellular' || preferences.limitedConnection || network.saveData === true;
 
   const sendHostSignal = useCallback(async (runtime: HostRuntime, peerId: string, signal: UnsequencedSignal) => {
     await api(`/api/screenshare/rooms/${runtime.roomId}/signals`, {
@@ -1360,18 +1350,10 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     void resumeHost(session);
   }, [initialRoomId, resumeHost]);
 
-  const confirmAndStart = useCallback((economy: boolean) => {
-    const nextPreferences = { ...preferencesRef.current, ...(economy ? { dataSaver: true, qualityMode: 'economy' as const } : {}) };
-    if (economy) {
-      setPreference('dataSaver', true);
-      setPreference('qualityMode', 'economy');
-    }
-  if (rememberConfirmation) {
-      try { localStorage.setItem('adtools.share-screen.confirm.v1', getConfirmationKey(nextPreferences, `${network.type}:${network.saveData ?? 'unknown'}`)); } catch { /* storage can be disabled */ }
-    }
+  const startHostCall = useCallback(() => {
     setPhase('starting');
-    void startCapture(economy ? 'economy' : nextPreferences.qualityMode, economy);
-  }, [network.saveData, network.type, rememberConfirmation, setPreference, startCapture]);
+    void startCapture(preferencesRef.current.qualityMode);
+  }, [startCapture]);
 
   const changeQuality = useCallback((mode: QualityMode) => {
     setPreference('qualityMode', mode);
@@ -2683,7 +2665,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     : participantName || callCopy.roomTitle;
   const remoteAudioEntries = participants.filter((person) => person.id !== selfId).flatMap((person) => {
     const media = remoteMedia[person.id];
-    return [person.microphoneOn ? media?.microphone : null, screenSharerId === person.id && sharedAudioAvailable ? media?.screenAudio : null].filter((stream): stream is MediaStream => Boolean(stream)).map((stream, index) => ({ key: `${person.id}-${index}`, stream }));
+    return [person.microphoneOn ? media?.microphone : null, screenSharerId === person.id && sharedAudioAvailable ? media?.screenAudio : null].filter((stream): stream is MediaStream => Boolean(stream)).map((stream, index) => ({ key: `${person.id}-${index}`, peerId: person.id, stream }));
   });
   const initials = (name: string) => Array.from(name.trim()).slice(0, 2).join('').toUpperCase() || '?';
   const callIdentity = (person: ParticipantView, size: 'small' | 'tile' = 'small') => {
@@ -2963,7 +2945,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
 
           {showThumbs && desktopLayout ? <div className="-my-1 flex w-48 shrink-0 flex-col gap-2 overflow-y-auto overscroll-contain px-1 py-1 [scrollbar-width:none] lg:w-60 [&::-webkit-scrollbar]:hidden">{thumbs}</div> : null}
 
-          {hostCallPanel ? <CallSheet title={panelTitle} closeLabel={callCopy.closePanel} dragHint={callCopy.dragToClose} onClose={() => setHostCallPanel(null)} fill={hostCallPanel === 'chat'} width={chatWidth} onResize={hostCallPanel === 'chat' ? setChatWidth : undefined} resizeLabel={callCopy.resizeChat}>
+          {hostCallPanel ? <CallSheet title={panelTitle} closeLabel={callCopy.closePanel} dragHint={callCopy.dragToClose} onClose={() => { setHostCallPanel(null); setParticipantAudioMenu(null); }} fill={hostCallPanel === 'chat'} width={chatWidth} onResize={hostCallPanel === 'chat' ? setChatWidth : undefined} resizeLabel={callCopy.resizeChat}>
             {hostCallPanel === 'chat' ? <div className="flex min-h-0 flex-1 flex-col gap-3">
               <div className="relative flex min-h-0 flex-1 flex-col">
                 <div ref={chatListRef} onScroll={onChatScroll} className="min-h-0 flex-1 space-y-2.5 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-live="polite" aria-relevant="additions text" onDragOver={(event) => event.preventDefault()} onDrop={dropChatFiles}>
@@ -2996,7 +2978,25 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
               {isHostCall && pendingTransfer ? <div role="status" className="mb-3 flex items-center justify-between gap-2 rounded-xl border border-accent-500/40 bg-accent-500/10 p-3 text-sm text-ink-200"><span className="min-w-0 truncate">{callCopy.transferWaiting} · {Math.max(0, Math.ceil((pendingTransfer.expiresAt - clock) / 1000))}s</span><button type="button" onClick={() => void cancelHostTransfer()} className="shrink-0 rounded-lg bg-ink-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-ink-600">{callCopy.transferCancel}</button></div> : null}
               {canManageRoom ? <div className="mb-4 rounded-xl border border-ink-700 p-3"><p className="text-xs text-ink-400">{callCopy.roomPrivacy}</p><p className="mt-1 text-sm font-medium">{room?.access === 'private' || roomStatus?.access === 'private' ? callCopy.privateRoom : callCopy.publicRoom}</p><div className="mt-2 flex gap-2"><input aria-label={callCopy.copyInvite} readOnly value={inviteUrl} className="min-w-0 flex-1 rounded-lg border border-ink-700 bg-ink-950 px-2 text-xs text-ink-300" onFocus={(event) => event.currentTarget.select()} /><button type="button" onClick={() => void copyLink()} aria-label={callCopy.copyInvite} className="rounded-lg bg-ink-800 px-2 text-white hover:bg-ink-700"><Copy size={15} /></button></div></div> : null}
               {pendingPeers.length ? <div className="mb-3"><p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-400">{callCopy.pendingRequests}</p>{pendingPeers.map((peer) => <div key={peer.id} className="mb-2 rounded-xl bg-ink-800 p-3"><p className="truncate text-sm font-medium">{peer.displayName}</p><p className="mb-3 mt-1 text-xs text-ink-400">{callCopy.approvalRequest}</p><div className="flex gap-2"><Button variant="callActive" className="h-8 flex-1 px-2 text-xs" onClick={() => void moderateViewer(peer.id, 'approve')}>{callCopy.approve}</Button><Button variant="call" className="h-8 px-2 text-xs" onClick={() => void moderateViewer(peer.id, 'reject')}>{callCopy.reject}</Button></div></div>)}</div> : null}
-              {participants.map((person) => <div key={person.id} className="flex items-center gap-3 rounded-xl bg-ink-800 px-3 py-2.5">{callIdentity(person)}<div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{person.id === selfId ? callCopy.you : person.displayName}</p><p className={`text-xs ${speakingPeerIds.has(person.id) ? 'font-medium text-emerald-300' : 'text-ink-400'}`}>{speakingPeerIds.has(person.id) ? callCopy.speaking : person.id === (roomStatus?.hostPeerId ?? 'host') ? callCopy.host : person.state === 'connected' ? ui.stable : ui.connecting}</p></div>{speakingPeerIds.has(person.id) ? <Mic size={15} className="animate-pulse text-emerald-400" /> : person.microphoneOn ? <Mic size={15} className="text-ink-300" /> : <MicOff size={15} className="text-ink-500" />}{isHostCall && person.id !== selfId ? <button type="button" onClick={() => void requestHostTransfer(person.id, person.displayName)} disabled={Boolean(pendingTransfer)} className="shrink-0 rounded-lg bg-ink-700 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-ink-600 disabled:cursor-not-allowed disabled:text-ink-500">{callCopy.transferHost}</button> : null}</div>)}
+              {participants.map((person) => {
+                const isSelf = person.id === selfId;
+                const volume = participantVolumes[person.id] ?? 1;
+                const isMutedForMe = mutedParticipantIds.has(person.id);
+                const audioOptionsOpen = participantAudioMenu === person.id;
+                return <div key={person.id} className="rounded-xl bg-ink-800 px-3 py-2.5">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+                    {callIdentity(person)}
+                    <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{isSelf ? callCopy.you : person.displayName}</p><p className={`text-xs ${speakingPeerIds.has(person.id) ? 'font-medium text-emerald-300' : 'text-ink-400'}`}>{speakingPeerIds.has(person.id) ? callCopy.speaking : person.id === (roomStatus?.hostPeerId ?? 'host') ? callCopy.host : person.state === 'connected' ? ui.stable : ui.connecting}</p></div>
+                    {speakingPeerIds.has(person.id) ? <Mic size={15} className="animate-pulse text-emerald-300" /> : person.microphoneOn ? <Mic size={15} className="text-ink-300" /> : <MicOff size={15} className="text-ink-500" />}
+                    {!isSelf ? <button type="button" aria-label={`${callCopy.participantAudioSettings}: ${person.displayName}`} aria-controls={`participant-audio-${person.id}`} aria-expanded={audioOptionsOpen} title={callCopy.participantAudioSettings} onClick={() => setParticipantAudioMenu((current) => current === person.id ? null : person.id)} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-ink-300 transition hover:bg-ink-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400"><MoreHorizontal size={19} /></button> : null}
+                    {isHostCall && !isSelf ? <button type="button" onClick={() => void requestHostTransfer(person.id, person.displayName)} disabled={Boolean(pendingTransfer)} className="shrink-0 rounded-lg bg-ink-700 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-ink-600 disabled:cursor-not-allowed disabled:text-ink-500">{callCopy.transferHost}</button> : null}
+                  </div>
+                  {!isSelf && audioOptionsOpen ? <div id={`participant-audio-${person.id}`} role="group" aria-label={`${callCopy.participantAudioSettings}: ${person.displayName}`} className="mt-3 space-y-3 rounded-lg border border-ink-700 bg-ink-900 p-3">
+                    <label className="block text-xs text-ink-300">{callCopy.participantVolume}<span className="float-right tabular-nums text-ink-400">{Math.round(volume * 100)}%</span><input aria-label={`${callCopy.participantVolume}: ${person.displayName}`} type="range" min="0" max="1" step="0.05" value={volume} onChange={(event) => setParticipantVolumes((current) => ({ ...current, [person.id]: Number(event.target.value) }))} className="mt-2 w-full accent-accent-500" /></label>
+                    <button type="button" onClick={() => setMutedParticipantIds((current) => { const next = new Set(current); if (next.has(person.id)) next.delete(person.id); else next.add(person.id); return next; })} className="inline-flex min-h-10 w-full items-center gap-2 rounded-lg bg-ink-800 px-3 text-left text-sm font-medium text-white transition hover:bg-ink-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400">{isMutedForMe ? <Volume2 size={16} /> : <VolumeX size={16} />}{isMutedForMe ? callCopy.unmuteParticipant : callCopy.muteParticipant}</button>
+                  </div> : null}
+                </div>;
+              })}
               {participants.length <= 1 ? <p className="px-2 py-3 text-sm text-ink-400">{callCopy.waitingForPeople}</p> : null}
             </div> : hostCallPanel === 'stats' ? <div className="space-y-4">
               {isHostCall ? <section className="rounded-2xl border border-ink-700 bg-ink-900 p-3">
@@ -3052,7 +3052,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         </footer>
         <canvas ref={pipCanvasRef} width={320} height={180} aria-hidden="true" className="pointer-events-none fixed left-[-10000px] top-0 h-[180px] w-[320px]" />
         <video ref={pipVideoRef} autoPlay playsInline muted aria-hidden="true" className="pointer-events-none fixed left-[-10000px] top-0 h-[180px] w-[320px] opacity-0" />
-        {remoteAudioEntries.map((entry) => <CallAudio key={entry.key} stream={entry.stream} muted={speakerMuted} volume={speakerVolume} playSignal={playAudioSignal} sinkId={speakerId} onBlocked={markPlayBlocked} />)}
+        {remoteAudioEntries.map((entry) => <CallAudio key={entry.key} stream={entry.stream} muted={speakerMuted || mutedParticipantIds.has(entry.peerId)} volume={speakerVolume * (participantVolumes[entry.peerId] ?? 1)} playSignal={playAudioSignal} sinkId={speakerId} onBlocked={markPlayBlocked} />)}
         {photoPreview?.attachment?.url ? <div role="dialog" aria-modal="true" aria-label={photoPreview.attachment.name} className="fixed inset-0 z-[120] flex flex-col bg-black/95" onClick={() => setPhotoPreview(null)}>
           <div className="flex shrink-0 items-center justify-between gap-3 p-3 pt-[max(0.75rem,env(safe-area-inset-top))]" onClick={(event) => event.stopPropagation()}>
             <p className="min-w-0 truncate text-sm font-medium text-white">{photoPreview.attachment.name}</p>
@@ -3095,17 +3095,16 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           {phase === 'connecting' && !viewerPeerId ? <div role="status" className="m-5 rounded-xl bg-slate-50 p-4 text-sm text-slate-600 md:m-8">{ui.preparingVideo}</div> : null}
           {phase === 'waiting' && !viewerPeerId ? <div role="status" className="m-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 md:m-8">{callCopy.waitingHost}</div> : null}
           {phase === 'idle' && (roomStatus?.state === 'active' || roomStatus?.state === 'recovering') ? <div className="grid gap-6 p-5 md:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)] md:p-8">
-            <section className="min-w-0">
+            <section className="order-2 min-w-0 md:order-1">
               <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900">
                 {cameraOn && localMediaRef.current ? <CallVideo stream={localMediaRef.current} fit="cover" mirror={previewMirror} className="h-full w-full object-cover" /> : <div className="flex h-full flex-col items-center justify-center gap-3 px-5 text-center text-white"><span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-slate-800"><CameraOff size={27} /></span><span className="text-sm text-slate-300">{devicePending === 'camera' ? callCopy.cameraStarting : callCopy.cameraOff}</span></div>}
                 <span className="absolute bottom-3 left-3 rounded-lg bg-slate-950/80 px-3 py-1.5 text-xs text-white">{callCopy.cameraPreview}</span>
                 {previewStatus === 'loading' ? <span role="status" className="absolute right-3 top-3 rounded-lg bg-slate-950/80 px-3 py-1.5 text-xs text-white">{ui.preparingVideo}</span> : null}
               </div>
-              <p className="mt-3 text-sm font-medium text-slate-800">{cameraOn ? callCopy.cameraReady : callCopy.cameraPreviewHelp}</p>
-              <p className="mt-1 text-xs leading-5 text-slate-500">{callCopy.cameraPreviewHelp}</p>
             </section>
-            <section className="flex min-w-0 flex-col">
+            <section className="order-1 flex min-w-0 flex-col md:order-2">
               <label className="block text-sm font-medium text-slate-800">{callCopy.displayName}<input autoComplete="nickname" maxLength={32} value={participantName} onChange={(event) => setParticipantName(event.target.value)} placeholder={callCopy.displayNamePlaceholder} className="mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base sm:text-sm" /></label>
+              <Button disabled={!participantName.trim()} className="mt-3 w-full" onClick={() => void connectViewer(initialRoomId, viewerEconomy)}><UsersRound size={17} /><span className="ml-2">{callCopy.joinCall}</span></Button>
               <div className="mt-5 flex flex-wrap gap-2">
                 <Button variant={microphoneOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('microphone')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'microphone' ? <LoaderCircle size={16} className="animate-spin" /> : microphoneOn ? <Mic size={16} /> : <MicOff size={16} />}</span><span className="ml-2">{devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff}</span></Button>
                 <Button variant={cameraOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('camera')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'camera' ? <LoaderCircle size={16} className="animate-spin" /> : cameraOn ? <Camera size={16} /> : <CameraOff size={16} />}</span><span className="ml-2">{devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff}</span></Button>
@@ -3114,11 +3113,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
               <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4" role="group" aria-label={callCopy.microphoneLevel}>
                 <div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold text-slate-800">{callCopy.microphoneLevel}</p><span className={`text-xs font-medium ${microphoneOn ? 'text-emerald-700' : 'text-slate-500'}`}>{microphoneOn ? callCopy.microphoneReady : callCopy.microphoneOff}</span></div>
                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200" role="meter" aria-label={callCopy.microphoneLevel} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(microphoneLevel * 100)}><div className="h-full rounded-full bg-brand-600 transition-[width] duration-100" style={{ width: `${Math.round(microphoneLevel * 100)}%` }} /></div>
-                <p className="mt-2 text-xs leading-5 text-slate-500">{callCopy.microphoneLevelHelp}</p>
               </div>
-              {roomStatus.access === 'private' ? <p className="mt-4 rounded-lg bg-brand-50 p-3 text-sm text-brand-900"><LockKeyhole size={15} className="mr-2 inline" />{callCopy.privateRoomDescription}</p> : null}
-              <p className="mt-4 text-xs leading-5 text-slate-500">{ui.p2pPrivacy}</p>
-              <Button disabled={!participantName.trim()} className="mt-5 w-full" onClick={() => void connectViewer(initialRoomId, viewerEconomy)}><UsersRound size={17} /><span className="ml-2">{callCopy.joinCall}</span></Button>
+              <details className="mt-4 rounded-xl border border-slate-200 px-4 py-3"><summary className="cursor-pointer text-sm font-semibold text-slate-700">{callCopy.privacyInformation}</summary><div className="mt-3 space-y-2 text-xs leading-5 text-slate-600"><p>{ui.p2pPrivacy}</p><p>{ui.connectivityNotice}</p></div></details>
             </section>
             <details className="md:col-span-2">
               <summary className="cursor-pointer text-sm font-medium text-slate-700">{ui.advanced}</summary>
@@ -3161,46 +3157,31 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         {settingsOpen ? <Card><h3 className="mb-3 font-bold text-slate-900">{ui.settings}</h3>{renderPreferences(true)}</Card> : null}
         {diagnosticsOpen ? <Card className="space-y-4"><h3 className="font-bold text-slate-900">{ui.diagnostics}</h3>{renderStats()}<p className="text-xs leading-5 text-slate-500">{ui.statsNote} {x.mediaOnly}</p></Card> : null}
       </> : <>
-        <Card className="relative overflow-hidden border-brand-100 bg-white p-5 md:p-8">
-          <div className="absolute right-6 top-6 hidden rounded-2xl bg-brand-50 p-4 text-brand-700 md:block"><MonitorUp size={34} /></div>
-          <div className="max-w-3xl"><span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-800"><Wifi size={14} />{ui.eyebrow}</span><h2 className="mt-4 max-w-2xl text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">{ui.startTitle}</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 md:text-base">{ui.startDescription}</p><div className="mt-5 flex flex-wrap gap-2"><span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-700">{ui.noAccount}</span><span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-700">{ui.noInstall}</span></div></div>
-          <div className="mt-6 grid min-w-0 gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-2 md:p-5">
+        <Card className="border-brand-100 bg-white p-5 md:p-8">
+          <div className="grid min-w-0 items-start gap-6 md:grid-cols-[minmax(0,1fr)_minmax(18rem,0.85fr)]">
+            <section className="min-w-0">
+              <label className="block text-sm font-medium text-slate-800">{callCopy.displayName}<input autoComplete="nickname" maxLength={32} required value={participantName} onChange={(event) => setParticipantName(event.target.value)} placeholder={callCopy.displayNamePlaceholder} className="mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base sm:text-sm" /></label>
+              {phase === 'starting' ? <Button disabled className="mt-4 min-h-12 w-full"><LoaderCircle size={17} className="mr-2 animate-spin" />{ui.preparingVideo}</Button> : <Button disabled={!participantName.trim()} className="mt-4 min-h-12 w-full" onClick={startHostCall}><MonitorUp size={17} /><span className="ml-2">{ui.startButton}</span></Button>}
+              {phase === 'error' ? <p role="alert" className="mt-3 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{errorText}</p> : null}
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-5 text-slate-500"><span className="inline-flex items-center gap-1.5"><Wifi size={14} />{x.network}: {connectionSummary}</span>{showNetworkNotice ? <span className="inline-flex items-center gap-1.5 text-amber-800"><AlertTriangle size={13} />{callCopy.networkDataNotice}</span> : null}</div>
+              <button type="button" className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(!settingsOpen)}><Gauge size={16} />{ui.advanced}<ChevronDown size={16} className={settingsOpen ? 'rotate-180 transition' : 'transition'} /></button>
+              <details className="mt-2 rounded-xl border border-slate-200">
+                <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-slate-800">{callCopy.beforeJoinSettings}</summary>
+                <div className="space-y-4 border-t border-slate-200 p-4">
+                  <fieldset className="min-w-0"><legend className="mb-2 text-sm font-medium text-slate-800">{callCopy.roomPrivacy}</legend><div className="grid grid-cols-2 gap-2"><button type="button" aria-pressed={roomAccess === 'public'} onClick={() => setRoomAccess('public')} className={`min-h-10 rounded-lg border px-3 py-2 text-sm font-medium ${roomAccess === 'public' ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-300 bg-white text-slate-700'}`}>{callCopy.publicRoom}</button><button type="button" aria-pressed={roomAccess === 'private'} onClick={() => setRoomAccess('private')} className={`min-h-10 rounded-lg border px-3 py-2 text-sm font-medium ${roomAccess === 'private' ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-300 bg-white text-slate-700'}`}>{callCopy.privateRoom}</button></div></fieldset>
+                  <div className="flex flex-wrap gap-2"><Button variant={microphoneOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('microphone')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'microphone' ? <LoaderCircle size={16} className="animate-spin" /> : microphoneOn ? <Mic size={16} /> : <MicOff size={16} />}</span><span className="ml-2">{devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff}</span></Button><Button variant={cameraOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('camera')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'camera' ? <LoaderCircle size={16} className="animate-spin" /> : cameraOn ? <Camera size={16} /> : <CameraOff size={16} />}</span><span className="ml-2">{devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff}</span></Button></div>
+                  {lightDevicePicker}
+                  <div className="rounded-lg bg-slate-50 p-3" role="group" aria-label={callCopy.microphoneLevel}><div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold text-slate-800">{callCopy.microphoneLevel}</p><span className={`text-xs font-medium ${microphoneOn ? 'text-emerald-700' : 'text-slate-500'}`}>{microphoneOn ? callCopy.microphoneReady : callCopy.microphoneOff}</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200" role="meter" aria-label={callCopy.microphoneLevel} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(microphoneLevel * 100)}><div className="h-full rounded-full bg-brand-600 transition-[width] duration-100" style={{ width: `${Math.round(microphoneLevel * 100)}%` }} /></div></div>
+                </div>
+              </details>
+              <details className="mt-2 rounded-xl border border-slate-200 px-4 py-3"><summary className="cursor-pointer text-sm font-semibold text-slate-700">{callCopy.privacyInformation}</summary><div className="mt-3 space-y-2 text-xs leading-5 text-slate-600"><p>{x.network}: {connectionLabel}</p><p>{ui.p2pNote}</p><p>{ui.connectivityNotice}</p><p>{ui.p2pPrivacy}</p></div></details>
+            </section>
             <section className="min-w-0">
               <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-900">
                 {cameraOn && localMediaRef.current ? <CallVideo stream={localMediaRef.current} fit="cover" mirror={previewMirror} className="h-full w-full object-cover" /> : <div className="flex h-full flex-col items-center justify-center gap-3 px-4 text-center text-white"><span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-800"><CameraOff size={25} /></span><span className="text-sm text-slate-300">{devicePending === 'camera' ? callCopy.cameraStarting : callCopy.cameraOff}</span></div>}
                 <span className="absolute bottom-3 left-3 rounded-lg bg-slate-950/80 px-3 py-1.5 text-xs text-white">{callCopy.cameraPreview}</span>
               </div>
-              <p className="mt-2 text-xs leading-5 text-slate-500">{callCopy.cameraPreviewHelp}</p>
             </section>
-            <section className="flex min-w-0 flex-col gap-4">
-              <label className="block text-sm font-medium text-slate-800">{callCopy.displayName}<input autoComplete="nickname" maxLength={32} required value={participantName} onChange={(event) => setParticipantName(event.target.value)} placeholder={callCopy.displayNamePlaceholder} className="mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base sm:text-sm" /></label>
-              <fieldset className="min-w-0"><legend className="mb-1.5 text-sm font-medium text-slate-800">{callCopy.roomPrivacy}</legend><div className="grid grid-cols-1 gap-2 sm:grid-cols-2"><button type="button" aria-pressed={roomAccess === 'public'} onClick={() => setRoomAccess('public')} className={`rounded-lg border px-3 py-2.5 text-left text-sm ${roomAccess === 'public' ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-300 bg-white text-slate-700'}`}><span className="block font-semibold">{callCopy.publicRoom}</span><span className="mt-1 block text-xs leading-4">{callCopy.publicRoomDescription}</span></button><button type="button" aria-pressed={roomAccess === 'private'} onClick={() => setRoomAccess('private')} className={`rounded-lg border px-3 py-2.5 text-left text-sm ${roomAccess === 'private' ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-300 bg-white text-slate-700'}`}><span className="block font-semibold">{callCopy.privateRoom}</span><span className="mt-1 block text-xs leading-4">{callCopy.privateRoomDescription}</span></button></div></fieldset>
-              <div className="flex flex-wrap gap-2">
-                <Button variant={microphoneOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('microphone')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'microphone' ? <LoaderCircle size={16} className="animate-spin" /> : microphoneOn ? <Mic size={16} /> : <MicOff size={16} />}</span><span className="ml-2">{devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff}</span></Button>
-                <Button variant={cameraOn ? 'secondary' : 'mediaDanger'} onClick={() => void toggleLocalDevice('camera')} className="rounded-full"><span className="inline-flex h-5 w-5 items-center justify-center">{devicePending === 'camera' ? <LoaderCircle size={16} className="animate-spin" /> : cameraOn ? <Camera size={16} /> : <CameraOff size={16} />}</span><span className="ml-2">{devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff}</span></Button>
-              </div>
-              {lightDevicePicker}
-              <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3" role="group" aria-label={callCopy.microphoneLevel}>
-                <div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold text-slate-800">{callCopy.microphoneLevel}</p><span className={`text-xs font-medium ${microphoneOn ? 'text-emerald-700' : 'text-slate-500'}`}>{microphoneOn ? callCopy.microphoneReady : callCopy.microphoneOff}</span></div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200" role="meter" aria-label={callCopy.microphoneLevel} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(microphoneLevel * 100)}><div className="h-full rounded-full bg-brand-600 transition-[width] duration-100" style={{ width: `${Math.round(microphoneLevel * 100)}%` }} /></div>
-                <p className="mt-2 text-xs leading-5 text-slate-500">{callCopy.microphoneLevelHelp}</p>
-              </div>
-            </section>
-          </div>
-          <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 md:p-5"><div className="flex items-start gap-3"><ShieldCheck size={22} className="mt-0.5 shrink-0 text-brand-700" /><div><h3 className="font-semibold text-slate-900">{ui.p2pNote}</h3><p className="mt-1 text-sm leading-6 text-slate-600">{ui.connectivityNotice}</p><p className="mt-2 text-xs leading-5 text-slate-500">{x.network}: {connectionLabel}{network.saveData ? ` · ${x.saveData}` : ''}</p></div></div>
-              {phase === 'confirm' ? <div className="mt-4 space-y-4 rounded-xl border border-amber-300 bg-amber-50 p-4" role="region" aria-labelledby="screenshare-warning-title"><div className="flex items-start gap-3"><AlertTriangle size={21} className="mt-0.5 shrink-0 text-amber-800" /><div><h3 id="screenshare-warning-title" className="font-bold text-amber-950">{x.warningTitle}</h3><p className="mt-1 text-sm leading-6 text-amber-900">{x.warningBody}</p></div></div><p className="text-sm font-semibold text-amber-950">{x.usageEstimate}: {roomEstimate.totalMbps.toFixed(1)} Mbps · {roomEstimate.totalGBPerHour.toFixed(2)} GB/h {x.estimated} ({roomEstimate.mediaGBPerHour.toFixed(2)} GB/h mídia + {roomEstimate.overheadGBPerHour.toFixed(2)} GB/h {x.overhead}). {preferences.viewerLimit} {ui.viewers}.</p><p className="text-xs leading-5 text-amber-900">{x.dataUseNotice}</p><p className="text-sm font-medium text-amber-950">{x.sessionDataLimit}: {preferences.sessionLimitBytes ? formatDataAmount(preferences.sessionLimitBytes) : x.unlimited} · {preferences.alertPolicy === 'stop' ? x.stopAtLimit : preferences.alertPolicy === 'reduce' ? x.reduceQuality : x.warnOnly}</p>{roomEstimate.totalMbps > preferences.uploadBudgetMbps ? <p className="rounded-lg bg-amber-100 p-3 text-sm font-medium text-amber-950">{budgetEstimateNotice[locale]}</p> : null}{risk ? <p className="rounded-lg bg-amber-100 p-3 text-sm font-medium text-amber-950">{riskMessage}</p> : null}<label className="flex items-center gap-2 text-sm text-amber-950"><input type="checkbox" checked={rememberConfirmation} onChange={(event) => setRememberConfirmation(event.target.checked)} />{x.rememberChoice}</label><div className="flex flex-wrap gap-2"><Button onClick={() => confirmAndStart(false)}>{x.continueChosen}</Button><Button variant="secondary" onClick={() => confirmAndStart(true)}>{x.startEconomy}</Button><Button variant="ghost" onClick={() => setPhase('idle')}>{x.adjustSettings}</Button></div></div> : null}
-              {phase === 'confirm' ? <div className="mt-3 space-y-2 rounded-lg bg-slate-100 p-3"><p className="text-xs leading-5 text-slate-600">{x.hotspotNotice}</p><label className="flex items-center gap-2 text-sm text-slate-800"><input type="checkbox" checked={preferences.limitedConnection} onChange={(event) => setPreference('limitedConnection', event.target.checked)} className="accent-brand-600" />{x.limitedConnection}</label></div> : null}
-              {phase === 'error' ? <p role="alert" className="mt-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{errorText}</p> : null}
-              {phase !== 'confirm' && phase !== 'starting' ? <Button disabled={!participantName.trim()} className="mt-5" onClick={() => {
-                let remembered = false;
-                try { remembered = localStorage.getItem('adtools.share-screen.confirm.v1') === getConfirmationKey(preferences, `${network.type}:${network.saveData ?? 'unknown'}`); } catch { /* storage can be disabled */ }
-                if (remembered) { setRememberConfirmation(true); confirmAndStart(false); }
-                else setPhase('confirm');
-              }}><MonitorUp size={17} /><span className="ml-2">{ui.startButton}</span></Button> : null}
-              {phase === 'starting' ? <Button className="mt-5" disabled><span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent" />{ui.preparingVideo}</Button> : null}
-            </div>
-            <div className="space-y-3"><button type="button" className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-4 py-3 text-left text-sm font-semibold text-slate-800" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(!settingsOpen)}><span className="inline-flex items-center gap-2"><Gauge size={17} />{ui.advanced}</span><ChevronDown size={16} className={settingsOpen ? 'rotate-180 transition' : 'transition'} /></button><p className="px-1 text-xs leading-5 text-slate-500">{x.dataUseNotice}</p><details className="rounded-lg border border-slate-200 p-3 text-sm"><summary className="cursor-pointer font-semibold text-slate-900">{x.usageEstimate}</summary><p className="mt-2 text-slate-700">{roomEstimate.totalMbps.toFixed(1)} Mbps · {roomEstimate.totalGBPerHour.toFixed(2)} GB/h</p><p className="mt-1 text-xs text-slate-500">{roomEstimate.mediaGBPerHour.toFixed(2)} GB/h mídia + {roomEstimate.overheadGBPerHour.toFixed(2)} GB/h {x.overhead}</p><p className="mt-2 text-xs leading-5 text-slate-500">{audioEstimateNotice[locale]}</p><p className="mt-3 text-xs leading-5 text-slate-500">{ui.p2pPrivacy}</p></details></div>
           </div>
         </Card>
         {settingsOpen ? <Card className="mt-5 p-5 md:p-7"><h3 className="mb-5 font-bold text-slate-900">{ui.advanced}</h3>{renderPreferences(false)}<p className="mt-5 text-xs leading-5 text-slate-500">{x.dataUseNotice}</p></Card> : null}
