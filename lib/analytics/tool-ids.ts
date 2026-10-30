@@ -39,6 +39,7 @@ export const TOOL_ID = {
   qrCodeGenerator: 'qr_code_generator',
   transfer: 'transfer',
   shareScreen: 'share_screen',
+  celularComoWebcam: 'celular_como_webcam',
   whatsappTelegramLinkGenerator: 'gerador_link_whatsapp_telegram',
   sorteador: 'sorteador',
   characterCounter: 'contador_de_caracteres',

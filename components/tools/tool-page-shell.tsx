@@ -69,6 +69,24 @@ export function ToolPageShell({
     },
   };
   const trustNoteByToolId: Partial<Record<string, Record<AppLocale, { title: string; text: string }>>> = {
+    'celular-como-webcam': {
+      'pt-br': {
+        title: 'Privacidade da câmera',
+        text: 'O servidor troca apenas mensagens temporárias para conectar o celular ao computador; vídeo e áudio seguem entre os navegadores e não são gravados. Os dados de pareamento expiram automaticamente. Em conexões diretas, os aparelhos podem conhecer o endereço IP um do outro.',
+      },
+      en: {
+        title: 'Camera privacy',
+        text: 'The server exchanges only temporary messages to connect your phone and computer; video and audio travel between browsers and are not recorded. Pairing data expires automatically. With a direct connection, devices may learn each other’s IP address.',
+      },
+      es: {
+        title: 'Privacidad de la cámara',
+        text: 'El servidor intercambia solo mensajes temporales para conectar el celular y la computadora; el video y el audio viajan entre los navegadores y no se graban. Los datos de emparejamiento vencen automáticamente. En una conexión directa, los dispositivos pueden conocer la dirección IP del otro.',
+      },
+      zh: {
+        title: '摄像头隐私',
+        text: '服务器只交换用于连接手机和电脑的临时消息；视频和音频在浏览器之间传输，不会被录制。配对数据会自动过期。直连时，设备可能会获知彼此的 IP 地址。',
+      },
+    },
     'zpl-label-editor': {
       'pt-br': {
         title: 'Privacidade e renderização de etiquetas',

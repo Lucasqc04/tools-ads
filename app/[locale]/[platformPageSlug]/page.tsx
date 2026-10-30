@@ -54,6 +54,7 @@ import { ToolPageShell } from '@/components/tools/tool-page-shell';
 import { VideoCompressionTool } from '@/components/tools/video-compression-tool';
 import { VideoDownloaderTool } from '@/components/tools/video-downloader-tool';
 import { ShareScreenTool } from '@/components/tools/share-screen-tool';
+import { CelularComoWebcamTool } from '@/components/tools/celular-como-webcam-tool';
 import { TimelapseCreatorTool } from '@/components/tools/timelapse-creator-tool';
 import { UniversalConverterTool } from '@/components/tools/universal-converter-tool';
 import {
@@ -751,6 +752,7 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   'video-compression': ({ locale }) => <VideoCompressionTool locale={locale} />,
   'video-downloader': ({ locale }) => <VideoDownloaderTool locale={locale} />,
   'share-screen': ({ locale }) => <ShareScreenTool locale={locale} />,
+  'celular-como-webcam': ({ locale }) => <CelularComoWebcamTool locale={locale} />,
   'extrair-audio-de-video': ({ locale }) => <AudioEditorTool locale={locale} />,
   'criador-de-timelapse': ({ locale }) => <TimelapseCreatorTool locale={locale} />,
   'estourador-de-audio': ({ locale }) => <AudioBlasterTool locale={locale} />,

@@ -183,6 +183,7 @@ import {
   transferIntro,
 } from '@/data/content/transfer';
 import { getShareScreenContent } from '@/data/content/share-screen';
+import { getCelularWebcamContent } from '@/data/content/celular-como-webcam';
 import {
   sorteadorContentBlocks,
   sorteadorFaq,
@@ -1306,6 +1307,14 @@ export const toolsRegistry: ToolDefinition[] = [
     relatedToolIds: ['transfer', 'qr-code-generator', 'video-compression'],
   },
   {
+    id: 'celular-como-webcam',
+    slug: 'celular-como-webcam',
+    ...getCelularWebcamContent('pt-br'),
+    category: 'utility',
+    canonicalPath: '/tools/celular-como-webcam',
+    relatedToolIds: ['share-screen', 'transfer', 'qr-code-generator'],
+  },
+  {
     id: 'gerador-link-whatsapp-telegram',
     slug: 'gerador-link-whatsapp-telegram',
     name: 'Gerador de Link com Mensagem para WhatsApp e Telegram',
@@ -2204,6 +2213,14 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
     return {
       ...tool,
       ...getShareScreenContent(locale),
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'celular-como-webcam') {
+    return {
+      ...tool,
+      ...getCelularWebcamContent(locale),
       canonicalPath: getToolCanonicalPathByLocale(tool, locale),
     };
   }

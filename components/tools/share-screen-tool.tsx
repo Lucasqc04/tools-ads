@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ClipboardEvent, type DragEvent, type ReactNode } from 'react';
 import {
-  Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Download, Expand, Flashlight, FlashlightOff, Gauge, MoreHorizontal,
+  Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Download, Expand, Flashlight, FlashlightOff, Gauge, MoreHorizontal, Smartphone,
   LoaderCircle, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, Paperclip, PhoneOff,
   PenLine, PictureInPicture2, Send, Settings2, Shrink, Square, SwitchCamera, UsersRound, Volume2, VolumeX, Wifi, X,
 } from 'lucide-react';
@@ -49,6 +49,7 @@ import { ChatMessage } from '@/components/tools/share-screen/chat-message';
 import { ChatContextMenu } from '@/components/tools/share-screen/chat-context-menu';
 import { Whiteboard, type BoardMessageHandlerRef } from '@/components/tools/share-screen/whiteboard';
 import { DevicePicker } from '@/components/tools/share-screen/device-picker';
+import { CelularComoWebcamTool } from '@/components/tools/celular-como-webcam-tool';
 import type { AppLocale } from '@/lib/i18n/config';
 
 type Props = { locale?: AppLocale; initialRoomId?: string };
@@ -285,6 +286,7 @@ const statusCopy = (state: string, ui: ReturnType<typeof getShareScreenUi>) => {
 };
 const getBrowserNetwork = (): BrowserNetworkInfo => classifyBrowserNetwork(getBrowserNetworkInformation());
 const CHAT_CHANNEL_LABEL = 'chamada-chat-v1';
+const CALL_HISTORY_GUARD_KEY = '__adtoolsShareScreenCallGuard';
 
 const viewerConnectionState = (runtime: ViewerRuntime): 'connecting' | 'connected' | 'disconnected' => {
   const peers = [runtime.pc, ...Array.from(runtime.meshPeers.values(), (peer) => peer.pc)];
@@ -315,10 +317,16 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const x = extra[locale];
   const hostVideoRef = useRef<HTMLVideoElement>(null);
   const pipVideoRef = useRef<HTMLVideoElement>(null);
+  const pipRequestRef = useRef<Promise<boolean> | null>(null);
+  const historyGuardCleanupTimerRef = useRef<number | null>(null);
+  const historyGuardRetireListenerRef = useRef<((event: PopStateEvent) => void) | null>(null);
   const pipCanvasRef = useRef<HTMLCanvasElement>(null);
   const pipAvatarStreamRef = useRef<MediaStream | null>(null);
   const pipDisplayRef = useRef('');
   const localMediaRef = useRef<MediaStream | null>(null);
+  const phoneCameraTrackRef = useRef<MediaStreamTrack | null>(null);
+  const phoneCameraUsingSourceRef = useRef(false);
+  const phoneCameraAutoSelectRef = useRef(false);
   const hostRef = useRef<HostRuntime | null>(null);
   const viewerRef = useRef<ViewerRuntime | null>(null);
   const preferencesRef = useRef<ShareScreenPreferences>(defaultShareScreenPreferences);
@@ -343,6 +351,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const [participantName, setParticipantName] = useState('');
   const [roomAccess, setRoomAccess] = useState<'public' | 'private'>('public');
   const [cameraOn, setCameraOn] = useState(false);
+  const [phoneWebcamOpen, setPhoneWebcamOpen] = useState(false);
+  const [phoneWebcamActive, setPhoneWebcamActive] = useState(false);
   const [microphoneOn, setMicrophoneOn] = useState(false);
   const [speakerMuted, setSpeakerMuted] = useState(false);
   const [participantVolumes, setParticipantVolumes] = useState<Record<string, number>>({});
@@ -799,6 +809,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     try {
       for (const kind of ['camera', 'microphone'] as const) {
         if (!(kind === 'camera' ? cameraOnRef.current : microphoneOnRef.current)) continue;
+        if (kind === 'camera' && phoneCameraUsingSourceRef.current) continue;
         const stream = localMediaRef.current;
         const track = kind === 'camera' ? stream?.getVideoTracks()[0] : stream?.getAudioTracks()[0];
         if (track && track.readyState === 'live' && !track.muted) continue;
@@ -817,6 +828,41 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   }, [acquireTrack, callCopy.deviceRecovered, notify, setLocalTrack]);
   recoverRef.current = recoverLocalDevices;
 
+  const handlePhoneWebcamStream = useCallback(async (stream: MediaStream | null) => {
+    const track = stream?.getVideoTracks().find((item) => item.readyState === 'live') ?? null;
+    phoneCameraTrackRef.current = track;
+    if (!track) {
+      if (phoneCameraUsingSourceRef.current) {
+        phoneCameraUsingSourceRef.current = false;
+        setPhoneWebcamActive(false);
+        await setLocalTrack('camera', null);
+      }
+      return;
+    }
+    if (phoneCameraUsingSourceRef.current || phoneCameraAutoSelectRef.current) {
+      phoneCameraUsingSourceRef.current = true;
+      setPhoneWebcamActive(true);
+      await setLocalTrack('camera', track.clone());
+    }
+  }, [setLocalTrack]);
+
+  const openPhoneWebcam = useCallback(() => {
+    phoneCameraAutoSelectRef.current = true;
+    setPhoneWebcamOpen(true);
+  }, []);
+
+  const closePhoneWebcam = useCallback(() => {
+    phoneCameraAutoSelectRef.current = false;
+    phoneCameraUsingSourceRef.current = false;
+    phoneCameraTrackRef.current = null;
+    setPhoneWebcamActive(false);
+    setPhoneWebcamOpen(false);
+  }, []);
+
+  const onPhoneWebcamStreamChange = useCallback((stream: MediaStream | null) => {
+    void handlePhoneWebcamStream(stream);
+  }, [handlePhoneWebcamStream]);
+
   const toggleLocalDevice = useCallback(async (kind: 'camera' | 'microphone') => {
     if (switchingRef.current || devicePendingRef.current === kind) return;
     if (kind === 'camera' ? cameraOnRef.current : microphoneOnRef.current) {
@@ -828,7 +874,11 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     devicePendingRef.current = kind;
     setDevicePending(kind);
     try {
-      await setLocalTrack(kind, await acquireTrack(kind));
+      if (kind === 'camera' && phoneCameraUsingSourceRef.current && phoneCameraTrackRef.current?.readyState === 'live') {
+        await setLocalTrack(kind, phoneCameraTrackRef.current.clone());
+      } else {
+        await setLocalTrack(kind, await acquireTrack(kind));
+      }
       setErrorText('');
     } catch {
       setErrorText(callCopy.permissionError);
@@ -843,6 +893,9 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     if (switchingRef.current || devicePendingRef.current === kind) return;
     const selection = selectionRef.current;
     if (kind === 'camera') {
+      phoneCameraUsingSourceRef.current = false;
+      phoneCameraAutoSelectRef.current = false;
+      setPhoneWebcamActive(false);
       if (override.deviceId !== undefined) selection.cameraId = override.deviceId;
       if (override.facingMode) selection.facing = override.facingMode;
       setCameraId(selection.cameraId);
@@ -2919,6 +2972,26 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     };
   }, [inCall]);
 
+  const enterMiniCall = useCallback(async () => {
+    const video = pipVideoRef.current;
+    if (!video || !document.pictureInPictureEnabled || !video.requestPictureInPicture) return false;
+    if (document.pictureInPictureElement === video) return true;
+    if (pipRequestRef.current) return pipRequestRef.current;
+    const request = (async () => {
+      try {
+        if (video.paused) await video.play();
+        await video.requestPictureInPicture();
+        return true;
+      } catch {
+        return false;
+      } finally {
+        pipRequestRef.current = null;
+      }
+    })();
+    pipRequestRef.current = request;
+    return request;
+  }, []);
+
   useEffect(() => {
     if (!inCall || typeof navigator === 'undefined') return;
     const mediaSession = (navigator as Navigator & { mediaSession?: CallMediaSession }).mediaSession;
@@ -2927,11 +3000,10 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     try { mediaSession.setMicrophoneActive?.(microphoneOn); } catch { /* browser may not expose microphone state actions */ }
     const handlers: Array<[string, () => void]> = [
       ['enterpictureinpicture', () => {
-        const video = pipVideoRef.current;
         // Some mobile browsers dispatch this again while restoring the tab.
         // Only enter PiP when the page is actually in the background.
         if (document.visibilityState !== 'hidden') return;
-        if (video && document.pictureInPictureEnabled && document.pictureInPictureElement !== video) void video.requestPictureInPicture().catch(() => undefined);
+        void enterMiniCall();
       }],
       ['togglecamera', () => { void toggleLocalDevice('camera'); }],
       ['togglemicrophone', () => { void toggleLocalDevice('microphone'); }],
@@ -2945,7 +3017,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         try { mediaSession.setActionHandler(action, null); } catch { /* action is not supported by this browser */ }
       }
     };
-  }, [cameraOn, inCall, isHostCall, leaveHost, leaveViewerCall, microphoneOn, toggleLocalDevice]);
+  }, [cameraOn, enterMiniCall, inCall, isHostCall, leaveHost, leaveViewerCall, microphoneOn, toggleLocalDevice]);
 
   const openMiniCall = useCallback(async () => {
     const video = pipVideoRef.current;
@@ -2955,14 +3027,93 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     }
     try {
       if (document.pictureInPictureElement === video) await document.exitPictureInPicture();
-      else {
-        if (video.paused) await video.play();
-        await video.requestPictureInPicture();
-      }
+      else if (!await enterMiniCall()) notify(callCopy.miniCallUnavailable);
     } catch {
       notify(callCopy.miniCallUnavailable);
     }
-  }, [callCopy.miniCallUnavailable, notify]);
+  }, [callCopy.miniCallUnavailable, enterMiniCall, notify]);
+
+  useEffect(() => {
+    if (!inCall) return;
+
+    const currentState = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
+    if (historyGuardCleanupTimerRef.current) {
+      window.clearTimeout(historyGuardCleanupTimerRef.current);
+      historyGuardCleanupTimerRef.current = null;
+    }
+    if (historyGuardRetireListenerRef.current) {
+      window.removeEventListener('popstate', historyGuardRetireListenerRef.current, true);
+      historyGuardRetireListenerRef.current = null;
+    }
+    const existingMarker = currentState[CALL_HISTORY_GUARD_KEY];
+    const marker = typeof existingMarker === 'string' ? existingMarker : createRandomHex(8);
+    const callUrl = window.location.href;
+    let guardInstalled = typeof existingMarker === 'string';
+
+    // Add a same-URL history entry so Back can be caught before Next unmounts
+    // the call and stops its media tracks.
+    if (!guardInstalled) {
+      try {
+        window.history.pushState({ ...currentState, [CALL_HISTORY_GUARD_KEY]: marker }, '', callUrl);
+        guardInstalled = true;
+      } catch {
+        // Some embedded browsers block History API writes; the call still works.
+      }
+    }
+
+    const onPopState = (event: PopStateEvent) => {
+      const state = event.state as Record<string, unknown> | null;
+      if (state?.[CALL_HISTORY_GUARD_KEY] === marker) {
+        // This is the forward step that restores the guarded call entry.
+        event.stopImmediatePropagation();
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      // Browsers that allow automatic PiP can show the call while restoring the
+      // history entry. Other browsers keep the call open in this tab.
+      void enterMiniCall();
+      window.history.forward();
+    };
+
+    const tryMiniCallInBackground = () => {
+      if (document.visibilityState === 'hidden') void enterMiniCall();
+    };
+
+    if (guardInstalled) window.addEventListener('popstate', onPopState, true);
+    document.addEventListener('visibilitychange', tryMiniCallInBackground);
+    window.addEventListener('pagehide', tryMiniCallInBackground);
+
+    return () => {
+      if (guardInstalled) window.removeEventListener('popstate', onPopState, true);
+      document.removeEventListener('visibilitychange', tryMiniCallInBackground);
+      window.removeEventListener('pagehide', tryMiniCallInBackground);
+      if (!guardInstalled) return;
+
+      // Keep Back from stopping on the duplicate URL entry after the call ends.
+      // Deferring lets Strict Mode replay this effect without leaving a listener.
+      historyGuardCleanupTimerRef.current = window.setTimeout(() => {
+        historyGuardCleanupTimerRef.current = null;
+        const state = window.history.state as Record<string, unknown> | null;
+        if (state?.[CALL_HISTORY_GUARD_KEY] !== marker) return;
+        const onGuardRemoval = (event: PopStateEvent) => {
+          const poppedState = event.state as Record<string, unknown> | null;
+          if (window.location.href === callUrl && poppedState?.[CALL_HISTORY_GUARD_KEY] !== marker) {
+            event.stopImmediatePropagation();
+            window.removeEventListener('popstate', onGuardRemoval, true);
+            historyGuardRetireListenerRef.current = null;
+            window.history.back();
+          } else if (window.location.href !== callUrl && poppedState?.[CALL_HISTORY_GUARD_KEY] !== marker) {
+            window.removeEventListener('popstate', onGuardRemoval, true);
+            historyGuardRetireListenerRef.current = null;
+          }
+        };
+        historyGuardRetireListenerRef.current = onGuardRemoval;
+        window.addEventListener('popstate', onGuardRemoval, true);
+      }, 0);
+    };
+  }, [enterMiniCall, inCall]);
 
   const previewMirror = shouldMirrorPreview(cameraFacing, mirrorSelf);
   const lightDevicePicker = (
@@ -2971,6 +3122,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       <div className="border-t border-slate-200 p-3">
         <DevicePicker theme="light" copy={callCopy} cameras={cameraInputs} microphones={microphoneInputs} speakers={speakerOutputs} cameraId={cameraId} microphoneId={microphoneId} speakerId={speakerId} facing={cameraFacing} showFacing={touchDevice} outputSupported={outputSupported} mirror={mirrorSelf}
           onCamera={(id) => void switchLocalDevice('camera', { deviceId: id })} onMicrophone={(id) => void switchLocalDevice('microphone', { deviceId: id })} onSpeaker={setSpeakerId} onFacing={(facingMode) => void switchLocalDevice('camera', { deviceId: '', facingMode })} onMirror={setMirrorSelf} />
+        <Button variant="secondary" aria-pressed={phoneWebcamOpen || phoneWebcamActive} onClick={openPhoneWebcam} className="mt-3 min-h-11 w-full justify-start"><Smartphone size={17} className="mr-2" aria-hidden="true" />{phoneWebcamActive ? callCopy.phoneWebcamActive : callCopy.phoneWebcam}</Button>
       </div>
     </details>
   );
@@ -3155,6 +3307,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-400">{callCopy.devices}</h3>
                 <DevicePicker theme="dark" copy={callCopy} cameras={cameraInputs} microphones={microphoneInputs} speakers={speakerOutputs} cameraId={cameraId} microphoneId={microphoneId} speakerId={speakerId} facing={cameraFacing} showFacing={touchDevice} outputSupported={outputSupported} mirror={mirrorSelf}
                   onCamera={(id) => void switchLocalDevice('camera', { deviceId: id })} onMicrophone={(id) => void switchLocalDevice('microphone', { deviceId: id })} onSpeaker={setSpeakerId} onFacing={(facingMode) => void switchLocalDevice('camera', { deviceId: '', facingMode })} onMirror={setMirrorSelf} />
+                <Button variant="call" aria-pressed={phoneWebcamOpen || phoneWebcamActive} onClick={openPhoneWebcam} className="mt-3 min-h-11 w-full justify-start"><Smartphone size={17} className="mr-2" aria-hidden="true" />{phoneWebcamActive ? callCopy.phoneWebcamActive : callCopy.phoneWebcam}</Button>
               </section>
               <section className="space-y-3 border-t border-ink-700 pt-4">
                 <label className="flex items-center gap-2 text-sm text-ink-300"><input type="checkbox" className="accent-accent-500" checked={serverEconomy} onChange={(event) => { setServerEconomy(event.target.checked); try { localStorage.setItem('adtools.share-screen.server-economy.v1', event.target.checked ? 'on' : 'off'); } catch { /* storage can be disabled */ } }} />{callCopy.serverEconomy}</label>
@@ -3175,6 +3328,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         <footer className={`flex flex-nowrap items-start gap-1 overflow-x-auto overscroll-x-contain px-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-opacity duration-300 ${stageExpanded ? `absolute inset-x-0 bottom-0 z-30 justify-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-8 sm:gap-3 sm:px-4 ${stageControlsVisible ? 'opacity-100' : 'pointer-events-none opacity-0'}` : 'shrink-0 justify-start border-t border-ink-800 bg-ink-950 pt-3 sm:justify-center sm:gap-3 sm:px-4'}`}>
           {callMediaButton(devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff, microphoneOn, devicePending === 'microphone' ? <LoaderCircle size={21} className="animate-spin" /> : microphoneOn ? <Mic size={21} /> : <MicOff size={21} />, () => void toggleLocalDevice('microphone'), !microphoneOn && devicePending !== 'microphone', '', 'neutral')}
           {callMediaButton(devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff, cameraOn, devicePending === 'camera' ? <LoaderCircle size={21} className="animate-spin" /> : cameraOn ? <Camera size={21} /> : <CameraOff size={21} />, () => void toggleLocalDevice('camera'), !cameraOn && devicePending !== 'camera', '', 'neutral')}
+          {callMediaButton(phoneWebcamActive ? callCopy.phoneWebcamActive : callCopy.phoneWebcam, phoneWebcamOpen || phoneWebcamActive, <Smartphone size={20} />, openPhoneWebcam)}
           {callMediaButton(shareLabel, screenSharerId === selfId, <MonitorUp size={21} />, () => screenSharerId === selfId ? void stopScreenShare() : startScreenShare(), false, screenSupported || screenSharerId === selfId ? '' : 'opacity-60')}
           {callMediaButton(callCopy.whiteboard, whiteboardOpen, <PenLine size={20} />, () => {
             if (!whiteboardOpen) { setWhiteboardMounted(true); setHostCallPanel(null); setWhiteboardOpen(true); }
@@ -3219,6 +3373,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           </div>
         </div> : null}
         {toast ? <div role="status" aria-live="polite" className="fixed bottom-28 left-1/2 z-[110] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl border border-ink-700 bg-ink-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div> : null}
+        {phoneWebcamOpen ? <CelularComoWebcamTool locale={locale} embedded audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
       </div>
     );
   }
@@ -3263,6 +3418,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           </div> : null}
           {(phase === 'error' || phase === 'ended') || errorText ? <div role="alert" className="m-5 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 md:m-8">{errorText || roomStateText || ui.roomEnded}<div className="mt-3"><Button variant="secondary" onClick={() => { setPhase('idle'); setErrorText(''); setAdmissionState(null); }}>{ui.retry}</Button></div></div> : null}
         </Card>
+        {phoneWebcamOpen ? <CelularComoWebcamTool locale={locale} embedded audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
       </div>
     );
   }
@@ -3327,6 +3483,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         {settingsOpen ? <Card className="mt-5 p-5 md:p-7"><h3 className="mb-5 font-bold text-slate-900">{ui.advanced}</h3>{renderPreferences(false)}<p className="mt-5 text-xs leading-5 text-slate-500">{x.dataUseNotice}</p></Card> : null}
         {errorText && phase !== 'error' ? <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{errorText}</p> : null}
       </>}
+      {phoneWebcamOpen ? <CelularComoWebcamTool locale={locale} embedded audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
       {toast ? <div role="status" aria-live="polite" className="fixed bottom-4 left-1/2 z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div> : null}
     </div>
   );

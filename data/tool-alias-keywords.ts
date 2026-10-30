@@ -1460,6 +1460,28 @@ const baseKeywordsByTool: ToolKeywordMap = {
       'decode lightning network',
     ],
   },
+  'celular-como-webcam': {
+    'pt-br': [
+      'usar celular como webcam no pc',
+      'câmera do celular para computador',
+      'câmera do celular no OBS',
+    ],
+    en: [
+      'use phone as webcam for PC',
+      'phone camera for computer',
+      'phone camera in OBS',
+    ],
+    es: [
+      'usar celular como webcam para PC',
+      'cámara del celular para computadora',
+      'cámara del celular en OBS',
+    ],
+    zh: [
+      '手机作为电脑摄像头',
+      '手机摄像头连接电脑',
+      '手机摄像头用于 OBS',
+    ],
+  },
 };
 
 // Keep only explicit, task-focused phrases. Automatically multiplying every phrase
