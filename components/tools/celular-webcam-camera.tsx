@@ -22,6 +22,14 @@ type StreamQuality = { width: number; height: number; fps: number; bitrate: numb
 type ZoomCapabilities = { min: number; max: number; step: number };
 type ExtendedCapabilities = MediaTrackCapabilities & { torch?: boolean; zoom?: ZoomCapabilities };
 type ExtendedConstraintSet = MediaTrackConstraintSet & { torch?: boolean; zoom?: number };
+type ExtendedTrackConstraints = Omit<MediaTrackConstraints, 'advanced'> & { torch?: boolean; advanced?: ExtendedConstraintSet[] };
+
+const constraintsWithTorch = (track: MediaStreamTrack, enabled: boolean): ExtendedTrackConstraints => {
+  const current = track.getConstraints() as ExtendedTrackConstraints;
+  const advanced = (current.advanced ?? []).filter((constraint) => constraint.torch === undefined);
+  return { ...current, torch: enabled, advanced: [...advanced, { torch: enabled }] };
+};
+
 const profile: Record<WebcamQualityPreset, StreamQuality> = {
   economy: { width: 640, height: 480, fps: 24, bitrate: 900_000 },
   balanced: { width: 1280, height: 720, fps: 30, bitrate: 2_500_000 },
@@ -81,6 +89,7 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
   const [paused, setPaused] = useState(false);
   const [torchSupported, setTorchSupported] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
+  const [torchPending, setTorchPending] = useState(false);
   const [zoomRange, setZoomRange] = useState<{ min: number; max: number; step: number; value: number } | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [actualResolution, setActualResolution] = useState('');
@@ -99,6 +108,8 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
   const restartTimerRef = useRef<number | null>(null);
   const restartAttemptsRef = useRef(0);
   const stoppedRef = useRef(false);
+  const torchOnRef = useRef(false);
+  const torchBusyRef = useRef(false);
 
   statusRef.current = status;
   tokenRef.current = token;
@@ -155,7 +166,10 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
     setCameraStream(null);
     setMicrophoneOn(false);
     setPaused(false);
+    torchOnRef.current = false;
     setTorchOn(false);
+    setTorchPending(false);
+    torchBusyRef.current = false;
   }, []);
 
   const makeOffer = useCallback(async (iceRestart = false) => {
@@ -323,7 +337,11 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
       track.onended = () => {
         setStatus((current) => current === 'connected' ? 'reconnecting' : current);
         setErrorText(copy.cameraUnavailable);
+        torchOnRef.current = false;
+        setTorchOn(false);
       };
+      torchOnRef.current = false;
+      setTorchOn(false);
       const settings = track.getSettings();
       if (settings.width && settings.height) setActualResolution(settings.width + ' × ' + settings.height);
       setActualFps(settings.frameRate ?? null);
@@ -383,7 +401,7 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
   }, [clientId, closePeerAndTracks, copy.sessionEnded, sessionId, token]);
 
   const switchCamera = useCallback(async (nextDeviceId?: string) => {
-    if (!cameraStreamRef.current) return;
+    if (!cameraStreamRef.current || torchBusyRef.current) return;
     const nextFacing = facingMode === 'environment' ? 'user' : 'environment';
     const resolvedDeviceId = nextDeviceId ?? '';
     let openedStream: MediaStream | null = null;
@@ -392,15 +410,38 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
       const track = stream.getVideoTracks()[0];
       if (!track) { stream.getTracks().forEach((item) => item.stop()); throw new Error('camera_track_missing'); }
       const sender = videoSenderRef.current;
-      if (sender) await sender.replaceTrack(track);
       const previous = cameraStreamRef.current;
+      const previousTrack = previous.getVideoTracks()[0];
+      if (torchOnRef.current && previousTrack) {
+        torchBusyRef.current = true;
+        setTorchPending(true);
+        try {
+          await previousTrack.applyConstraints(constraintsWithTorch(previousTrack, false));
+        } catch {
+          setErrorText(copy.cameraError);
+          openedStream?.getTracks().forEach((item) => { item.onended = null; item.stop(); });
+          return;
+        } finally {
+          torchBusyRef.current = false;
+          setTorchPending(false);
+        }
+        torchOnRef.current = false;
+        setTorchOn(false);
+      }
+      if (sender) await sender.replaceTrack(track);
       track.onended = () => {
         setStatus((current) => current === 'connected' ? 'reconnecting' : current);
         setErrorText(copy.cameraUnavailable);
+        torchOnRef.current = false;
+        setTorchOn(false);
       };
       cameraStreamRef.current = stream;
       setCameraStream(stream);
       previous.getTracks().forEach((item) => { item.onended = null; item.stop(); });
+      const capabilities = (typeof track.getCapabilities === 'function' ? track.getCapabilities() : {}) as ExtendedCapabilities;
+      setTorchSupported(capabilities.torch === true);
+      torchOnRef.current = false;
+      setTorchOn(false);
       if (nextDeviceId !== undefined) setCameraId(nextDeviceId);
       else setFacingMode(nextFacing);
       const settings = track.getSettings();
@@ -419,7 +460,7 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
     if (!track) return;
     const target = profile[next];
     try {
-      await track.applyConstraints({ width: { ideal: target.width }, height: { ideal: target.height }, frameRate: { ideal: target.fps } });
+      await track.applyConstraints({ ...track.getConstraints(), width: { ideal: target.width }, height: { ideal: target.height }, frameRate: { ideal: target.fps } });
       const settings = track.getSettings();
       if (settings.width && settings.height) setActualResolution(settings.width + ' × ' + settings.height);
       setActualFps(settings.frameRate ?? null);
@@ -471,28 +512,59 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
     }
   }, [audioAllowed, copy, locale]);
 
-  const togglePause = useCallback(() => {
+  const togglePause = useCallback(async () => {
     const track = cameraStreamRef.current?.getVideoTracks()[0];
-    if (!track) return;
+    if (!track || torchBusyRef.current) return;
+    if (!paused && torchOnRef.current) {
+      torchBusyRef.current = true;
+      setTorchPending(true);
+      try {
+        await track.applyConstraints(constraintsWithTorch(track, false));
+        torchOnRef.current = false;
+        setTorchOn(false);
+      } catch {
+        setErrorText(copy.cameraError);
+        return;
+      } finally {
+        torchBusyRef.current = false;
+        setTorchPending(false);
+      }
+    }
     track.enabled = paused;
     setPaused(!paused);
-  }, [paused]);
+  }, [copy.cameraError, paused]);
 
   const toggleTorch = useCallback(async () => {
     const track = cameraStreamRef.current?.getVideoTracks()[0];
-    if (!track) return;
-    const next = !torchOn;
+    if (!track || torchBusyRef.current) return;
+    const next = !torchOnRef.current;
+    torchBusyRef.current = true;
+    setTorchPending(true);
     try {
-      await track.applyConstraints({ advanced: [{ torch: next } as ExtendedConstraintSet] });
+      await track.applyConstraints(constraintsWithTorch(track, next));
+      if (cameraStreamRef.current?.getVideoTracks()[0] !== track) return;
+      torchOnRef.current = next;
       setTorchOn(next);
-    } catch { setTorchSupported(false); setTorchOn(false); }
-  }, [torchOn]);
+      setErrorText('');
+    } catch {
+      setErrorText(copy.cameraError);
+      if (next) {
+        torchOnRef.current = false;
+        setTorchOn(false);
+      }
+    } finally {
+      torchBusyRef.current = false;
+      setTorchPending(false);
+    }
+  }, [copy.cameraError]);
 
   const setZoom = useCallback(async (value: number) => {
     const track = cameraStreamRef.current?.getVideoTracks()[0];
     if (!track) return;
     try {
-      await track.applyConstraints({ advanced: [{ zoom: value } as ExtendedConstraintSet] });
+      const current = track.getConstraints() as ExtendedTrackConstraints;
+      const advanced = (current.advanced ?? []).filter((constraint) => constraint.zoom === undefined);
+      await track.applyConstraints({ ...current, advanced: [...advanced, { zoom: value }] });
       setZoomRange((current) => current ? { ...current, value } : current);
     } catch { setZoomRange(null); }
   }, []);
@@ -585,7 +657,7 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
           <Button variant="media" shape="icon" className="h-12 w-12 rounded-full" aria-label={copy.flipCamera} title={copy.flipCamera} disabled={!isCameraActive} onClick={() => void switchCamera()}><SwitchCamera size={20} /></Button>
           {audioAllowed ? <Button variant={microphoneOn ? 'mediaActive' : 'media'} shape="icon" className="h-12 w-12 rounded-full" aria-label={microphoneOn ? copy.microphoneOn : copy.microphoneOff} aria-pressed={microphoneOn} title={copy.microphone} disabled={status !== 'connected'} onClick={() => void toggleMicrophone()}>{microphoneOn ? <Mic size={20} /> : <MicOff size={20} />}</Button> : null}
           <Button variant={paused ? 'mediaActive' : 'media'} shape="icon" className="h-12 w-12 rounded-full" aria-label={paused ? copy.resumeCamera : copy.pauseCamera} aria-pressed={paused} title={paused ? copy.resumeCamera : copy.pauseCamera} disabled={!isCameraActive} onClick={togglePause}>{paused ? <Play size={19} /> : <CameraOff size={19} />}</Button>
-          {torchSupported ? <Button variant={torchOn ? 'mediaActive' : 'media'} shape="icon" className="h-12 w-12 rounded-full" aria-label={copy.torch} aria-pressed={torchOn} title={copy.torch} disabled={!isCameraActive} onClick={() => void toggleTorch()}>{torchOn ? <FlashlightOff size={20} /> : <Flashlight size={20} />}</Button> : null}
+          {torchSupported ? <Button variant={torchOn ? 'mediaActive' : 'media'} shape="icon" className="h-12 w-12 rounded-full" aria-label={copy.torch} aria-pressed={torchOn} aria-busy={torchPending} title={copy.torch} disabled={!isCameraActive || torchPending} onClick={() => void toggleTorch()}>{torchOn ? <FlashlightOff size={20} /> : <Flashlight size={20} />}</Button> : null}
           <Button variant="media" shape="icon" className="h-12 w-12 rounded-full" aria-label={copy.openSettings} aria-expanded={settingsOpen} title={copy.openSettings} onClick={() => setSettingsOpen((current) => !current)}><Settings2 size={20} /></Button>
           <Button variant="mediaDanger" shape="icon" className="h-12 w-12 rounded-full" aria-label={copy.endSession} title={copy.endSession} disabled={status === 'ended'} onClick={() => void endConnection()}><CameraOff size={20} /></Button>
         </div>
@@ -614,7 +686,7 @@ export function CelularWebcamCamera({ locale, sessionId, audioAllowed = true }: 
               </select>
             </label> : null}
             {zoomRange ? <label className="block text-sm text-ink-200">{copy.zoom}<span className="float-right tabular-nums text-ink-400">{zoomRange.value.toFixed(1)}×</span><input aria-label={copy.zoom} type="range" min={zoomRange.min} max={zoomRange.max} step={zoomRange.step} value={zoomRange.value} onChange={(event) => void setZoom(Number(event.target.value))} className="mt-3 w-full accent-accent-500" /></label> : null}
-            {torchSupported ? <Button variant={torchOn ? 'mediaActive' : 'media'} aria-pressed={torchOn} onClick={() => void toggleTorch()} className="min-h-11 w-full"><Flashlight size={17} className="mr-2" />{copy.torch}</Button> : null}
+            {torchSupported ? <Button variant={torchOn ? 'mediaActive' : 'media'} aria-pressed={torchOn} aria-busy={torchPending} disabled={!isCameraActive || torchPending} onClick={() => void toggleTorch()} className="min-h-11 w-full">{torchOn ? <FlashlightOff size={17} className="mr-2" /> : <Flashlight size={17} className="mr-2" />}{copy.torch}</Button> : null}
             <div className="rounded-xl border border-ink-700 bg-ink-950 p-3 text-xs leading-5 text-ink-300">
               <div className="flex items-center justify-between gap-3"><span>{copy.resolution}</span><span className="font-medium tabular-nums text-white">{actualResolution || copy.unknown}</span></div>
               <div className="mt-2 flex items-center justify-between gap-3"><span>{copy.frameRate}</span><span className="font-medium tabular-nums text-white">{actualFps ? Math.round(actualFps) + ' fps' : copy.unknown}</span></div>
