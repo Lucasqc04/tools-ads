@@ -6,6 +6,8 @@ export const SCREENSHARE_ROOM_TTL_SECONDS = 12 * 60 * 60;
 export const SCREENSHARE_SIGNAL_TTL_SECONDS = 60 * 60;
 /** How long a host-transfer request waits for an answer before it expires. */
 export const SCREENSHARE_TRANSFER_TTL_SECONDS = 30;
+export const SCREENSHARE_KICK_VOTE_SECONDS = 30;
+export const SCREENSHARE_KICK_VOTE_TTL_SECONDS = 60;
 export const SCREENSHARE_VIEWER_LEASE_SECONDS = 180;
 export const SCREENSHARE_HOST_RECOVERY_MS = 180_000;
 export const SCREENSHARE_SIGNAL_LIMIT = 128;
@@ -22,6 +24,19 @@ export const qualityProfiles = {
 
 export type ManualQualityProfile = keyof typeof qualityProfiles;
 export type QualityMode = 'automatic' | ManualQualityProfile;
+export type KickVoteView = {
+  id: string;
+  targetPeerId: string;
+  targetName: string;
+  startedAt: number;
+  expiresAt: number;
+  status: 'active' | 'passed' | 'rejected' | 'expired' | 'cancelled';
+  yesWeight: number;
+  noWeight: number;
+  totalWeight: number;
+  ownVote: 'yes' | 'no' | null;
+  canVote: boolean;
+};
 export type RoomState = 'active' | 'recovering' | 'closed' | 'expired' | 'full';
 export type PeerState = 'connecting' | 'connected' | 'disconnected';
 export type RoomAccess = 'public' | 'private';

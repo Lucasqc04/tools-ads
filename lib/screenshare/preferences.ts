@@ -13,6 +13,7 @@ export type ShareScreenPreferences = {
   uploadBudgetMbps: number;
   sessionLimitPreset: SessionLimitPreset;
   sessionLimitBytes: number | null;
+  sessionLimitCustomized: boolean;
   alertPolicy: AlertPolicy;
   contentPreference: ContentPreference;
   viewerLimit: number;
@@ -26,8 +27,9 @@ export const defaultShareScreenPreferences: ShareScreenPreferences = {
   dataSaver: false,
   uploadBudgetPreset: 'moderate',
   uploadBudgetMbps: 10,
-  sessionLimitPreset: '1gb',
-  sessionLimitBytes: 1_000_000_000,
+  sessionLimitPreset: 'unlimited',
+  sessionLimitBytes: null,
+  sessionLimitCustomized: false,
   alertPolicy: 'stop',
   contentPreference: 'automatic',
   viewerLimit: 5,
@@ -46,9 +48,19 @@ export const loadShareScreenPreferences = (value: string | null): ShareScreenPre
     const uploadBudgetPreset: UploadBudgetPreset = ['economy', 'moderate', 'balanced', 'performance', 'custom'].includes(String(parsed.uploadBudgetPreset))
       ? parsed.uploadBudgetPreset as UploadBudgetPreset
       : defaultShareScreenPreferences.uploadBudgetPreset;
-    const sessionLimitPreset: SessionLimitPreset = ['500mb', '1gb', '2gb', '5gb', 'custom', 'unlimited'].includes(String(parsed.sessionLimitPreset))
+    let sessionLimitPreset: SessionLimitPreset = ['500mb', '1gb', '2gb', '5gb', 'custom', 'unlimited'].includes(String(parsed.sessionLimitPreset))
       ? parsed.sessionLimitPreset as SessionLimitPreset
       : defaultShareScreenPreferences.sessionLimitPreset;
+    let sessionLimitBytes = parsed.sessionLimitBytes === null || typeof parsed.sessionLimitBytes === 'number' && parsed.sessionLimitBytes >= 0
+      ? parsed.sessionLimitBytes as number | null
+      : null;
+    const sessionLimitCustomized = parsed.sessionLimitCustomized === true;
+    // Older versions wrote the default 1 GB cap to storage. Treat that legacy
+    // value as the new unlimited default until a user changes the setting.
+    if (!sessionLimitCustomized && sessionLimitPreset === '1gb' && sessionLimitBytes === 1_000_000_000) {
+      sessionLimitPreset = 'unlimited';
+      sessionLimitBytes = null;
+    }
     const alertPolicy: AlertPolicy = ['warn', 'reduce', 'stop'].includes(String(parsed.alertPolicy))
       ? parsed.alertPolicy as AlertPolicy
       : defaultShareScreenPreferences.alertPolicy;
@@ -64,9 +76,8 @@ export const loadShareScreenPreferences = (value: string | null): ShareScreenPre
         ? parsed.uploadBudgetMbps
         : defaultShareScreenPreferences.uploadBudgetMbps,
       sessionLimitPreset,
-      sessionLimitBytes: parsed.sessionLimitBytes === null || typeof parsed.sessionLimitBytes === 'number' && parsed.sessionLimitBytes >= 0
-        ? parsed.sessionLimitBytes
-        : null,
+      sessionLimitBytes,
+      sessionLimitCustomized,
       alertPolicy,
       contentPreference,
       viewerLimit: typeof parsed.viewerLimit === 'number' && Number.isInteger(parsed.viewerLimit) && parsed.viewerLimit >= 1 && parsed.viewerLimit <= 20

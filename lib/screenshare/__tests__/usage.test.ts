@@ -77,8 +77,9 @@ describe('screen-share traffic calculations', () => {
     expect(formatDataAmount(2_250_000_000)).toBe('2.25 GB');
   });
 
-  it('defaults to a protective one-gigabyte session stop and sanitizes stored preferences', () => {
-    expect(defaultShareScreenPreferences.sessionLimitBytes).toBe(1_000_000_000);
+  it('defaults to an unlimited session and sanitizes stored preferences', () => {
+    expect(defaultShareScreenPreferences.sessionLimitPreset).toBe('unlimited');
+    expect(defaultShareScreenPreferences.sessionLimitBytes).toBeNull();
     expect(defaultShareScreenPreferences.alertPolicy).toBe('stop');
     const loaded = loadShareScreenPreferences(JSON.stringify({ qualityMode: 'fake', viewerLimit: 999, dataSaver: 'yes', alertPolicy: 'delete' }));
     expect(loaded.qualityMode).toBe('automatic');

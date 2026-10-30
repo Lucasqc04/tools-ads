@@ -1,6 +1,8 @@
 import { Redis } from '@upstash/redis';
 import {
   SCREENSHARE_HOST_RECOVERY_MS,
+  SCREENSHARE_KICK_VOTE_SECONDS,
+  SCREENSHARE_KICK_VOTE_TTL_SECONDS,
   SCREENSHARE_MAX_VIEWERS_DEFAULT,
   SCREENSHARE_ROOM_TTL_SECONDS,
   SCREENSHARE_TRANSFER_TTL_SECONDS,
@@ -8,6 +10,7 @@ import {
   SCREENSHARE_SIGNAL_TTL_SECONDS,
   SCREENSHARE_VIEWER_LEASE_SECONDS,
   type PeerState,
+  type KickVoteView,
   type QualityMode,
   type ScreenSharePeerRecord,
   type ScreenShareRoomRecord,
@@ -41,6 +44,7 @@ const pendingKey = (id: string) => `screenshare:{${id}}:pending`;
 const viewerKey = (id: string, peerId: string) => `screenshare:{${id}}:peer:${peerId}`;
 const signalSequenceKey = (id: string) => `screenshare:{${id}}:signal-sequence`;
 const transferKey = (id: string) => `screenshare:{${id}}:transfer`;
+const kickVoteKey = (id: string) => `screenshare:{${id}}:kick-vote`;
 const hostSignalsKey = (id: string) => `screenshare:{${id}}:signals:host`;
 const peerSignalsKey = (id: string, peerId: string) => `screenshare:{${id}}:signals:${peerId}`;
 
@@ -542,6 +546,214 @@ end
 return cjson.encode({status='ok', host={id=room.hostPeerId or 'host', displayName=room.hostName, cameraOn=room.hostCameraOn, microphoneOn=room.hostMicrophoneOn}, peers=peers, hostPeerId=room.hostPeerId or 'host', screenSharerId=room.screenSharerId, access=room.access, audioAvailable=room.audioAvailable})
 `;
 
+const START_KICK_VOTE_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return 'missing' end
+local room = cjson.decode(roomValue)
+local now = tonumber(ARGV[2])
+if room.hostTokenHash ~= ARGV[1] then return 'unauthorized' end
+if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now then return 'closed' end
+local hostId = room.hostPeerId or 'host'
+if ARGV[3] ~= hostId then return 'unauthorized' end
+local targetId = ARGV[4]
+if targetId == hostId or redis.call('SISMEMBER', KEYS[2], targetId) == 0 then return 'target_missing' end
+local targetKey = ARGV[6] .. targetId
+local targetValue = redis.call('GET', targetKey)
+if not targetValue then return 'target_missing' end
+local target = cjson.decode(targetValue)
+if target.admission ~= 'approved' or now - tonumber(target.lastHeartbeat) > (tonumber(ARGV[8]) * 1000) then return 'target_missing' end
+local currentValue = redis.call('GET', KEYS[3])
+if currentValue then
+  local current = cjson.decode(currentValue)
+  if current.status == 'active' and tonumber(current.expiresAt) > now then
+    if current.initiatorPeerId == hostId then
+      return current.id == ARGV[5] and 'existing' or 'vote_active'
+    end
+  end
+end
+local eligible = {}
+local totalWeight = 0
+local hostIncluded = false
+local viewerIds = redis.call('SMEMBERS', KEYS[2])
+for _, voterId in ipairs(viewerIds) do
+  if voterId ~= targetId then
+    local voterKey = ARGV[6] .. voterId
+    local voterValue = redis.call('GET', voterKey)
+    if not voterValue then
+      redis.call('SREM', KEYS[2], voterId)
+    else
+      local voter = cjson.decode(voterValue)
+      if voter.admission ~= 'approved' or now - tonumber(voter.lastHeartbeat) > (tonumber(ARGV[8]) * 1000) then
+        redis.call('SREM', KEYS[2], voterId)
+      else
+        local weight = voterId == hostId and 2 or 1
+        table.insert(eligible, {id=voterId, weight=weight})
+        totalWeight = totalWeight + weight
+        if voterId == hostId then hostIncluded = true end
+      end
+    end
+  end
+end
+if hostId == 'host' then
+  table.insert(eligible, {id='host', weight=2})
+  totalWeight = totalWeight + 2
+  hostIncluded = true
+end
+if not hostIncluded then return 'host_missing' end
+if #eligible < 2 then return 'not_enough_voters' end
+local vote = {
+  id=ARGV[5], targetPeerId=targetId, targetName=target.displayName,
+  initiatorPeerId=hostId, startedAt=now,
+  expiresAt=now + (tonumber(ARGV[7]) * 1000), status='active',
+  totalWeight=totalWeight, eligible=eligible, yes={}, no={}
+}
+redis.call('SET', KEYS[3], cjson.encode(vote), 'EX', tonumber(ARGV[9]))
+return 'started'
+`;
+
+const CAST_KICK_VOTE_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return 'missing' end
+local room = cjson.decode(roomValue)
+local now = tonumber(ARGV[5])
+if room.status ~= 'active' or tonumber(room.hardExpiresAt) <= now then return 'closed' end
+local hostId = room.hostPeerId or 'host'
+local actorId = ARGV[1]
+if actorId == 'host' then
+  if hostId ~= 'host' or room.hostTokenHash ~= ARGV[2] then return 'unauthorized' end
+else
+  if redis.call('SISMEMBER', KEYS[2], actorId) == 0 then return 'unauthorized' end
+  local actorValue = redis.call('GET', ARGV[6] .. actorId)
+  if not actorValue then return 'unauthorized' end
+  local actor = cjson.decode(actorValue)
+  if actor.tokenHash ~= ARGV[2] or actor.admission ~= 'approved' or now - tonumber(actor.lastHeartbeat) > (tonumber(ARGV[10]) * 1000) then return 'unauthorized' end
+  if actorId == hostId and room.hostTokenHash ~= ARGV[2] then return 'unauthorized' end
+end
+local voteValue = redis.call('GET', KEYS[3])
+if not voteValue then return 'vote_missing' end
+local vote = cjson.decode(voteValue)
+if vote.id ~= ARGV[3] then return 'vote_stale' end
+if vote.status ~= 'active' then return 'vote_resolved' end
+if vote.initiatorPeerId ~= hostId then
+  vote.status = 'cancelled'
+  redis.call('SET', KEYS[3], cjson.encode(vote), 'EX', tonumber(ARGV[11]))
+  return 'vote_cancelled'
+end
+if tonumber(vote.expiresAt) <= now then
+  vote.status = 'expired'
+  redis.call('SET', KEYS[3], cjson.encode(vote), 'EX', tonumber(ARGV[11]))
+  return 'vote_expired'
+end
+local weight = nil
+for _, voter in ipairs(vote.eligible) do
+  if voter.id == actorId then weight = tonumber(voter.weight); break end
+end
+if not weight then return 'not_eligible' end
+for _, voterId in ipairs(vote.yes) do if voterId == actorId then return 'already_voted' end end
+for _, voterId in ipairs(vote.no) do if voterId == actorId then return 'already_voted' end end
+if ARGV[4] == 'yes' then table.insert(vote.yes, actorId) else table.insert(vote.no, actorId) end
+local yesWeight = 0
+local noWeight = 0
+for _, voter in ipairs(vote.eligible) do
+  for _, voterId in ipairs(vote.yes) do if voterId == voter.id then yesWeight = yesWeight + tonumber(voter.weight) end end
+  for _, voterId in ipairs(vote.no) do if voterId == voter.id then noWeight = noWeight + tonumber(voter.weight) end end
+end
+local threshold = math.floor(tonumber(vote.totalWeight) / 2) + 1
+if yesWeight >= threshold then
+  vote.status = 'passed'
+elseif noWeight >= threshold then
+  vote.status = 'rejected'
+elseif (#vote.yes + #vote.no) >= #vote.eligible then
+  vote.status = 'rejected'
+end
+if vote.status == 'passed' then
+  local targetId = vote.targetPeerId
+  local targetKey = ARGV[6] .. targetId
+  local targetValue = redis.call('GET', targetKey)
+  if not targetValue or redis.call('SISMEMBER', KEYS[2], targetId) == 0 then
+    vote.status = 'cancelled'
+  else
+    local target = cjson.decode(targetValue)
+    if target.admission ~= 'approved' or now - tonumber(target.lastHeartbeat) > (tonumber(ARGV[10]) * 1000) then
+      vote.status = 'cancelled'
+    else
+      target.admission = 'denied'
+      target.lastHeartbeat = now
+      redis.call('SET', targetKey, cjson.encode(target), 'EX', 120)
+      redis.call('SREM', KEYS[2], targetId)
+      redis.call('SREM', KEYS[4], targetId)
+      if room.screenSharerId == targetId then
+        room.screenSharerId = cjson.null
+        room.audioAvailable = false
+        redis.call('SET', KEYS[1], cjson.encode(room), 'KEEPTTL')
+      end
+      local sequence = redis.call('INCR', KEYS[5])
+      local message = cjson.encode({type='bye', fromPeerId=targetId, sequence=sequence, createdAt=now})
+      redis.call('RPUSH', KEYS[6], message)
+      redis.call('LTRIM', KEYS[6], -tonumber(ARGV[8]), -1)
+      redis.call('EXPIRE', KEYS[6], tonumber(ARGV[9]))
+      local remainingPeers = redis.call('SMEMBERS', KEYS[2])
+      for _, peerId in ipairs(remainingPeers) do
+        local peerSequence = redis.call('INCR', KEYS[5])
+        local peerMessage = cjson.encode({type='bye', fromPeerId=targetId, sequence=peerSequence, createdAt=now})
+        local peerQueue = ARGV[7] .. peerId
+        redis.call('RPUSH', peerQueue, peerMessage)
+        redis.call('LTRIM', peerQueue, -tonumber(ARGV[8]), -1)
+        redis.call('EXPIRE', peerQueue, tonumber(ARGV[9]))
+      end
+    end
+  end
+end
+redis.call('SET', KEYS[3], cjson.encode(vote), 'EX', tonumber(ARGV[11]))
+return vote.status
+`;
+
+const GET_KICK_VOTE_SCRIPT = `
+local roomValue = redis.call('GET', KEYS[1])
+if not roomValue then return cjson.encode({status='missing'}) end
+local room = cjson.decode(roomValue)
+local role = ARGV[1]
+local actorId = ARGV[2]
+if role == 'host' then
+  if actorId ~= 'host' or (room.hostPeerId or 'host') ~= 'host' or room.hostTokenHash ~= ARGV[3] then return cjson.encode({status='unauthorized'}) end
+else
+  local actorValue = redis.call('GET', KEYS[3])
+  if not actorValue or cjson.decode(actorValue).tokenHash ~= ARGV[3] or not redis.call('SISMEMBER', KEYS[2], actorId) then return cjson.encode({status='unauthorized'}) end
+end
+local voteValue = redis.call('GET', KEYS[4])
+if not voteValue then return cjson.encode({status='ok', vote=cjson.null}) end
+local vote = cjson.decode(voteValue)
+local now = tonumber(ARGV[4])
+local hostId = room.hostPeerId or 'host'
+if vote.status == 'active' and vote.initiatorPeerId ~= hostId then vote.status = 'cancelled' end
+if vote.status == 'active' and tonumber(vote.expiresAt) <= now then vote.status = 'expired' end
+if vote.status ~= 'active' then redis.call('SET', KEYS[4], cjson.encode(vote), 'EX', tonumber(ARGV[6])) end
+local yesWeight = 0
+local noWeight = 0
+local ownVote = cjson.null
+local canVote = false
+for _, voter in ipairs(vote.eligible) do
+  if voter.id == actorId then canVote = true end
+  for _, voterId in ipairs(vote.yes) do
+    if voterId == voter.id then
+      yesWeight = yesWeight + tonumber(voter.weight)
+      if voterId == actorId then ownVote = 'yes' end
+    end
+  end
+  for _, voterId in ipairs(vote.no) do
+    if voterId == voter.id then
+      noWeight = noWeight + tonumber(voter.weight)
+      if voterId == actorId then ownVote = 'no' end
+    end
+  end
+end
+return cjson.encode({status='ok', vote={
+  id=vote.id, targetPeerId=vote.targetPeerId, targetName=vote.targetName,
+  startedAt=vote.startedAt, expiresAt=vote.expiresAt, status=vote.status,
+  yesWeight=yesWeight, noWeight=noWeight, totalWeight=vote.totalWeight, ownVote=ownVote, canVote=canVote
+}})
+`;
+
 const SET_SCREEN_SHARER_SCRIPT = `
 local roomValue = redis.call('GET', KEYS[1])
 if not roomValue then return 'missing' end
@@ -960,6 +1172,44 @@ export const getViewerAdmission = async ({ id, peerId, tokenHash, now }: { id: s
   VIEWER_ADMISSION_SCRIPT,
   [roomKey(id), viewerKey(id, peerId)],
   [tokenHash, peerId, now, SCREENSHARE_HOST_RECOVERY_MS],
+));
+
+export const startKickVote = async ({ id, actorId, tokenHash, targetPeerId, voteId, now }: {
+  id: string;
+  actorId: string;
+  tokenHash: string;
+  targetPeerId: string;
+  voteId: string;
+  now: number;
+}): Promise<string> => String(await getRedis().eval(
+  START_KICK_VOTE_SCRIPT,
+  [roomKey(id), viewersKey(id), kickVoteKey(id)],
+  [tokenHash, now, actorId, targetPeerId, voteId, `screenshare:{${id}}:peer:`, SCREENSHARE_KICK_VOTE_SECONDS, SCREENSHARE_VIEWER_LEASE_SECONDS, SCREENSHARE_KICK_VOTE_TTL_SECONDS],
+));
+
+export const castKickVote = async ({ id, actorId, tokenHash, voteId, choice, now }: {
+  id: string;
+  actorId: string;
+  tokenHash: string;
+  voteId: string;
+  choice: 'yes' | 'no';
+  now: number;
+}): Promise<string> => String(await getRedis().eval(
+  CAST_KICK_VOTE_SCRIPT,
+  [roomKey(id), viewersKey(id), kickVoteKey(id), pendingKey(id), signalSequenceKey(id), hostSignalsKey(id)],
+  [actorId, tokenHash, voteId, choice, now, `screenshare:{${id}}:peer:`, `screenshare:{${id}}:signals:`, SCREENSHARE_SIGNAL_LIMIT, SCREENSHARE_SIGNAL_TTL_SECONDS, SCREENSHARE_VIEWER_LEASE_SECONDS, SCREENSHARE_KICK_VOTE_TTL_SECONDS],
+));
+
+export const getKickVote = async ({ id, role, actorId, tokenHash, now }: {
+  id: string;
+  role: 'host' | 'viewer';
+  actorId: string;
+  tokenHash: string;
+  now: number;
+}): Promise<{ status: string; vote: KickVoteView | null }> => parseScriptJson(await getRedis().eval(
+  GET_KICK_VOTE_SCRIPT,
+  [roomKey(id), viewersKey(id), viewerKey(id, actorId), kickVoteKey(id)],
+  [role, actorId, tokenHash, now, SCREENSHARE_VIEWER_LEASE_SECONDS, SCREENSHARE_KICK_VOTE_TTL_SECONDS],
 ));
 
 export const approveViewer = async ({ id, peerId, tokenHash, now }: { id: string; peerId: string; tokenHash: string; now: number }): Promise<string> => String(await getRedis().eval(

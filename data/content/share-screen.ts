@@ -77,7 +77,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
         title: 'Consumo de internet e limite por sessão',
         paragraphs: [
           'Como cada espectador recebe uma conexão independente, o computador do host envia uma cópia de mídia para cada pessoa. Um fluxo de 5 Mbps corresponde a cerca de 2,25 GB por hora para um espectador e 11,25 GB por hora para cinco, antes do overhead de rede estimado separadamente. O bitrate efetivo muda com o conteúdo, a rede e o navegador; o orçamento de upload controla uma meta e não é um bloqueio rígido do tráfego.',
-          'A ferramenta começa com limite de sessão de 1 GB e encerramento automático, que você pode alterar para 500 MB, 2 GB, 5 GB, um valor personalizado ou sem limite. O cálculo usa bytes de mídia WebRTC observados pelo navegador, não o consumo total da operadora, o overhead ou os dados usados por outros aplicativos. Se o navegador não disponibilizar esses contadores, a aplicação mostra que o uso não foi medido e não consegue aplicar o limite automaticamente.',
+          'A chamada não tem limite de dados por padrão e não é encerrada automaticamente. Se quiser, você pode definir um limite de 500 MB, 1 GB, 2 GB, 5 GB ou um valor personalizado. O cálculo usa bytes de mídia WebRTC observados pelo navegador, não o consumo total da operadora, o overhead ou os dados usados por outros aplicativos. Se o navegador não disponibilizar esses contadores, a aplicação mostra que o uso não foi medido e não consegue aplicar o limite automaticamente.',
         ],
       },
     ],
@@ -150,7 +150,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
         title: 'Internet use and per-session limit',
         paragraphs: [
           'Each viewer receives an independent connection, so the presenter sends one media copy per person. A 5 Mbps stream uses about 2.25 GB per hour for one viewer and 11.25 GB per hour for five, with estimated network overhead shown separately. Effective bitrate changes with screen content, network conditions, and browser behavior. The upload budget controls an encoder target; it is not a hard cap on all network traffic.',
-          'The tool starts with a 1 GB session limit and automatic stop. You can choose 500 MB, 2 GB, 5 GB, a custom amount, or no limit. The counter uses WebRTC media bytes reported by the browser; it does not include your carrier total, network overhead, or other apps. If the browser does not expose byte counters, the app marks usage as unavailable and cannot enforce the session limit.',
+          'Calls have no data limit by default and do not stop automatically. If you want, you can set a limit of 500 MB, 1 GB, 2 GB, 5 GB, or a custom amount. The counter uses WebRTC media bytes reported by the browser; it does not include your carrier total, network overhead, or other apps. If the browser does not expose byte counters, the app marks usage as unavailable and cannot enforce the session limit.',
         ],
       },
     ],
@@ -223,7 +223,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
         title: 'Consumo de internet y límite por sesión',
         paragraphs: [
           'Cada espectador recibe una conexión independiente, así que quien presenta envía una copia de medios por persona. Un flujo de 5 Mbps consume unos 2,25 GB por hora para un espectador y 11,25 GB por hora para cinco; el overhead estimado de red se muestra aparte. El bitrate real cambia según el contenido de la pantalla, la red y el navegador. El presupuesto de subida controla un objetivo del encoder, no limita de forma rígida todo el tráfico.',
-          'La herramienta comienza con un límite de sesión de 1 GB y cierre automático. Puedes cambiarlo a 500 MB, 2 GB, 5 GB, un valor personalizado o sin límite. El contador usa bytes de medios WebRTC que informa el navegador; no incluye el total de la operadora, el overhead ni otras aplicaciones. Si el navegador no ofrece contadores, el uso aparece como no medido y no se puede aplicar el límite automáticamente.',
+          'Las llamadas no tienen límite de datos ni se cierran automáticamente de forma predeterminada. Si quieres, puedes fijar un límite de 500 MB, 1 GB, 2 GB, 5 GB o un valor personalizado. El contador usa bytes de medios WebRTC que informa el navegador; no incluye el total de la operadora, el overhead ni otras aplicaciones. Si el navegador no ofrece contadores, el uso aparece como no medido y no se puede aplicar el límite automáticamente.',
         ],
       },
     ],
@@ -249,7 +249,7 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
       { title: '链接共享如何工作', paragraphs: ['开始直播时，浏览器会让你选择要共享的屏幕、窗口或标签页。工具创建一个临时房间和观看链接。观众在浏览器中打开链接，并与主持人自动协商独立的 WebRTC 连接。', 'Redis 只保存临时房间状态，并在连接建立期间交换信令。视频和兼容的音频通过 WebRTC P2P 在浏览器之间传输，不经过 Redis、Next.js 应用或媒体服务器。房间创建者离开时，系统会自动把管理权交给另一位活跃参与者，并优先考虑网络状况较好的连接；浏览器报告网络类型时会优先 Wi-Fi。'] },
       { title: '质量、音频与连接诊断', paragraphs: ['自动模式以均衡目标开始，并根据连接状态调整捕获分辨率。浏览器支持时，每位观众的码率限制会单独调整。分辨率和帧率是目标值，不是保证值。', '诊断面板只显示浏览器实际提供的 RTT、丢包、码率和接收分辨率。RTT 是连接往返时间，并不等于端到端视频延迟。'] },
       { title: '隐私和直连限制', paragraphs: ['网站不会录制直播。房间链接在房间有效期间可以观看，请只分享给预期的观众，并在结束后关闭房间。浏览器是否能捕获系统或标签页音频取决于设备和选择的来源。', 'WebRTC 使用 ICE 和 STUN 寻找连接路径。直连参与者可能获得连接信息，包括 IP 地址；P2P 不等于 IP 匿名。本版本不包含 TURN 中继，严格的防火墙或 NAT 可能阻止连接。房间和信令会自动过期。'] },
-      { title: '流量消耗和会话上限', paragraphs: ['每位观众都有独立连接，因此主持人会为每个人发送一份媒体流。5 Mbps 的视频流每位观众每小时约使用 2.25 GB，五位观众约使用 11.25 GB；估算的网络开销会单独显示。实际码率会随屏幕内容、网络和浏览器变化。上传预算是编码器目标，不是严格的总流量上限。', '工具默认设置 1 GB 会话上限并在达到时自动结束。你可以改为 500 MB、2 GB、5 GB、自定义数值或不限。计数依据浏览器报告的 WebRTC 媒体字节，不包括运营商总流量、网络开销或其他应用。如果浏览器不提供字节计数，应用会显示无法测量，也无法自动执行上限。'] },
+      { title: '流量消耗和会话上限', paragraphs: ['每位观众都有独立连接，因此主持人会为每个人发送一份媒体流。5 Mbps 的视频流每位观众每小时约使用 2.25 GB，五位观众约使用 11.25 GB；估算的网络开销会单独显示。实际码率会随屏幕内容、网络和浏览器变化。上传预算是编码器目标，不是严格的总流量上限。', '通话默认不限制流量，也不会自动结束。你可以按需设置 500 MB、1 GB、2 GB、5 GB 或自定义上限。计数依据浏览器报告的 WebRTC 媒体字节，不包括运营商总流量、网络开销或其他应用。如果浏览器不提供字节计数，应用会显示无法测量，也无法自动执行上限。'] },
     ],
     faq: [
       { question: '别人如何观看我的屏幕？', answer: '开始捕获后复制房间链接。观众在另一个浏览器打开链接，WebRTC 会自动协商连接。' },

@@ -1,6 +1,6 @@
 import { sha256Hex } from '@/lib/screenshare/auth';
 import { getSignalRateLimit, isValidPeerId, isValidRoomId, isValidSecret, isViewerSignalDirectionValid, validateSignalPayload } from '@/lib/screenshare/protocol';
-import { consumeRateLimit, getHostPeers, getParticipants, pollSignals, sendSignal } from '@/lib/screenshare/store';
+import { consumeRateLimit, getHostPeers, getKickVote, getParticipants, pollSignals, sendSignal } from '@/lib/screenshare/store';
 import { isRecord, json, readJsonBody, serverError } from '@/lib/screenshare/http';
 
 export const runtime = 'nodejs';
@@ -15,14 +15,16 @@ type RouteProps = { params: Promise<{ roomId: string }> };
  */
 const loadRoster = async (role: 'host' | 'viewer', roomId: string, peerId: string, tokenHash: string, now: number) => {
   try {
+    const kickVote = await getKickVote({ id: roomId, role, actorId: peerId, tokenHash, now }).catch(() => null);
+    const vote = kickVote?.status === 'ok' ? kickVote.vote : null;
     if (role === 'host') {
       const result = await getHostPeers(roomId, tokenHash, now);
       if (result.status === 'unauthorized' || result.status === 'missing') return null;
-      return { host: result.host, hostPeerId: result.hostPeerId, peers: result.peers, pending: result.pending, screenSharerId: result.screenSharerId ?? null, audioAvailable: result.audioAvailable ?? false };
+      return { host: result.host, hostPeerId: result.hostPeerId, peers: result.peers, pending: result.pending, screenSharerId: result.screenSharerId ?? null, audioAvailable: result.audioAvailable ?? false, kickVote: vote };
     }
     const result = await getParticipants({ id: roomId, peerId, tokenHash, now });
     if (result.status !== 'ok') return null;
-    return { host: result.host, hostPeerId: result.hostPeerId, peers: result.peers, screenSharerId: result.screenSharerId ?? null, access: result.access, audioAvailable: result.audioAvailable ?? false };
+    return { host: result.host, hostPeerId: result.hostPeerId, peers: result.peers, screenSharerId: result.screenSharerId ?? null, access: result.access, audioAvailable: result.audioAvailable ?? false, kickVote: vote };
   } catch {
     return null;
   }
