@@ -22,8 +22,6 @@ type StreamQuality = { width: number; height: number; fps: number; bitrate: numb
 type ZoomCapabilities = { min: number; max: number; step: number };
 type ExtendedCapabilities = MediaTrackCapabilities & { torch?: boolean; zoom?: ZoomCapabilities };
 type ExtendedConstraintSet = MediaTrackConstraintSet & { torch?: boolean; zoom?: number };
-type Baseline = { at: number; bytes: number } | null;
-
 const profile: Record<WebcamQualityPreset, StreamQuality> = {
   economy: { width: 640, height: 480, fps: 24, bitrate: 900_000 },
   balanced: { width: 1280, height: 720, fps: 30, bitrate: 2_500_000 },

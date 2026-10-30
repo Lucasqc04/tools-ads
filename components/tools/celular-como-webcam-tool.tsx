@@ -60,6 +60,7 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
   const cleanVideoRef = useRef<HTMLVideoElement | null>(null);
   const pollErrorCountRef = useRef(0);
   const statusRef = useRef(status);
+  const isEnded = status === 'ended';
   const completedEventRef = useRef(false);
   statusRef.current = status;
 
@@ -184,7 +185,7 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
   }, [acceptOffer, clearPeer]);
 
   useEffect(() => {
-    if (!sessionId || !hostTokenRef.current || status === 'ended') return;
+    if (!sessionId || !hostTokenRef.current || isEnded) return;
     let active = true;
     let timer = 0;
     let delay = 800;
@@ -221,17 +222,17 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
     };
     void poll();
     return () => { active = false; window.clearTimeout(timer); };
-  }, [clearPeer, copy.sessionEnded, copy.sessionExpired, handleSignal, sessionId, status === 'ended']);
+  }, [clearPeer, copy.sessionEnded, copy.sessionExpired, handleSignal, isEnded, sessionId]);
 
   useEffect(() => {
-    if (!sessionId || !hostTokenRef.current || status === 'ended') return;
+    if (!sessionId || !hostTokenRef.current || isEnded) return;
     const heartbeat = window.setInterval(() => {
       void webcamRequest('/api/webcam/sessions/' + encodeURIComponent(sessionId) + '/heartbeat?role=host', {
         method: 'POST', headers: { 'X-Webcam-Token': hostTokenRef.current },
       }).catch(() => undefined);
     }, 25_000);
     return () => window.clearInterval(heartbeat);
-  }, [sessionId, status === 'ended']);
+  }, [isEnded, sessionId]);
 
   useEffect(() => {
     const video = videoRef.current;
