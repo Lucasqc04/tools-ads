@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ClipboardEvent, type DragEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ClipboardEvent, type DragEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
 import {
   Activity, AlertTriangle, Camera, CameraOff, ChevronDown, Copy, Download, Expand, Flashlight, FlashlightOff, Gauge, MoreHorizontal, Smartphone,
   LoaderCircle, Maximize2, MessageCircle, Mic, MicOff, MonitorUp, Paperclip, PhoneOff,
@@ -352,6 +352,8 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
   const [roomAccess, setRoomAccess] = useState<'public' | 'private'>('public');
   const [cameraOn, setCameraOn] = useState(false);
   const [phoneWebcamOpen, setPhoneWebcamOpen] = useState(false);
+  const [phoneWebcamMounted, setPhoneWebcamMounted] = useState(false);
+  const [phoneWebcamAnchor, setPhoneWebcamAnchor] = useState<HTMLElement | null>(null);
   const [phoneWebcamActive, setPhoneWebcamActive] = useState(false);
   const [microphoneOn, setMicrophoneOn] = useState(false);
   const [speakerMuted, setSpeakerMuted] = useState(false);
@@ -832,6 +834,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     const track = stream?.getVideoTracks().find((item) => item.readyState === 'live') ?? null;
     phoneCameraTrackRef.current = track;
     if (!track) {
+      phoneCameraAutoSelectRef.current = false;
       if (phoneCameraUsingSourceRef.current) {
         phoneCameraUsingSourceRef.current = false;
         setPhoneWebcamActive(false);
@@ -841,23 +844,34 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     }
     if (phoneCameraUsingSourceRef.current || phoneCameraAutoSelectRef.current) {
       phoneCameraUsingSourceRef.current = true;
+      phoneCameraAutoSelectRef.current = false;
       setPhoneWebcamActive(true);
       await setLocalTrack('camera', track.clone());
     }
   }, [setLocalTrack]);
 
-  const openPhoneWebcam = useCallback(() => {
+  const openPhoneWebcam = useCallback((anchor: HTMLElement) => {
+    if (phoneWebcamOpen) {
+      setPhoneWebcamOpen(false);
+      return;
+    }
     phoneCameraAutoSelectRef.current = true;
+    const phoneTrack = phoneCameraTrackRef.current;
+    if (phoneTrack?.readyState === 'live' && !phoneCameraUsingSourceRef.current) {
+      phoneCameraUsingSourceRef.current = true;
+      phoneCameraAutoSelectRef.current = false;
+      setPhoneWebcamActive(true);
+      void setLocalTrack('camera', phoneTrack.clone());
+    }
+    setPhoneWebcamAnchor(anchor);
+    setPhoneWebcamMounted(true);
     setPhoneWebcamOpen(true);
-  }, []);
+  }, [phoneWebcamOpen, setLocalTrack]);
 
   const closePhoneWebcam = useCallback(() => {
-    phoneCameraAutoSelectRef.current = false;
-    phoneCameraUsingSourceRef.current = false;
-    phoneCameraTrackRef.current = null;
-    setPhoneWebcamActive(false);
     setPhoneWebcamOpen(false);
-  }, []);
+    window.requestAnimationFrame(() => phoneWebcamAnchor?.focus());
+  }, [phoneWebcamAnchor]);
 
   const onPhoneWebcamStreamChange = useCallback((stream: MediaStream | null) => {
     void handlePhoneWebcamStream(stream);
@@ -2858,7 +2872,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
     </span>;
   };
   const callButtonSize = 'h-11 w-11 sm:h-14 sm:w-14';
-  const callMediaButton = (label: string, active: boolean, icon: ReactNode, onClick: () => void, danger = false, className = '', tone: 'brand' | 'neutral' = 'brand') => (
+  const callMediaButton = (label: string, active: boolean, icon: ReactNode, onClick: (event: ReactMouseEvent<HTMLButtonElement>) => void, danger = false, className = '', tone: 'brand' | 'neutral' = 'brand') => (
     <div className={`flex shrink-0 flex-col items-center gap-1 ${className}`}>
       <Button shape="circle" variant={danger ? 'callDanger' : active && tone === 'brand' ? 'callActive' : 'call'} aria-label={label} title={label} onClick={onClick} className={`${callButtonSize} shrink-0 p-0`}>
         {icon}
@@ -3122,7 +3136,6 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
       <div className="border-t border-slate-200 p-3">
         <DevicePicker theme="light" copy={callCopy} cameras={cameraInputs} microphones={microphoneInputs} speakers={speakerOutputs} cameraId={cameraId} microphoneId={microphoneId} speakerId={speakerId} facing={cameraFacing} showFacing={touchDevice} outputSupported={outputSupported} mirror={mirrorSelf}
           onCamera={(id) => void switchLocalDevice('camera', { deviceId: id })} onMicrophone={(id) => void switchLocalDevice('microphone', { deviceId: id })} onSpeaker={setSpeakerId} onFacing={(facingMode) => void switchLocalDevice('camera', { deviceId: '', facingMode })} onMirror={setMirrorSelf} />
-        <Button variant="secondary" aria-pressed={phoneWebcamOpen || phoneWebcamActive} onClick={openPhoneWebcam} className="mt-3 min-h-11 w-full justify-start"><Smartphone size={17} className="mr-2" aria-hidden="true" />{phoneWebcamActive ? callCopy.phoneWebcamActive : callCopy.phoneWebcam}</Button>
       </div>
     </details>
   );
@@ -3307,7 +3320,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-400">{callCopy.devices}</h3>
                 <DevicePicker theme="dark" copy={callCopy} cameras={cameraInputs} microphones={microphoneInputs} speakers={speakerOutputs} cameraId={cameraId} microphoneId={microphoneId} speakerId={speakerId} facing={cameraFacing} showFacing={touchDevice} outputSupported={outputSupported} mirror={mirrorSelf}
                   onCamera={(id) => void switchLocalDevice('camera', { deviceId: id })} onMicrophone={(id) => void switchLocalDevice('microphone', { deviceId: id })} onSpeaker={setSpeakerId} onFacing={(facingMode) => void switchLocalDevice('camera', { deviceId: '', facingMode })} onMirror={setMirrorSelf} />
-                <Button variant="call" aria-pressed={phoneWebcamOpen || phoneWebcamActive} onClick={openPhoneWebcam} className="mt-3 min-h-11 w-full justify-start"><Smartphone size={17} className="mr-2" aria-hidden="true" />{phoneWebcamActive ? callCopy.phoneWebcamActive : callCopy.phoneWebcam}</Button>
+                <Button variant="call" aria-pressed={phoneWebcamOpen || phoneWebcamActive} aria-expanded={phoneWebcamOpen} aria-controls="phone-webcam-popover" onClick={(event) => openPhoneWebcam(event.currentTarget)} className="mt-3 min-h-11 w-full justify-start"><Smartphone size={17} className="mr-2" aria-hidden="true" />{phoneWebcamActive ? callCopy.phoneWebcamActive : callCopy.phoneWebcam}</Button>
               </section>
               <section className="space-y-3 border-t border-ink-700 pt-4">
                 <label className="flex items-center gap-2 text-sm text-ink-300"><input type="checkbox" className="accent-accent-500" checked={serverEconomy} onChange={(event) => { setServerEconomy(event.target.checked); try { localStorage.setItem('adtools.share-screen.server-economy.v1', event.target.checked ? 'on' : 'off'); } catch { /* storage can be disabled */ } }} />{callCopy.serverEconomy}</label>
@@ -3328,7 +3341,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         <footer className={`flex flex-nowrap items-start gap-1 overflow-x-auto overscroll-x-contain px-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden transition-opacity duration-300 ${stageExpanded ? `absolute inset-x-0 bottom-0 z-30 justify-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-8 sm:gap-3 sm:px-4 ${stageControlsVisible ? 'opacity-100' : 'pointer-events-none opacity-0'}` : 'shrink-0 justify-start border-t border-ink-800 bg-ink-950 pt-3 sm:justify-center sm:gap-3 sm:px-4'}`}>
           {callMediaButton(devicePending === 'microphone' ? callCopy.deviceStarting : microphoneOn ? callCopy.microphone : callCopy.microphoneOff, microphoneOn, devicePending === 'microphone' ? <LoaderCircle size={21} className="animate-spin" /> : microphoneOn ? <Mic size={21} /> : <MicOff size={21} />, () => void toggleLocalDevice('microphone'), !microphoneOn && devicePending !== 'microphone', '', 'neutral')}
           {callMediaButton(devicePending === 'camera' ? callCopy.deviceStarting : cameraOn ? callCopy.camera : callCopy.cameraOff, cameraOn, devicePending === 'camera' ? <LoaderCircle size={21} className="animate-spin" /> : cameraOn ? <Camera size={21} /> : <CameraOff size={21} />, () => void toggleLocalDevice('camera'), !cameraOn && devicePending !== 'camera', '', 'neutral')}
-          {callMediaButton(phoneWebcamActive ? callCopy.phoneWebcamActive : callCopy.phoneWebcam, phoneWebcamOpen || phoneWebcamActive, <Smartphone size={20} />, openPhoneWebcam)}
+          {callMediaButton(phoneWebcamActive ? callCopy.phoneWebcamActive : callCopy.phoneWebcam, phoneWebcamOpen || phoneWebcamActive, <Smartphone size={20} />, (event) => openPhoneWebcam(event.currentTarget))}
           {callMediaButton(shareLabel, screenSharerId === selfId, <MonitorUp size={21} />, () => screenSharerId === selfId ? void stopScreenShare() : startScreenShare(), false, screenSupported || screenSharerId === selfId ? '' : 'opacity-60')}
           {callMediaButton(callCopy.whiteboard, whiteboardOpen, <PenLine size={20} />, () => {
             if (!whiteboardOpen) { setWhiteboardMounted(true); setHostCallPanel(null); setWhiteboardOpen(true); }
@@ -3373,7 +3386,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           </div>
         </div> : null}
         {toast ? <div role="status" aria-live="polite" className="fixed bottom-28 left-1/2 z-[110] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl border border-ink-700 bg-ink-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div> : null}
-        {phoneWebcamOpen ? <CelularComoWebcamTool locale={locale} embedded audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
+        {phoneWebcamMounted ? <CelularComoWebcamTool locale={locale} embedded open={phoneWebcamOpen} anchorElement={phoneWebcamAnchor} embeddedTheme="dark" audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
       </div>
     );
   }
@@ -3418,7 +3431,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
           </div> : null}
           {(phase === 'error' || phase === 'ended') || errorText ? <div role="alert" className="m-5 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 md:m-8">{errorText || roomStateText || ui.roomEnded}<div className="mt-3"><Button variant="secondary" onClick={() => { setPhase('idle'); setErrorText(''); setAdmissionState(null); }}>{ui.retry}</Button></div></div> : null}
         </Card>
-        {phoneWebcamOpen ? <CelularComoWebcamTool locale={locale} embedded audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
+        {phoneWebcamMounted ? <CelularComoWebcamTool locale={locale} embedded open={phoneWebcamOpen} anchorElement={phoneWebcamAnchor} embeddedTheme="light" audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
       </div>
     );
   }
@@ -3483,7 +3496,7 @@ export function ShareScreenTool({ locale = 'pt-br', initialRoomId }: Props) {
         {settingsOpen ? <Card className="mt-5 p-5 md:p-7"><h3 className="mb-5 font-bold text-slate-900">{ui.advanced}</h3>{renderPreferences(false)}<p className="mt-5 text-xs leading-5 text-slate-500">{x.dataUseNotice}</p></Card> : null}
         {errorText && phase !== 'error' ? <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{errorText}</p> : null}
       </>}
-      {phoneWebcamOpen ? <CelularComoWebcamTool locale={locale} embedded audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
+      {phoneWebcamMounted ? <CelularComoWebcamTool locale={locale} embedded open={phoneWebcamOpen} anchorElement={phoneWebcamAnchor} embeddedTheme="light" audioAllowed={false} onRemoteStreamChange={onPhoneWebcamStreamChange} onClose={closePhoneWebcam} /> : null}
       {toast ? <div role="status" aria-live="polite" className="fixed bottom-4 left-1/2 z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-3 text-sm text-white shadow-lg">{toast}</div> : null}
     </div>
   );

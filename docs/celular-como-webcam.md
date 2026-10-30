@@ -35,6 +35,8 @@ Uma sessão tem TTL renovável de 30 minutos, limite absoluto de 4 horas e reten
 
 ## Captura no OBS
 
+Uma página web não consegue registrar uma câmera virtual do sistema para outros programas. Para escolher o vídeo do celular no Discord, Meet ou outro aplicativo, use o OBS Virtual Camera como ponte local.
+
 1. Abra a janela limpa na página do computador.
 2. No OBS Studio, adicione uma fonte **Captura de Janela** e selecione essa janela do navegador.
 3. Ajuste o enquadramento e inicie **Câmera Virtual** no OBS.

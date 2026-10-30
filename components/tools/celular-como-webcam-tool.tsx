@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Camera, Check, Copy, Expand, LoaderCircle, MonitorPlay, Smartphone, Wifi, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,22 +21,27 @@ import type { WebcamSignal } from '@/lib/celular-webcam/protocol';
 type Props = {
   locale: AppLocale;
   embedded?: boolean;
+  open?: boolean;
+  anchorElement?: HTMLElement | null;
+  embeddedTheme?: 'light' | 'dark';
   audioAllowed?: boolean;
   onRemoteStreamChange?: (stream: MediaStream | null) => void;
   onClose?: () => void;
 };
 type HostStatus = 'idle' | 'creating' | 'waiting' | 'requested' | 'connecting' | 'connected' | 'reconnecting' | 'ended' | 'error';
+type PopoverPosition = { left: number; top?: number; bottom?: number; maxHeight: number; arrowLeft: number; placement: 'above' | 'below' };
 type InboundVideoStats = { kind?: string; mediaType?: string; frameWidth?: number; frameHeight?: number; framesPerSecond?: number; bytesReceived?: number; packetsLost?: number; packetsReceived?: number };
 type CandidatePairStats = { state?: string; selected?: boolean; nominated?: boolean; currentRoundTripTime?: number; localCandidateId?: string };
 
 const sessionErrorType = (error: unknown) => error instanceof WebcamApiError && error.code === 'service_unavailable' ? 'network_error' : 'processing_failed';
 
-export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, onRemoteStreamChange, onClose }: Props) {
+export function CelularComoWebcamTool({ locale, embedded = false, open = true, anchorElement, embeddedTheme = 'light', audioAllowed, onRemoteStreamChange, onClose }: Props) {
   const copy = getCelularWebcamUiCopy(locale);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const receiveAudio = embedded ? false : (audioAllowed ?? audioEnabled);
   const [status, setStatus] = useState<HostStatus>('idle');
   const [portalReady, setPortalReady] = useState(false);
+  const [popoverPosition, setPopoverPosition] = useState<PopoverPosition | null>(null);
   const [sessionId, setSessionId] = useState('');
   const [phoneUrl, setPhoneUrl] = useState('');
   const [error, setError] = useState('');
@@ -48,7 +53,7 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
   const [videoFit, setVideoFit] = useState<'contain' | 'cover'>('contain');
   const [cleanWindowOpen, setCleanWindowOpen] = useState(false);
   const [qrLib, setQrLib] = useState<typeof import('qr-code-styling') | null>(null);
-  const overlayRef = useRef<HTMLElement>(null);
+  const popoverRef = useRef<HTMLElement>(null);
   const qrContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -59,8 +64,11 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
   const cleanWindowRef = useRef<Window | null>(null);
   const cleanVideoRef = useRef<HTMLVideoElement | null>(null);
   const pollErrorCountRef = useRef(0);
+  const autoStartRef = useRef(false);
   const statusRef = useRef(status);
   const isEnded = status === 'ended';
+  const qrTargetReady = !embedded || (open && popoverPosition !== null);
+  const pauseHiddenSession = embedded && !open && (status === 'waiting' || status === 'requested' || status === 'error');
   const completedEventRef = useRef(false);
   statusRef.current = status;
 
@@ -73,12 +81,13 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
   useEffect(() => { setPortalReady(true); }, []);
 
   useEffect(() => {
-    if (!qrLib || !phoneUrl || !qrContainerRef.current) return;
+    if (!qrTargetReady || !qrLib || !phoneUrl || !qrContainerRef.current) return;
     const container = qrContainerRef.current;
     container.replaceChildren();
+    const qrSize = embedded ? 168 : 240;
     const qr = new qrLib.default({
-      width: 240,
-      height: 240,
+      width: qrSize,
+      height: qrSize,
       data: phoneUrl,
       margin: 4,
       dotsOptions: { color: '#0f172a', type: 'square' },
@@ -88,7 +97,7 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
       qrOptions: { errorCorrectionLevel: 'M' },
     });
     qr.append(container);
-  }, [phoneUrl, qrLib]);
+  }, [embedded, phoneUrl, qrLib, qrTargetReady]);
 
   const publishRemoteStream = useCallback((stream: MediaStream | null) => {
     remoteStreamRef.current = stream;
@@ -185,7 +194,7 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
   }, [acceptOffer, clearPeer]);
 
   useEffect(() => {
-    if (!sessionId || !hostTokenRef.current || isEnded) return;
+    if (!sessionId || !hostTokenRef.current || isEnded || pauseHiddenSession) return;
     let active = true;
     let timer = 0;
     let delay = 800;
@@ -222,17 +231,17 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
     };
     void poll();
     return () => { active = false; window.clearTimeout(timer); };
-  }, [clearPeer, copy.sessionEnded, copy.sessionExpired, handleSignal, isEnded, sessionId]);
+  }, [clearPeer, copy.sessionEnded, copy.sessionExpired, handleSignal, isEnded, pauseHiddenSession, sessionId]);
 
   useEffect(() => {
-    if (!sessionId || !hostTokenRef.current || isEnded) return;
+    if (!sessionId || !hostTokenRef.current || isEnded || pauseHiddenSession) return;
     const heartbeat = window.setInterval(() => {
       void webcamRequest('/api/webcam/sessions/' + encodeURIComponent(sessionId) + '/heartbeat?role=host', {
         method: 'POST', headers: { 'X-Webcam-Token': hostTokenRef.current },
       }).catch(() => undefined);
     }, 25_000);
     return () => window.clearInterval(heartbeat);
-  }, [isEnded, sessionId]);
+  }, [isEnded, pauseHiddenSession, sessionId]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -322,6 +331,12 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
     }
   }, [copy.startError, embedded, locale, receiveAudio]);
 
+  useEffect(() => {
+    if (!embedded || !open || status !== 'idle' || autoStartRef.current) return;
+    autoStartRef.current = true;
+    void createSession();
+  }, [createSession, embedded, open, status]);
+
   const allowPhone = useCallback(async () => {
     try {
       await signal({ type: 'accept' });
@@ -347,54 +362,67 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
   }, [clearPeer, onRemoteStreamChange, sessionId]);
 
   const closeOverlay = useCallback(() => {
-    void endSession();
     onClose?.();
-  }, [endSession, onClose]);
+  }, [onClose]);
   const closeOverlayRef = useRef(closeOverlay);
   closeOverlayRef.current = closeOverlay;
 
   useEffect(() => {
-    if (!embedded || !overlayRef.current) return;
-    const root = overlayRef.current;
-    const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const previousOverflow = document.body.style.overflow;
-    const previousInert = new Map<HTMLElement, boolean>();
-    let branch: HTMLElement = root;
-    document.body.style.overflow = 'hidden';
-    while (branch.parentElement) {
-      const parent = branch.parentElement;
-      for (const sibling of Array.from(parent.children)) {
-        if (!(sibling instanceof HTMLElement) || sibling === branch) continue;
-        previousInert.set(sibling, sibling.inert);
-        sibling.inert = true;
-      }
-      if (parent === document.body) break;
-      branch = parent;
-    }
-    const focusables = () => Array.from(root.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'));
-    window.requestAnimationFrame(() => (focusables()[0] ?? root).focus());
+    if (!embedded || !open) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         closeOverlayRef.current();
-        return;
       }
-      if (event.key !== 'Tab') return;
-      const items = focusables();
-      if (!items.length) { event.preventDefault(); root.focus(); return; }
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     };
     document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-      document.body.style.overflow = previousOverflow;
-      previousInert.forEach((wasInert, element) => { element.inert = wasInert; });
-      previousActive?.focus();
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [embedded, open, closeOverlay]);
+
+  useLayoutEffect(() => {
+    if (!embedded || !open || !portalReady) return;
+    const frame = window.requestAnimationFrame(() => popoverRef.current?.focus({ preventScroll: true }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [embedded, open, portalReady]);
+
+  useLayoutEffect(() => {
+    if (!embedded || !open || !portalReady || !anchorElement) {
+      setPopoverPosition(null);
+      return;
+    }
+    const updatePosition = () => {
+      if (!anchorElement.isConnected) {
+        setPopoverPosition(null);
+        return;
+      }
+      const rect = anchorElement.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const width = Math.min(360, viewportWidth - 24);
+      const left = Math.min(viewportWidth - width - 12, Math.max(12, rect.left + rect.width / 2 - width / 2));
+      const spaceAbove = rect.top - 12;
+      const spaceBelow = viewportHeight - rect.bottom - 12;
+      const placement = spaceAbove >= 360 || spaceAbove >= spaceBelow ? 'above' : 'below';
+      const available = placement === 'above' ? spaceAbove : spaceBelow;
+      const maxHeight = Math.max(220, Math.min(520, available - 12));
+      const anchorCenter = rect.left + rect.width / 2;
+      setPopoverPosition({
+        left,
+        top: placement === 'below' ? rect.bottom + 12 : undefined,
+        bottom: placement === 'above' ? viewportHeight - rect.top + 12 : undefined,
+        maxHeight,
+        arrowLeft: Math.min(width - 20, Math.max(20, anchorCenter - left)),
+        placement,
+      });
     };
-  }, [embedded, portalReady]);
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [anchorElement, embedded, open, portalReady]);
 
   const copyLink = useCallback(async () => {
     try {
@@ -404,6 +432,11 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
       trackEvent('result_shared', { tool: TOOL_ID.celularComoWebcam, locale, method: 'copy_link' });
     } catch { setError(copy.connectionError); }
   }, [copy.connectionError, locale, phoneUrl]);
+
+  const retrySession = useCallback(async () => {
+    if (sessionId) await endSession();
+    void createSession();
+  }, [createSession, endSession, sessionId]);
 
   const toggleAudio = useCallback(() => {
     const next = !audioOn;
@@ -452,21 +485,19 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
     return copy.awaitingPhone;
   }, [copy, status]);
 
-  const isEmbedded = embedded;
   const content = (
-    <section ref={overlayRef} role={isEmbedded ? 'dialog' : undefined} aria-modal={isEmbedded || undefined} tabIndex={isEmbedded ? -1 : undefined} className={isEmbedded ? 'fixed inset-0 z-[160] flex min-h-0 flex-col overflow-y-auto bg-slate-950 p-3 text-white sm:p-6' : 'w-full space-y-5'} aria-label={copy.preview}>
-      {isEmbedded ? <header className="flex shrink-0 items-center justify-between gap-3"><div className="flex min-w-0 items-center gap-2"><Smartphone size={20} aria-hidden="true" /><h2 className="truncate text-lg font-semibold">{copy.cameraPreview}</h2></div><Button variant="media" shape="icon" className="h-10 w-10" aria-label={copy.close} onClick={closeOverlay}><X size={19} /></Button></header> : null}
-
-      {!sessionId ? <div className={isEmbedded ? 'mx-auto my-auto w-full max-w-xl' : 'mx-auto max-w-5xl'}>
+    <section className="w-full space-y-5" aria-label={copy.preview}>
+      {!sessionId ? <div className="mx-auto max-w-5xl">
         <div className="grid min-w-0 gap-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 md:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)] md:items-center">
           <div className="min-w-0">
             <div className="flex items-center gap-2 text-sm font-semibold text-brand-700"><Smartphone size={18} aria-hidden="true" />{copy.noInstall}</div>
             <h2 className="mt-3 text-xl font-bold text-slate-900 sm:text-2xl">{copy.awaitingPhone}</h2>
             <ol className="mt-4 space-y-3 text-sm leading-6 text-slate-700">{copy.connectInstructions.map((instruction, index) => <li className="flex gap-3" key={instruction}><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-800">{index + 1}</span><span>{instruction}</span></li>)}</ol>
             <p className="mt-4 text-sm font-medium text-slate-600">{copy.sessionPrivacy}</p>
+            <p className="mt-2 text-xs leading-5 text-slate-600">{copy.externalCameraHint}</p>
             {error ? <p role="alert" className="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{error}</p> : null}
             {!embedded && audioAllowed === undefined ? <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm text-slate-700"><input type="checkbox" checked={audioEnabled} onChange={(event) => setAudioEnabled(event.target.checked)} className="mt-1 accent-brand-600" /><span><span className="font-medium text-slate-900">{copy.optionalAudio}</span><span className="mt-1 block text-xs leading-5 text-slate-600">{copy.optionalAudioHint}</span></span></label> : null}
-            <Button onClick={() => void createSession()} disabled={status === 'creating'} className="mt-5 min-h-12 w-full sm:w-auto">
+            <Button onClick={() => void (status === 'error' ? retrySession() : createSession())} disabled={status === 'creating'} className="mt-5 min-h-12 w-full sm:w-auto">
               {status === 'creating' ? <LoaderCircle size={18} className="mr-2 animate-spin" aria-hidden="true" /> : <Camera size={18} className="mr-2" aria-hidden="true" />}
               {status === 'creating' ? copy.creatingSession : status === 'error' ? copy.retry : status === 'ended' ? copy.startNewSession : copy.createSession}
             </Button>
@@ -476,7 +507,7 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
           </div>
         </div>
       </div> : (
-        <div className={isEmbedded ? 'mx-auto my-4 grid min-h-0 w-full max-w-6xl flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_19rem]' : 'mx-auto grid w-full max-w-6xl gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]'}>
+        <div className="mx-auto grid w-full max-w-6xl gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <div className="flex min-w-0 flex-col gap-3">
             <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black" aria-label={copy.preview}>
               {remoteStream ? <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full ${videoFit === 'cover' ? 'object-cover' : 'object-contain'}`} /> : <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center"><span className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-800 text-slate-300"><Camera size={26} aria-hidden="true" /></span><p className="text-sm font-medium text-white">{statusLabel}</p></div>}
@@ -525,7 +556,56 @@ export function CelularComoWebcamTool({ locale, embedded = false, audioAllowed, 
     </section>
   );
 
-  return embedded
-    ? portalReady ? createPortal(content, document.body) : null
-    : content;
+  const darkPopover = embeddedTheme === 'dark';
+  const embeddedContent = popoverPosition ? (
+    <div className="pointer-events-none fixed z-[160] w-[min(22.5rem,calc(100vw-1.5rem))]" style={{ left: popoverPosition.left, top: popoverPosition.top, bottom: popoverPosition.bottom }}>
+      <span aria-hidden="true" className={`absolute h-3 w-3 rotate-45 ${popoverPosition.placement === 'above' ? 'bottom-[-0.35rem] border-b border-r' : 'top-[-0.35rem] border-l border-t'} ${darkPopover ? 'border-ink-700 bg-ink-900' : 'border-slate-200 bg-white'}`} style={{ left: popoverPosition.arrowLeft - 6 }} />
+      <section ref={popoverRef} id="phone-webcam-popover" role="dialog" aria-modal="false" aria-labelledby="phone-webcam-title" tabIndex={-1} style={{ maxHeight: popoverPosition.maxHeight }} className={`pointer-events-auto relative overflow-y-auto overscroll-contain rounded-2xl border p-3 shadow-2xl outline-none sm:p-4 ${darkPopover ? 'border-ink-700 bg-ink-900 text-white' : 'border-slate-200 bg-white text-slate-900'}`}>
+        <header className="flex items-center gap-3">
+          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${darkPopover ? 'bg-accent-500 text-ink-950' : 'bg-brand-50 text-brand-700'}`}><Smartphone size={20} aria-hidden="true" /></span>
+          <div className="min-w-0 flex-1">
+            <h2 id="phone-webcam-title" className="truncate text-sm font-semibold">{copy.phoneConnectTitle}</h2>
+            <p role="status" aria-live="polite" className={`mt-0.5 truncate text-xs ${darkPopover ? 'text-ink-300' : 'text-slate-600'}`}>{status === 'creating' ? copy.creatingSession : status === 'connected' ? copy.phoneConnectedTitle : statusLabel}</p>
+          </div>
+          <Button variant={darkPopover ? 'call' : 'secondary'} shape="icon" className="h-9 w-9 shrink-0" aria-label={copy.close} title={copy.close} onClick={closeOverlay}><X size={17} /></Button>
+        </header>
+
+        {status === 'waiting' || status === 'requested' ? <>
+          <div className="mt-3 flex min-h-40 justify-center rounded-xl bg-white p-2">
+            {qrLib ? <div ref={qrContainerRef} role="img" aria-label={copy.qrAlt} className="max-w-full" /> : <LoaderCircle size={22} className="m-auto animate-spin text-brand-600" aria-label={copy.creatingSession} />}
+          </div>
+          {status === 'waiting' ? <p className={`mt-3 text-center text-sm leading-5 ${darkPopover ? 'text-ink-200' : 'text-slate-700'}`}>{copy.phoneConnectHint}</p> : null}
+          {status === 'requested' ? <Button variant={darkPopover ? 'callActive' : 'primary'} onClick={() => void allowPhone()} className="mt-3 min-h-11 w-full"><Check size={17} className="mr-2" />{copy.approvePhone}</Button> : null}
+          <div className="mt-2 flex gap-2">
+            <Button variant={darkPopover ? 'call' : 'secondary'} onClick={() => void copyLink()} className="min-h-10 min-w-0 flex-1 px-2 text-xs">{copied ? <Check size={15} className="mr-1.5 shrink-0" /> : <Copy size={15} className="mr-1.5 shrink-0" />}{copied ? copy.linkCopied : copy.copyLink}</Button>
+            <Button variant={darkPopover ? 'call' : 'secondary'} onClick={() => void endSession()} className="min-h-10 min-w-0 flex-1 px-2 text-xs">{copy.cancelConnection}</Button>
+          </div>
+        </> : null}
+
+        {status === 'idle' || status === 'creating' || status === 'connecting' || status === 'reconnecting' ? <div className={`mt-4 flex items-center gap-3 rounded-xl p-3 text-sm ${darkPopover ? 'bg-ink-800 text-ink-200' : 'bg-slate-50 text-slate-700'}`}>
+          <LoaderCircle size={19} className="shrink-0 animate-spin text-brand-600" aria-hidden="true" />
+          <p>{status === 'connecting' || status === 'reconnecting' ? statusLabel : copy.creatingSession}</p>
+        </div> : null}
+
+        {status === 'connected' ? <div className="mt-4 space-y-3">
+          <p className={`text-sm leading-5 ${darkPopover ? 'text-ink-200' : 'text-slate-700'}`}>{copy.phoneConnectedHint}</p>
+          <p className={`text-xs leading-5 ${darkPopover ? 'text-ink-400' : 'text-slate-500'}`}>{copy.externalCameraHint}</p>
+          <Button variant={darkPopover ? 'callActive' : 'primary'} onClick={openCleanWindow} className="min-h-11 w-full"><MonitorPlay size={17} className="mr-2" />{copy.cleanPreview}</Button>
+          <Button variant={darkPopover ? 'callDanger' : 'secondary'} onClick={() => void endSession()} className="min-h-10 w-full text-xs">{copy.endSession}</Button>
+        </div> : null}
+
+        {status === 'error' || status === 'ended' ? <div className="mt-3 space-y-3">
+          <p role={status === 'error' ? 'alert' : 'status'} className={`rounded-lg p-3 text-sm leading-5 ${status === 'error' ? 'border border-rose-200 bg-rose-50 text-rose-800' : darkPopover ? 'bg-ink-800 text-ink-200' : 'bg-slate-50 text-slate-700'}`}>{status === 'error' ? error || copy.connectionError : copy.sessionEnded}</p>
+          <Button variant={darkPopover ? 'callActive' : 'primary'} onClick={() => void retrySession()} className="min-h-11 w-full"><Camera size={17} className="mr-2" />{status === 'error' ? copy.retry : copy.startNewSession}</Button>
+        </div> : null}
+
+        {status === 'waiting' ? <p className={`mt-3 text-center text-[11px] leading-4 ${darkPopover ? 'text-ink-400' : 'text-slate-500'}`}>{copy.sessionPrivacy}</p> : null}
+      </section>
+    </div>
+  ) : null;
+
+  if (embedded) {
+    return open && portalReady && embeddedContent ? createPortal(embeddedContent, document.body) : null;
+  }
+  return content;
 }
