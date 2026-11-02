@@ -37,7 +37,7 @@ export type WorkerResponseMessage =
       processedSeconds?: number;
       totalSeconds?: number;
     }
-  | { type: 'MODEL_READY'; jobId: string; fromCache: boolean }
+  | { type: 'MODEL_READY'; jobId: string; fromCache: boolean; device: InferenceDevice }
   | { type: 'RESULT'; jobId: string; result: TranscriptResult }
   | { type: 'CANCELLED'; jobId: string }
   | { type: 'ERROR'; jobId: string | null; errorType: TranscriptionErrorType; message: string }

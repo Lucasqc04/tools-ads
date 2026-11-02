@@ -40,6 +40,7 @@ env.allowLocalModels = false;
 
 let currentPipeline: AutomaticSpeechRecognitionPipeline | null = null;
 let currentPipelineKey: string | null = null;
+let currentPipelineDevice: InferenceDevice | null = null;
 let activeStoppingCriteria: InterruptableStoppingCriteria | null = null;
 const cancelledJobIds = new Set<string>();
 
@@ -82,6 +83,7 @@ const disposeCurrentPipeline = async (): Promise<void> => {
 
   currentPipeline = null;
   currentPipelineKey = null;
+  currentPipelineDevice = null;
 };
 
 const ensurePipeline = async (
@@ -142,6 +144,7 @@ const ensurePipeline = async (
 
   try {
     currentPipeline = await loadWithDevice(device);
+    currentPipelineDevice = device;
   } catch (error) {
     if (device !== 'webgpu') {
       throw error;
@@ -150,11 +153,17 @@ const ensurePipeline = async (
     // WebGPU looked available on the main thread but failed to initialize
     // here; gracefully retry on WASM instead of breaking the tool.
     currentPipeline = await loadWithDevice('wasm');
+    currentPipelineDevice = 'wasm';
   }
 
   currentPipelineKey = key;
   throwIfCancelled(jobId);
-  post({ type: 'MODEL_READY', jobId, fromCache: !sawRealDownload });
+  post({
+    type: 'MODEL_READY',
+    jobId,
+    fromCache: !sawRealDownload,
+    device: currentPipelineDevice ?? device,
+  });
 
   return currentPipeline;
 };

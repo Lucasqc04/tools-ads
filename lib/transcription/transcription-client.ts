@@ -19,7 +19,7 @@ export type TranscriptionClientCallbacks = {
     processedSeconds?: number,
     totalSeconds?: number,
   ) => void;
-  onModelReady?: (fromCache: boolean) => void;
+  onModelReady?: (fromCache: boolean, device: InferenceDevice) => void;
   onResult?: (result: TranscriptResult) => void;
   onCancelled?: () => void;
   onError?: (error: TranscriptionError) => void;
@@ -93,7 +93,7 @@ export class TranscriptionClient {
         break;
 
       case 'MODEL_READY':
-        this.callbacks.onModelReady?.(message.fromCache);
+        this.callbacks.onModelReady?.(message.fromCache, message.device);
         break;
 
       case 'RESULT':

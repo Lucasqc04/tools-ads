@@ -47,6 +47,7 @@ type ToolUi = {
   removeFileButton: string;
   webgpuOn: string;
   webgpuOff: string;
+  webgpuFallback: string;
   detectedLanguage: (language: string) => string;
   textTab: string;
   segmentsTab: string;
@@ -77,6 +78,7 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
     webgpuOn: 'Aceleração por GPU (WebGPU) disponível neste dispositivo.',
     webgpuOff:
       'WebGPU indisponível. A transcrição roda na CPU; em celulares, selecionamos um modelo mais leve. Arquivos longos podem demorar mais.',
+    webgpuFallback: 'O navegador encontrou WebGPU, mas o modelo não conseguiu iniciar na GPU. A transcrição foi feita pela CPU.',
     detectedLanguage: (language) => `Idioma: ${language}`,
     textTab: 'Texto',
     segmentsTab: 'Segmentos',
@@ -104,6 +106,7 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
     removeFileButton: 'Remove file',
     webgpuOn: 'GPU acceleration (WebGPU) available on this device.',
     webgpuOff: 'WebGPU is unavailable. Transcription runs on the CPU; phones start with a lighter model. Long files may take more time.',
+    webgpuFallback: 'WebGPU was detected, but the model could not start on the GPU. Transcription used the CPU.',
     detectedLanguage: (language) => `Language: ${language}`,
     textTab: 'Text',
     segmentsTab: 'Segments',
@@ -131,6 +134,7 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
     removeFileButton: 'Quitar archivo',
     webgpuOn: 'Aceleracion por GPU (WebGPU) disponible en este dispositivo.',
     webgpuOff: 'WebGPU no está disponible. La transcripción se ejecuta en la CPU; en móviles usamos un modelo más ligero. Los archivos largos pueden tardar más.',
+    webgpuFallback: 'Se detectó WebGPU, pero el modelo no pudo iniciarse en la GPU. La transcripción usó la CPU.',
     detectedLanguage: (language) => `Idioma: ${language}`,
     textTab: 'Texto',
     segmentsTab: 'Segmentos',
@@ -158,6 +162,7 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
     removeFileButton: 'Remove file',
     webgpuOn: 'GPU acceleration (WebGPU) available on this device.',
     webgpuOff: 'WebGPU unavailable on this browser/device. Using CPU processing (slower).',
+    webgpuFallback: 'WebGPU was detected, but the model could not start on the GPU. Transcription used the CPU.',
     detectedLanguage: (language) => `Language: ${language}`,
     textTab: 'Text',
     segmentsTab: 'Segments',
@@ -411,7 +416,11 @@ export function AudioVideoTranscriptionTool({ locale = 'pt-br' }: AudioVideoTran
 
           {t.deviceCapabilities ? (
             <p className="text-xs text-slate-500">
-              {t.deviceCapabilities.webgpuAvailable ? ui.webgpuOn : ui.webgpuOff}
+              {t.usedDevice === 'wasm' && t.deviceCapabilities.webgpuAvailable
+                ? ui.webgpuFallback
+                : t.deviceCapabilities.webgpuAvailable
+                  ? ui.webgpuOn
+                  : ui.webgpuOff}
             </p>
           ) : null}
 

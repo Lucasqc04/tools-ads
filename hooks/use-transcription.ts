@@ -171,6 +171,7 @@ export function useTranscription() {
     setError(null);
     setResult(null);
     setProgress(EMPTY_PROGRESS);
+    setUsedDevice(null);
     setStatus('extracting-audio');
 
     let device: InferenceDevice = 'wasm';
@@ -190,7 +191,6 @@ export function useTranscription() {
       pcmBufferRef.current = decoded.channelData;
       setDurationInSeconds(decoded.durationInSeconds);
       setStatus('loading-model');
-      setUsedDevice(device);
 
       client.beginJob(jobId, {
         onProgress: (phase, percent, processedSeconds, totalSeconds) => {
@@ -201,12 +201,13 @@ export function useTranscription() {
           setStatus(phase === 'transcribing' ? 'transcribing' : 'loading-model');
           setProgress({ phase, percent, processedSeconds, totalSeconds });
         },
-        onModelReady: (fromCache) => {
+        onModelReady: (fromCache, actualDevice) => {
           if (activeJobIdRef.current !== jobId) {
             return;
           }
 
           setModelFromCache(fromCache);
+          setUsedDevice(actualDevice);
           setStatus('transcribing');
           setProgress({ phase: 'transcribing', percent: 0, totalSeconds: decoded.durationInSeconds });
 
