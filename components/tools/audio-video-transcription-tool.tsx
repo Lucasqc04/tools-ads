@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Loader2, ShieldCheck, X } from 'lucide-react';
+import { Clapperboard, Loader2, ShieldCheck, X } from 'lucide-react';
 import { FileUploadDropzone } from '@/components/shared/file-upload-dropzone';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { TranscriptionExportMenu } from '@/components/tools/transcription-export
 import { TranscriptionMediaPreview } from '@/components/tools/transcription-media-preview';
 import { TranscriptionProgressView } from '@/components/tools/transcription-progress';
 import { TranscriptSegments } from '@/components/tools/transcript-segments';
+import { VideoSubtitleEditor } from '@/components/tools/video-subtitle-editor';
 import { useTranscription } from '@/hooks/use-transcription';
 import { TOOL_ID, trackEvent } from '@/lib/analytics';
 import { type AppLocale } from '@/lib/i18n/config';
@@ -51,34 +52,38 @@ type ToolUi = {
   segmentsTab: string;
   cancelledNote: string;
   errorRetry: string;
+  subtitleEditorButton: string;
+  subtitleEditorClose: string;
 };
 
 const uiByLocale: Record<AppLocale, ToolUi> = {
   'pt-br': {
     privacyNote:
-      'Seu arquivo e processado localmente no seu dispositivo e nao e enviado aos nossos servidores. Apenas os arquivos do modelo de IA sao baixados (uma vez, com cache) para rodar a transcricao no navegador.',
-    filesLabel: 'Audio ou video para transcrever',
+      'Seu arquivo é processado no próprio dispositivo e não é enviado aos nossos servidores. Apenas os arquivos do modelo de IA são baixados (uma vez, com cache) para executar a transcrição no navegador.',
+    filesLabel: 'Áudio ou vídeo para transcrever',
     filesHint: 'Aceita MP3, WAV, M4A, AAC, OGG, OPUS, FLAC, MP4, MOV, WEBM, MKV e outros formatos.',
     fileInfo: (type, size, duration) => `${type} - ${size} - ${duration}`,
     qualityLabel: 'Qualidade',
-    qualityFast: 'Rapido',
+    qualityFast: 'Rápido',
     qualityBalanced: 'Equilibrado (recomendado)',
     qualityHigh: 'Alta qualidade',
     languageLabel: 'Idioma do audio',
     taskLabel: 'Modo',
     taskTranscribe: 'Transcrever',
-    taskTranslate: 'Traduzir para ingles',
+    taskTranslate: 'Traduzir para inglês',
     startButton: 'Transcrever',
     cancelButton: 'Cancelar',
     removeFileButton: 'Remover arquivo',
-    webgpuOn: 'Aceleracao por GPU (WebGPU) disponivel neste dispositivo.',
+    webgpuOn: 'Aceleração por GPU (WebGPU) disponível neste dispositivo.',
     webgpuOff:
-      'WebGPU indisponivel neste navegador/dispositivo. Usando processamento por CPU (mais lento).',
+      'WebGPU indisponível. A transcrição roda na CPU; em celulares, selecionamos um modelo mais leve. Arquivos longos podem demorar mais.',
     detectedLanguage: (language) => `Idioma: ${language}`,
     textTab: 'Texto',
     segmentsTab: 'Segmentos',
-    cancelledNote: 'Transcricao cancelada.',
+    cancelledNote: 'Transcrição cancelada.',
     errorRetry: 'Tentar novamente',
+    subtitleEditorButton: 'Legendar vídeo',
+    subtitleEditorClose: 'Fechar editor de legendas',
   },
   en: {
     privacyNote:
@@ -98,12 +103,14 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
     cancelButton: 'Cancel',
     removeFileButton: 'Remove file',
     webgpuOn: 'GPU acceleration (WebGPU) available on this device.',
-    webgpuOff: 'WebGPU unavailable on this browser/device. Using CPU processing (slower).',
+    webgpuOff: 'WebGPU is unavailable. Transcription runs on the CPU; phones start with a lighter model. Long files may take more time.',
     detectedLanguage: (language) => `Language: ${language}`,
     textTab: 'Text',
     segmentsTab: 'Segments',
     cancelledNote: 'Transcription cancelled.',
     errorRetry: 'Try again',
+    subtitleEditorButton: 'Add video subtitles',
+    subtitleEditorClose: 'Close subtitle editor',
   },
   es: {
     privacyNote:
@@ -123,12 +130,14 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
     cancelButton: 'Cancelar',
     removeFileButton: 'Quitar archivo',
     webgpuOn: 'Aceleracion por GPU (WebGPU) disponible en este dispositivo.',
-    webgpuOff: 'WebGPU no disponible en este navegador/dispositivo. Usando procesamiento por CPU (mas lento).',
+    webgpuOff: 'WebGPU no está disponible. La transcripción se ejecuta en la CPU; en móviles usamos un modelo más ligero. Los archivos largos pueden tardar más.',
     detectedLanguage: (language) => `Idioma: ${language}`,
     textTab: 'Texto',
     segmentsTab: 'Segmentos',
     cancelledNote: 'Transcripcion cancelada.',
     errorRetry: 'Intentar de nuevo',
+    subtitleEditorButton: 'Subtitular video',
+    subtitleEditorClose: 'Cerrar editor de subtítulos',
   },
   zh: {
     privacyNote:
@@ -154,23 +163,25 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
     segmentsTab: 'Segments',
     cancelledNote: 'Transcription cancelled.',
     errorRetry: 'Try again',
+    subtitleEditorButton: '为视频添加字幕',
+    subtitleEditorClose: '关闭字幕编辑器',
   },
 };
 
 const ERROR_MESSAGES: Record<AppLocale, Partial<Record<TranscriptionErrorType, string>> & { default: string }> = {
   'pt-br': {
-    default: 'Nao foi possivel concluir a transcricao. Tente novamente.',
-    no_audio_track: 'Nao encontramos uma faixa de audio valida neste arquivo.',
-    unsupported_format: 'Este formato de arquivo nao e suportado.',
-    corrupted_file: 'O arquivo parece estar corrompido ou ilegivel.',
-    decode_failed: 'Nao foi possivel decodificar o audio deste arquivo.',
-    empty_file: 'O arquivo esta vazio.',
-    zero_duration: 'O arquivo nao possui duracao de audio valida.',
-    file_too_long: 'Este arquivo e muito longo para processar localmente no navegador.',
-    webgpu_unavailable: 'A aceleracao por GPU falhou; tentando modo compativel (CPU).',
-    model_load_failed: 'Nao foi possivel carregar o modelo de transcricao.',
-    out_of_memory: 'O dispositivo ficou sem memoria disponivel para concluir a transcricao.',
-    worker_error: 'O processo de transcricao falhou inesperadamente.',
+    default: 'Não foi possível concluir a transcrição. Tente novamente.',
+    no_audio_track: 'Não encontramos uma faixa de áudio válida neste arquivo.',
+    unsupported_format: 'Este formato de arquivo não é compatível.',
+    corrupted_file: 'O arquivo parece estar corrompido ou ilegível.',
+    decode_failed: 'Não foi possível decodificar o áudio deste arquivo.',
+    empty_file: 'O arquivo está vazio.',
+    zero_duration: 'O arquivo não possui duração de áudio válida.',
+    file_too_long: 'Este arquivo é muito longo para processar localmente no navegador.',
+    webgpu_unavailable: 'A aceleração por GPU falhou; tentando o modo compatível (CPU).',
+    model_load_failed: 'Não foi possível carregar o modelo de transcrição.',
+    out_of_memory: 'O dispositivo ficou sem memória disponível para concluir a transcrição.',
+    worker_error: 'O processo de transcrição falhou inesperadamente.',
   },
   en: {
     default: 'We could not finish the transcription. Please try again.',
@@ -239,7 +250,12 @@ export function AudioVideoTranscriptionTool({ locale = 'pt-br' }: AudioVideoTran
   const mediaRef = useRef<HTMLVideoElement | HTMLAudioElement>(null);
   const [currentTime, setCurrentTime] = useState<number | null>(null);
   const [resultTab, setResultTab] = useState<'text' | 'segments'>('text');
+  const [isSubtitleEditorOpen, setIsSubtitleEditorOpen] = useState(false);
   const hasStartedRef = useRef(false);
+
+  useEffect(() => {
+    setIsSubtitleEditorOpen(false);
+  }, [t.file]);
 
   useEffect(() => {
     if (t.status === 'completed' && t.result) {
@@ -309,7 +325,7 @@ export function AudioVideoTranscriptionTool({ locale = 'pt-br' }: AudioVideoTran
       <header className="border-b border-slate-200 pb-4">
         <div className="flex items-start gap-2">
           <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" aria-hidden="true" />
-          <p className="text-sm text-slate-700">{ui.privacyNote}</p>
+          <p className="text-base leading-7 text-slate-700">{ui.privacyNote}</p>
         </div>
       </header>
 
@@ -442,7 +458,7 @@ export function AudioVideoTranscriptionTool({ locale = 'pt-br' }: AudioVideoTran
                 </p>
               ) : null}
 
-              <div className="flex gap-2 border-b border-slate-200">
+              <div className="flex min-w-0 gap-2 border-b border-slate-200">
                 <button
                   type="button"
                   onClick={() => setResultTab('text')}
@@ -460,7 +476,7 @@ export function AudioVideoTranscriptionTool({ locale = 'pt-br' }: AudioVideoTran
               </div>
 
               {resultTab === 'text' ? (
-                <p className="whitespace-pre-wrap text-sm leading-6 text-slate-800">{t.result.text}</p>
+                <p className="break-words whitespace-pre-wrap text-base leading-7 text-slate-800">{t.result.text}</p>
               ) : (
                 <TranscriptSegments
                   segments={t.result.segments}
@@ -480,6 +496,34 @@ export function AudioVideoTranscriptionTool({ locale = 'pt-br' }: AudioVideoTran
                   trackEvent('result_downloaded', { tool: TOOL_ID.audioVideoTranscription, locale, format })
                 }
               />
+
+              {t.mediaKind === 'video' && t.file && t.mediaUrl ? (
+                <div className="space-y-4 border-t border-slate-200 pt-4">
+                  <Button
+                    variant="secondary"
+                    aria-expanded={isSubtitleEditorOpen}
+                    onClick={() => setIsSubtitleEditorOpen((current) => !current)}
+                  >
+                    <Clapperboard className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                    {isSubtitleEditorOpen ? ui.subtitleEditorClose : ui.subtitleEditorButton}
+                  </Button>
+                  {isSubtitleEditorOpen ? (
+                    <VideoSubtitleEditor
+                      file={t.file}
+                      mediaUrl={t.mediaUrl}
+                      segments={t.result.segments}
+                      locale={locale}
+                      onDownload={(format) =>
+                        trackEvent('result_downloaded', {
+                          tool: TOOL_ID.audioVideoTranscription,
+                          locale,
+                          format,
+                        })
+                      }
+                    />
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           ) : null}
         </div>

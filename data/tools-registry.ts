@@ -1175,9 +1175,9 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'transcricao-de-audio-e-video',
     slug: 'transcricao-de-audio-e-video',
-    name: 'Transcricao de Audio e Video para Texto',
+    name: 'Transcrição de Áudio e Vídeo para Texto',
     shortDescription:
-      'Transcreva audio e video para texto localmente no navegador com Whisper, gerando texto continuo, segmentos com timestamp e legendas SRT/VTT.',
+      'Transcreva áudio e vídeo, revise trechos com timestamp e gere um vídeo com legendas personalizadas direto no navegador.',
     category: 'documents',
     primaryKeyword: 'transcrever audio e video para texto',
     secondaryKeywords: [
@@ -1188,16 +1188,19 @@ export const toolsRegistry: ToolDefinition[] = [
       'whisper no navegador',
       'transcrever video para texto gratis',
       'converter audio em texto',
-      'gerar legenda de video',
+      'legendar video online',
+      'adicionar legenda ao video',
+      'gerar video com legenda embutida',
+      'editar legenda com timestamp',
       'transcricao offline no navegador',
       'audio to text sem upload',
     ],
     searchIntent:
-      'Usuarios que precisam transcrever reunioes, aulas, entrevistas ou videos para texto pesquisavel e legendas, sem enviar o arquivo para servidores externos.',
-    seoTitle: 'Transcrever Audio e Video para Texto Online Gratis | Whisper Local',
+      'Usuários que precisam transcrever reuniões, aulas, entrevistas ou vídeos, corrigir os trechos reconhecidos e exportar um vídeo com legendas sem enviar a mídia para servidores externos.',
+    seoTitle: 'Transcrição de Áudio e Vídeo com Legendas Personalizadas',
     seoDescription:
-      'Transcreva audio e video para texto direto no navegador com Whisper local, sem upload. Gere timestamps, legenda SRT/VTT e exporte em TXT ou JSON.',
-    h1: 'Transcrever Audio e Video para Texto com Whisper Local',
+      'Transcreva áudio e vídeo no navegador, corrija os trechos e gere um vídeo com legendas ajustáveis. Exporte SRT ou VTT sem enviar sua mídia.',
+    h1: 'Transcreva Áudio e Vídeo e Gere Legendas Online',
     intro: audioVideoTranscriptionIntro,
     canonicalPath: '/tools/transcricao-de-audio-e-video',
     faq: audioVideoTranscriptionFaq,

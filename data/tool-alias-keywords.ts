@@ -4,6 +4,11 @@ type LocaleKeywordMap = Partial<Record<AppLocale, string[]>>;
 type ToolKeywordMap = Record<string, LocaleKeywordMap>;
 
 const baseKeywordsByTool: ToolKeywordMap = {
+  'transcricao-de-audio-e-video': {
+    'pt-br': ['legendar video online'],
+    en: ['add subtitles to video'],
+    es: ['poner subtitulos a un video'],
+  },
   'instagram-image-optimizer': {
     'pt-br': [
       'redimensionar imagem para instagram',

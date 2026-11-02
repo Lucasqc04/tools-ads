@@ -4,6 +4,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
 import { AudioEditorTool } from '@/components/tools/audio-editor-tool';
 import { AudioBlasterTool } from '@/components/tools/audio-blaster-tool';
+import { AudioVideoTranscriptionTool } from '@/components/tools/audio-video-transcription-tool';
 import { AuthenticatorCodeGeneratorTool } from '@/components/tools/authenticator-code-generator-tool';
 import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-tool';
 import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
@@ -162,6 +163,7 @@ import {
   toLocalizedToolAliasLink,
   type ToolAliasPage,
 } from '@/data/tool-alias-pages';
+import { getAudioVideoTranscriptionAliasContent } from '@/data/content/audio-video-transcription-aliases';
 import {
   getLocalizedUniversalConversionLandingContent,
   getUniversalConversionLandingBySlug,
@@ -709,11 +711,36 @@ const getUniversalAliasContext = (
   };
 };
 
+const getAudioVideoTranscriptionAliasContext = (
+  page: ToolAliasPage,
+  locale: AppLocale,
+): ContextualLandingContent | undefined => {
+  if (page.toolSlug !== 'transcricao-de-audio-e-video') {
+    return undefined;
+  }
+
+  const content = getAudioVideoTranscriptionAliasContent(page.slug, locale);
+  if (!content) {
+    return undefined;
+  }
+
+  return {
+    title: content.title,
+    intro: content.intro,
+    seoTitle: content.seoTitle,
+    seoDescription: content.seoDescription,
+    keywords: content.keywords,
+    contentBlocks: content.contentBlocks,
+    faq: content.faq,
+  };
+};
+
 const getContextualLandingContent = (
   page: ToolAliasPage,
   locale: AppLocale,
 ): ContextualLandingContent | undefined => {
   const resolvers = [
+    getAudioVideoTranscriptionAliasContext,
     getImageAliasContext,
     getCryptoAliasContext,
     getInvisibleAliasContext,
@@ -731,6 +758,7 @@ const getContextualLandingContent = (
 };
 
 const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
+  'transcricao-de-audio-e-video': ({ locale }) => <AudioVideoTranscriptionTool locale={locale} />,
   'authenticator-code-generator': ({ locale }) => <AuthenticatorCodeGeneratorTool locale={locale} />,
   'bitcoin-wallet': ({ locale }) => <BitcoinWalletTool locale={locale} />,
   'html-viewer': ({ locale }) => <LazyHtmlViewerTool locale={locale} />,

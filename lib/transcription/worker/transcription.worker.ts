@@ -12,6 +12,7 @@ import {
   type WhisperTokenizer,
 } from '@huggingface/transformers';
 import { WHISPER_LANGUAGE_NAME } from '../languages';
+import { reduceRepeatedPhraseLoops } from '../repetition-filter';
 import {
   QUALITY_MODEL_ID,
   WHISPER_CHUNK_LENGTH_S,
@@ -170,7 +171,7 @@ const toTranscriptSegments = (
       return {
         start: start ?? 0,
         end: end ?? durationInSeconds,
-        text: chunk.text.trim(),
+        text: reduceRepeatedPhraseLoops(chunk.text),
       };
     })
     .filter((segment) => segment.text.length > 0);
@@ -270,7 +271,7 @@ const handleTranscribe = async (message: TranscribeMessage): Promise<void> => {
       | AutomaticSpeechRecognitionOutput
       | undefined;
     const segments = output ? toTranscriptSegments(output, durationInSeconds) : [];
-    const text = output ? output.text.trim() : '';
+    const text = output ? reduceRepeatedPhraseLoops(output.text) : '';
 
     const result: TranscriptResult = {
       fileName,

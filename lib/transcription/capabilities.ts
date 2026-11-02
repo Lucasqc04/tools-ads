@@ -39,9 +39,13 @@ export const getDeviceCapabilities = async (): Promise<DeviceCapabilities> => {
     typeof navigator !== 'undefined' && typeof navigator.deviceMemory === 'number'
       ? navigator.deviceMemory
       : null;
+  const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+  const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(userAgent) ||
+    (/Macintosh/i.test(userAgent) && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1);
 
   const isLikelyLowPower =
-    !webgpuAvailable && (hardwareConcurrency <= 4 || (approxDeviceMemoryGb ?? 8) <= 4);
+    !webgpuAvailable &&
+    (isMobileDevice || hardwareConcurrency <= 4 || (approxDeviceMemoryGb ?? 8) <= 4);
 
   return {
     webgpuAvailable,

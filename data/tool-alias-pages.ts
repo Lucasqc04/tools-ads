@@ -66,6 +66,7 @@ const DEFAULT_MAX_ALIASES_PER_LOCALE = 4;
 const MAX_ALIASES_BY_TOOL: Record<string, number> = {
   'criador-de-timelapse': 7,
   'estourador-de-audio': 7,
+  'transcricao-de-audio-e-video': 5,
 };
 
 const getMaxAliasesPerLocale = (toolSlug: string): number =>
@@ -545,15 +546,23 @@ export const getRelatedToolAliasPages = (
   currentSlug: string,
   locale: AppLocale,
   limit = 4,
-): ToolAliasPage[] =>
-  toolAliasPages
+): ToolAliasPage[] => {
+  const preferredSlugs = (toolAliasKeywordSeeds[toolSlug]?.[locale] ?? []).map(sanitizeSlug);
+  const priority = new Map(preferredSlugs.map((slug, index) => [slug, index]));
+
+  return toolAliasPages
     .filter(
       (page) =>
         page.toolSlug === toolSlug &&
         page.slug !== currentSlug &&
         page.sourceLocales.includes(locale),
     )
+    .sort((left, right) =>
+      (priority.get(left.slug) ?? Number.MAX_SAFE_INTEGER) -
+      (priority.get(right.slug) ?? Number.MAX_SAFE_INTEGER),
+    )
     .slice(0, limit);
+};
 
 export const toLocalizedToolAliasLink = (
   page: ToolAliasPage,

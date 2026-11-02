@@ -42,7 +42,7 @@ export function TranscriptSegments({ segments, currentTime, onSeek, locale }: Tr
             >
               {timeLabel}
             </button>
-            <p className="text-sm leading-6 text-slate-800">{segment.text}</p>
+            <p className="break-words text-base leading-7 text-slate-800">{segment.text}</p>
           </li>
         );
       })}

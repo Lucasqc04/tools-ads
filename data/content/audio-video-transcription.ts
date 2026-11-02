@@ -1,70 +1,63 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const audioVideoTranscriptionIntro =
-  'Transcreva audio e video para texto direto no navegador com Whisper rodando localmente, sem enviar o arquivo para nenhum servidor. Obtenha texto continuo, segmentos com timestamp e legendas SRT/VTT.';
+  'Transcreva áudio e vídeo no navegador, revise os trechos com timestamp e crie um vídeo com legendas personalizadas. Ajuste a posição, o tamanho, a cor e a fonte, sem enviar sua mídia para um servidor.';
 
 export const audioVideoTranscriptionContentBlocks: ContentBlock[] = [
   {
-    title: 'Transcricao local com Whisper, sem upload',
+    title: 'Transcrição de áudio e vídeo no navegador',
     paragraphs: [
-      'Esta ferramenta usa um modelo Whisper multilingue rodando inteiramente no seu navegador, atraves de WebGPU quando disponivel (com fallback automatico para processamento por CPU). O arquivo de audio ou video nunca e enviado para o nosso servidor: a extracao de audio, a normalizacao e a inferencia acontecem localmente no seu dispositivo.',
-      'Apenas os arquivos do modelo de IA (pesos do Whisper) sao baixados do Hugging Face na primeira vez que voce usa a ferramenta. Depois disso, o navegador guarda esses arquivos em cache e as proximas transcricoes nao exigem um novo download.',
+      'A ferramenta usa Whisper para transformar falas em texto e dividir o resultado em trechos com timestamps. Você pode enviar arquivos de áudio como MP3, WAV, M4A, AAC, OGG, OPUS ou FLAC, além de vídeos MP4, MOV, WEBM e MKV. Em vídeos, o navegador extrai a faixa de áudio para reconhecer a fala.',
+      'O modelo funciona no seu dispositivo. Se o navegador permitir, a transcrição usa WebGPU; caso contrário, executa pela CPU com um modelo leve sugerido para celulares e aparelhos de menor capacidade. Na primeira utilização, os arquivos do modelo precisam ser baixados e podem ocupar espaço em cache.',
     ],
   },
   {
-    title: 'Audio ou video, com extracao automatica da faixa de audio',
+    title: 'Revise o texto e reduza repetições inesperadas',
     paragraphs: [
-      'Voce pode enviar arquivos de audio (MP3, WAV, M4A, AAC, OGG, OPUS, FLAC) ou de video (MP4, MOV, WEBM, MKV e outros). Quando o arquivo e um video, apenas a faixa de audio e extraida e processada; os frames de video nao sao usados na transcricao.',
-      'A ferramenta tenta primeiro decodificar o audio usando APIs nativas do navegador. Se o formato ou codec nao for suportado diretamente, ela recorre a um conversor local (FFmpeg compilado para WebAssembly) para extrair o audio antes de transcrever, sem depender de upload.',
-    ],
-    list: [
-      'Selecionar o nivel de qualidade (Rapido, Equilibrado ou Alta qualidade).',
-      'Escolher o idioma manualmente ou deixar o Whisper detectar automaticamente.',
-      'Transcrever no idioma original ou traduzir para ingles.',
-      'Acompanhar progresso real de download do modelo e de transcricao por trecho.',
-      'Cancelar a qualquer momento sem travar a pagina.',
+      'O reconhecimento automático pode errar nomes, sotaques, falas sobrepostas, trechos cantados ou áudio com ruído. A ferramenta reduz loops longos de frases repetidas que podem aparecer quando o modelo perde o contexto, mantendo algumas repetições que fazem parte de uma fala normal. Essa limpeza evita blocos enormes de palavras duplicadas, mas não substitui a revisão do resultado.',
+      'Na aba de segmentos, confira cada frase junto do timestamp e use o player para ouvir aquele ponto. Para preparar legendas, os trechos longos são separados em linhas menores e ficam disponíveis para edição. Corrija palavras e pontuação antes de gerar o arquivo final.',
     ],
   },
   {
-    title: 'Timestamps, player sincronizado e exportacao',
+    title: 'Personalize e exporte legendas para vídeo',
     paragraphs: [
-      'O resultado inclui timestamps por trecho, exibidos tanto no texto continuo quanto na lista de segmentos. Clique em qualquer timestamp para mover o player de audio/video exatamente para aquele ponto.',
-      'Voce pode copiar o texto puro, copiar com timestamps, ou exportar em TXT, TXT com timestamps, SRT (legenda), WebVTT ou JSON estruturado com os segmentos, idioma e duracao.',
+      'Depois de transcrever um vídeo, escolha “Legendar vídeo” no resultado. A prévia acompanha a reprodução e permite colocar o texto em cima, no centro ou embaixo. Ajuste o tamanho, escolha uma cor, use uma fonte sem serifa, com serifa ou monoespaçada e ative um fundo escuro para dar contraste.',
+      'Ao gerar o vídeo, as legendas ficam gravadas na imagem. O navegador renderiza o arquivo localmente e em tempo real; mantenha a página aberta até terminar. A resolução de saída é limitada a 1920 por 1080 pixels, e o formato depende do suporte do navegador, geralmente WebM ou MP4. Se a gravação não estiver disponível, exporte SRT ou WebVTT e aplique as legendas em outro editor.',
     ],
   },
   {
-    title: 'Desempenho, limites e privacidade',
+    title: 'Privacidade, desempenho e formatos de exportação',
     paragraphs: [
-      'Em dispositivos com suporte a WebGPU, a transcricao roda acelerada por GPU. Sem WebGPU, a ferramenta usa processamento por CPU (WebAssembly), que funciona em praticamente qualquer navegador mas e mais lento, especialmente em celulares.',
-      'Arquivos muito longos exigem mais memoria do navegador; ha um limite pratico de duracao para evitar que a aba trave. Nenhum audio, video ou texto transcrito e salvo em nossos servidores ou enviado para analytics.',
+      'Áudio, vídeo, transcrição e vídeo legendado são processados no navegador e não são enviados aos nossos servidores nem incluídos em eventos de análise. Apenas os arquivos do modelo de transcrição são baixados de uma fonte externa para que o reconhecimento funcione.',
+      'A velocidade depende do aparelho, do tamanho do arquivo e do suporte a WebGPU. Sem aceleração por GPU, a CPU pode levar mais tempo que a duração do áudio, especialmente em gravações extensas. Você pode cancelar a transcrição e, ao terminar, copiar o texto ou exportar TXT, timestamps, SRT, WebVTT e JSON.',
     ],
   },
 ];
 
 export const audioVideoTranscriptionFaq: FaqItem[] = [
   {
-    question: 'O audio ou video e enviado para algum servidor?',
+    question: 'Meu áudio ou vídeo é enviado para algum servidor?',
     answer:
-      'Nao. A extracao de audio e a transcricao acontecem localmente no seu navegador. Apenas os arquivos do modelo de IA sao baixados do Hugging Face para rodar a inferencia no seu dispositivo; o seu arquivo de midia nunca sai do navegador.',
+      'Não. O reconhecimento, a prévia e a renderização das legendas acontecem localmente no navegador. Apenas os arquivos do modelo de transcrição são baixados para o aparelho.',
   },
   {
-    question: 'Quais formatos de audio e video sao aceitos?',
+    question: 'Como criar um vídeo com as legendas gravadas na imagem?',
     answer:
-      'Audio: MP3, WAV, M4A, AAC, OGG, OPUS e FLAC. Video: MP4, MOV, WEBM, MKV e outros containers com faixa de audio legivel pelo navegador ou pelo conversor local de apoio.',
+      'Envie um vídeo, transcreva o áudio e escolha “Legendar vídeo”. Revise os textos com timestamp, ajuste posição, tamanho, cor e fonte e gere uma nova cópia do vídeo.',
   },
   {
-    question: 'Funciona sem placa de video com suporte a WebGPU?',
+    question: 'Posso corrigir palavras antes de exportar?',
     answer:
-      'Sim. Quando WebGPU nao esta disponivel, a ferramenta usa automaticamente processamento por CPU. E mais lento, mas continua funcionando dentro do navegador.',
+      'Sim. Cada trecho da legenda tem um campo editável e mantém seu timestamp. Você pode corrigir palavras, pontuação e nomes antes de gerar o vídeo.',
   },
   {
-    question: 'Consigo exportar como legenda?',
+    question: 'Por que a transcrição pode repetir palavras?',
     answer:
-      'Sim. Voce pode exportar o resultado em SRT ou WebVTT, alem de TXT simples, TXT com timestamps e JSON estruturado com os segmentos.',
+      'Modelos de fala podem entrar em loops quando há música, ruído, silêncio ou fala difícil de entender. A ferramenta reduz repetições longas e você pode revisar cada trecho antes de exportar.',
   },
   {
-    question: 'Da para escolher o idioma ou traduzir para ingles?',
+    question: 'A transcrição funciona no celular sem WebGPU?',
     answer:
-      'Sim. Voce pode deixar o Whisper detectar o idioma automaticamente ou selecionar um idioma especifico, alem de escolher entre transcrever no idioma original ou traduzir o audio para ingles.',
+      'Sim. Sem WebGPU, o navegador usa um modelo mais leve pela CPU. Isso pode demorar mais, mas evita depender de uma placa de vídeo compatível. A renderização do vídeo legendado também acontece no aparelho e em tempo real.',
   },
 ];
