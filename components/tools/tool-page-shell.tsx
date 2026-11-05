@@ -105,6 +105,24 @@ export function ToolPageShell({
         text: '服务器只交换用于连接手机和电脑的临时消息；视频和音频在浏览器之间传输，不会被录制。配对数据会自动过期。直连时，设备可能会获知彼此的 IP 地址。',
       },
     },
+    'instagram-post-simulator': {
+      'pt-br': {
+        title: 'Privacidade e simulação',
+        text: 'Fotos e vídeos são lidos e processados apenas no seu navegador e não são enviados aos servidores do site. Esta ferramenta não publica nada no Instagram nem se conecta à API da plataforma. Não é oficial nem afiliada à Meta.',
+      },
+      en: {
+        title: 'Privacy and simulation',
+        text: 'Photos and videos are read and processed only in your browser and are not sent to the site servers. This tool publishes nothing to Instagram and does not connect to the platform API. It is not official and is not affiliated with Meta.',
+      },
+      es: {
+        title: 'Privacidad y simulación',
+        text: 'Las fotos y los videos se leen y procesan solo en tu navegador y no se envían a los servidores del sitio. Esta herramienta no publica nada en Instagram ni se conecta a la API de la plataforma. No es oficial ni está afiliada a Meta.',
+      },
+      zh: {
+        title: 'Privacy and simulation',
+        text: 'Photos and videos are read and processed only in your browser and are not sent to the site servers. This tool publishes nothing to Instagram and does not connect to the platform API. It is not official and is not affiliated with Meta.',
+      },
+    },
     'zpl-label-editor': {
       'pt-br': {
         title: 'Privacidade e renderização de etiquetas',

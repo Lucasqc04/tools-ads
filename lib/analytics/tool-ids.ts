@@ -29,6 +29,7 @@ export const TOOL_ID = {
   imageConverter: 'image_converter',
   imageCompression: 'image_compression',
   instagramImageOptimizer: 'instagram_image_optimizer',
+  instagramPostSimulator: 'instagram_post_simulator',
   chromaBackgroundRemover: 'remover_fundo_imagem',
   videoCompression: 'video_compression',
   videoDownloader: 'video_downloader',

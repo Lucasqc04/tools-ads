@@ -93,6 +93,7 @@ import {
   instagramImageOptimizerFaq,
   instagramImageOptimizerIntro,
 } from '@/data/content/instagram-image-optimizer';
+import { getInstagramPostSimulatorContent } from '@/data/content/instagram-post-simulator';
 import {
   backgroundRemoverContentBlocks,
   backgroundRemoverFaq,
@@ -984,6 +985,14 @@ export const toolsRegistry: ToolDefinition[] = [
     faq: instagramImageOptimizerFaq,
     contentBlocks: instagramImageOptimizerContentBlocks,
     relatedToolIds: ['image-compression', 'image-converter', 'redimensionar-imagem'],
+  },
+  {
+    id: 'instagram-post-simulator',
+    slug: 'simulador-post-instagram',
+    ...getInstagramPostSimulatorContent('pt-br'),
+    category: 'documents',
+    canonicalPath: '/tools/simulador-post-instagram',
+    relatedToolIds: ['instagram-image-optimizer', 'image-compression', 'video-compression'],
   },
   {
     id: 'remover-fundo-imagem',
@@ -2225,6 +2234,14 @@ const localizeTool = (tool: ToolDefinition, locale: AppLocale): ToolDefinition =
     return {
       ...tool,
       ...getCelularWebcamContent(locale),
+      canonicalPath: getToolCanonicalPathByLocale(tool, locale),
+    };
+  }
+
+  if (tool.id === 'instagram-post-simulator') {
+    return {
+      ...tool,
+      ...getInstagramPostSimulatorContent(locale),
       canonicalPath: getToolCanonicalPathByLocale(tool, locale),
     };
   }
