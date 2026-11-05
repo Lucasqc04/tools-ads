@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { extractPinId, parsePinVideo, pinterestExtractor } from '../providers/pinterest';
+import { extractPinId, parsePinMedia, pinterestExtractor } from '../providers/pinterest';
 
 const snippet = JSON.stringify({
   '@type': 'VideoObject',
@@ -32,8 +32,9 @@ describe('pinterest provider', () => {
   });
 
   it('parses the embedded VideoObject and marks it as open-only (no CORS)', () => {
-    const result = parsePinVideo(html(snippet));
+    const result = parsePinMedia(html(snippet));
 
+    expect(result.mediaType).toBe('video');
     expect(result.formats).toHaveLength(1);
     expect(result.formats[0]).toMatchObject({ kind: 'progressive', quality: '720p', container: 'mp4', width: 1080, height: 1920 });
     expect(result.durationSeconds).toBe(23);
@@ -42,10 +43,25 @@ describe('pinterest provider', () => {
     expect(result.notes).toContain('no_cors_open_only');
   });
 
-  it('rejects pins without a video or with a foreign contentUrl', () => {
-    expect(() => parsePinVideo('<html></html>')).toThrowError(expect.objectContaining({ code: 'no_video_found' }));
+  it('extracts a public image pin from its Pinterest image metadata', () => {
+    const result = parsePinMedia(
+      '<html><head><meta content="https://i.pinimg.com/originals/aa/bb/cc/pin.jpg" property="og:image" /><meta property="og:title" content="A saved pin" /></head></html>',
+    );
+
+    expect(result).toMatchObject({
+      mediaType: 'image',
+      title: 'A saved pin',
+      browserDownload: 'open',
+      formats: [{ kind: 'progressive', container: 'jpg', mimeType: 'image/jpeg', hasVideo: false, url: 'https://i.pinimg.com/originals/aa/bb/cc/pin.jpg' }],
+    });
+  });
+
+  it('rejects pins without supported media or with a foreign media URL', () => {
+    expect(() => parsePinMedia('<html></html>')).toThrowError(expect.objectContaining({ code: 'no_media_found' }));
     expect(() =>
-      parsePinVideo(html(JSON.stringify({ contentUrl: 'https://evil.example/a.mp4' }))),
-    ).toThrowError(expect.objectContaining({ code: 'no_video_found' }));
+      parsePinMedia(
+        '<html><head><meta property="og:image" content="https://evil.example/pin.jpg" /></head></html>',
+      ),
+    ).toThrowError(expect.objectContaining({ code: 'no_media_found' }));
   });
 });

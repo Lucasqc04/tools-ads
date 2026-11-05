@@ -1,4 +1,4 @@
-# Video downloader (extractors)
+# Video and image downloader (extractors)
 
 Server code only locates the media URL of a **public** post. The browser downloads the bytes
 straight from the platform CDN (`client.ts`). Nothing is stored and no video is proxied.
@@ -28,8 +28,10 @@ rate-limit.ts    -> per-instance burst + concurrency limit (NOT a global rate li
 | Platform  | Result |
 |-----------|--------|
 | X/Twitter | Works. `cdn.syndication.twimg.com` returns MP4 variants + HLS; `video.twimg.com` reflects `Origin` in CORS, so the browser downloads directly. |
-| Pinterest | Extracts the MP4 from the pin's `VideoObject` JSON-LD. `v1.pinimg.com` sends no `Access-Control-Allow-Origin`, so the UI can only open the file (`browserDownload: 'open'`). |
+| Pinterest | Extracts video URLs from a pin's `VideoObject` JSON-LD; the verified `v1.pinimg.com` URL sends no `Access-Control-Allow-Origin`. Image pins are recognized when public HTML exposes an `ImageObject`, `og:image` or Pinterest image preload URL on `i.pinimg.com`. Both types currently open the original file in a new tab (`browserDownload: 'open'`). |
 | TikTok    | Metadata is readable, but the MP4 needs `ttwid`/`tt_chain_token` cookies and a Referer, and CORS only allows `https://www.tiktok.com`. A browser on our origin cannot fetch it. Not offered. |
 | Instagram | Public HTML is a login wall with no media URL. Not offered. |
 | Facebook  | Public HTML has no playable URL for logged-out clients. Not offered. |
 | Reddit    | `reddit.com` returned HTTP 403 ("Blocked") to this client, so nothing could be verified. Not offered. |
+
+Image pin extraction depends on Pinterest returning a public image URL in its HTML. Some pin pages return only the app shell to unauthenticated requests; those links correctly return `no_media_found`. The parser does not call Pinterest's private API or use account cookies to get around that restriction.

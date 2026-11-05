@@ -37,7 +37,7 @@ import {
   getVideoDownloaderPlatformLocalePathMap,
   videoDownloaderPlatformPages,
 } from '@/data/video-downloader-pages';
-import { getToolAliasStaticParamsByLocale } from '@/data/tool-alias-pages';
+import { getToolAliasLocalePathMap, toolAliasPages } from '@/data/tool-alias-pages';
 import { getToolLocalePathMap, toolsRegistry } from '@/data/tools-registry';
 import {
   defaultLocale,
@@ -56,6 +56,24 @@ const buildAlternates = (paths: Record<AppLocale, string>) => {
   });
 
   languages['x-default'] = makeAbsoluteUrl(paths[defaultLocale]);
+
+  return { languages };
+};
+
+const buildPartialAlternates = (paths: Partial<Record<AppLocale, string>>) => {
+  const languages: Record<string, string> = {};
+
+  locales.forEach((locale) => {
+    const path = paths[locale];
+    if (path) {
+      languages[localeMetadata[locale].hreflang] = makeAbsoluteUrl(path);
+    }
+  });
+
+  const defaultPath = paths[defaultLocale] ?? Object.values(paths)[0];
+  if (defaultPath) {
+    languages['x-default'] = makeAbsoluteUrl(defaultPath);
+  }
 
   return { languages };
 };
@@ -243,14 +261,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
   });
 
-  const toolAliasRoutes: MetadataRoute.Sitemap = locales.flatMap((locale) =>
-    getToolAliasStaticParamsByLocale(locale).map(({ platformPageSlug }) => ({
-      url: makeAbsoluteUrl(localizePath(locale, `/${platformPageSlug}`)),
-      lastModified: contentLastModified,
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    })),
-  );
+  const toolAliasRoutes: MetadataRoute.Sitemap = toolAliasPages.flatMap((page) => {
+    const pathMap = getToolAliasLocalePathMap(page);
+
+    return locales.flatMap((locale) => {
+      const path = pathMap[locale];
+      if (!path) {
+        return [];
+      }
+
+      return [{
+        url: makeAbsoluteUrl(path),
+        lastModified: contentLastModified,
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+        alternates: buildPartialAlternates(pathMap),
+      }];
+    });
+  });
 
   const gtaSeoRoutes: MetadataRoute.Sitemap = gtaSeoPages.flatMap((page) => {
     const pathMap = getGtaSeoLocalePathMap(page);

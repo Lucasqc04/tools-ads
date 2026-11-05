@@ -20,7 +20,7 @@ import {
   formatDuration,
 } from '@/lib/video-downloader/client';
 import { guessPlatformFromText, platformDisplayNames } from '@/lib/video-downloader/platforms';
-import type { ExtractionNote, ExtractionSuccess, VideoFormat, VideoPlatformId } from '@/lib/video-downloader/types';
+import type { ExtractionNote, ExtractionSuccess, MediaType, VideoFormat, VideoPlatformId } from '@/lib/video-downloader/types';
 
 type VideoDownloaderToolProps = Readonly<{
   locale?: AppLocale;
@@ -46,8 +46,9 @@ type Ui = {
   estimate: (size: string) => string;
   download: (quality: string) => string;
   downloadAudio: string;
-  openVideo: string;
-  openHint: string;
+  openMedia: (type: MediaType) => string;
+  openHint: (type: MediaType) => string;
+  imageReady: (format: string) => string;
   downloading: string;
   converting: string;
   cancel: string;
@@ -65,7 +66,7 @@ type Ui = {
 };
 
 const en: Ui = {
-  inputLabel: 'Video link',
+  inputLabel: 'Video or image link',
   defaultPlaceholder: 'Paste a link from X (Twitter) or Pinterest',
   paste: 'Paste',
   analyze: 'Analyze link',
@@ -78,8 +79,12 @@ const en: Ui = {
   estimate: (size) => `≈ ${size}`,
   download: (quality) => (quality ? `Download MP4 (${quality})` : 'Download MP4'),
   downloadAudio: 'Extract audio (MP3)',
-  openVideo: 'Open video',
-  openHint: 'This platform does not allow in-page downloads. The file opens in a new tab: save it from the player menu or with a right click.',
+  openMedia: (type) => (type === 'image' ? 'Open image' : 'Open video'),
+  openHint: (type) =>
+    type === 'image'
+      ? 'The image opens in a new tab. Use the browser menu or right click to save it. On a phone, press and hold the image.'
+      : 'This platform does not allow in-page downloads. The video opens in a new tab: save it from the player menu or with a right click.',
+  imageReady: (format) => `Image ready to open · ${format}`,
   downloading: 'Downloading',
   converting: 'Converting audio on your device',
   cancel: 'Cancel',
@@ -87,10 +92,10 @@ const en: Ui = {
   saved: 'Done. The file was saved to your device.',
   by: 'by',
   duration: 'Duration',
-  corsBlocked: 'The platform did not allow the browser to download this file directly. We do not route videos through our server.',
+  corsBlocked: 'The platform did not allow the browser to download this media directly. We do not route files through our server.',
   openFallback: 'Open the file in a new tab',
   tooLarge: 'This file is too large to download inside the browser.',
-  downloadFailed: 'The platform refused the download. The video may have been removed.',
+  downloadFailed: 'The platform refused the download. This media may have been removed.',
   noAudioTrack: 'No audio track was found in this video.',
   notes: {
     multiple_media_only_first: 'This post has more than one video. Only the first one is listed.',
@@ -102,6 +107,7 @@ const en: Ui = {
     unsupported_platform: 'This platform is not supported yet. Supported: X (Twitter) and Pinterest.',
     media_unavailable: 'The post is unavailable. It may be private, deleted or require login.',
     no_video_found: 'No downloadable video was found in this link.',
+    no_media_found: 'No supported public video or image was found in this link.',
     rate_limited: 'Too many requests. Wait a few seconds and try again.',
     timeout: 'The platform took too long to respond. Try again.',
     access_blocked: 'The platform blocked access to this content.',
@@ -112,7 +118,7 @@ const en: Ui = {
 };
 
 const ptBr: Ui = {
-  inputLabel: 'Link do vídeo',
+  inputLabel: 'Link do vídeo ou da imagem',
   defaultPlaceholder: 'Cole um link do X (Twitter) ou do Pinterest',
   paste: 'Colar',
   analyze: 'Analisar link',
@@ -125,8 +131,12 @@ const ptBr: Ui = {
   estimate: (size) => `≈ ${size}`,
   download: (quality) => (quality ? `Baixar MP4 (${quality})` : 'Baixar MP4'),
   downloadAudio: 'Extrair áudio (MP3)',
-  openVideo: 'Abrir vídeo',
-  openHint: 'Esta plataforma não permite baixar dentro da página. O arquivo abre em uma nova aba: salve pelo menu do player ou com o botão direito.',
+  openMedia: (type) => (type === 'image' ? 'Abrir imagem' : 'Abrir vídeo'),
+  openHint: (type) =>
+    type === 'image'
+      ? 'A imagem abre em uma nova aba. Use o menu do navegador ou o botão direito para salvar. No celular, toque e segure a imagem.'
+      : 'Esta plataforma não permite baixar o vídeo dentro da página. Ele abre em uma nova aba: salve pelo menu do player ou com o botão direito.',
+  imageReady: (format) => `Imagem pronta para abrir · ${format}`,
   downloading: 'Baixando',
   converting: 'Convertendo o áudio no seu aparelho',
   cancel: 'Cancelar',
@@ -134,10 +144,10 @@ const ptBr: Ui = {
   saved: 'Pronto. O arquivo foi salvo no seu aparelho.',
   by: 'por',
   duration: 'Duração',
-  corsBlocked: 'A plataforma não permitiu que o navegador baixasse este arquivo diretamente. Não passamos vídeos pelo nosso servidor.',
+  corsBlocked: 'A plataforma não permitiu que o navegador baixasse esta mídia diretamente. Não passamos arquivos pelo nosso servidor.',
   openFallback: 'Abrir o arquivo em uma nova aba',
   tooLarge: 'Este arquivo é grande demais para baixar dentro do navegador.',
-  downloadFailed: 'A plataforma recusou o download. O vídeo pode ter sido removido.',
+  downloadFailed: 'A plataforma recusou o download. Esta mídia pode ter sido removida.',
   noAudioTrack: 'Não foi encontrada faixa de áudio neste vídeo.',
   notes: {
     multiple_media_only_first: 'Este post tem mais de um vídeo. Só o primeiro aparece na lista.',
@@ -149,6 +159,7 @@ const ptBr: Ui = {
     unsupported_platform: 'Esta plataforma ainda não é aceita. Disponíveis: X (Twitter) e Pinterest.',
     media_unavailable: 'O post não está disponível. Pode ser privado, ter sido apagado ou exigir login.',
     no_video_found: 'Nenhum vídeo para baixar foi encontrado neste link.',
+    no_media_found: 'Nenhum vídeo ou imagem pública compatível foi encontrado neste link.',
     rate_limited: 'Muitas requisições. Aguarde alguns segundos e tente de novo.',
     timeout: 'A plataforma demorou demais para responder. Tente novamente.',
     access_blocked: 'A plataforma bloqueou o acesso a este conteúdo.',
@@ -159,7 +170,7 @@ const ptBr: Ui = {
 };
 
 const es: Ui = {
-  inputLabel: 'Enlace del video',
+  inputLabel: 'Enlace del video o la imagen',
   defaultPlaceholder: 'Pega un enlace de X (Twitter) o Pinterest',
   paste: 'Pegar',
   analyze: 'Analizar enlace',
@@ -172,8 +183,12 @@ const es: Ui = {
   estimate: (size) => `≈ ${size}`,
   download: (quality) => (quality ? `Descargar MP4 (${quality})` : 'Descargar MP4'),
   downloadAudio: 'Extraer audio (MP3)',
-  openVideo: 'Abrir video',
-  openHint: 'Esta plataforma no permite descargar dentro de la página. El archivo se abre en una pestaña nueva: guárdalo desde el menú del reproductor o con clic derecho.',
+  openMedia: (type) => (type === 'image' ? 'Abrir imagen' : 'Abrir video'),
+  openHint: (type) =>
+    type === 'image'
+      ? 'La imagen se abre en una pestaña nueva. Usa el menú del navegador o el clic derecho para guardarla. En el móvil, mantén pulsada la imagen.'
+      : 'Esta plataforma no permite descargar el video dentro de la página. Se abre en una pestaña nueva: guárdalo desde el menú del reproductor o con clic derecho.',
+  imageReady: (format) => `Imagen lista para abrir · ${format}`,
   downloading: 'Descargando',
   converting: 'Convirtiendo el audio en tu dispositivo',
   cancel: 'Cancelar',
@@ -181,10 +196,10 @@ const es: Ui = {
   saved: 'Listo. El archivo se guardó en tu dispositivo.',
   by: 'por',
   duration: 'Duración',
-  corsBlocked: 'La plataforma no permitió que el navegador descargara este archivo directamente. No pasamos videos por nuestro servidor.',
+  corsBlocked: 'La plataforma no permitió que el navegador descargara este contenido directamente. No pasamos archivos por nuestro servidor.',
   openFallback: 'Abrir el archivo en una pestaña nueva',
   tooLarge: 'Este archivo es demasiado grande para descargarlo dentro del navegador.',
-  downloadFailed: 'La plataforma rechazó la descarga. Puede que el video se haya eliminado.',
+  downloadFailed: 'La plataforma rechazó la descarga. Puede que este contenido se haya eliminado.',
   noAudioTrack: 'No se encontró pista de audio en este video.',
   notes: {
     multiple_media_only_first: 'Esta publicación tiene más de un video. Solo se lista el primero.',
@@ -196,6 +211,7 @@ const es: Ui = {
     unsupported_platform: 'Esta plataforma aún no es compatible. Disponibles: X (Twitter) y Pinterest.',
     media_unavailable: 'La publicación no está disponible. Puede ser privada, borrada o exigir inicio de sesión.',
     no_video_found: 'No se encontró ningún video descargable en este enlace.',
+    no_media_found: 'No se encontró ningún video o imagen pública compatible en este enlace.',
     rate_limited: 'Demasiadas solicitudes. Espera unos segundos e inténtalo de nuevo.',
     timeout: 'La plataforma tardó demasiado en responder. Inténtalo de nuevo.',
     access_blocked: 'La plataforma bloqueó el acceso a este contenido.',
@@ -452,15 +468,20 @@ export function VideoDownloaderTool({ locale = 'pt-br', platform, placeholder, h
       {result ? (
         <Card className="space-y-4">
           <div className="grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
-            <div className="aspect-video w-full max-w-full overflow-hidden rounded-lg bg-slate-100">
+            <div
+              className={cn(
+                'w-full max-w-full overflow-hidden rounded-lg bg-slate-100',
+                result.mediaType === 'image' ? 'aspect-[4/5]' : 'aspect-video',
+              )}
+            >
               {result.thumbnail ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={result.thumbnail}
-                  alt=""
+                  alt={result.mediaType === 'image' ? result.title : ''}
                   loading="lazy"
                   referrerPolicy="no-referrer"
-                  className="h-full w-full object-cover"
+                  className={cn('h-full w-full', result.mediaType === 'image' ? 'object-contain' : 'object-cover')}
                 />
               ) : null}
             </div>
@@ -481,35 +502,41 @@ export function VideoDownloaderTool({ locale = 'pt-br', platform, placeholder, h
             </div>
           </div>
 
-          <fieldset className="space-y-2" disabled={busy}>
-            <legend className="text-sm font-semibold text-slate-900">{ui.qualityLabel}</legend>
-            <div role="radiogroup" aria-label={ui.qualityLabel} className="flex flex-wrap gap-2">
-              {formats.map((format) => {
-                const size = estimateSizeBytes(format, result.durationSeconds);
-                const active = format.id === selected?.id;
-                return (
-                  <button
-                    key={format.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={active}
-                    onClick={() => setSelectedId(format.id)}
-                    className={cn(
-                      'rounded-lg border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed',
-                      active ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50',
-                    )}
-                  >
-                    <span className="font-semibold">{format.quality ?? 'MP4'}</span>
-                    <span className="ml-2 text-xs">
-                      MP4
-                      {size ? ` · ${ui.estimate(formatBytes(size))}` : ''}
-                      {format.hasAudio === false ? ` · ${ui.noAudio}` : ''}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
+          {result.mediaType === 'video' ? (
+            <fieldset className="space-y-2" disabled={busy}>
+              <legend className="text-sm font-semibold text-slate-900">{ui.qualityLabel}</legend>
+              <div role="radiogroup" aria-label={ui.qualityLabel} className="flex flex-wrap gap-2">
+                {formats.map((format) => {
+                  const size = estimateSizeBytes(format, result.durationSeconds);
+                  const active = format.id === selected?.id;
+                  return (
+                    <button
+                      key={format.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      onClick={() => setSelectedId(format.id)}
+                      className={cn(
+                        'rounded-lg border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed',
+                        active ? 'border-brand-300 bg-brand-50 text-brand-800' : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50',
+                      )}
+                    >
+                      <span className="font-semibold">{format.quality ?? format.container.toUpperCase()}</span>
+                      <span className="ml-2 text-xs">
+                        {format.container.toUpperCase()}
+                        {size ? ` · ${ui.estimate(formatBytes(size))}` : ''}
+                        {format.hasAudio === false ? ` · ${ui.noAudio}` : ''}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          ) : (
+            <p className="text-sm font-medium text-slate-700">
+              {ui.imageReady(selected?.container.toUpperCase() ?? 'IMAGE')}
+            </p>
+          )}
 
           {busy && status !== 'analyzing' ? (
             <div className="space-y-2" aria-live="polite">
@@ -555,14 +582,14 @@ export function VideoDownloaderTool({ locale = 'pt-br', platform, placeholder, h
                     rel="noopener noreferrer"
                     className="inline-flex h-10 items-center justify-center rounded-lg bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                   >
-                    {ui.openVideo}
+                    {ui.openMedia(result.mediaType)}
                   </a>
                 ) : null}
                 <Button variant="ghost" onClick={reset}>
                   {ui.clear}
                 </Button>
               </div>
-              {openOnly ? <p className="text-xs text-slate-600">{ui.openHint}</p> : null}
+              {openOnly ? <p className="text-xs text-slate-600">{ui.openHint(result.mediaType)}</p> : null}
               {status === 'done' || (status === 'ready' && message) ? (
                 <p role="status" className="text-sm font-medium text-slate-800">
                   {message}

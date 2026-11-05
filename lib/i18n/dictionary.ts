@@ -148,7 +148,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       home: {
         title: 'Ferramentas Online Grátis para o Dia a Dia',
         description:
-          'Converta, calcule, gere e organize tarefas com ferramentas online grátis. Busque por nome ou categoria e abra a opção que você precisa.',
+          'Converta arquivos, valide Pix e boletos, formate JSON e encontre utilitários para desenvolvimento, documentos, cripto e jogos. Grátis e sem cadastro.',
         keywords: [
           'ferramentas online',
           'ferramentas online gratis sem cadastro',
@@ -174,7 +174,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       about: {
         title: 'Sobre o Projeto',
         description:
-          'Entenda o objetivo do Tools Lucasqc, como as ferramentas são construídas e quais princípios de utilidade, UX e privacidade orientam o produto.',
+          'Conheça as ferramentas do Tools Lucasqc para arquivos, desenvolvimento, cripto, jogos e tarefas cotidianas, além de como enviar sugestões e correções.',
         keywords: ['sobre ferramentas online', 'projeto tools', 'utilitários web'],
       },
       contact: {
@@ -230,22 +230,22 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'Todos os direitos reservados.',
     },
     home: {
-      h1: 'Ferramentas online para o dia a dia',
+      h1: 'Ferramentas online para arquivos, código e tarefas do dia a dia',
       intro:
-        'Ferramentas grátis para converter arquivos, calcular valores e resolver tarefas do dia a dia.',
+        'O Tools Lucasqc reúne conversores de arquivos, calculadoras e utilitários para desenvolvimento, documentos, cripto, jogos e tarefas cotidianas. Grátis e sem cadastro.',
       catalogTitle: 'Mais acessadas',
-      viewAllTools: 'Ver todas',
+      viewAllTools: 'Catálogo completo',
       guideTitle: 'Como encontrar a ferramenta certa',
       guideParagraphs: [
-        'Busque pelo que você precisa fazer — como converter PDF, formatar JSON ou criar um QR Code. A pesquisa também encontra termos sem acento e pequenas variações na escrita.',
-        'Use as categorias e o filtro de jogo para refinar os resultados. O catálogo completo reúne ferramentas de cripto, desenvolvimento, documentos e mídia, jogos e tarefas cotidianas.',
+        'Converta imagens e arquivos, valide a estrutura de Pix e boletos, formate JSON ou prepare arquivos para redes sociais. Cada página apresenta instruções e limites relacionados à tarefa.',
+        'O catálogo atende quem desenvolve ou testa software, trabalha com documentos e mídia, configura jogos ou precisa resolver uma tarefa pontual. Busque pelo nome ou use os filtros de categoria e jogo.',
       ],
     },
     toolsIndex: {
       h1: 'Todas as ferramentas',
       intro: 'Busque pelo nome, tarefa ou categoria e abra a ferramenta que resolve o que você precisa.',
       searchLabel: 'Buscar ferramenta',
-      searchPlaceholder: 'Nome ou tarefa, ex.: json, boleto, pdf',
+      searchPlaceholder: 'Buscar: JSON, boleto, PDF',
       searchButton: 'Buscar',
       resultsLabel: {
         singular: 'ferramenta encontrada',
@@ -259,17 +259,16 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     about: {
       h1: 'Sobre o Tools Lucasqc',
       intro:
-        'O Tools Lucasqc nasceu para entregar utilitários web realmente úteis, rápidos e fáceis de usar. Cada página foi pensada para funcionar bem sozinha e ajudar você a resolver tarefas sem complicação.',
-      principlesTitle: 'Princípios do produto',
+        'O Tools Lucasqc reúne ferramentas web para converter arquivos, fazer cálculos, trabalhar com dados de desenvolvimento e configurar recursos para jogos. O catálogo também inclui utilitários para QR Codes, Pix, boletos e tarefas cotidianas.',
+      principlesTitle: 'O que você encontra',
       principles: [
-        'Conteúdo útil antes de monetização.',
-        'Experiência limpa e responsiva em mobile e desktop.',
-        'Processamento local quando possível, para mais privacidade.',
-        'Arquitetura escalável para novas tools sem retrabalho.',
+        'Ferramentas para arquivos, desenvolvimento, cripto, jogos e tarefas cotidianas.',
+        'Instruções e limitações relacionadas ao funcionamento de cada ferramenta.',
+        'Informações sobre processamento local ou uso de serviços quando isso se aplica.',
       ],
-      qualityTitle: 'Compromisso de qualidade',
+      qualityTitle: 'Contato e correções',
       qualityParagraph:
-        'Mantemos páginas institucionais claras, políticas transparentes e navegação simples. Isso fortalece a confiança dos usuários e de plataformas de anúncios como o Google AdSense.',
+        'Encontrou uma informação incorreta ou uma ferramenta com problema? Acesse a página Contato e envie o link da ferramenta, o que aconteceu e os passos para reproduzir.',
     },
     contact: {
       h1: 'Contato',
@@ -289,22 +288,22 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     privacy: {
       h1: 'Política de Privacidade',
       intro:
-        'Esta política descreve como o Tools Lucasqc trata informações de navegação e quais práticas adotamos para proteger usuários.',
+        'Esta política explica o que acontece com dados de navegação e informações inseridas nas ferramentas do Tools Lucasqc.',
       sections: [
         {
           title: '1. Dados processados nas ferramentas',
           body:
-            'As ferramentas principais foram projetadas para processamento local no navegador sempre que possível. Isso significa que conteúdos inseridos em campos de uso não são enviados automaticamente para nossos servidores.',
+            'O tratamento depende da ferramenta. Pix e boleto são processados no navegador. A conversão de HEIC/HEIF e a compressão de vídeos menores podem enviar o arquivo ao servidor do site; vídeos acima de 512 MB são processados no navegador. A prévia Open Graph envia a URL informada ao servidor para buscar metadados. Consultas de IP, DNS e cripto podem usar serviços externos. A caixa de e-mail temporário mantém endereço e mensagens no servidor até a expiração configurada ou a exclusão. Leia o aviso da ferramenta e evite inserir dados sensíveis quando não forem necessários.',
         },
         {
-          title: '2. Cookies e métricas',
+            title: '2. Métricas e preferências',
           body:
-            'Podemos usar cookies técnicos e de medição para melhorar desempenho, estabilidade e experiência. Quando houver integração de publicidade, parceiros podem usar cookies para personalização e medição conforme suas próprias políticas.',
+            'O site usa Vercel Analytics para métricas de visita. Quando NEXT_PUBLIC_GTM_ID está configurado, também carrega o Google Tag Manager, cujas tags podem tratar dados conforme sua configuração. Os eventos das ferramentas registram identificadores e metadados de uso, sem incluir o conteúdo digitado ou os arquivos. O seletor de idioma guarda sua preferência no cookie NEXT_LOCALE e no armazenamento local do navegador. Consulte as políticas dos serviços envolvidos para saber como eles tratam dados de navegação.',
         },
         {
           title: '3. Publicidade',
           body:
-            'Este site pode exibir anúncios de redes como Google AdSense. A veiculação está sujeita às políticas da plataforma, inclusive quanto a uso de cookies e personalização de anúncios por interesse.',
+            'O script e os espaços de anúncio do Google AdSense estão desativados no código atual. Se a publicidade for ativada no futuro, esta política será atualizada antes da ativação.',
         },
         {
           title: '4. Direitos do usuário',
@@ -368,9 +367,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       relatedToolsTitle: 'Outras ferramentas úteis',
       relatedToolsDescription:
         'Links úteis para continuar tarefas parecidas sem voltar para a busca.',
-      trustTitle: 'Privacidade e processamento local',
+      trustTitle: 'Privacidade e tratamento de dados',
       trustText:
-        'As ferramentas desta página rodam no navegador e não enviam o conteúdo digitado para backend. Isso melhora privacidade, reduz latência e ajuda na experiência mobile.',
+        'O tratamento de dados varia conforme a ferramenta: algumas operam no navegador; outras enviam arquivos, links ou solicitações ao servidor do site ou a um serviço externo. Consulte as instruções desta página antes de enviar dados, especialmente se forem sensíveis.',
       cryptoRelatedTitle: 'Outras conversões relacionadas',
       cryptoRelatedDescription:
         'Links internos leves para combinações próximas e úteis do mesmo contexto técnico.',
@@ -403,7 +402,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       home: {
         title: 'Free Online Tools for Everyday Tasks',
         description:
-          'Convert files, calculate, generate, and organize everyday tasks with free online tools. Search by name or category to find what you need.',
+          'Convert files, validate Pix and boleto data, format JSON, and find utilities for development, documents, crypto, and games. Free to use, with no account required.',
         keywords: [
           'free online tools',
           'free online tools no sign up',
@@ -428,7 +427,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       about: {
         title: 'About This Project',
         description:
-          'Learn how Tools Lucasqc is built to deliver useful tools with clean UX and transparent privacy practices.',
+          'Explore Tools Lucasqc utilities for files, development, crypto, games, and everyday tasks, and learn how to send feedback or corrections.',
         keywords: ['about tools lucasqc', 'web tools project', 'web tools mission'],
       },
       contact: {
@@ -485,22 +484,22 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'All rights reserved.',
     },
     home: {
-      h1: 'Online tools for everyday tasks',
+      h1: 'Online tools for files, code, and everyday tasks',
       intro:
-        'Free tools to convert files, calculate values, and handle everyday tasks.',
+        'Tools Lucasqc brings together file converters, calculators, and utilities for development, documents, crypto, games, and everyday tasks. Free to use, with no account required.',
       catalogTitle: 'Popular tools',
-      viewAllTools: 'View all tools',
+      viewAllTools: 'Full catalog',
       guideTitle: 'How to find the right tool',
       guideParagraphs: [
-        'Search for the task you have in mind, such as converting a PDF, formatting JSON, or creating a QR code. Search also handles accents and small spelling variations.',
-        'Use the category and game filters to narrow the results. The full catalog covers crypto, development, documents and media, gaming, and everyday utilities.',
+        'Convert images and files, check Pix and boleto structures, format JSON, or prepare images for social networks. Each tool page explains its workflow and relevant limits.',
+        'The catalog is for people who build or test software, work with documents and media, configure games, or need a quick utility. Search by name or use the category and game filters.',
       ],
     },
     toolsIndex: {
       h1: 'All tools',
       intro: 'Find the right tool by name, task, category, or game.',
       searchLabel: 'Search tools',
-      searchPlaceholder: 'Tool or task, e.g. json, pdf, QR code',
+      searchPlaceholder: 'Search: JSON, PDF, QR code',
       searchButton: 'Search',
       resultsLabel: {
         singular: 'tool found',
@@ -514,17 +513,16 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     about: {
       h1: 'About Tools Lucasqc',
       intro:
-        'Tools Lucasqc was created to ship practical web utilities that are fast, simple, and useful in real workflows.',
-      principlesTitle: 'Product principles',
+        'Tools Lucasqc brings together web tools for file conversion, calculations, development data, and game configuration. The catalog also includes utilities for QR codes, Brazilian Pix payments, boletos, and everyday tasks.',
+      principlesTitle: 'What you can find here',
       principles: [
-        'Useful content before monetization.',
-        'Clean responsive UX across mobile and desktop.',
-        'Local processing whenever possible for stronger privacy.',
-        'Scalable architecture for adding new tools consistently.',
+        'Tools for files, development, crypto, games, and everyday tasks.',
+        'Instructions and limitations related to how each tool works.',
+        'Processing details when a tool runs locally or uses a service.',
       ],
-      qualityTitle: 'Quality commitment',
+      qualityTitle: 'Contact and corrections',
       qualityParagraph:
-        'We keep institutional pages clear, policies transparent, and navigation straightforward. This helps build trust with users and ad platforms such as Google AdSense.',
+        'Found incorrect information or a tool issue? Visit the Contact page and share the tool URL, what happened, and the steps to reproduce it.',
     },
     contact: {
       h1: 'Contact',
@@ -544,22 +542,22 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     privacy: {
       h1: 'Privacy Policy',
       intro:
-        'This policy explains how Tools Lucasqc handles browsing information and which practices we follow to protect users.',
+        'This policy explains what happens to browsing data and information entered into Tools Lucasqc tools.',
       sections: [
         {
           title: '1. Data processed in tools',
           body:
-            'Core tools are designed for local browser processing whenever possible. In practical terms, the content you enter into tool fields is not automatically sent to our servers.',
+            'Data handling depends on the tool. Pix and boleto checks run in the browser. HEIC/HEIF conversion and compression of smaller videos may send the file to the site server; videos over 512 MB are processed in the browser. The Open Graph preview sends the URL to our server to retrieve metadata. IP, DNS, and crypto lookups may use external services. The temporary email inbox keeps its address and messages on the server until the configured expiry or deletion. Read the tool notice and avoid entering sensitive data when it is not needed.',
         },
         {
-          title: '2. Cookies and analytics',
+          title: '2. Analytics and preferences',
           body:
-            'We may use technical and measurement cookies to improve performance, stability, and experience. Advertising partners may also use cookies under their own policies.',
+            'The site uses Vercel Analytics for visit metrics. When NEXT_PUBLIC_GTM_ID is configured, it also loads Google Tag Manager, whose tags may process data according to their configuration. Tool events record identifiers and usage metadata, not entered content or files. The language selector stores your preference in the NEXT_LOCALE cookie and browser local storage. See the relevant providers’ policies for details on browsing data.',
         },
         {
           title: '3. Advertising',
           body:
-            'This site may display ads from providers such as Google AdSense. Delivery is subject to partner policies, including cookie usage and interest-based personalization rules.',
+            'The Google AdSense script and ad spaces are disabled in the current code. If advertising is enabled in the future, this policy will be updated first.',
         },
         {
           title: '4. User rights',
@@ -623,9 +621,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       relatedToolsTitle: 'Other useful tools',
       relatedToolsDescription:
         'Helpful links to continue similar tasks without starting over.',
-      trustTitle: 'Privacy and local processing',
+      trustTitle: 'Privacy and data handling',
       trustText:
-        'Tools on this page run directly in your browser and do not send entered content to a backend. This improves privacy and reduces latency.',
+        'Data handling varies by tool: some run in your browser, while others send files, links, or requests to the site server or an external service. Check this page’s instructions before sending data, especially sensitive data.',
       cryptoRelatedTitle: 'Related conversions',
       cryptoRelatedDescription:
         'Internal links to nearby conversion combinations that match similar technical intent.',
@@ -658,7 +656,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       home: {
         title: 'Herramientas Online Gratis para el Día a Día',
         description:
-          'Convierte archivos, calcula, genera contenido y resuelve tareas con herramientas online gratis. Busca por nombre o categoría.',
+          'Convierte archivos, revisa datos Pix y boletos brasileños, formatea JSON y encuentra utilidades para desarrollo, documentos, cripto y juegos. Gratis y sin registro.',
         keywords: [
           'herramientas online gratis',
           'herramientas online sin registro',
@@ -683,7 +681,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       about: {
         title: 'Sobre este proyecto',
         description:
-          'Conoce cómo Tools Lucasqc está construido para ofrecer herramientas útiles con UX limpia y políticas transparentes.',
+          'Explora herramientas de Tools Lucasqc para archivos, desarrollo, cripto, juegos y tareas cotidianas, y descubre cómo enviar sugerencias o correcciones.',
         keywords: ['sobre tools lucasqc', 'proyecto herramientas web', 'herramientas web'],
       },
       contact: {
@@ -740,22 +738,22 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: 'Todos los derechos reservados.',
     },
     home: {
-      h1: 'Herramientas online para el día a día',
+      h1: 'Herramientas online para archivos, código y tareas cotidianas',
       intro:
-        'Herramientas gratis para convertir archivos, calcular y resolver tareas cotidianas.',
+        'Tools Lucasqc reúne conversores de archivos, calculadoras y utilidades para desarrollo, documentos, cripto, juegos y tareas cotidianas. Gratis y sin registro.',
       catalogTitle: 'Más utilizadas',
-      viewAllTools: 'Ver todas',
+      viewAllTools: 'Catálogo completo',
       guideTitle: 'Cómo encontrar la herramienta adecuada',
       guideParagraphs: [
-        'Busca la tarea que necesitas, como convertir un PDF, dar formato a JSON o crear un código QR. La búsqueda también acepta términos sin tilde y pequeños errores al escribir.',
-        'Usa las categorías y el filtro de juegos para afinar los resultados. El catálogo completo incluye cripto, desarrollo, documentos y medios, juegos y utilidades cotidianas.',
+        'Convierte imágenes y archivos, revisa la estructura de Pix y boletos brasileños, da formato a JSON o prepara imágenes para redes sociales. Cada herramienta explica su flujo y sus límites relevantes.',
+        'El catálogo es para quienes desarrollan o prueban software, trabajan con documentos y medios, configuran juegos o necesitan una utilidad rápida. Busca por nombre o usa los filtros de categoría y juego.',
       ],
     },
     toolsIndex: {
       h1: 'Todas las herramientas',
       intro: 'Busca por nombre, tarea, categoría o juego y abre la herramienta adecuada.',
       searchLabel: 'Buscar herramienta',
-      searchPlaceholder: 'Nombre o tarea, ej.: json, boleto, pdf',
+      searchPlaceholder: 'Buscar: JSON, boleto, PDF',
       searchButton: 'Buscar',
       resultsLabel: {
         singular: 'herramienta encontrada',
@@ -769,17 +767,16 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     about: {
       h1: 'Sobre Tools Lucasqc',
       intro:
-        'Tools Lucasqc nace para ofrecer utilidades web realmente prácticas, rápidas y fáciles de usar en tareas reales.',
-      principlesTitle: 'Principios del producto',
+        'Tools Lucasqc reúne herramientas web para convertir archivos, hacer cálculos, trabajar con datos de desarrollo y configurar juegos. El catálogo también incluye utilidades para códigos QR, Pix, boletos brasileños y tareas cotidianas.',
+      principlesTitle: 'Qué encontrarás',
       principles: [
-        'Contenido útil antes que monetización.',
-        'Experiencia limpia y responsive en móvil y escritorio.',
-        'Procesamiento local cuando sea posible para mayor privacidad.',
-        'Arquitectura escalable para nuevas herramientas sin retrabajo.',
+        'Herramientas para archivos, desarrollo, cripto, juegos y tareas cotidianas.',
+        'Instrucciones y límites relacionados con el funcionamiento de cada herramienta.',
+        'Detalles de procesamiento cuando una herramienta funciona localmente o usa un servicio.',
       ],
-      qualityTitle: 'Compromiso de calidad',
+      qualityTitle: 'Contacto y correcciones',
       qualityParagraph:
-        'Mantenemos páginas institucionales claras, políticas transparentes y navegación simple. Esto fortalece la confianza de usuarios y plataformas de anuncios como Google AdSense.',
+        '¿Encontraste información incorrecta o un problema? Visita la página de Contacto e incluye el enlace de la herramienta, qué ocurrió y los pasos para reproducirlo.',
     },
     contact: {
       h1: 'Contacto',
@@ -799,22 +796,22 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     privacy: {
       h1: 'Política de Privacidad',
       intro:
-        'Esta política explica cómo Tools Lucasqc trata la información de navegación y qué prácticas aplicamos para proteger a los usuarios.',
+        'Esta política explica qué ocurre con los datos de navegación y la información que ingresas en las herramientas de Tools Lucasqc.',
       sections: [
         {
           title: '1. Datos procesados en las herramientas',
           body:
-            'Las herramientas principales fueron diseñadas para procesar datos localmente en el navegador siempre que sea posible. Esto significa que el contenido ingresado no se envía automáticamente a nuestros servidores.',
+            'El tratamiento depende de cada herramienta. Pix y los boletos brasileños se procesan en el navegador. La conversión HEIC/HEIF y la compresión de videos pequeños pueden enviar el archivo al servidor del sitio; los videos de más de 512 MB se procesan en el navegador. La vista previa Open Graph envía la URL al servidor para obtener metadatos. Las consultas de IP, DNS y cripto pueden usar servicios externos. La bandeja de correo temporal conserva la dirección y los mensajes en el servidor hasta el vencimiento configurado o su eliminación. Lee el aviso de cada herramienta y evita ingresar datos sensibles cuando no sean necesarios.',
         },
         {
-          title: '2. Cookies y métricas',
+          title: '2. Métricas y preferencias',
           body:
-            'Podemos usar cookies técnicas y de medición para mejorar rendimiento, estabilidad y experiencia. En integraciones publicitarias, socios externos pueden usar cookies según sus políticas.',
+            'El sitio usa Vercel Analytics para medir visitas. Cuando se configura NEXT_PUBLIC_GTM_ID, también carga Google Tag Manager, cuyas etiquetas pueden tratar datos según su configuración. Los eventos de las herramientas registran identificadores y metadatos de uso, no el contenido ingresado ni los archivos. El selector de idioma guarda tu preferencia en la cookie NEXT_LOCALE y en el almacenamiento local del navegador. Consulta las políticas de los proveedores para conocer cómo tratan los datos de navegación.',
         },
         {
           title: '3. Publicidad',
           body:
-            'Este sitio puede mostrar anuncios de redes como Google AdSense. La publicación se rige por políticas de terceros, incluyendo uso de cookies y personalización por intereses.',
+            'El script y los espacios de Google AdSense están desactivados en el código actual. Si activamos publicidad en el futuro, actualizaremos esta política antes.',
         },
         {
           title: '4. Derechos del usuario',
@@ -879,9 +876,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       relatedToolsTitle: 'Otras herramientas útiles',
       relatedToolsDescription:
         'Enlaces útiles para continuar tareas parecidas sin empezar de cero.',
-      trustTitle: 'Privacidad y procesamiento local',
+      trustTitle: 'Privacidad y tratamiento de datos',
       trustText:
-        'Las herramientas de esta página se ejecutan en el navegador y no envían automáticamente el contenido ingresado a un backend. Esto mejora privacidad y reduce latencia.',
+        'El tratamiento de datos varía según la herramienta: algunas funcionan en el navegador y otras envían archivos, enlaces o solicitudes al servidor del sitio o a un servicio externo. Lee las instrucciones de esta página antes de enviar datos, especialmente si son sensibles.',
       cryptoRelatedTitle: 'Otras conversiones relacionadas',
       cryptoRelatedDescription:
         'Enlaces internos ligeros para combinaciones cercanas dentro del mismo contexto técnico.',
@@ -939,7 +936,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       about: {
         title: '关于本项目',
         description:
-          '了解 Tools Lucasqc 如何打造实用工具,注重简洁体验与透明的隐私实践。',
+          '了解 Tools Lucasqc 提供的文件、开发、加密货币、游戏和日常工具,以及如何提交建议或更正。',
         keywords: ['关于 tools lucasqc', '网页工具项目', '网页工具使命'],
       },
       contact: {
@@ -995,22 +992,22 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       rightsReserved: '版权所有。',
     },
     home: {
-      h1: '解决日常任务的在线工具',
+      h1: '处理文件、代码和日常任务的在线工具',
       intro:
-        '免费转换文件、计算数值,并处理开发、游戏和日常任务。可按名称或类别快速查找。',
+        'Tools Lucasqc 提供文件转换、计算以及开发、文档、加密货币、游戏和日常任务工具。免费使用,无需注册。',
       catalogTitle: '热门工具',
-      viewAllTools: '查看全部',
+      viewAllTools: '完整工具目录',
       guideTitle: '如何找到合适的工具',
       guideParagraphs: [
-        '搜索要完成的任务,例如转换 PDF、格式化 JSON 或创建二维码。也可以使用类别和游戏筛选器缩小范围。',
-        '完整目录包含加密货币、开发、文档与媒体、游戏和日常实用工具。打开工具页面即可查看说明、示例和使用方式。',
+        '你可以转换文件、检查 Pix 与巴西 boleto 的格式、整理 JSON,或为社交平台准备图片。每个工具页面会说明操作方式和相关限制。',
+        '目录适合开发或测试软件、处理文档和媒体、配置游戏,或临时完成一项任务的人。可按名称搜索,也可按类别或游戏筛选。',
       ],
     },
     toolsIndex: {
       h1: '全部工具',
       intro: '按名称、任务、类别或游戏查找所需工具。',
       searchLabel: '搜索工具',
-      searchPlaceholder: '搜索工具或任务,例如:json、pdf',
+      searchPlaceholder: '搜索: JSON、PDF',
       searchButton: '搜索',
       resultsLabel: {
         singular: '个工具',
@@ -1024,17 +1021,16 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     about: {
       h1: '关于 Tools Lucasqc',
       intro:
-        'Tools Lucasqc 致力于打造快速、简单、真正实用的网页工具,服务于真实的工作流程。',
-      principlesTitle: '产品原则',
+        'Tools Lucasqc 汇集文件转换、计算、开发数据和游戏配置工具,也提供二维码、Pix、巴西 boleto 及日常任务相关工具。',
+      principlesTitle: '网站工具',
       principles: [
-        '实用内容优先于商业化。',
-        '桌面和移动端均保持简洁的响应式体验。',
-        '尽可能采用本地处理,更好地保护隐私。',
-        '可扩展的架构,便于持续、稳定地新增工具。',
+        '用于文件、开发、加密货币、游戏和日常任务。',
+        '页面会介绍工具的操作方式和相关限制。',
+        '适用时会说明数据在本地处理或使用在线服务的情况。',
       ],
-      qualityTitle: '质量承诺',
+      qualityTitle: '联系与纠错',
       qualityParagraph:
-        '我们保持机构页面清晰、政策透明、导航直观。这有助于建立用户信任,也符合 Google AdSense 等广告平台的要求。',
+        '如果发现信息有误或工具无法正常使用,请前往联系页面,提供工具链接、问题描述和复现步骤。',
     },
     contact: {
       h1: '联系我们',
@@ -1054,22 +1050,22 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     privacy: {
       h1: '隐私政策',
       intro:
-        '本政策说明 Tools Lucasqc 如何处理浏览信息,以及我们为保护用户所遵循的做法。',
+        '本政策说明 Tools Lucasqc 如何处理浏览数据以及你在工具中输入的信息。',
       sections: [
         {
           title: '1. 工具中处理的数据',
           body:
-            '核心工具在设计上尽可能在浏览器本地处理数据。也就是说,你在工具字段中输入的内容不会自动发送到我们的服务器。',
+            '数据处理方式因工具而异。Pix 和巴西 boleto 检查在浏览器中运行。HEIC/HEIF 转换和较小视频的压缩可能会将文件发送到网站服务器；超过 512 MB 的视频在浏览器中处理。Open Graph 预览会将输入的网址发送到服务器以获取元数据。IP、DNS 和加密货币查询可能使用外部服务。临时邮箱地址和邮件会保存在服务器中,直到设定的过期时间或手动删除。请阅读工具提示,并避免输入非必要的敏感数据。',
         },
         {
-          title: '2. Cookie 与统计分析',
+          title: '2. 统计与偏好设置',
           body:
-            '我们可能使用技术性和统计性 Cookie,以提升性能、稳定性和使用体验。广告合作伙伴也可能根据其自身政策使用 Cookie。',
+            '网站使用 Vercel Analytics 统计访问情况。配置 NEXT_PUBLIC_GTM_ID 后,网站也会加载 Google Tag Manager；其中启用的标签可能按其配置处理数据。工具事件记录工具标识和使用元数据,不包含输入内容或文件。语言选择器会将你的偏好保存在 NEXT_LOCALE Cookie 和浏览器本地存储中。第三方服务如何处理浏览数据,请查看其隐私政策。',
         },
         {
           title: '3. 广告',
           body:
-            '本网站可能展示来自 Google AdSense 等服务商的广告。广告投放受合作伙伴政策约束,包括 Cookie 使用和基于兴趣的个性化规则。',
+            '当前代码已停用 Google AdSense 脚本和广告位。如果将来启用广告,我们会先更新本政策。',
         },
         {
           title: '4. 用户权利',
@@ -1130,9 +1126,9 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       faqTitle: '常见问题',
       relatedToolsTitle: '其他实用工具',
       relatedToolsDescription: '相关链接,帮助你继续完成类似任务,无需重新开始。',
-      trustTitle: '隐私与本地处理',
+      trustTitle: '隐私与数据处理',
       trustText:
-        '本页面的工具直接在你的浏览器中运行,不会将输入内容发送到后端服务器。这样可以提升隐私保护并降低延迟。',
+        '数据处理方式因工具而异：有些在浏览器中运行,有些会将文件、链接或请求发送到网站服务器或外部服务。发送数据前请查看本页说明,尤其是敏感信息。',
       cryptoRelatedTitle: '相关换算',
       cryptoRelatedDescription: '与当前换算意图相近的内部链接推荐。',
       cryptoPopularTitle: '热门换算',

@@ -167,7 +167,7 @@ const socialPlatformOptions: Array<{ id: SocialPlatformId; label: string }> = [
 
 const assetKindLabel: Record<AssetKind, string> = {
   image: 'Imagem',
-  icon: 'Icone',
+  icon: 'Ícone',
   script: 'Script',
   stylesheet: 'CSS',
   font: 'Fonte',
@@ -232,9 +232,9 @@ const getChecklist = (state: OpenGraphState) => [
   { label: 'favicon', ok: Boolean(state.favicon.trim()) },
   { label: 'manifest', ok: Boolean(state.manifest.trim()) },
   { label: 'robots', ok: Boolean(state.robots.trim()) },
-  { label: 'imagem https', ok: state.image.startsWith('https://') },
-  { label: 'titulo <= 70', ok: state.title.length > 0 && state.title.length <= 70 },
-  { label: 'descricao <= 200', ok: state.description.length > 0 && state.description.length <= 200 },
+  { label: 'Imagem HTTPS', ok: state.image.startsWith('https://') },
+  { label: 'Título (até 70 caracteres)', ok: state.title.length > 0 && state.title.length <= 70 },
+  { label: 'Descrição (até 200 caracteres)', ok: state.description.length > 0 && state.description.length <= 200 },
 ];
 
 const copyToClipboard = async (value: string): Promise<boolean> => {
@@ -307,7 +307,7 @@ const buildIconVisualItems = (state: OpenGraphState): VisualItem[] => {
   state.icons.forEach((icon, index) => {
     items.push({
       id: `icon:${index}:${icon.href}`,
-      title: icon.rel || `Icone ${index + 1}`,
+      title: icon.rel || `Ícone ${index + 1}`,
       subtitle: icon.href,
       imageUrl: icon.href,
       kind: 'icon',
@@ -365,9 +365,9 @@ const buildPreviewVisual = (platform: SocialPlatformId, state: OpenGraphState) =
 
 const Ui = {
   intro:
-    'Auditoria visual e tecnica via backend: busca HTML real da URL, extrai Open Graph, Twitter Card, icones, assets publicados, canonical, manifest, alternates, verificacoes, app links e permite copiar/baixar o que for possivel.',
-  targetUrl: 'URL para auditoria',
-  fetchAction: 'Buscar metadados completos',
+    'Informe uma URL pública para conferir os dados Open Graph e Twitter Card, visualizar imagens e ícones publicados e copiar as meta tags. A página é consultada pelo servidor do site.',
+  targetUrl: 'URL pública da página',
+  fetchAction: 'Analisar URL',
   loadExample: 'Carregar exemplo',
   clear: 'Limpar',
   copyMeta: 'Copiar meta tags',
@@ -579,7 +579,7 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
       setCopied(`img:${item.id}`);
       trackEvent('result_copied', { tool: TOOL_ID.openGraphPreview, locale, field: 'preview_image' });
     } catch {
-      setError('Nao foi possivel copiar essa imagem agora.');
+      setError('Não foi possível copiar essa imagem agora.');
     }
   };
 
@@ -588,7 +588,7 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
       await downloadViaProxy(item.imageUrl);
       trackEvent('result_downloaded', { tool: TOOL_ID.openGraphPreview, locale, format: 'asset' });
     } catch {
-      setError('Nao foi possivel baixar esse arquivo agora.');
+      setError('Não foi possível baixar esse arquivo agora.');
     }
   };
 
@@ -597,14 +597,14 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
       await downloadViaProxy(url);
       trackEvent('result_downloaded', { tool: TOOL_ID.openGraphPreview, locale, format: 'asset' });
     } catch {
-      setError('Nao foi possivel baixar esse arquivo agora.');
+      setError('Não foi possível baixar esse arquivo agora.');
     }
   };
 
   const handleFetch = async () => {
     trackEvent('tool_started', { tool: TOOL_ID.openGraphPreview, locale });
     if (!targetUrl.trim()) {
-      setError('Informe uma URL valida.');
+      setError('Informe uma URL válida.');
       trackEvent('tool_error', { tool: TOOL_ID.openGraphPreview, locale, error_type: 'validation_failed' });
       return;
     }
@@ -617,7 +617,7 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
       const payload = (await response.json()) as FetchResponse;
 
       if (!response.ok || !payload.ok) {
-        setError(payload.error ?? 'Nao foi possivel buscar tags dessa URL.');
+        setError(payload.error ?? 'Não foi possível buscar os dados dessa URL.');
         trackEvent('tool_error', { tool: TOOL_ID.openGraphPreview, locale, error_type: 'network_error' });
         return;
       }
@@ -686,12 +686,12 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
           <KeyValueList
             items={[
               { label: 'URL final', value: fetchedUrl || state.url || '-' },
-              { label: 'Dominio', value: domain || '-' },
+              { label: 'Domínio', value: domain || '-' },
               { label: 'HTTP status', value: fetchMeta?.status ?? '-' },
-              { label: 'Tempo (ms)', value: fetchMeta?.durationMs ?? '-' },
+              { label: 'Tempo de resposta (ms)', value: fetchMeta?.durationMs ?? '-' },
               { label: 'Content-Type', value: fetchMeta?.contentType || '-' },
               { label: 'Meta tags', value: state.metaTagsCount },
-              { label: 'Link tags', value: state.linkTagsCount },
+              { label: 'Tags de link', value: state.linkTagsCount },
               { label: 'Assets descobertos', value: state.discoveredAssets.length },
             ]}
           />
@@ -731,8 +731,8 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
               { label: 'og:type', value: state.type || '-' },
               { label: 'og:locale', value: state.locale || '-' },
               { label: 'twitter:card', value: state.twitterCard || '-' },
-              { label: 'Titulo', value: state.title || '-' },
-              { label: 'Descricao', value: state.description || '-' },
+              { label: 'Título', value: state.title || '-' },
+              { label: 'Descrição', value: state.description || '-' },
             ]}
           />
         </section>
@@ -788,15 +788,15 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
             )}
             <div className="space-y-2 p-4">
               <p className="text-[11px] uppercase tracking-wide text-slate-500">{domain || state.siteName || 'domain.com'}</p>
-              <p className="text-lg font-semibold text-slate-900">{clip(previewVisual.title || 'Titulo do preview', 90)}</p>
-              <p className="text-sm text-slate-600">{clip(previewVisual.description || 'Descricao do preview do link compartilhado.', 220)}</p>
+              <p className="text-lg font-semibold text-slate-900">{clip(previewVisual.title || 'Título da prévia', 90)}</p>
+              <p className="text-sm text-slate-600">{clip(previewVisual.description || 'Descrição da prévia do link compartilhado.', 220)}</p>
             </div>
           </article>
         </section>
 
         <section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-sm font-semibold text-slate-800">Icones visuais ({iconItems.length})</h3>
+            <h3 className="text-sm font-semibold text-slate-800">Ícones do site ({iconItems.length})</h3>
             <span className="text-xs text-slate-500">Ver, copiar URL, copiar imagem e baixar</span>
           </div>
           {iconItems.length > 0 ? (
@@ -814,7 +814,7 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
               ))}
             </div>
           ) : (
-            <p className="text-sm text-slate-600">Nenhum icone encontrado na URL auditada.</p>
+            <p className="text-sm text-slate-600">Nenhum ícone encontrado nesta URL.</p>
           )}
         </section>
 
@@ -844,18 +844,18 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
 
         <section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-sm font-semibold text-slate-800">Assets e arquivos descobertos ({state.discoveredAssets.length})</h3>
-            <span className="text-xs text-slate-500">Best effort: inclui arquivos referenciados no HTML, metatags, links publicos e manifest</span>
+            <h3 className="text-sm font-semibold text-slate-800">Arquivos e recursos encontrados ({state.discoveredAssets.length})</h3>
+            <span className="text-xs text-slate-500">Inclui arquivos referenciados no HTML, nas meta tags, em links públicos e no manifest.</span>
           </div>
           {state.discoveredAssets.length > 0 ? (
             <>
               {totalAssetPages > 1 ? (
                 <label className="space-y-2">
-                  <span className="sr-only">Selecionar pagina de assets descobertos</span>
+                  <span className="sr-only">Selecionar página de arquivos encontrados</span>
                   <div className="flex items-center justify-between gap-2 text-sm font-semibold text-slate-800">
-                    <span>Paginacao por slider</span>
+                    <span>Navegar pelos arquivos</span>
                     <span className="rounded-md border border-slate-200 bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">
-                      Pagina {assetsPage} de {totalAssetPages}
+                      Página {assetsPage} de {totalAssetPages}
                     </span>
                   </div>
                   <input
@@ -887,7 +887,7 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
         </section>
 
         <section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <h3 className="text-sm font-semibold text-slate-800">Diagnostico tecnico</h3>
+          <h3 className="text-sm font-semibold text-slate-800">Verificações técnicas</h3>
           <div className="grid gap-2 md:grid-cols-3">
             {checklist.map((item) => (
               <p key={item.label} className={`rounded-md border px-2 py-1 text-xs ${item.ok ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
@@ -899,7 +899,7 @@ export function OpenGraphPreviewTool({ locale = 'pt-br' }: OpenGraphPreviewToolP
 
         <section className="grid gap-3 md:grid-cols-2">
           <article className="space-y-2 rounded-xl border border-slate-200 bg-white p-3">
-            <h4 className="text-sm font-semibold text-slate-800">Verificacoes ({state.verification.length})</h4>
+            <h4 className="text-sm font-semibold text-slate-800">Verificações ({state.verification.length})</h4>
             <pre className="max-h-[220px] overflow-auto whitespace-pre-wrap break-all rounded-lg border border-slate-100 bg-slate-50 p-3 text-xs text-slate-700">{JSON.stringify(state.verification, null, 2)}</pre>
           </article>
           <article className="space-y-2 rounded-xl border border-slate-200 bg-white p-3">

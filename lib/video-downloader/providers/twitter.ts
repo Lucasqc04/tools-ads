@@ -121,6 +121,7 @@ export const parseTweetMedia = (tweet: SyndicationTweet): ProviderExtraction => 
   const durationMillis = media.video_info?.duration_millis;
 
   return {
+    mediaType: 'video',
     sourceUrl: '',
     title: cleanTweetText(tweet.text) || (screenName ? `@${screenName}` : 'X video'),
     author: tweet.user?.name || (screenName ? `@${screenName}` : undefined),

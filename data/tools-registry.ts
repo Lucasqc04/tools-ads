@@ -727,7 +727,7 @@ export const toolsRegistry: ToolDefinition[] = [
     seoTitle: 'Open Graph Preview Online | Testar Link e Gerar Meta Tags',
     seoDescription:
       'Visualize previews de link para Facebook, LinkedIn, WhatsApp e X, valide Open Graph/Twitter Card e gere meta tags HTML e metadata Next.js.',
-    h1: 'Open Graph Preview Online com Diagnostico e Gerador de Meta Tags',
+    h1: 'Open Graph Preview Online com Diagnóstico e Gerador de Meta Tags',
     intro: openGraphPreviewIntro,
     canonicalPath: '/tools/open-graph-preview',
     faq: openGraphPreviewFaq,
@@ -1054,9 +1054,9 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'video-downloader',
     slug: 'video-downloader',
-    name: 'Baixar Vídeo de Link Público (X e Pinterest)',
+    name: 'Baixar Vídeos do X e Mídia do Pinterest',
     shortDescription:
-      'Cole o link de um post público do X (Twitter) ou do Pinterest, escolha a qualidade e salve o vídeo no aparelho, sem cadastro.',
+      'Cole um link público do X ou um pin do Pinterest para abrir e salvar vídeos e imagens no celular ou computador, sem cadastro.',
     category: 'utility',
     primaryKeyword: 'baixar vídeo online grátis',
     secondaryKeywords: [
@@ -1065,13 +1065,14 @@ export const toolsRegistry: ToolDefinition[] = [
       'salvar vídeo do twitter e pinterest',
       'baixar vídeo sem aplicativo',
       'extrair áudio mp3 de vídeo',
+      'baixar imagem do pinterest',
     ],
     searchIntent:
-      'Pessoas que têm o link de um vídeo público e querem salvar o arquivo no celular ou no computador, escolhendo a qualidade.',
-    seoTitle: 'Baixar Vídeo Online Grátis | X (Twitter) e Pinterest',
+      'Pessoas que querem salvar um vídeo público do X ou uma imagem ou vídeo de um pin público do Pinterest.',
+    seoTitle: 'Baixar Vídeos do X e Pinterest e Imagens de Pins',
     seoDescription:
-      'Cole o link de um vídeo público do X ou do Pinterest, veja as qualidades disponíveis e baixe direto no navegador. Grátis, sem cadastro e sem instalar nada.',
-    h1: 'Baixar Vídeo Online Grátis: Cole o Link e Escolha a Qualidade',
+      'Cole um link público do X ou Pinterest para abrir vídeos e imagens no navegador. Grátis, sem cadastro e sem instalar nada.',
+    h1: 'Baixar Vídeos do X e Pinterest e Imagens de Pins',
     intro: videoDownloaderIntro,
     canonicalPath: '/tools/video-downloader',
     faq: videoDownloaderFaq,

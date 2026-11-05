@@ -17,6 +17,7 @@ const post = (body: unknown, init: { headers?: Record<string, string> } = {}) =>
 const success = {
   success: true,
   platform: 'twitter',
+  mediaType: 'video',
   sourceUrl: 'https://x.com/i/status/1',
   title: 't',
   formats: [],
@@ -46,6 +47,7 @@ describe('POST /api/video-extractor', () => {
     ['unsupported_platform', 422],
     ['media_unavailable', 404],
     ['no_video_found', 404],
+    ['no_media_found', 404],
     ['access_blocked', 403],
     ['rate_limited', 429],
     ['timeout', 504],

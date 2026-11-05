@@ -120,6 +120,7 @@ describe('analyzeVideoUrl', () => {
   const success: ExtractionSuccess = {
     success: true,
     platform: 'twitter',
+    mediaType: 'video',
     sourceUrl: 'https://x.com/i/status/1',
     title: 't',
     formats: [],

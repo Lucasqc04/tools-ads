@@ -25,6 +25,7 @@ const makeExtractor = (extract: VideoExtractor['extract']): VideoExtractor => ({
 });
 
 const good: ProviderExtraction = {
+  mediaType: 'video',
   sourceUrl: 'https://x.com/i/status/1',
   title: 't',
   thumbnail: 'https://pbs.twimg.com/a.jpg',
@@ -59,10 +60,10 @@ describe('extractVideo orchestration', () => {
     expect(kept.map((item) => item.url)).toEqual(['https://video.twimg.com/ok.mp4']);
   });
 
-  it('fails with no_video_found when every format is filtered out', async () => {
+  it('fails with no_media_found when every media URL is filtered out', async () => {
     const extractor = makeExtractor(async () => ({ ...good, formats: [format('https://evil.example/a.mp4')] }));
     await expect(extractVideo('https://x.com/a/status/1', { extractors: () => extractor })).rejects.toMatchObject({
-      code: 'no_video_found',
+      code: 'no_media_found',
     });
   });
 

@@ -40,7 +40,7 @@ export const extractVideo = async (
     const formats = sanitizeFormats(result.formats, extractor);
 
     if (!formats.length) {
-      throw new ExtractionError('no_video_found');
+      throw new ExtractionError('no_media_found');
     }
 
     return {

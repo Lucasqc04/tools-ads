@@ -195,40 +195,40 @@ const twitterEs: VideoDownloaderPlatformContent = {
 };
 
 const pinterestPt: VideoDownloaderPlatformContent = {
-  title: 'Baixar Vídeo do Pinterest pelo Link do Pin',
+  title: 'Baixar Vídeos e Imagens do Pinterest pelo Link do Pin',
   intro:
-    'Cole o link de um pin de vídeo do Pinterest, inclusive links curtos pin.it, e abra o arquivo MP4 original para salvar no aparelho. Funciona com pins públicos, sem cadastro.',
-  seoTitle: 'Baixar Vídeo do Pinterest Grátis | Link do Pin em MP4',
+    'Cole o link de um pin público de vídeo ou imagem do Pinterest, inclusive pin.it, e abra o arquivo para salvar no aparelho. Sem cadastro.',
+  seoTitle: 'Baixar Vídeos e Imagens do Pinterest pelo Link do Pin',
   seoDescription:
-    'Encontre o arquivo de vídeo de um pin público do Pinterest pelo link, inclusive pin.it, e salve o MP4 no celular ou computador. Grátis e sem cadastro.',
-  keywords: ['baixar video do pinterest', 'download pinterest video', 'salvar video do pin', 'baixar pin pin.it', 'pinterest video mp4'],
+    'Encontre o arquivo de vídeo ou imagem de um pin público do Pinterest pelo link, inclusive pin.it. Grátis e sem cadastro.',
+  keywords: ['baixar video do pinterest', 'baixar imagem do pinterest', 'download pinterest video', 'salvar imagem do pin', 'baixar pin pin.it'],
   placeholder: 'https://www.pinterest.com/pin/1234567890123/',
   hint: 'Aceita links de pin do Pinterest e links curtos pin.it.',
   contentBlocks: [
     {
-      title: 'Como salvar o vídeo de um pin',
+      title: 'Como salvar um vídeo ou imagem de um pin',
       paragraphs: [
-        'No Pinterest, abra o pin com vídeo, toque nos três pontos ou em compartilhar e copie o link. Cole aqui e toque em analisar. A página lê os dados públicos do pin, mostra miniatura, título, autor e duração, e localiza o arquivo MP4 que o Pinterest publica para aquele vídeo.',
-        'Ao tocar em abrir vídeo, o arquivo original abre em uma nova aba. De lá, use o menu do player (três pontos, opção de download) ou o botão direito do mouse com salvar vídeo como. No celular, toque e segure o vídeo ou use o menu de compartilhar do navegador.',
+        'No Pinterest, abra o pin de vídeo ou imagem, toque em compartilhar e copie o link. Cole aqui e toque em analisar. Quando o pin expõe um arquivo público, a página mostra uma prévia e localiza a mídia publicada pelo Pinterest.',
+        'Ao abrir a mídia, ela aparece em uma nova aba. Para imagens, use o menu do navegador ou o botão direito para salvar. Para vídeos, use o menu do player. No celular, toque e segure a imagem ou o vídeo.',
       ],
       list: [
         'Links curtos pin.it são resolvidos automaticamente para o pin original.',
         'Links de países diferentes, como br.pinterest.com, funcionam normalmente.',
-        'Cada pin de vídeo normalmente tem uma única versão MP4, geralmente em 720p.',
+        'A ferramenta abre a imagem pública disponível ou o arquivo MP4 publicado para o pin de vídeo.',
       ],
     },
     {
-      title: 'Por que o vídeo abre em outra aba',
+      title: 'Por que a mídia abre em outra aba',
       paragraphs: [
-        'O servidor de vídeos do Pinterest não autoriza que outras páginas leiam o arquivo dentro do navegador. Por isso esta ferramenta não consegue baixar o vídeo direto para a memória como faz com outras plataformas, nem converter para MP3 aqui. Também não passamos o arquivo pelo nosso servidor para contornar isso, porque o objetivo é não armazenar nem retransmitir vídeos de terceiros.',
-        'O link aberto aponta para o arquivo real publicado pelo Pinterest, não para uma cópia. Se o endereço deixar de existir porque o autor apagou o pin, o vídeo some junto.',
+        'Os servidores de mídia do Pinterest não permitem que outras páginas leiam o arquivo dentro do navegador. Por isso a mídia abre em uma nova aba; não retransmitimos o arquivo pelo nosso servidor.',
+        'O link aberto aponta para o arquivo publicado pelo Pinterest. Se o autor apagar o pin ou o endereço da mídia expirar, o arquivo deixa de estar disponível.',
       ],
     },
     {
       title: 'Limitações dos pins',
       paragraphs: [
-        'Funciona apenas com pins que contêm vídeo e são públicos. Pins de imagem, pins de ideias com várias páginas, pins de contas ou quadros secretos e conteúdo removido retornam que nenhum vídeo foi encontrado.',
-        'Muitos vídeos do Pinterest foram criados por terceiros e têm direitos autorais. Salve apenas o que você pode usar, como seus próprios pins ou material com autorização do autor.',
+        'Funciona com pins públicos de vídeo ou imagem quando o Pinterest expõe o arquivo da mídia. Pins de contas ou quadros secretos, conteúdo removido e formatos sem arquivo público acessível não podem ser abertos.',
+        'Imagens e vídeos podem pertencer a outras pessoas. Salve apenas material que você tem direito de usar, como seus próprios pins ou conteúdo com autorização do autor.',
       ],
     },
   ],
@@ -238,13 +238,13 @@ const pinterestPt: VideoDownloaderPlatformContent = {
       answer: 'Sim. O link curto é resolvido para o pin original e só então o vídeo é procurado.',
     },
     {
-      question: 'Por que o vídeo não baixa direto?',
+      question: 'Por que o vídeo ou imagem abre em outra aba?',
       answer:
-        'O Pinterest não permite que outras páginas leiam o arquivo no navegador. Por isso o MP4 abre em uma nova aba e você o salva pelo menu do player ou pelo botão direito.',
+        'O Pinterest não permite que outras páginas leiam a mídia diretamente. O arquivo abre em uma nova aba para você salvar pelo menu do navegador ou do player.',
     },
     {
-      question: 'Por que aparece que não há vídeo no link?',
-      answer: 'O pin provavelmente é uma imagem, um pin de ideias ou está privado ou removido. Só pins públicos com vídeo funcionam.',
+      question: 'Por que o link não mostra uma imagem ou vídeo?',
+      answer: 'O pin pode ser privado, ter sido removido ou não expor um arquivo público compatível.',
     },
     {
       question: 'Posso escolher a qualidade?',
@@ -254,40 +254,40 @@ const pinterestPt: VideoDownloaderPlatformContent = {
 };
 
 const pinterestEn: VideoDownloaderPlatformContent = {
-  title: 'Download Pinterest Videos from the Pin Link',
+  title: 'Download Pinterest Videos and Images from a Pin Link',
   intro:
-    'Paste the link of a Pinterest video pin, including pin.it short links, and open the original MP4 file to save it on your device. Works with public pins, no sign-up.',
-  seoTitle: 'Free Pinterest Video Downloader | Pin Link to MP4',
+    'Paste the link of a public Pinterest video or image pin, including pin.it short links, and open its file to save it. No sign-up.',
+  seoTitle: 'Download Pinterest Videos and Images from a Pin Link',
   seoDescription:
-    'Find the video file of a public Pinterest pin from its link, including pin.it, and save the MP4 on your phone or computer. Free and no sign-up.',
-  keywords: ['download pinterest video', 'pinterest video downloader', 'save pinterest pin video', 'pin.it video download', 'pinterest video mp4'],
+    'Find the video or image file of a public Pinterest pin from its link, including pin.it. Free and no sign-up.',
+  keywords: ['download pinterest video', 'download pinterest image', 'pinterest video downloader', 'save pinterest pin image', 'pin.it download'],
   placeholder: 'https://www.pinterest.com/pin/1234567890123/',
   hint: 'Accepts Pinterest pin links and pin.it short links.',
   contentBlocks: [
     {
-      title: 'How to save a pin video',
+      title: 'How to save a video or image pin',
       paragraphs: [
-        'On Pinterest, open the pin with the video, tap the three dots or share and copy the link. Paste it here and tap analyze. The page reads the public data of the pin, shows thumbnail, title, author and duration, and locates the MP4 file Pinterest publishes for that video.',
-        'When you tap open video, the original file opens in a new tab. From there, use the player menu (three dots, download option) or right click and save video as. On a phone, press and hold the video or use the browser share menu.',
+        'On Pinterest, open a video or image pin, tap share and copy the link. Paste it here and tap analyze. When the pin exposes a public file, the page shows a preview and locates the media published by Pinterest.',
+        'The media opens in a new tab. Save images from the browser menu or with a right click; save videos from the player menu. On a phone, press and hold the image or video.',
       ],
       list: [
         'pin.it short links are resolved automatically to the original pin.',
         'Links from other countries, such as br.pinterest.com, work normally.',
-        'A video pin normally has a single MP4 version, usually at 720p.',
+        'The tool opens the public image file or the MP4 file published for a video pin.',
       ],
     },
     {
-      title: 'Why the video opens in another tab',
+      title: 'Why media opens in another tab',
       paragraphs: [
-        'Pinterest video servers do not allow other pages to read the file inside the browser. That is why this tool cannot pull the video straight into memory the way it does for other platforms, nor convert it to MP3 here. We also do not route the file through our server to get around this, because the goal is not to store or relay third-party videos.',
-        'The link that opens points to the real file published by Pinterest, not to a copy. If the address stops existing because the author deleted the pin, the video disappears with it.',
+        'Pinterest media servers do not let other pages read the file inside the browser. The media therefore opens in a new tab; we do not relay the file through our server.',
+        'The link points to the file published by Pinterest. If the author deletes the pin or the media address expires, the file is no longer available.',
       ],
     },
     {
       title: 'Limits of pins',
       paragraphs: [
-        'It only works with public pins that contain video. Image pins, multi-page idea pins, pins from secret accounts or boards and removed content return that no video was found.',
-        'Many Pinterest videos were created by others and are protected by copyright. Save only what you can use, such as your own pins or material with the author permission.',
+        'It works with public video or image pins when Pinterest exposes a media file. Pins from secret accounts or boards, removed content and formats without a public file cannot be opened.',
+        'Images and videos may belong to someone else. Save only material you have the right to use, such as your own pins or content with the author’s permission.',
       ],
     },
   ],
@@ -297,13 +297,13 @@ const pinterestEn: VideoDownloaderPlatformContent = {
       answer: 'Yes. The short link is resolved to the original pin and only then is the video looked up.',
     },
     {
-      question: 'Why does the video not download directly?',
+      question: 'Why does the video or image open in another tab?',
       answer:
-        'Pinterest does not let other pages read the file in the browser. The MP4 therefore opens in a new tab and you save it from the player menu or with a right click.',
+        'Pinterest does not let other pages read the media directly. The file opens in a new tab so you can save it from the browser or player menu.',
     },
     {
-      question: 'Why does it say there is no video in the link?',
-      answer: 'The pin is probably an image, an idea pin, or it is private or removed. Only public pins with video work.',
+      question: 'Why does the link show no image or video?',
+      answer: 'The pin may be private, removed or may not expose a supported public media file.',
     },
     {
       question: 'Can I choose the quality?',
@@ -313,40 +313,40 @@ const pinterestEn: VideoDownloaderPlatformContent = {
 };
 
 const pinterestEs: VideoDownloaderPlatformContent = {
-  title: 'Descargar Videos de Pinterest con el Enlace del Pin',
+  title: 'Descargar Videos e Imágenes de Pinterest con el Enlace del Pin',
   intro:
-    'Pega el enlace de un pin de video de Pinterest, incluidos los enlaces cortos pin.it, y abre el archivo MP4 original para guardarlo en tu dispositivo. Funciona con pines públicos, sin registro.',
-  seoTitle: 'Descargar Videos de Pinterest Gratis | Enlace del Pin a MP4',
+    'Pega el enlace de un pin público de video o imagen de Pinterest, incluidos los enlaces cortos pin.it, y abre el archivo para guardarlo. Sin registro.',
+  seoTitle: 'Descargar Videos e Imágenes de Pinterest con el Enlace del Pin',
   seoDescription:
-    'Encuentra el archivo de video de un pin público de Pinterest con su enlace, incluido pin.it, y guarda el MP4 en el móvil u ordenador. Gratis y sin registro.',
-  keywords: ['descargar video de pinterest', 'bajar video de pinterest', 'guardar video de un pin', 'descargar pin.it', 'video de pinterest mp4'],
+    'Encuentra el archivo de video o imagen de un pin público de Pinterest con su enlace, incluido pin.it. Gratis y sin registro.',
+  keywords: ['descargar video de pinterest', 'descargar imagen de pinterest', 'bajar video de pinterest', 'guardar imagen de un pin', 'descargar pin.it'],
   placeholder: 'https://www.pinterest.com/pin/1234567890123/',
   hint: 'Acepta enlaces de pin de Pinterest y enlaces cortos pin.it.',
   contentBlocks: [
     {
-      title: 'Cómo guardar el video de un pin',
+      title: 'Cómo guardar un video o imagen de un pin',
       paragraphs: [
-        'En Pinterest, abre el pin con video, pulsa los tres puntos o compartir y copia el enlace. Pégalo aquí y pulsa analizar. La página lee los datos públicos del pin, muestra miniatura, título, autor y duración, y localiza el archivo MP4 que Pinterest publica para ese video.',
-        'Al pulsar abrir video, el archivo original se abre en una pestaña nueva. Desde allí usa el menú del reproductor (tres puntos, opción de descarga) o clic derecho y guardar video como. En el móvil, mantén pulsado el video o usa el menú de compartir del navegador.',
+        'En Pinterest, abre un pin de video o imagen, pulsa compartir y copia el enlace. Pégalo aquí y pulsa analizar. Cuando el pin expone un archivo público, la página muestra una vista previa y localiza el contenido publicado por Pinterest.',
+        'El contenido se abre en una pestaña nueva. Guarda las imágenes desde el menú del navegador o con clic derecho; guarda los videos desde el menú del reproductor. En el móvil, mantén pulsada la imagen o el video.',
       ],
       list: [
         'Los enlaces cortos pin.it se resuelven automáticamente al pin original.',
         'Los enlaces de otros países, como es.pinterest.com, funcionan con normalidad.',
-        'Un pin de video normalmente tiene una única versión MP4, casi siempre en 720p.',
+        'La herramienta abre el archivo de imagen público o el MP4 publicado para un pin de video.',
       ],
     },
     {
-      title: 'Por qué el video se abre en otra pestaña',
+      title: 'Por qué el contenido se abre en otra pestaña',
       paragraphs: [
-        'Los servidores de video de Pinterest no permiten que otras páginas lean el archivo dentro del navegador. Por eso esta herramienta no puede traer el video directo a la memoria como hace con otras plataformas, ni convertirlo a MP3 aquí. Tampoco pasamos el archivo por nuestro servidor para evitarlo, porque el objetivo es no almacenar ni retransmitir videos de terceros.',
-        'El enlace que se abre apunta al archivo real publicado por Pinterest, no a una copia. Si la dirección deja de existir porque el autor borró el pin, el video desaparece con él.',
+        'Los servidores de medios de Pinterest no permiten que otras páginas lean el archivo dentro del navegador. Por eso el contenido se abre en una pestaña nueva; no retransmitimos el archivo por nuestro servidor.',
+        'El enlace apunta al archivo publicado por Pinterest. Si el autor borra el pin o la dirección de la imagen o el video caduca, el archivo deja de estar disponible.',
       ],
     },
     {
       title: 'Límites de los pines',
       paragraphs: [
-        'Solo funciona con pines públicos que contengan video. Los pines de imagen, los pines de ideas con varias páginas, los de cuentas o tableros secretos y el contenido eliminado indican que no se encontró video.',
-        'Muchos videos de Pinterest fueron creados por terceros y tienen derechos de autor. Guarda solo lo que puedas usar, como tus propios pines o material con permiso del autor.',
+        'Funciona con pines públicos de video o imagen cuando Pinterest expone un archivo. Los pines de cuentas o tableros secretos, el contenido eliminado y los formatos sin un archivo público no se pueden abrir.',
+        'Las imágenes y videos pueden pertenecer a otras personas. Guarda solo contenido que tengas derecho a usar, como tus propios pines o material con permiso del autor.',
       ],
     },
   ],
@@ -356,13 +356,13 @@ const pinterestEs: VideoDownloaderPlatformContent = {
       answer: 'Sí. El enlace corto se resuelve al pin original y solo entonces se busca el video.',
     },
     {
-      question: '¿Por qué el video no se descarga directamente?',
+      question: '¿Por qué el video o la imagen se abre en otra pestaña?',
       answer:
-        'Pinterest no permite que otras páginas lean el archivo en el navegador. Por eso el MP4 se abre en una pestaña nueva y lo guardas desde el menú del reproductor o con clic derecho.',
+        'Pinterest no permite que otras páginas lean el contenido directamente. El archivo se abre en una pestaña nueva para que lo guardes desde el menú del navegador o del reproductor.',
     },
     {
-      question: '¿Por qué dice que no hay video en el enlace?',
-      answer: 'Probablemente el pin es una imagen, un pin de ideas, o es privado o fue eliminado. Solo funcionan pines públicos con video.',
+      question: '¿Por qué el enlace no muestra imagen o video?',
+      answer: 'El pin puede ser privado, haberse eliminado o no exponer un archivo público compatible.',
     },
     {
       question: '¿Puedo elegir la calidad?',

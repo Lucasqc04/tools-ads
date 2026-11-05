@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { extractOpenGraphData } from '@/lib/open-graph-preview';
+import {
+  fetchPublicUrl,
+  PublicUrlFetchError,
+} from '@/lib/safe-public-url-fetch';
 
 export const runtime = 'nodejs';
 
@@ -47,24 +51,22 @@ const dedupeBy = <T,>(items: T[], getKey: (item: T) => string): T[] => {
 
 const fetchJson = async (url: string, signal: AbortSignal): Promise<object | null> => {
   try {
-    const response = await fetch(url, {
-      method: 'GET',
-      cache: 'no-store',
+    const response = await fetchPublicUrl(new URL(url), {
       signal,
-      headers: {
-        'User-Agent': 'adtools-og-preview-bot/1.0 (+https://adtools.local)',
-        Accept: 'application/json,text/plain,*/*',
-      },
+      userAgent: 'adtools-og-preview-bot/1.0 (+https://tools.lucasqc.com)',
+      accept: 'application/json,text/plain,*/*',
+      maxBytes: 1_000_000,
     });
 
-    if (!response.ok) {
-      return null;
-    }
-
-    return (await response.json()) as object;
+    return JSON.parse(response.body.toString('utf8')) as object;
   } catch {
     return null;
   }
+};
+
+const getHeader = (headers: Record<string, string | string[] | undefined>, name: string): string => {
+  const value = headers[name];
+  return Array.isArray(value) ? value.join(', ') : value ?? '';
 };
 
 const isValidPublicUrl = (value: string): boolean => {
@@ -83,7 +85,7 @@ export async function GET(request: Request) {
   if (!isValidPublicUrl(targetUrl)) {
     return NextResponse.json(
       {
-        error: 'URL invalida. Use endereco publico com http ou https.',
+        error: 'URL inválida. Use um endereço público com HTTP ou HTTPS.',
       },
       {
         status: 400,
@@ -92,38 +94,19 @@ export async function GET(request: Request) {
     );
   }
 
-  try {
-    const startedAt = Date.now();
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+  const startedAt = Date.now();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
 
-    const response = await fetch(targetUrl, {
-      method: 'GET',
-      redirect: 'follow',
-      cache: 'no-store',
+  try {
+    const response = await fetchPublicUrl(new URL(targetUrl), {
       signal: controller.signal,
-      headers: {
-        'User-Agent': 'adtools-og-preview-bot/1.0 (+https://adtools.local)',
-        Accept: 'text/html,application/xhtml+xml',
-      },
+      userAgent: 'adtools-og-preview-bot/1.0 (+https://tools.lucasqc.com)',
+      accept: 'text/html,application/xhtml+xml',
+      maxBytes: 2_000_000,
     });
 
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      return NextResponse.json(
-        {
-          error: `Nao foi possivel acessar a URL (status ${response.status}).`,
-        },
-        {
-          status: 502,
-          headers: defaultHeaders,
-        },
-      );
-    }
-
-    const html = await response.text();
-    const data = extractOpenGraphData(html, response.url || targetUrl);
+    const data = extractOpenGraphData(response.body.toString('utf8'), response.url.toString());
 
     if (data.manifest) {
       const manifestPayload = await fetchJson(data.manifest, controller.signal);
@@ -191,17 +174,17 @@ export async function GET(request: Request) {
     return NextResponse.json(
       {
         ok: true,
-        fetchedUrl: response.url || targetUrl,
+        fetchedUrl: response.url.toString(),
         data,
         fetchMeta: {
           status: response.status,
           statusText: response.statusText,
-          contentType: response.headers.get('content-type') || '',
-          contentLength: response.headers.get('content-length') || '',
-          server: response.headers.get('server') || '',
-          cacheControl: response.headers.get('cache-control') || '',
-          contentLanguage: response.headers.get('content-language') || '',
-          xRobotsTag: response.headers.get('x-robots-tag') || '',
+          contentType: getHeader(response.headers, 'content-type'),
+          contentLength: getHeader(response.headers, 'content-length'),
+          server: getHeader(response.headers, 'server'),
+          cacheControl: getHeader(response.headers, 'cache-control'),
+          contentLanguage: getHeader(response.headers, 'content-language'),
+          xRobotsTag: getHeader(response.headers, 'x-robots-tag'),
           durationMs,
           fetchedAt: new Date().toISOString(),
         },
@@ -211,15 +194,21 @@ export async function GET(request: Request) {
         headers: defaultHeaders,
       },
     );
-  } catch {
+  } catch (error) {
+    const isUnsafeUrl = error instanceof PublicUrlFetchError && error.code === 'unsafe_url';
+
     return NextResponse.json(
       {
-        error: 'Falha ao buscar a URL informada no momento.',
+        error: isUnsafeUrl
+          ? 'Este endereço não pode ser consultado. Use uma página pública em HTTP ou HTTPS.'
+          : 'Falha ao buscar a URL informada no momento.',
       },
       {
-        status: 500,
+        status: isUnsafeUrl ? 400 : 502,
         headers: defaultHeaders,
       },
     );
+  } finally {
+    clearTimeout(timeout);
   }
 }

@@ -19,6 +19,7 @@ export const httpStatusForError = (code: ExtractionErrorCode): number => {
       return 422;
     case 'media_unavailable':
     case 'no_video_found':
+    case 'no_media_found':
       return 404;
     case 'access_blocked':
       return 403;
@@ -37,6 +38,7 @@ export const defaultErrorMessage: Record<ExtractionErrorCode, string> = {
   unsupported_platform: 'This platform is not supported.',
   media_unavailable: 'The post is unavailable, private or was removed.',
   no_video_found: 'No downloadable video was found in this link.',
+  no_media_found: 'No supported public video or image was found in this link.',
   rate_limited: 'Too many requests. Try again in a moment.',
   timeout: 'The platform took too long to respond.',
   access_blocked: 'The platform blocked access to this content.',

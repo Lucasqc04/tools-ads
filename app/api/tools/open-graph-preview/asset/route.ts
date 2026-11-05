@@ -1,4 +1,8 @@
 import { NextResponse } from 'next/server';
+import {
+  fetchPublicUrl,
+  PublicUrlFetchError,
+} from '@/lib/safe-public-url-fetch';
 
 export const runtime = 'nodejs';
 
@@ -22,7 +26,7 @@ export async function GET(request: Request) {
   if (!isValidPublicUrl(targetUrl)) {
     return NextResponse.json(
       {
-        error: 'URL invalida. Use endereco publico com http ou https.',
+        error: 'URL inválida. Use um endereço público com HTTP ou HTTPS.',
       },
       {
         status: 400,
@@ -31,53 +35,39 @@ export async function GET(request: Request) {
     );
   }
 
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
 
-    const response = await fetch(targetUrl, {
-      method: 'GET',
-      redirect: 'follow',
-      cache: 'no-store',
+  try {
+    const response = await fetchPublicUrl(new URL(targetUrl), {
       signal: controller.signal,
-      headers: {
-        'User-Agent': 'adtools-og-preview-bot/1.0 (+https://adtools.local)',
-        Accept: '*/*',
-      },
+      userAgent: 'adtools-og-preview-bot/1.0 (+https://tools.lucasqc.com)',
+      accept: '*/*',
+      maxBytes: 15_000_000,
     });
 
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      return NextResponse.json(
-        {
-          error: `Nao foi possivel baixar o arquivo (status ${response.status}).`,
-        },
-        {
-          status: 502,
-          headers: defaultHeaders,
-        },
-      );
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-
-    return new NextResponse(arrayBuffer, {
+    return new NextResponse(new Uint8Array(response.body), {
       status: 200,
       headers: {
         ...defaultHeaders,
-        'Content-Type': response.headers.get('content-type') || 'application/octet-stream',
+        'Content-Type': response.headers['content-type'] || 'application/octet-stream',
       },
     });
-  } catch {
+  } catch (error) {
+    const isUnsafeUrl = error instanceof PublicUrlFetchError && error.code === 'unsafe_url';
+
     return NextResponse.json(
       {
-        error: 'Falha ao baixar o arquivo informado no momento.',
+        error: isUnsafeUrl
+          ? 'Este endereço não pode ser consultado. Use uma página pública em HTTP ou HTTPS.'
+          : 'Falha ao baixar o arquivo informado no momento.',
       },
       {
-        status: 500,
+        status: isUnsafeUrl ? 400 : 502,
         headers: defaultHeaders,
       },
     );
+  } finally {
+    clearTimeout(timeout);
   }
 }

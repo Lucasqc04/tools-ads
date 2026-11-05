@@ -16,9 +16,9 @@ export type VideoDownloaderLocaleContent = {
 };
 
 const ptBr: VideoDownloaderLocaleContent = {
-  name: 'Baixar Vídeo de Link Público (X e Pinterest)',
+  name: 'Baixar Vídeos do X e Mídia do Pinterest',
   shortDescription:
-    'Cole o link de um post público do X (Twitter) ou do Pinterest, escolha a qualidade e salve o vídeo no aparelho, sem cadastro.',
+    'Cole um link público do X ou um pin do Pinterest para abrir e salvar vídeos e imagens no celular ou computador, sem cadastro.',
   primaryKeyword: 'baixar vídeo online grátis',
   secondaryKeywords: [
     'baixar vídeo pelo link',
@@ -26,76 +26,77 @@ const ptBr: VideoDownloaderLocaleContent = {
     'salvar vídeo do twitter e pinterest',
     'baixar vídeo sem aplicativo',
     'extrair áudio mp3 de vídeo',
+    'baixar imagem do pinterest',
   ],
   searchIntent:
-    'Pessoas que têm o link de um vídeo público e querem salvar o arquivo no celular ou no computador, escolhendo a qualidade.',
-  seoTitle: 'Baixar Vídeo Online Grátis | X (Twitter) e Pinterest',
+    'Pessoas que querem salvar um vídeo público do X ou uma imagem ou vídeo de um pin público do Pinterest.',
+  seoTitle: 'Baixar Vídeos do X e Pinterest e Imagens de Pins',
   seoDescription:
-    'Cole o link de um vídeo público do X ou do Pinterest, veja as qualidades disponíveis e baixe direto no navegador. Grátis, sem cadastro e sem instalar nada.',
-  h1: 'Baixar Vídeo Online Grátis: Cole o Link e Escolha a Qualidade',
+    'Cole um link público do X ou Pinterest para abrir vídeos e imagens no navegador. Grátis, sem cadastro e sem instalar nada.',
+  h1: 'Baixar Vídeos do X e Pinterest e Imagens de Pins',
   intro:
-    'Cole o link de um post público do X (Twitter) ou do Pinterest, veja as qualidades realmente disponíveis e salve o vídeo no aparelho. Sem cadastro e sem instalar aplicativo.',
+    'Cole o link de um post público do X ou pin do Pinterest para salvar vídeos e imagens no aparelho. No X, escolha entre as qualidades disponíveis. Sem cadastro e sem instalar aplicativo.',
   contentBlocks: [
     {
-      title: 'Como baixar um vídeo pelo link',
+      title: 'Como salvar um vídeo ou imagem pelo link',
       paragraphs: [
-        'Esta ferramenta serve para quem já tem o endereço de um vídeo publicado de forma aberta e quer guardar uma cópia no celular ou no computador. Você cola o link, a plataforma é reconhecida automaticamente e a página lista somente as versões que o post realmente oferece, como 270p, 360p, 720p ou 1080p quando existirem.',
-        'O processo é curto: copie o link do post, cole no campo, toque em analisar, escolha a qualidade e baixe. Para vídeos do X, o arquivo MP4 é transferido direto do servidor de mídia da plataforma para o seu navegador e salvo no aparelho, com barra de progresso e botão de cancelar.',
+        'Esta ferramenta serve para quem já tem o link de um vídeo público do X ou de um pin público do Pinterest e quer salvar o arquivo no celular ou computador. No X, a ferramenta lista as qualidades de vídeo disponíveis. No Pinterest, ela reconhece pins de vídeo e imagem quando a plataforma publica um arquivo acessível.',
+        'Copie o link do post ou pin, cole no campo e toque em analisar. Para vídeos do X, escolha a qualidade e baixe o MP4 direto no navegador. No Pinterest, abra o arquivo em uma nova aba e salve pelo menu do navegador ou do player.',
       ],
       list: [
         'Copie o link do post no aplicativo ou no site.',
         'Cole no campo e toque em analisar link.',
-        'Confira miniatura, título, duração e qualidades encontradas.',
-        'Escolha a qualidade e baixe o MP4, ou extraia só o áudio em MP3 quando disponível.',
+        'Confira a prévia e o formato de mídia encontrado.',
+        'Para vídeos, escolha uma qualidade e baixe o MP4. No Pinterest, abra a mídia e salve pelo navegador.',
       ],
     },
     {
       title: 'Plataformas aceitas e o que cada uma entrega',
       paragraphs: [
-        'Hoje funcionam links públicos do X (x.com e twitter.com) e de pins de vídeo do Pinterest (incluindo links curtos pin.it). Cada plataforma tem uma página própria com instruções e limitações específicas, e todas usam a mesma ferramenta.',
-        'No X, a página mostra várias qualidades em MP4 e permite converter o áudio para MP3 no próprio navegador. No Pinterest, o vídeo é localizado e aberto em uma nova aba, porque o servidor de mídia deles não permite que outra página leia o arquivo; dali você salva pelo menu do player.',
-        'Plataformas que exigem login para exibir o vídeo, como Instagram e Facebook, ou que protegem o arquivo de forma que o navegador não consegue baixá-lo, como TikTok, não são oferecidas. Preferimos não listar um serviço do que prometer algo que não funciona.',
+        'Hoje funcionam links públicos do X (x.com e twitter.com) e pins públicos de vídeo ou imagem do Pinterest, inclusive links curtos pin.it. Cada plataforma tem uma página própria com instruções e limitações específicas, e todas usam a mesma ferramenta.',
+        'No X, a página mostra as qualidades MP4 disponíveis e permite extrair o áudio para MP3 no próprio navegador. No Pinterest, o arquivo do pin abre em uma nova aba porque o servidor de mídia não permite que outra página leia o conteúdo; salve a imagem pelo menu do navegador ou o vídeo pelo menu do player.',
+        'Pins privados, apagados ou sem um arquivo público acessível não funcionam. Instagram, Facebook, TikTok e Reddit também não estão disponíveis. A ferramenta não tenta contornar login nem proteções das plataformas.',
       ],
     },
     {
       title: 'Limitações, privacidade e uso responsável',
       paragraphs: [
-        'Só funcionam posts públicos. Vídeos de contas protegidas, posts apagados, conteúdo que exige login ou restrito por idade não podem ser acessados, e a ferramenta não tenta contornar nenhuma dessas proteções nem remove DRM.',
-        'O link que você cola é enviado ao nosso servidor apenas para localizar o endereço do arquivo; o vídeo em si não passa pelo site e nada é armazenado. A conversão para MP3 acontece no seu dispositivo. Baixe somente conteúdo que você tem direito de salvar, como material seu, com permissão do autor ou de uso pessoal permitido, e respeite os direitos autorais.',
+        'Só funcionam posts e pins públicos que ainda estejam disponíveis. Conteúdo protegido, apagado ou que exige login não pode ser acessado; a ferramenta não contorna essas proteções nem remove DRM.',
+        'O link que você cola é enviado ao nosso servidor para localizar a mídia pública; o arquivo de vídeo ou imagem abre direto da plataforma e não é armazenado pela ferramenta. A conversão para MP3 acontece no seu dispositivo. Salve somente conteúdo que você tem direito de usar e respeite os direitos autorais.',
       ],
     },
   ],
   faq: [
     {
-      question: 'Quais plataformas funcionam?',
+      question: 'Quais plataformas e tipos de mídia funcionam?',
       answer:
-        'Posts públicos com vídeo do X (Twitter) e pins de vídeo do Pinterest. Instagram, Facebook, TikTok e Reddit não estão disponíveis porque exigem login ou bloqueiam o download direto pelo navegador.',
+        'Vídeos públicos do X (Twitter) e pins públicos de vídeo ou imagem do Pinterest, quando a plataforma expõe o arquivo. Instagram, Facebook, TikTok e Reddit não estão disponíveis.',
     },
     {
       question: 'É grátis e precisa de cadastro?',
       answer: 'É grátis, sem cadastro e sem instalar nada. Funciona no navegador do celular e do computador.',
     },
     {
-      question: 'O vídeo passa pelo servidor do site?',
+      question: 'A mídia passa pelo servidor do site?',
       answer:
-        'Não. O servidor só recebe o link para descobrir onde o arquivo está. O download vai direto da plataforma para o seu navegador, e nada fica guardado.',
+        'O link é enviado ao servidor para localizar a mídia pública. O arquivo abre direto da plataforma no seu navegador; o vídeo ou a imagem não passa pelo site nem entra nos eventos de análise.',
     },
     {
-      question: 'Por que o Pinterest apenas abre o vídeo em outra aba?',
+      question: 'Por que o Pinterest abre a mídia em outra aba?',
       answer:
-        'O servidor de vídeos do Pinterest não autoriza que outras páginas leiam o arquivo. Por isso mostramos o arquivo real em uma nova aba, onde você salva pelo menu do player ou com o botão direito.',
+        'Os servidores de mídia do Pinterest não deixam outras páginas lerem o arquivo diretamente. Abrimos a mídia em uma nova aba para você salvar pelo menu do navegador ou do player.',
     },
     {
-      question: 'Posso baixar vídeos privados ou apagados?',
+      question: 'Posso abrir mídia de posts privados ou apagados?',
       answer: 'Não. Apenas conteúdo público e ainda disponível. A ferramenta não contorna login, contas privadas ou proteções das plataformas.',
     },
   ],
 };
 
 const en: VideoDownloaderLocaleContent = {
-  name: 'Public Video Downloader (X and Pinterest)',
+  name: 'Download X Videos and Pinterest Media',
   shortDescription:
-    'Paste the link of a public X (Twitter) or Pinterest post, pick a quality and save the video to your device, with no sign-up.',
+    'Paste a public X link or Pinterest pin link to open and save videos and images on your device, with no sign-up.',
   primaryKeyword: 'online video downloader',
   secondaryKeywords: [
     'download video from link',
@@ -103,76 +104,77 @@ const en: VideoDownloaderLocaleContent = {
     'video downloader no app',
     'download video free no sign up',
     'extract mp3 from video',
+    'download pinterest image',
   ],
   searchIntent:
-    'People who have the link to a public video and want to save the file on their phone or computer, choosing the quality.',
-  seoTitle: 'Free Online Video Downloader | X (Twitter) and Pinterest',
+    'People who want to save a public X video or a public Pinterest video or image pin.',
+  seoTitle: 'Download X and Pinterest Videos and Pinterest Images',
   seoDescription:
-    'Paste the link of a public X or Pinterest video, see the qualities that are really available and download it in your browser. Free, no sign-up and nothing to install.',
-  h1: 'Free Online Video Downloader: Paste the Link and Pick the Quality',
+    'Paste a public X or Pinterest link to open videos and images in your browser. Free, no sign-up and nothing to install.',
+  h1: 'Download X and Pinterest Videos and Pinterest Images',
   intro:
-    'Paste the link of a public X (Twitter) or Pinterest post, see the qualities that are actually available and save the video to your device. No sign-up, no app to install.',
+    'Paste a public X post or Pinterest pin link to save videos and images on your device. Choose from the video qualities available on X. No sign-up or app to install.',
   contentBlocks: [
     {
-      title: 'How to download a video from its link',
+      title: 'How to save a video or image from its link',
       paragraphs: [
-        'This tool is for people who already have the address of an openly published video and want to keep a copy on their phone or computer. You paste the link, the platform is recognised automatically, and the page lists only the versions the post really offers, such as 270p, 360p, 720p or 1080p when they exist.',
-        'The flow is short: copy the post link, paste it, tap analyze, choose a quality and download. For X videos the MP4 is transferred straight from the platform media server to your browser and saved on your device, with a progress bar and a cancel button.',
+        'This tool is for people who have a public X video link or Pinterest pin link and want to save the file on a phone or computer. On X, it lists the video qualities available for that post. On Pinterest, it recognizes public video and image pins when the platform exposes a downloadable file.',
+        'Copy the post or pin link, paste it and tap analyze. For X videos, choose a quality and download the MP4 in your browser. Pinterest files open in a new tab, where you save them from the browser or player menu.',
       ],
       list: [
         'Copy the post link from the app or the website.',
         'Paste it into the field and tap analyze link.',
-        'Check the thumbnail, title, duration and the qualities found.',
-        'Pick a quality and download the MP4, or extract only the audio as MP3 when available.',
+        'Check the preview and the media format found.',
+        'For videos, pick a quality and download the MP4. On Pinterest, open the media and save it from your browser.',
       ],
     },
     {
       title: 'Supported platforms and what each one delivers',
       paragraphs: [
-        'Public links from X (x.com and twitter.com) and Pinterest video pins (including pin.it short links) work today. Each platform has its own page with specific instructions and limitations, and all of them run the same tool.',
-        'On X, the page shows several MP4 qualities and can convert the audio to MP3 inside your browser. On Pinterest, the video is located and opened in a new tab, because their media server does not let other pages read the file; from there you save it with the player menu.',
-        'Platforms that require login to show the video, such as Instagram and Facebook, or that protect the file so a browser cannot download it, such as TikTok, are not offered. We would rather leave a service out than promise something that does not work.',
+        'Public links from X (x.com and twitter.com) and Pinterest video or image pins, including pin.it short links, work when the platform exposes a public file. Each platform has its own page with specific instructions and limitations.',
+        'On X, the page shows available MP4 qualities and can extract audio as MP3 in your browser. Pinterest media opens in a new tab because its media server does not let other pages read the file; save images from the browser menu and videos from the player menu.',
+        'Private, deleted or unavailable pins do not work. Instagram, Facebook, TikTok and Reddit are also not supported. The tool does not bypass logins or platform protections.',
       ],
     },
     {
       title: 'Limits, privacy and responsible use',
       paragraphs: [
-        'Only public posts work. Videos from protected accounts, deleted posts, content behind a login or age-restricted content cannot be reached, and the tool does not try to bypass those protections or remove DRM.',
-        'The link you paste is sent to our server only to find the address of the file; the video itself does not pass through the site and nothing is stored. MP3 conversion happens on your device. Download only content you have the right to save, such as your own material, content you have permission to use or personal use that is allowed, and respect copyright.',
+        'Only public posts and pins that are still available work. Protected, deleted or login-required content cannot be reached; the tool does not bypass those protections or remove DRM.',
+        'The link you paste is sent to our server to locate public media; the video or image file opens directly from the platform and is not stored by the tool. MP3 conversion happens on your device. Save only content you have the right to use and respect copyright.',
       ],
     },
   ],
   faq: [
     {
-      question: 'Which platforms work?',
+      question: 'Which platforms and media types work?',
       answer:
-        'Public posts with video from X (Twitter) and Pinterest video pins. Instagram, Facebook, TikTok and Reddit are not available because they require login or block direct downloads from a browser.',
+        'Public X (Twitter) videos and public Pinterest video or image pins, when Pinterest exposes a public file. Instagram, Facebook, TikTok and Reddit are not supported.',
     },
     {
       question: 'Is it free and do I need an account?',
       answer: 'It is free, with no sign-up and nothing to install. It works in phone and desktop browsers.',
     },
     {
-      question: 'Does the video go through the site server?',
+      question: 'Does the media go through the site server?',
       answer:
-        'No. The server only receives the link to find where the file is. The download goes straight from the platform to your browser, and nothing is kept.',
+        'The link is sent to the server to locate public media. The file opens directly from the platform in your browser; the video or image does not pass through the site or enter analytics events.',
     },
     {
-      question: 'Why does Pinterest only open the video in another tab?',
+      question: 'Why does Pinterest open media in another tab?',
       answer:
-        'Pinterest video servers do not allow other pages to read the file. We show the real file in a new tab, where you save it from the player menu or with a right click.',
+        'Pinterest media servers do not let other pages read the file directly. We open the media in a new tab so you can save it from the browser or player menu.',
     },
     {
-      question: 'Can I download private or deleted videos?',
+      question: 'Can I open media from private or deleted posts?',
       answer: 'No. Only public content that is still available. The tool does not bypass logins, private accounts or platform protections.',
     },
   ],
 };
 
 const es: VideoDownloaderLocaleContent = {
-  name: 'Descargar Video de un Enlace Público (X y Pinterest)',
+  name: 'Descargar Videos de X y Contenido de Pinterest',
   shortDescription:
-    'Pega el enlace de una publicación pública de X (Twitter) o Pinterest, elige la calidad y guarda el video en tu dispositivo, sin registro.',
+    'Pega un enlace público de X o un pin de Pinterest para abrir y guardar videos e imágenes, sin registro.',
   primaryKeyword: 'descargar videos online gratis',
   secondaryKeywords: [
     'descargar video con el enlace',
@@ -180,67 +182,68 @@ const es: VideoDownloaderLocaleContent = {
     'descargar video sin aplicación',
     'descargador de videos online',
     'extraer audio mp3 de un video',
+    'descargar imagen de pinterest',
   ],
   searchIntent:
-    'Personas que tienen el enlace de un video público y quieren guardar el archivo en el móvil o el ordenador, eligiendo la calidad.',
-  seoTitle: 'Descargar Videos Online Gratis | X (Twitter) y Pinterest',
+    'Personas que quieren guardar un video público de X o una imagen o video de un pin público de Pinterest.',
+  seoTitle: 'Descargar Videos de X y Pinterest e Imágenes de Pinterest',
   seoDescription:
-    'Pega el enlace de un video público de X o Pinterest, mira las calidades realmente disponibles y descárgalo en el navegador. Gratis, sin registro y sin instalar nada.',
-  h1: 'Descargar Videos Online Gratis: Pega el Enlace y Elige la Calidad',
+    'Pega un enlace público de X o Pinterest para abrir videos e imágenes en el navegador. Gratis, sin registro y sin instalar nada.',
+  h1: 'Descargar Videos de X y Pinterest e Imágenes de Pinterest',
   intro:
-    'Pega el enlace de una publicación pública de X (Twitter) o Pinterest, mira las calidades que de verdad existen y guarda el video en tu dispositivo. Sin registro y sin instalar apps.',
+    'Pega el enlace de una publicación pública de X o un pin de Pinterest para guardar videos e imágenes. En X puedes elegir entre las calidades disponibles. Sin registro ni aplicaciones.',
   contentBlocks: [
     {
-      title: 'Cómo descargar un video desde su enlace',
+      title: 'Cómo guardar un video o una imagen desde su enlace',
       paragraphs: [
-        'Esta herramienta es para quien ya tiene la dirección de un video publicado de forma abierta y quiere conservar una copia en el móvil o el ordenador. Pegas el enlace, la plataforma se reconoce automáticamente y la página lista solo las versiones que la publicación ofrece de verdad, como 270p, 360p, 720p o 1080p cuando existen.',
-        'El proceso es corto: copia el enlace, pégalo, pulsa analizar, elige la calidad y descarga. En los videos de X, el MP4 se transfiere directo del servidor de medios de la plataforma a tu navegador y se guarda en el dispositivo, con barra de progreso y botón para cancelar.',
+        'Esta herramienta es para quien tiene un enlace público de video de X o un enlace de pin de Pinterest y quiere guardar el archivo en el móvil o el ordenador. En X, muestra las calidades disponibles. En Pinterest, reconoce pines públicos de video e imagen cuando la plataforma expone un archivo descargable.',
+        'Copia el enlace del post o pin, pégalo y pulsa analizar. Para videos de X, elige una calidad y descarga el MP4 desde el navegador. Los archivos de Pinterest se abren en una pestaña nueva, donde puedes guardarlos desde el menú del navegador o del reproductor.',
       ],
       list: [
         'Copia el enlace de la publicación desde la app o la web.',
         'Pégalo en el campo y pulsa analizar enlace.',
-        'Revisa la miniatura, el título, la duración y las calidades encontradas.',
-        'Elige la calidad y descarga el MP4, o extrae solo el audio en MP3 cuando esté disponible.',
+        'Revisa la vista previa y el formato de contenido encontrado.',
+        'Para videos, elige una calidad y descarga el MP4. En Pinterest, abre el contenido y guárdalo desde el navegador.',
       ],
     },
     {
       title: 'Plataformas compatibles y qué ofrece cada una',
       paragraphs: [
-        'Hoy funcionan enlaces públicos de X (x.com y twitter.com) y pines de video de Pinterest (incluidos los enlaces cortos pin.it). Cada plataforma tiene su propia página con instrucciones y limitaciones específicas, y todas usan la misma herramienta.',
-        'En X, la página muestra varias calidades en MP4 y permite convertir el audio a MP3 en tu propio navegador. En Pinterest, el video se localiza y se abre en una pestaña nueva, porque su servidor de medios no deja que otras páginas lean el archivo; desde allí lo guardas con el menú del reproductor.',
-        'Las plataformas que exigen inicio de sesión para mostrar el video, como Instagram y Facebook, o que protegen el archivo para que el navegador no pueda descargarlo, como TikTok, no se ofrecen. Preferimos no listar un servicio antes que prometer algo que no funciona.',
+        'Funcionan enlaces públicos de X (x.com y twitter.com) y pines públicos de video o imagen de Pinterest, incluidos los enlaces cortos pin.it, cuando la plataforma expone un archivo público. Cada plataforma tiene sus propias instrucciones y limitaciones.',
+        'En X, se muestran las calidades MP4 disponibles y puedes extraer el audio a MP3 en tu navegador. Los archivos de Pinterest se abren en una pestaña nueva porque su servidor multimedia no permite que otras páginas lean el contenido; guarda imágenes desde el menú del navegador y videos desde el reproductor.',
+        'Los pines privados, borrados o no disponibles no funcionan. Instagram, Facebook, TikTok y Reddit tampoco son compatibles. La herramienta no elude inicios de sesión ni protecciones de las plataformas.',
       ],
     },
     {
       title: 'Límites, privacidad y uso responsable',
       paragraphs: [
-        'Solo funcionan publicaciones públicas. Los videos de cuentas protegidas, publicaciones borradas, contenido que exige inicio de sesión o con restricción de edad no son accesibles, y la herramienta no intenta eludir esas protecciones ni elimina DRM.',
-        'El enlace que pegas se envía a nuestro servidor solo para localizar la dirección del archivo; el video en sí no pasa por el sitio y no se guarda nada. La conversión a MP3 ocurre en tu dispositivo. Descarga únicamente contenido que tengas derecho a guardar, como material propio, con permiso del autor o de uso personal permitido, y respeta los derechos de autor.',
+        'Solo funcionan publicaciones y pines públicos que sigan disponibles. No se puede acceder a contenido protegido, borrado o que exige inicio de sesión; la herramienta no elude esas protecciones ni elimina DRM.',
+        'El enlace se envía a nuestro servidor para localizar contenido público; el archivo de video o imagen se abre directamente desde la plataforma y la herramienta no lo almacena. La conversión a MP3 ocurre en tu dispositivo. Guarda solo contenido que tengas derecho a usar y respeta los derechos de autor.',
       ],
     },
   ],
   faq: [
     {
-      question: '¿Qué plataformas funcionan?',
+      question: '¿Qué plataformas y tipos de contenido funcionan?',
       answer:
-        'Publicaciones públicas con video de X (Twitter) y pines de video de Pinterest. Instagram, Facebook, TikTok y Reddit no están disponibles porque exigen inicio de sesión o bloquean la descarga directa desde el navegador.',
+        'Videos públicos de X (Twitter) y pines públicos de video o imagen de Pinterest, cuando la plataforma expone un archivo. Instagram, Facebook, TikTok y Reddit no son compatibles.',
     },
     {
       question: '¿Es gratis y necesito registrarme?',
       answer: 'Es gratis, sin registro y sin instalar nada. Funciona en el navegador del móvil y del ordenador.',
     },
     {
-      question: '¿El video pasa por el servidor del sitio?',
+      question: '¿El contenido pasa por el servidor del sitio?',
       answer:
-        'No. El servidor solo recibe el enlace para descubrir dónde está el archivo. La descarga va directa de la plataforma a tu navegador y no se guarda nada.',
+        'El enlace se envía al servidor para localizar contenido público. El archivo se abre directamente desde la plataforma en tu navegador; el video o la imagen no pasa por el sitio ni se incluye en los eventos de análisis.',
     },
     {
-      question: '¿Por qué Pinterest solo abre el video en otra pestaña?',
+      question: '¿Por qué Pinterest abre el contenido en otra pestaña?',
       answer:
-        'Los servidores de video de Pinterest no autorizan que otras páginas lean el archivo. Mostramos el archivo real en una pestaña nueva, donde lo guardas desde el menú del reproductor o con clic derecho.',
+        'Los servidores de Pinterest no permiten que otras páginas lean el archivo directamente. Abrimos el contenido en una pestaña nueva para que lo guardes desde el menú del navegador o del reproductor.',
     },
     {
-      question: '¿Puedo descargar videos privados o borrados?',
+      question: '¿Puedo abrir contenido de publicaciones privadas o borradas?',
       answer: 'No. Solo contenido público que siga disponible. La herramienta no elude inicios de sesión, cuentas privadas ni protecciones de las plataformas.',
     },
   ],

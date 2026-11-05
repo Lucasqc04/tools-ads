@@ -44,7 +44,7 @@ export type FrontOnlyToolSeed = {
 
 const localPrivacy = {
   'pt-br':
-    'O processamento acontece no navegador sempre que possivel. Arquivos e entradas nao precisam ser enviados para o servidor do site para executar a tarefa principal.',
+    'O processamento acontece no navegador sempre que possível. Arquivos e dados inseridos não precisam ser enviados ao servidor do site para concluir a tarefa principal.',
   en: 'Processing happens in the browser whenever possible. Files and inputs do not need to be uploaded to the site server for the main workflow.',
   es: 'El procesamiento ocurre en el navegador siempre que es posible. Los archivos y entradas no necesitan enviarse al servidor del sitio para ejecutar el flujo principal.',
   zh: 'Processing happens in the browser whenever possible. Files and inputs do not need to be uploaded to the site server for the main workflow.',
@@ -60,7 +60,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Validador e Gerador de CNPJ',
         shortDescription:
-          'Valide CNPJ, gere numeros validos para testes e exporte listas em TXT, CSV ou JSON.',
+          'Valide CNPJ, gere números válidos para testes e exporte listas em TXT, CSV ou JSON.',
         primaryKeyword: 'gerador e validador de cnpj',
         secondaryKeywords: [
           'gerador de cnpj valido',
@@ -72,40 +72,40 @@ const frontOnlyToolSeeds = [
         ],
         searchIntent:
           'Devs, QAs e analistas que precisam validar CNPJ ou gerar massa de teste brasileira sem cadastro.',
-        seoTitle: 'Gerador e Validador de CNPJ Online | Com ou Sem Pontuacao',
+        seoTitle: 'Gerador e Validador de CNPJ Online | Com ou Sem Pontuação',
         seoDescription:
-          'Valide CNPJ e gere listas de CNPJ validos para testes com copia rapida e exportacao TXT, CSV e JSON.',
+          'Valide CNPJ e gere listas de números válidos para testes, com cópia rápida e exportação TXT, CSV e JSON.',
         h1: 'Validador e Gerador de CNPJ para Testes',
         intro:
-          'Cole um CNPJ para validar os digitos verificadores ou gere CNPJs validos em lote com matriz/filial e exportacao.',
+          'Cole um CNPJ para validar os dígitos verificadores ou gere números válidos em lote com matriz, filial e exportação.',
         contentBlocks: [
           {
-            title: 'Validacao real dos digitos do CNPJ',
+            title: 'Validação dos dígitos do CNPJ',
             paragraphs: [
-              'A ferramenta remove mascara, calcula os dois digitos verificadores e mostra o CNPJ formatado e somente numeros. Isso ajuda a diferenciar erro de formato de erro real no algoritmo.',
-              'O gerador cria numeros validos para formulario, homologacao, QA e testes automatizados. Eles nao representam empresas reais e nao devem ser usados para fraude, cadastro indevido ou tentativa de identificacao.',
+              'A ferramenta remove a máscara, calcula os dois dígitos verificadores e mostra o CNPJ formatado e também só com números. Assim, você consegue diferenciar um erro de formato de um erro no algoritmo.',
+              'O gerador cria números válidos para formulários, homologação, QA e testes automatizados. Eles não representam empresas reais e não devem ser usados para fraude, cadastro indevido ou tentativa de identificação.',
             ],
           },
           {
-            title: 'Exportacao para massa de teste',
+            title: 'Exportação para testes',
             paragraphs: [
-              'Voce pode gerar de 1 a 200 CNPJs por vez, escolher a filial e alternar entre saida com ou sem pontuacao. A lista pode ser copiada ou baixada para planilhas, fixtures e scripts.',
+              'Gere de 1 a 200 CNPJs por vez, escolha a filial e alterne entre a saída com ou sem pontuação. Você pode copiar a lista ou baixá-la para planilhas, fixtures e scripts.',
               localPrivacy['pt-br'],
             ],
-            list: ['TXT linha a linha', 'CSV com cabecalho', 'JSON para testes de API'],
+            list: ['TXT, um número por linha', 'CSV com cabeçalho', 'JSON para testes de API'],
           },
           {
             title: 'Limites importantes',
             paragraphs: [
-              'Um CNPJ valido matematicamente nao confirma existencia, situacao cadastral ou dados da Receita Federal. A validacao aqui cobre apenas estrutura numerica e digitos verificadores.',
+              'Um CNPJ matematicamente válido não confirma a existência da empresa, sua situação cadastral nem dados da Receita Federal. A ferramenta confere apenas a estrutura numérica e os dígitos verificadores.',
             ],
           },
         ],
         faq: [
-          { question: 'O CNPJ gerado existe na Receita Federal?', answer: 'Nao. A ferramenta gera numeros validos pelo algoritmo, mas nao consulta cadastro oficial.' },
-          { question: 'Posso gerar CNPJ sem pontuacao?', answer: 'Sim. Escolha a opcao sem pontuacao para usar somente os 14 digitos.' },
-          { question: 'Serve para testes de formulario?', answer: 'Sim. O uso recomendado e QA, homologacao, fixtures e validacao de entrada.' },
-          { question: 'Os CNPJs sao enviados para servidor?', answer: 'Nao por padrao. A validacao e a geracao rodam localmente no navegador.' },
+          { question: 'O CNPJ gerado existe na Receita Federal?', answer: 'Não. A ferramenta gera números válidos pelo algoritmo, mas não consulta cadastros oficiais.' },
+          { question: 'Posso gerar CNPJ sem pontuação?', answer: 'Sim. Escolha essa opção para usar somente os 14 dígitos.' },
+          { question: 'Serve para testar formulários?', answer: 'Sim. O uso recomendado é em QA, homologação, fixtures e validação de entradas.' },
+          { question: 'Os CNPJs são enviados para o servidor?', answer: 'Não. A validação e a geração acontecem localmente no navegador.' },
         ],
       },
       en: {
@@ -270,9 +270,9 @@ const frontOnlyToolSeeds = [
     relatedToolIds: ['pix-decoder', 'gerador-cnpj', 'cpf-generator'],
     content: {
       'pt-br': {
-        name: 'Validador de Boleto e Linha Digitavel',
+        name: 'Validador de Boleto e Linha Digitável',
         shortDescription:
-          'Valide linha digitavel ou codigo de barras, converta formatos e extraia vencimento, valor e campo livre.',
+          'Valide a linha digitável ou o código de barras, converta formatos e confira vencimento, valor e campo livre.',
         primaryKeyword: 'validador de boleto linha digitavel',
         secondaryKeywords: [
           'validar boleto online',
@@ -284,40 +284,40 @@ const frontOnlyToolSeeds = [
         ],
         searchIntent:
           'Usuarios e devs que precisam conferir boleto, linha digitavel ou codigo de barras antes de integrar pagamentos.',
-        seoTitle: 'Validador de Boleto e Linha Digitavel | Converter e Decodificar',
+        seoTitle: 'Validador de Boleto e Linha Digitável | Converter e Decodificar',
         seoDescription:
-          'Cole linha digitavel ou codigo de barras de boleto para validar DACs, converter formatos e ver valor, vencimento e campo livre.',
-        h1: 'Validador de Boleto e Linha Digitavel Online',
+          'Cole a linha digitável ou o código de barras de um boleto para validar dígitos, converter formatos e conferir valor e vencimento.',
+        h1: 'Validador de Boleto e Linha Digitável Online',
         intro:
-          'Cole uma linha digitavel de 47/48 digitos ou codigo de barras de 44 digitos para validar, converter e inspecionar os campos.',
+          'Cole uma linha digitável de 47 ou 48 dígitos, ou um código de barras de 44 dígitos, para validar, converter e conferir os campos.',
         contentBlocks: [
           {
-            title: 'Validacao de boleto bancario e arrecadacao',
+            title: 'Validação de boletos bancários e de arrecadação',
             paragraphs: [
-              'A ferramenta reconhece boleto bancario comum e boleto de arrecadacao/concessionaria, recalcula os digitos dos campos e o DAC geral quando aplicavel.',
-              'O resultado mostra codigo de barras, linha digitavel formatada, banco, valor, fator de vencimento e campo livre para facilitar debug de integracoes.',
+              'A ferramenta reconhece boletos bancários e de arrecadação ou concessionárias. Ela recalcula os dígitos verificadores dos campos e o DAC geral, quando aplicável.',
+              'O resultado mostra o código de barras, a linha digitável formatada, o banco, o valor, o fator de vencimento e o campo livre para ajudar a verificar integrações.',
             ],
           },
           {
-            title: 'Conversao entre linha digitavel e codigo de barras',
+            title: 'Conversão entre linha digitável e código de barras',
             paragraphs: [
-              'Quando voce informa uma linha digitavel, a ferramenta monta o codigo de barras equivalente. Quando informa codigo de barras, ela gera a linha digitavel correspondente.',
+              'Ao informar uma linha digitável, a ferramenta monta o código de barras equivalente. Ao informar o código de barras, ela gera a linha digitável correspondente.',
               localPrivacy['pt-br'],
             ],
-            list: ['Validar campos modulo 10', 'Validar DAC modulo 11', 'Exportar diagnostico em JSON'],
+            list: ['Validar campos pelo módulo 10', 'Validar o DAC pelo módulo 11', 'Exportar o diagnóstico em JSON'],
           },
           {
             title: 'Limites e cuidado operacional',
             paragraphs: [
-              'A validacao matematica nao confirma pagamento, beneficiario, fraude ou registro no banco. Use o resultado como apoio tecnico e confirme dados sensiveis em canais oficiais.',
+              'A validação matemática não confirma pagamento, beneficiário, fraude ou registro no banco. Use o resultado como apoio técnico e confirme dados sensíveis nos canais oficiais.',
             ],
           },
         ],
         faq: [
-          { question: 'A ferramenta consulta o banco?', answer: 'Nao. Ela valida estrutura, digitos e campos localmente, sem consulta bancaria.' },
-          { question: 'Aceita boleto de concessionaria?', answer: 'Sim. Linhas de arrecadacao com 48 digitos e codigos iniciados por 8 sao tratados separadamente.' },
-          { question: 'Mostra vencimento?', answer: 'Sim para boletos bancarios com fator de vencimento. Em ciclos novos, a ferramenta exibe candidatos quando necessario.' },
-          { question: 'Posso exportar o resultado?', answer: 'Sim. O diagnostico pode ser copiado ou baixado em JSON.' },
+          { question: 'A ferramenta consulta o banco?', answer: 'Não. Ela valida a estrutura, os dígitos e os campos localmente, sem consultar o banco.' },
+          { question: 'Aceita boleto de concessionária?', answer: 'Sim. Linhas de arrecadação com 48 dígitos e códigos iniciados por 8 são tratadas separadamente.' },
+          { question: 'Mostra o vencimento?', answer: 'Sim, para boletos bancários com fator de vencimento. Em ciclos novos, a ferramenta pode exibir mais de uma data candidata.' },
+          { question: 'Posso exportar o resultado?', answer: 'Sim. Você pode copiar o diagnóstico ou baixá-lo em JSON.' },
         ],
       },
       en: {

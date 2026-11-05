@@ -62,9 +62,9 @@ live('live extraction', () => {
     expect(probe.allowOrigin).toBeNull();
   }, 30000);
 
-  it('Pinterest: image pin reports no_video_found', async () => {
+  it('Pinterest: image pin without public image metadata reports no_media_found', async () => {
     await expect(extractVideo('https://www.pinterest.com/pin/487022284612061468/')).rejects.toMatchObject({
-      code: 'no_video_found',
+      code: 'no_media_found',
     });
   }, 30000);
 });

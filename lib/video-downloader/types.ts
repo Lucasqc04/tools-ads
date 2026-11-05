@@ -1,4 +1,5 @@
 export type VideoPlatformId = 'twitter' | 'pinterest';
+export type MediaType = 'video' | 'image';
 
 /**
  * progressive: single file with a plain HTTP URL (downloadable with fetch/Range).
@@ -11,7 +12,7 @@ export type VideoFormat = {
   kind: VideoFormatKind;
   /** Human label such as "720p". Only present when it was read from the source. */
   quality?: string;
-  container: 'mp4' | 'm3u8';
+  container: 'mp4' | 'm3u8' | 'jpg' | 'jpeg' | 'png' | 'webp';
   mimeType: string;
   width?: number;
   height?: number;
@@ -31,6 +32,7 @@ export type BrowserDownloadSupport = 'fetch' | 'open';
 export type ExtractionSuccess = {
   success: true;
   platform: VideoPlatformId;
+  mediaType: MediaType;
   sourceUrl: string;
   title: string;
   author?: string;
@@ -49,6 +51,7 @@ export type ExtractionErrorCode =
   | 'unsupported_platform'
   | 'media_unavailable'
   | 'no_video_found'
+  | 'no_media_found'
   | 'rate_limited'
   | 'timeout'
   | 'access_blocked'
