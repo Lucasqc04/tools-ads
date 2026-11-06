@@ -104,10 +104,10 @@ const buildSmartAlerts = (analysis: CounterAnalysis, fallback: string): string[]
     alerts.push(`${analysis.longSentences} frase(s) muito longa(s)`);
   }
   if (analysis.longParagraphs > 0) {
-    alerts.push(`${analysis.longParagraphs} paragrafo(s) muito longo(s)`);
+    alerts.push(`${analysis.longParagraphs} parágrafo(s) muito longo(s)`);
   }
   if (analysis.invisibleCharacters.zeroWidthSpace > 0 || analysis.invisibleCharacters.zeroWidthJoiner > 0) {
-    alerts.push('Caracteres invisiveis detectados no texto');
+    alerts.push('Caracteres invisíveis detectados no texto');
   }
   if (analysis.metrics.urls > 0) {
     alerts.push(`${analysis.metrics.urls} link(s) detectado(s)`);
@@ -392,16 +392,16 @@ export function CharacterCounterTool({ locale = 'pt-br' }: CharacterCounterToolP
         <h3 className="text-base font-semibold text-slate-900">{copy.metricsTitle}</h3>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Caracteres: <strong>{analysis.metrics.charactersWithSpaces}</strong></div>
-          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Sem espacos: <strong>{analysis.metrics.charactersWithoutSpaces}</strong></div>
+          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Sem espaços: <strong>{analysis.metrics.charactersWithoutSpaces}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Visuais: <strong>{analysis.metrics.visualCharacters}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Palavras: <strong>{analysis.metrics.words}</strong></div>
-          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Unicas: <strong>{analysis.metrics.uniqueWords}</strong></div>
+          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Únicas: <strong>{analysis.metrics.uniqueWords}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Frases: <strong>{analysis.metrics.sentences}</strong></div>
-          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Paragrafos: <strong>{analysis.metrics.paragraphs}</strong></div>
+          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Parágrafos: <strong>{analysis.metrics.paragraphs}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Linhas: <strong>{analysis.metrics.lines}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Emojis: <strong>{analysis.metrics.emojis}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Hashtags: <strong>{analysis.metrics.hashtags}</strong></div>
-          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Mencoes: <strong>{analysis.metrics.mentions}</strong></div>
+          <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Menções: <strong>{analysis.metrics.mentions}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Links: <strong>{analysis.metrics.urls}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Bytes UTF-8: <strong>{analysis.metrics.bytesUtf8}</strong></div>
           <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">Leitura: <strong>{formatDuration(analysis.metrics.readingTimeSeconds)}</strong></div>
@@ -422,8 +422,8 @@ export function CharacterCounterTool({ locale = 'pt-br' }: CharacterCounterToolP
 
       <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
         <h3 className="text-base font-semibold text-slate-900">{copy.qualityTitle}</h3>
-        <p className="text-sm text-slate-700">Frases longas: <strong>{analysis.longSentences}</strong> | Paragrafos longos: <strong>{analysis.longParagraphs}</strong></p>
-        <p className="text-sm text-slate-700">Linhas vazias: <strong>{analysis.programming.emptyLines}</strong> | Linhas comentario: <strong>{analysis.programming.commentLines}</strong> | Tabs: <strong>{analysis.programming.tabCount}</strong></p>
+        <p className="text-sm text-slate-700">Frases longas: <strong>{analysis.longSentences}</strong> | Parágrafos longos: <strong>{analysis.longParagraphs}</strong></p>
+        <p className="text-sm text-slate-700">Linhas vazias: <strong>{analysis.programming.emptyLines}</strong> | Linhas de comentário: <strong>{analysis.programming.commentLines}</strong> | Tabs: <strong>{analysis.programming.tabCount}</strong></p>
       </section>
 
       <section className="grid gap-3 lg:grid-cols-2">
@@ -469,14 +469,14 @@ export function CharacterCounterTool({ locale = 'pt-br' }: CharacterCounterToolP
       <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
         <h3 className="text-base font-semibold text-slate-900">{copy.transformsTitle}</h3>
         <div className="flex flex-wrap gap-2">
-          <Button variant="ghost" onClick={() => applyTransform(textTransforms.removeDuplicateSpaces)}>Remover espacos duplos</Button>
+          <Button variant="ghost" onClick={() => applyTransform(textTransforms.removeDuplicateSpaces)}>Remover espaços duplos</Button>
           <Button variant="ghost" onClick={() => applyTransform(textTransforms.removeLineBreaks)}>Remover quebras</Button>
           <Button variant="ghost" onClick={() => applyTransform(textTransforms.trimEachLine)}>Trim por linha</Button>
           <Button variant="ghost" onClick={() => applyTransform(textTransforms.removeAccents)}>Remover acentos</Button>
           <Button variant="ghost" onClick={() => applyTransform(textTransforms.removeEmojis)}>Remover emojis</Button>
           <Button variant="ghost" onClick={() => applyTransform(textTransforms.removeLinks)}>Remover links</Button>
-          <Button variant="ghost" onClick={() => applyTransform(textTransforms.toUpperCase)}>MAIUSCULO</Button>
-          <Button variant="ghost" onClick={() => applyTransform(textTransforms.toLowerCase)}>minusculo</Button>
+          <Button variant="ghost" onClick={() => applyTransform(textTransforms.toUpperCase)}>MAIÚSCULO</Button>
+          <Button variant="ghost" onClick={() => applyTransform(textTransforms.toLowerCase)}>minúsculo</Button>
           <Button variant="ghost" onClick={() => applyTransform(textTransforms.titleCase)}>Title Case</Button>
           <Button variant="ghost" onClick={() => applyTransform(textTransforms.toSlug)}>slug</Button>
           <Button variant="ghost" onClick={() => applyTransform(toSnakeCase)}>snake_case</Button>

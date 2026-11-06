@@ -95,15 +95,15 @@ const hashUi = {
     algorithms: 'Algoritmos',
     algorithm: 'Algoritmo',
     hash: 'Hash',
-    compare: 'Comparacao',
+    compare: 'Comparação',
     copyAll: 'Copiar todos',
     copyHash: 'Copiar hash',
     exportJson: 'Exportar JSON',
     exportCsv: 'Exportar CSV',
     copied: 'Copiado.',
-    copyError: 'Nao foi possivel copiar.',
+    copyError: 'Não foi possível copiar.',
     match: 'Confere',
-    noMatch: 'Nao confere',
+    noMatch: 'Não confere',
     empty: 'Selecione um arquivo para calcular checksums.',
   },
   en: {
@@ -303,7 +303,7 @@ const imageAccept = 'image/png,image/jpeg,image/jpg,image/webp,image/avif,image/
 const exifUi = {
   'pt-br': {
     title: 'Leitor e removedor de EXIF',
-    intro: 'Leia metadados de imagens, identifique GPS/camera e baixe uma copia limpa gerada por canvas.',
+    intro: 'Leia os metadados de várias imagens, confira GPS e câmera e baixe uma cópia limpa, sem EXIF.',
     file: 'Imagens',
     read: 'Ler metadados',
     remove: 'Remover EXIF da imagem ativa',
@@ -315,20 +315,20 @@ const exifUi = {
     rawJson: 'JSON bruto',
     selectedImage: 'Imagem',
     fileInfo: 'Arquivo',
-    dimensions: 'Dimensoes',
-    createdAt: 'Data de criacao',
+    dimensions: 'Dimensões',
+    createdAt: 'Data de criação',
     software: 'Software',
-    camera: 'Camera',
+    camera: 'Câmera',
     lens: 'Lente',
-    gps: 'Localizacao GPS',
+    gps: 'Localização GPS',
     colors: 'Cores',
-    orientation: 'Orientacao',
-    notFound: 'Nao informado',
-    noMetadata: 'Nenhum metadado EXIF encontrado ou formato nao suportado.',
+    orientation: 'Orientação',
+    notFound: 'Não informado',
+    noMetadata: 'Nenhum metadado EXIF encontrado ou formato não suportado.',
     cleanDone: 'Imagem limpa gerada.',
-    cleanAllDone: 'Imagens limpas geradas em ZIP.',
+    cleanAllDone: 'Imagens limpas geradas em um ZIP.',
     copied: 'Copiado.',
-    copyError: 'Nao foi possivel copiar.',
+    copyError: 'Não foi possível copiar.',
     quality: 'Qualidade JPEG/WEBP',
     format: 'Formato limpo',
   },
@@ -431,7 +431,7 @@ const cleanImage = async (file: File, format: 'png' | 'jpeg' | 'webp', quality: 
   const bitmap = await loadImageBitmapFromFile(file);
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('Canvas indisponivel.');
+  if (!context) throw new Error('Canvas indisponível.');
   canvas.width = bitmap.width;
   canvas.height = bitmap.height;
   context.drawImage(bitmap, 0, 0);
@@ -523,25 +523,25 @@ const buildExifFriendlyCards = (
     {
       title: ui.createdAt,
       value: findMetadataValue(metadata, ['DateTimeOriginal', 'CreateDate', 'ModifyDate', 'Creation Time']) || ui.notFound,
-      description: 'Data/hora gravada no metadado, quando existe.',
+      description: 'Data e hora gravadas no metadado, quando existem.',
       className: friendlyExifClasses[2],
     },
     {
       title: ui.software,
       value: findMetadataValue(metadata, ['Software', 'ProcessingSoftware']) || ui.notFound,
-      description: 'Programa ou sistema que gerou/editou a imagem.',
+      description: 'Programa ou sistema que gerou ou editou a imagem.',
       className: friendlyExifClasses[3],
     },
     {
       title: ui.camera,
       value: [findMetadataValue(metadata, ['Make']), findMetadataValue(metadata, ['Model'])].filter(Boolean).join(' ') || ui.notFound,
-      description: 'Fabricante e modelo da camera, quando o arquivo informa.',
+      description: 'Fabricante e modelo da câmera, quando o arquivo informa.',
       className: friendlyExifClasses[4],
     },
     {
       title: ui.lens,
       value: findMetadataValue(metadata, ['LensModel', 'Lens', 'LensInfo']) || ui.notFound,
-      description: 'Lente ou configuracao optica registrada pela camera.',
+      description: 'Lente ou configuração óptica registrada pela câmera.',
       className: friendlyExifClasses[5],
     },
     {
@@ -553,13 +553,13 @@ const buildExifFriendlyCards = (
     {
       title: ui.colors,
       value: colorParts.join(' / ') || ui.notFound,
-      description: 'Informacoes tecnicas de cor, profundidade e compressao.',
+      description: 'Informações técnicas de cor, profundidade e compressão.',
       className: friendlyExifClasses[1],
     },
     {
       title: ui.orientation,
       value: findMetadataValue(metadata, ['Orientation']) || ui.notFound,
-      description: 'Indica como a imagem deve ser rotacionada para exibicao.',
+      description: 'Indica como a imagem deve ser girada para exibição.',
       className: friendlyExifClasses[2],
     },
   ];
@@ -742,11 +742,11 @@ export function ExifReaderRemoverTool({ locale = 'pt-br' }: Readonly<{ locale?: 
 const resizeUi = {
   'pt-br': {
     title: 'Redimensionar e cortar imagem',
-    intro: 'Redimensione, recorte em proporcao fixa e exporte imagem em PNG, JPEG ou WEBP.',
+    intro: 'Redimensione, recorte em proporção fixa e exporte a imagem em PNG, JPEG ou WEBP.',
     file: 'Imagem',
     width: 'Largura',
     height: 'Altura',
-    keepRatio: 'Manter proporcao',
+    keepRatio: 'Manter proporção',
     mode: 'Modo',
     fit: 'Ajustar sem cortar',
     cover: 'Cortar para preencher',
@@ -756,10 +756,10 @@ const resizeUi = {
     sourcePreview: 'Imagem original',
     livePreview: 'Resultado ao vivo',
     cropHint: 'Arraste a moldura ou os quadrados para escolher o corte.',
-    outputSize: 'Saida',
+    outputSize: 'Saída',
     download: 'Baixar resultado',
-    preview: 'Preview',
-    rendering: 'Atualizando preview...',
+    preview: 'Prévia',
+    rendering: 'Atualizando prévia...',
     noImage: 'Selecione uma imagem para abrir o editor.',
     copied: 'Imagem pronta.',
   },
@@ -983,7 +983,7 @@ const renderResizedBlob = async (
   const outputHeight = Math.max(1, Math.round(mode === 'square' ? targetWidth : targetHeight));
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('Canvas indisponivel.');
+  if (!context) throw new Error('Canvas indisponível.');
   canvas.width = outputWidth;
   canvas.height = outputHeight;
   context.imageSmoothingQuality = 'high';
@@ -1295,25 +1295,25 @@ export function ImageResizeCropTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
 const pdfUi = {
   'pt-br': {
     title: 'Juntar, dividir e reordenar PDF',
-    intro: 'Combine PDFs, reorganize ordem, suporte PDFs com senha, remova protecao quando souber a senha e exporte PDF final protegido.',
+    intro: 'Junte PDFs na ordem que escolher, divida um PDF em páginas, abra PDFs com senha (se você souber a senha) e proteja o PDF final.',
     files: 'Arquivos PDF',
     merge: 'Juntar PDFs',
     split: 'Dividir primeiro PDF em ZIP',
-    inspect: 'Verificar seguranca',
+    inspect: 'Verificar segurança',
     decrypt: 'Remover senha do primeiro PDF',
     protectFirst: 'Proteger primeiro PDF',
     clear: 'Limpar',
-    zipPassword: 'Senha do ZIP das paginas (opcional)',
+    zipPassword: 'Senha do ZIP das páginas (opcional)',
     inputPassword: 'Senha do PDF de entrada',
-    inputPasswordHint: 'Use para abrir/remover protecao de PDF que ja veio com senha. A mesma senha sera usada em PDFs protegidos da fila.',
-    outputPassword: 'Senha para proteger PDF final',
-    ownerPassword: 'Senha do proprietario (opcional)',
-    outputPasswordHint: 'Se preencher, o PDF unido ou o primeiro PDF sera exportado com senha de abertura.',
-    security: 'Seguranca dos PDFs',
+    inputPasswordHint: 'Use para abrir ou remover a proteção de um PDF que já tem senha. A mesma senha é usada em todos os PDFs protegidos da fila.',
+    outputPassword: 'Senha para proteger o PDF final',
+    ownerPassword: 'Senha do proprietário (opcional)',
+    outputPasswordHint: 'Se preencher, o PDF unido ou o primeiro PDF será exportado com senha de abertura.',
+    security: 'Segurança dos PDFs',
     encrypted: 'Protegido',
     notEncrypted: 'Sem senha',
     needsPassword: 'PDF protegido: informe a senha de entrada.',
-    wrongPassword: 'Senha incorreta ou criptografia nao suportada.',
+    wrongPassword: 'Senha incorreta ou criptografia não suportada.',
     moveUp: 'Subir',
     moveDown: 'Descer',
     remove: 'Remover',
@@ -1642,16 +1642,16 @@ export function PdfOrganizerTool({ locale = 'pt-br' }: Readonly<{ locale?: AppLo
 const faviconUi = {
   'pt-br': {
     title: 'Gerador de favicon e manifest',
-    intro: 'Gere pacote completo com favicon.ico, PNGs, Apple Touch Icon, maskable icons, manifest PWA e snippet HTML.',
+    intro: 'Gere o pacote completo com favicon.ico, PNGs, Apple Touch Icon, ícones maskable, manifest PWA e tags HTML.',
     file: 'Imagem base',
     name: 'Nome do app/site',
     shortName: 'Nome curto',
     bg: 'Cor de fundo',
     theme: 'Cor do tema',
     startUrl: 'URL inicial',
-    display: 'Display',
-    padding: 'Padding seguro',
-    rounded: 'Fundo arredondado nos maskable icons',
+    display: 'Modo de exibição',
+    padding: 'Margem de segurança',
+    rounded: 'Fundo arredondado nos ícones maskable',
     standardBg: 'Fundo dos favicons comuns',
     transparent: 'Transparente',
     useBackground: 'Usar cor de fundo',
@@ -1660,7 +1660,7 @@ const faviconUi = {
     autoGenerate: 'Atualizar automaticamente',
     previewTab: 'Previews',
     filesTab: 'Arquivos',
-    codeTab: 'Codigos',
+    codeTab: 'Códigos',
     sourcePreview: 'Imagem original',
     pwaPreview: 'PWA / Android',
     iosPreview: 'iOS Home Screen',

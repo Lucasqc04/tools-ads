@@ -1,36 +1,35 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const videoCompressionIntro =
-  'Comprima vídeos de até 10 GB, ajuste a intensidade e compare o resultado antes de baixar. Vídeos acima de 512 MB são processados no aparelho; arquivos menores podem usar o servidor do site.';
+  'Comprima vídeos de até 10 GB, ajuste o nível de compressão e compare o resultado antes de baixar. Vídeos acima de 512 MB são processados no seu aparelho; arquivos menores podem passar pelo servidor do site.';
 
 export const videoCompressionContentBlocks: ContentBlock[] = [
   {
-    title: 'Como a compressão de vídeo funciona',
+    title: 'Como comprimir um vídeo',
     paragraphs: [
-      'Reduza o tamanho dos vídeos sem instalar um programa. Você pode adicionar vários arquivos e acompanhar cada um na fila. Vídeos acima de 512 MB são processados no aparelho, sem enviar o arquivo ao servidor do site.',
-      'O nível de compressão ajusta o equilíbrio entre qualidade visual e tamanho final, conforme o uso: envio, compartilhamento, publicação na web ou armazenamento.',
+      'Adicione um ou vários vídeos (MP4, MOV, M4V, WEBM, OGV ou MKV), ajuste o nível de compressão e clique em comprimir. Cada arquivo aparece na fila com seu próprio status. O resultado sai sempre em MP4, normalmente com vídeo H.264 e áudio AAC, e você baixa um vídeo de cada vez ou todos juntos.',
+      'O nível vai de 1% a 100% e começa em 58%. Em níveis mais altos a imagem fica mais comprimida e o áudio usa uma taxa menor; acima de cerca de 35%, a resolução também diminui, chegando a cerca de 58% do tamanho original nos níveis mais altos. Para manter a resolução, use um nível baixo.',
     ],
   },
   {
     title: 'Estimativa de tamanho e prévia antes do download',
     paragraphs: [
-      'Antes do processamento, a interface estima o tamanho final com base na duração e no nível de compressão. O tamanho real pode variar conforme o vídeo e os codecs disponíveis.',
-      'Cada item mostra uma prévia do vídeo original e do comprimido, além da comparação de tamanho e percentual de redução. Confira a qualidade antes de baixar.',
-      'O limite é de 10 GB por arquivo. Vídeos grandes usam os codecs disponíveis no navegador e podem demorar, especialmente em celulares.',
+      'Antes do processamento, a interface estima o tamanho final com base na duração e no nível escolhido. É só uma previsão: o tamanho real varia com o tipo de cena, o movimento e o codec disponível.',
+      'Depois de comprimir, cada item mostra uma prévia do vídeo original e do comprimido, com a comparação de tamanho e a porcentagem de redução. Assista a um trecho com movimento rápido ou texto na tela antes de baixar, porque é onde a perda de qualidade aparece primeiro.',
     ],
     list: [
-      'Nível baixo: preserva mais qualidade e reduz menos o tamanho.',
+      'Nível baixo: preserva mais qualidade e reduz menos o arquivo.',
       'Nível médio: equilibra qualidade e tamanho.',
-      'Nível alto: reduz mais o tamanho, com maior perda visual.',
-      'Processamento em lote para vários arquivos na mesma execução.',
+      'Nível alto: reduz mais o arquivo, com perda visual maior e resolução menor.',
+      'Lote: vários arquivos na mesma execução.',
     ],
   },
   {
     title: 'Privacidade, desempenho e limites',
     paragraphs: [
-      'Vídeos acima de 512 MB ficam no aparelho e são comprimidos por um worker do navegador, com saída temporária no armazenamento local. Arquivos menores podem ser enviados à API do site para processamento.',
-      'Em celulares, o navegador pode suspender a tarefa se você trocar de aplicativo ou bloquear a tela. Mantenha a página aberta e, se possível, conecte o aparelho à energia.',
-      'A ferramenta não divide o vídeo em cortes independentes. Ela processa o fluxo de mídia em partes internas para preservar a linha do tempo e reduzir problemas de áudio e sincronização.',
+      'O que acontece com o seu arquivo depende do tamanho. Vídeos acima de 512 MB ficam no aparelho e são comprimidos por uma tarefa do navegador, com saída temporária no armazenamento local, e nunca vão para o servidor. Vídeos de até 512 MB são enviados primeiro ao servidor do site, que comprime e devolve o arquivo; o envio é temporário e os arquivos são apagados ao fim do processamento. Se o servidor estiver indisponível ou demorar demais, a compressão continua no navegador com FFmpeg, que pode precisar baixar seus componentes no primeiro uso.',
+      'O limite é de 10 GB por arquivo, mas a conclusão depende de memória, espaço livre e dos codecs do navegador. Vídeos grandes podem levar bastante tempo, principalmente no celular, e o navegador pode pausar a tarefa se você trocar de aplicativo ou bloquear a tela. Mantenha a página aberta e, se possível, conecte o aparelho à energia.',
+      'A compressão não divide o vídeo em cortes independentes: ela processa o fluxo de mídia inteiro para preservar a linha do tempo e a sincronia do áudio.',
     ],
   },
 ];
@@ -39,26 +38,26 @@ export const videoCompressionFaq: FaqItem[] = [
   {
     question: 'Posso comprimir vários vídeos de uma vez?',
     answer:
-      'Sim. Você pode adicionar vários arquivos, e cada vídeo aparece com seu próprio status na fila.',
+      'Sim. Adicione vários arquivos e cada vídeo aparece na fila com seu próprio status, prévia e porcentagem de redução.',
   },
   {
-    question: 'Consigo controlar o quanto quero comprimir?',
+    question: 'O que o nível de compressão muda?',
     answer:
-      'Sim. Ajuste o nível de compressão para equilibrar qualidade e tamanho final.',
+      'Ele ajusta a qualidade da imagem, a taxa do áudio e, a partir de cerca de 35%, a resolução do vídeo. Níveis mais altos geram arquivos menores com mais perda visual.',
   },
   {
     question: 'A previsão do tamanho final é exata?',
     answer:
-      'Não. É uma estimativa baseada na taxa de bits e na duração. O tamanho real varia conforme o codec, as cenas e o movimento do vídeo.',
+      'Não. É uma estimativa baseada na duração e no nível. O tamanho real aparece depois da compressão e varia conforme o codec, as cenas e o movimento do vídeo.',
   },
   {
-    question: 'Os vídeos são enviados para algum servidor?',
+    question: 'Meu vídeo é enviado para algum servidor?',
     answer:
-      'Vídeos acima de 512 MB são processados no navegador e não são enviados ao servidor. Arquivos menores podem ser enviados à API do site para compressão.',
+      'Depende do tamanho. Acima de 512 MB, o vídeo é processado no navegador e não é enviado. Até 512 MB, ele é enviado ao servidor do site, comprimido e apagado ao fim do processamento. Se o servidor falhar, a compressão é refeita no navegador.',
   },
   {
     question: 'Consigo comprimir um vídeo de 5 GB no celular?',
     answer:
-      'A ferramenta aceita arquivos de até 10 GB e processa vídeos grandes localmente, mas um vídeo de 5 GB pode demorar e exige codecs compatíveis e espaço livre. Mantenha a página aberta: o navegador pode pausar a tarefa quando o aplicativo vai para segundo plano.',
+      'A ferramenta aceita até 10 GB e processa vídeos grandes no próprio aparelho, mas um arquivo de 5 GB pode demorar bastante e exige codecs compatíveis e espaço livre. Mantenha a página aberta: o navegador pode pausar a tarefa em segundo plano.',
   },
 ];

@@ -106,12 +106,12 @@ const SIGNAL_RAW_TAG_REGEX = /\n?\[ADTOOLS_PART:\d+\/\d+\]$/;
 
 const uiByLocale = {
   'pt-br': {
-    simpleTab: 'QR rapido',
+    simpleTab: 'QR rápido',
     p2pTab: 'Arquivos por link',
     p2pLinkMode: 'Sala por link',
     p2pManualMode: 'QR manual',
     simpleIntro:
-      'Use QR para links, Pix, senhas temporarias, JSON curto e comandos pequenos. O destino pode ler pela camera, pela propria pagina ou por imagem.',
+      'Use QR para links, Pix, senhas temporárias, JSON curto e comandos pequenos. O destino pode ler pela câmera, pela própria página ou por imagem.',
     p2pIntro:
       'Crie uma sala por link para todos enviarem e receberem arquivos diretamente. O pareamento manual por QR continua disponível como alternativa.',
     simpleWriteTitle: '1. Gerar QR neste dispositivo',
@@ -123,39 +123,39 @@ const uiByLocale = {
     simpleClear: 'Limpar',
     simpleGeneratedTitle: 'QR atual',
     simpleGeneratedEmpty: 'Digite algo e gere o QR para mostrar aqui.',
-    simpleReceivedTitle: 'Conteudo lido neste dispositivo',
-    simpleReceivedLabel: 'Conteudo lido',
+    simpleReceivedTitle: 'Conteúdo lido neste dispositivo',
+    simpleReceivedLabel: 'Conteúdo lido',
     simpleReceivedPlaceholder: 'O texto recebido aparece aqui para copiar.',
     simpleCopyReceived: 'Copiar texto',
     simpleOpenScanner: 'Abrir leitor QR',
-    simpleCaptureImage: 'Ler por imagem / camera do sistema',
+    simpleCaptureImage: 'Ler por imagem / câmera do sistema',
     simpleCopyLink: 'Copiar link desta parte',
     simpleChars: 'Caracteres',
     simpleCompressed: 'Compactado',
     simpleParts: 'Partes',
     simpleUseP2P:
-      'Se esse conteudo ficar com muitas partes, use o modo P2P para evitar troca manual longa.',
-    simpleGeneratedOne: 'QR pronto. O outro dispositivo ja pode escanear.',
+      'Se esse conteúdo ficar com muitas partes, use o modo P2P para evitar troca manual longa.',
+    simpleGeneratedOne: 'QR pronto. O outro dispositivo já pode escanear.',
     simpleGeneratedMany: (parts: number) =>
-      `Conteudo dividido em ${parts} partes. Leia todas no destino para reconstruir.`,
-    simpleReceivedOk: 'Conteudo recebido com sucesso.',
-    simpleCameraPlainOk: 'QR lido. Conteudo carregado para copia.',
+      `Conteúdo dividido em ${parts} partes. Leia todas no destino para reconstruir.`,
+    simpleReceivedOk: 'Conteúdo recebido com sucesso.',
+    simpleCameraPlainOk: 'QR lido. Conteúdo carregado para cópia.',
     simpleWrongPacket:
-      'Esse QR nao contem texto simples. Troque para o fluxo P2P ou escaneie o QR correto.',
+      'Esse QR não contém texto simples. Troque para o fluxo P2P ou escaneie o QR correto.',
     p2pRoleTitle: 'Escolha o papel deste dispositivo',
     p2pReceiveRole: 'Receber neste dispositivo',
     p2pSendRole: 'Enviar deste dispositivo',
     p2pReceiveIntro:
       'Use este modo no PC ou no aparelho que vai baixar o arquivo. Ele gera a offer e espera a answer do outro lado.',
     p2pSendIntro:
-      'Use este modo no celular ou no aparelho que vai mandar o conteudo. Ele le a offer, responde com uma answer e envia o arquivo ou o texto.',
-    receiveStep1Title: 'Passo 1 — Gerar o QR de conexao neste dispositivo',
+      'Use este modo no celular ou no aparelho que vai mandar o conteúdo. Ele lê a offer, responde com uma answer e envia o arquivo ou o texto.',
+    receiveStep1Title: 'Passo 1 — Gerar o QR de conexão neste dispositivo',
     receiveStep1Description:
-      'No PC ou no aparelho que vai receber, gere a offer e deixe este QR visivel para o dispositivo que vai enviar.',
+      'No PC ou no aparelho que vai receber, gere a offer e deixe este QR visível para o dispositivo que vai enviar.',
     receiveStep2Title: 'Passo 2 — Ler a answer do dispositivo que vai enviar',
     receiveStep2Description:
-      'Depois que o outro dispositivo ler a offer, volte aqui e leia a answer dele pela camera, por imagem ou colando o texto.',
-    receiveStep3Title: 'Passo 3 — Aguardar a conexao e o recebimento',
+      'Depois que o outro dispositivo ler a offer, volte aqui e leia a answer dele pela câmera, por imagem ou colando o texto.',
+    receiveStep3Title: 'Passo 3 — Aguardar a conexão e o recebimento',
     receiveStep3Description:
       'Quando o canal abrir, este dispositivo fica pronto para receber o arquivo ou o texto.',
     sendStep1Title: 'Passo 1 — Ler a offer do dispositivo receptor',
@@ -163,20 +163,20 @@ const uiByLocale = {
       'No celular ou no aparelho que vai enviar, leia a offer mostrada no dispositivo receptor.',
     sendStep2Title: 'Passo 2 — Mostrar a answer para o dispositivo receptor',
     sendStep2Description:
-      'Depois de ler a offer, esta pagina gera uma answer. Deixe este QR aberto para o receptor ler.',
+      'Depois de ler a offer, esta página gera uma answer. Deixe este QR aberto para o receptor ler.',
     sendStep3Title: 'Passo 3 — Aguardar o canal abrir',
     sendStep3Description:
-      'Quando o receptor ler a answer, aguarde alguns segundos ate o canal P2P ficar pronto.',
+      'Quando o receptor ler a answer, aguarde alguns segundos até o canal P2P ficar pronto.',
     sendStep4Title: 'Passo 4 — Enviar arquivo ou texto',
     sendStep4Description:
       'Escolha um arquivo ou cole um texto grande somente depois que o canal estiver aberto.',
     privacyTitle: 'Conectividade e privacidade',
     privacyHint:
-      'Sem TURN relay nesta versao. Com STUN ligado, a conexao continua direta, mas um STUN publico pode ajudar a descobrir a rota.',
+      'Sem TURN relay nesta versão. Com STUN ligado, a conexão continua direta, mas um STUN público pode ajudar a descobrir a rota.',
     privacyStrict:
-      'Com STUN desligado, a chance maior e funcionar na mesma rede ou em cenarios simples de NAT.',
-    stunToggle: 'Usar STUN publico para facilitar conexao direta',
-    generateOffer: 'Gerar pedido de conexao',
+      'Com STUN desligado, a chance maior é funcionar na mesma rede ou em cenários simples de NAT.',
+    stunToggle: 'Usar STUN público para facilitar conexão direta',
+    generateOffer: 'Gerar pedido de conexão',
     regenerateOffer: 'Gerar novo pedido',
     offerReadyOne: 'Offer pronta. Escaneie no celular ou no outro navegador.',
     offerReadyMany: (parts: number) =>
@@ -199,7 +199,7 @@ const uiByLocale = {
     connectivityNFCDesc: 'Toque para conectar (NFC)',
     expandQR: 'Expandir QR',
     closeExpanded: 'Fechar',
-    nfcNotSupported: 'NFC indisponivel. Requer Chrome no Android com NFC ativo.',
+    nfcNotSupported: 'NFC indisponível. Requer Chrome no Android com NFC ativo.',
     nfcWriteOffer: 'Gravar offer no NFC',
     nfcWriteAnswer: 'Gravar answer no NFC',
     nfcReadOffer: 'Ler offer via NFC',
@@ -208,16 +208,16 @@ const uiByLocale = {
     nfcReading: 'Aguardando... Aproxime o outro dispositivo com NFC.',
     nfcWriteSuccess: 'Gravado! O outro dispositivo pode tocar para ler.',
     nfcReadSuccess: 'Lido com sucesso via NFC!',
-    nfcError: 'Erro no NFC. Verifique se esta ativo nas configuracoes.',
+    nfcError: 'Erro no NFC. Verifique se está ativo nas configurações.',
     btShareOffer: 'Compartilhar offer via Bluetooth / AirDrop',
     btShareAnswer: 'Compartilhar answer via Bluetooth / AirDrop',
-    btShareNotSupported: 'Compartilhamento indisponivel. Texto copiado para a area de transferencia.',
+    btShareNotSupported: 'Compartilhamento indisponível. Texto copiado para a área de transferência.',
     btPasteOfferDesc: 'Receba a offer pelo outro dispositivo e cole aqui:',
     btPasteAnswerDesc: 'Receba a answer pelo outro dispositivo e cole aqui:',
-    pasteClipboard: 'Colar da area de transferencia',
+    pasteClipboard: 'Colar da área de transferência',
     pasteAndImport: 'Colar e importar agora',
-    clipboardEmpty: 'Area de transferencia vazia.',
-    clipboardReadError: 'Nao foi possivel ler a area de transferencia.',
+    clipboardEmpty: 'Área de transferência vazia.',
+    clipboardReadError: 'Não foi possível ler a área de transferência.',
     clipboardPasted: 'Texto colado. Revise e importe quando quiser.',
     importOfferTitle: 'Ler offer do dispositivo receptor',
     importAnswerTitle: 'Ler answer do dispositivo que vai enviar',
@@ -228,89 +228,89 @@ const uiByLocale = {
     importByCamera: 'Ler offer/answer por QR',
     openOfferScanner: 'Abrir leitor da offer',
     openAnswerScanner: 'Abrir leitor da answer',
-    connectionIdle: 'Nenhuma conexao ativa ainda.',
+    connectionIdle: 'Nenhuma conexão ativa ainda.',
     connectionWaitingAnswer:
       'Offer gerada. Falta o outro dispositivo responder com a answer.',
     connectionConnecting:
-      'Pareamento concluido. Aguarde o WebRTC abrir o canal entre os dispositivos.',
+      'Pareamento concluído. Aguarde o WebRTC abrir o canal entre os dispositivos.',
     connectionReadyReceive:
-      'Canal aberto. Este dispositivo esta pronto para receber texto ou arquivo.',
+      'Canal aberto. Este dispositivo está pronto para receber texto ou arquivo.',
     connectionReadySend:
-      'Canal aberto. Este dispositivo ja pode enviar texto ou arquivo.',
+      'Canal aberto. Este dispositivo já pode enviar texto ou arquivo.',
     connectionClosed: 'Canal encerrado.',
     connectionFailed:
-      'Falha na conexao P2P. Tente regenerar a offer, revisar a answer ou ligar o STUN.',
+      'Falha na conexão P2P. Tente regenerar a offer, revisar a answer ou ligar o STUN.',
     importOfferOk: 'Offer recebida. A answer foi gerada para o outro dispositivo.',
     importAnswerOk: 'Answer aplicada. Aguarde a abertura do canal.',
-    invalidOffer: 'A offer informada e invalida.',
-    invalidAnswer: 'A answer informada e invalida.',
-    payloadTitle: 'Conteudo para enviar',
+    invalidOffer: 'A offer informada é inválida.',
+    invalidAnswer: 'A answer informada é inválida.',
+    payloadTitle: 'Conteúdo para enviar',
     payloadModeFile: 'Arquivo',
     payloadModeText: 'Texto grande',
     payloadTextLabel: 'Texto para transferir',
     payloadTextPlaceholder:
-      'Cole aqui um texto maior, um JSON grande, um trecho de log ou qualquer conteudo que nao caiba bem em QR.',
+      'Cole aqui um texto maior, um JSON grande, um trecho de log ou qualquer conteúdo que não caiba bem em QR.',
     payloadChooseFile: 'Selecionar arquivo',
     payloadNoFile: 'Nenhum arquivo selecionado.',
     sendNow: 'Enviar agora',
     sending: 'Enviando...',
-    sendDone: 'Envio concluido.',
-    sendNeedsChannel: 'O canal ainda nao esta aberto.',
+    sendDone: 'Envio concluído.',
+    sendNeedsChannel: 'O canal ainda não está aberto.',
     sendNeedsText: 'Digite um texto antes de enviar.',
     sendNeedsFile: 'Escolha um arquivo antes de enviar.',
     sendPreparing: 'Preparando envio...',
     receiving: (fileName: string) => `Recebendo ${fileName}...`,
     receiveDoneFile: (fileName: string) =>
       `${fileName} recebido. O download foi disparado neste dispositivo.`,
-    receiveDoneText: 'Texto recebido. Voce pode copiar ou baixar agora.',
-    receiveResultTitle: 'Conteudo recebido neste dispositivo',
+    receiveDoneText: 'Texto recebido. Você pode copiar ou baixar agora.',
+    receiveResultTitle: 'Conteúdo recebido neste dispositivo',
     receiveDownload: 'Baixar novamente',
     receiveCopy: 'Copiar texto recebido',
     receiveEmpty:
-      'Depois que a conexao abrir e o envio terminar, o arquivo ou o texto recebido aparece aqui.',
-    resetSession: 'Resetar sessao',
+      'Depois que a conexão abrir e o envio terminar, o arquivo ou o texto recebido aparece aqui.',
+    resetSession: 'Resetar sessão',
     loadingOffer: 'Gerando offer e preparando os QR Codes...',
     loadingOfferImport: 'Lendo a offer e gerando a answer...',
     loadingAnswerImport: 'Aplicando a answer e aguardando o canal...',
-    loadingCamera: 'Abrindo camera para ler o QR...',
-    scannerTitle: 'Leitor QR da pagina',
+    loadingCamera: 'Abrindo câmera para ler o QR...',
+    scannerTitle: 'Leitor QR da página',
     scannerIntro:
-      'Use a camera do navegador ou envie uma imagem do QR. Em muitos celulares, o seletor de imagem tambem abre a camera do sistema.',
+      'Use a câmera do navegador ou envie uma imagem do QR. Em muitos celulares, o seletor de imagem também abre a câmera do sistema.',
     scannerForSimpleTitle: 'Ler QR de texto',
     scannerForOfferTitle: 'Ler QR da offer',
     scannerForAnswerTitle: 'Ler QR da answer',
-    scannerSimpleHint: 'Aponte a camera para o QR de texto do outro dispositivo.',
-    scannerOfferHint: 'Aponte a camera para o QR da offer mostrado no dispositivo receptor.',
-    scannerAnswerHint: 'Aponte a camera para o QR da answer mostrado no dispositivo que vai enviar.',
-    scannerStart: 'Iniciar camera',
-    scannerStop: 'Parar camera',
+    scannerSimpleHint: 'Aponte a câmera para o QR de texto do outro dispositivo.',
+    scannerOfferHint: 'Aponte a câmera para o QR da offer mostrado no dispositivo receptor.',
+    scannerAnswerHint: 'Aponte a câmera para o QR da answer mostrado no dispositivo que vai enviar.',
+    scannerStart: 'Iniciar câmera',
+    scannerStop: 'Parar câmera',
     scannerClose: 'Fechar leitor',
-    scannerDevice: 'Camera',
+    scannerDevice: 'Câmera',
     scannerImageLabel: 'Escolher imagem do QR',
     scannerReady: 'Leitor QR pronto.',
-    scannerReading: 'Aponte a camera para o QR.',
+    scannerReading: 'Aponte a câmera para o QR.',
     scannerAwaitMore: (count: number, total: number) =>
-      `Parte ${count} de ${total} lida. Continue com as proximas.`,
+      `Parte ${count} de ${total} lida. Continue com as próximas.`,
     scannerWrongSignal:
-      'O QR lido nao pertence a este passo. Confira se esta lendo offer ou answer.',
+      'O QR lido não pertence a este passo. Confira se está lendo offer ou answer.',
     scannerUnsupportedText:
-      'Seu navegador nao permitiu a camera neste momento. Voce ainda pode enviar uma imagem do QR ou usar a camera nativa do celular.',
-    scannerImageError: 'Nao foi possivel ler esse arquivo como QR Code.',
-    scannerCameraError: 'Nao foi possivel iniciar a camera para ler o QR.',
+      'Seu navegador não permitiu a câmera neste momento. Você ainda pode enviar uma imagem do QR ou usar a câmera nativa do celular.',
+    scannerImageError: 'Não foi possível ler esse arquivo como QR Code.',
+    scannerCameraError: 'Não foi possível iniciar a câmera para ler o QR.',
     scannerHashLoaded: (count: number, total: number) =>
-      `A pagina abriu com a parte ${count} de ${total}. Use o leitor interno para completar a transferencia.`,
-    scannerHashTextDone: 'Conteudo vindo do QR carregado automaticamente nesta pagina.',
+      `A página abriu com a parte ${count} de ${total}. Use o leitor interno para completar a transferência.`,
+    scannerHashTextDone: 'Conteúdo vindo do QR carregado automaticamente nesta página.',
     scannerHashOfferDone:
       'Offer recebida pela URL. A answer foi gerada automaticamente para este dispositivo.',
     scannerHashAnswerDone:
       'Answer recebida pela URL. Aguarde a abertura do canal P2P.',
     localOnlyNote:
-      'Processamento local no navegador. No modo P2P, o payload principal segue pelo DataChannel apos o pareamento.',
+      'Processamento local no navegador. No modo P2P, o payload principal segue pelo DataChannel após o pareamento.',
     partLabel: (index: number, total: number) => `Parte ${index} de ${total}`,
     previous: 'Anterior',
-    next: 'Proxima',
+    next: 'Próxima',
     copied: 'Copiado.',
-    copyError: 'Nao foi possivel copiar agora.',
+    copyError: 'Não foi possível copiar agora.',
   },
   en: {
     simpleTab: 'Quick QR',
@@ -1241,10 +1241,10 @@ const readFileAsUint8Array = (file: File): Promise<Uint8Array> =>
         return;
       }
 
-      reject(new Error('Nao foi possivel ler o arquivo.'));
+      reject(new Error('Não foi possível ler o arquivo.'));
     };
 
-    reader.onerror = () => reject(new Error('Nao foi possivel ler o arquivo.'));
+    reader.onerror = () => reject(new Error('Não foi possível ler o arquivo.'));
     reader.readAsArrayBuffer(file);
   });
 

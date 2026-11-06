@@ -90,14 +90,14 @@ type Ui = {
 const uiByLocale: Record<AppLocale, Ui> = {
   "pt-br": {
     tabNames: "Sorteio de Nomes",
-    tabNumbers: "Sorteio de Numeros",
+    tabNumbers: "Sorteio de Números",
     tabTeams: "Sorteio de Equipes",
     namesTitle: "Sorteio de Nomes e Listas",
-    namesPlaceholder: "Joao\nMaria\nPedro\nAna\nCarlos\nBeatriz",
-    numbersTitle: "Sorteio de Numeros",
-    numbersDescription: "Defina o intervalo de numeros para o sorteio.",
+    namesPlaceholder: "João\nMaria\nPedro\nAna\nCarlos\nBeatriz",
+    numbersTitle: "Sorteio de Números",
+    numbersDescription: "Defina o intervalo de números para o sorteio.",
     rangeStartLabel: "De",
-    rangeEndLabel: "Ate",
+    rangeEndLabel: "Até",
     teamsTitle: "Sorteio de Equipes",
     teamsDescription:
       "Informe abaixo a lista de participantes a ser sorteada:",
@@ -108,21 +108,21 @@ const uiByLocale: Record<AppLocale, Ui> = {
     groupsLabel: "Grupos",
     drawCountPrefix: "Sortear",
     drawCountSuffix: "item(ns) da lista abaixo:",
-    drawCountNumbers: "numero(s)",
-    optionsTitle: "Opcoes do Sorteio",
-    separatorLabel: "Qual o criterio de separacao",
+    drawCountNumbers: "número(s)",
+    optionsTitle: "Opções do Sorteio",
+    separatorLabel: "Qual o critério de separação",
     autoSeparator: "Detectar automaticamente",
     separatorNames: {
       newline: "Quebra de Linha",
-      comma: "Virgula",
-      space: "Espaco",
+      comma: "Vírgula",
+      space: "Espaço",
       tab: "Tab",
       dot: "Ponto",
       pipe: "Pipe (|)",
       slash: "Barra (/)",
       semicolon: "Ponto e virgula",
     },
-    dedupe: "Nao sortear nomes ja sorteados",
+    dedupe: "Remover itens repetidos da lista",
     orderResults: "Ordenar resultados em ordem crescente",
     countdownToggle: "Adicionar contagem regressiva (mais emocao)",
     countdownTimeLabel: "Tempo de contagem regressiva:",
@@ -132,8 +132,8 @@ const uiByLocale: Record<AppLocale, Ui> = {
     rouletteToggle: "Ativar modo roleta visual",
     weightedToggle: "Aplicar pesos no sorteio",
     shuffleBeforeDraw: "Embaralhar antes de sortear",
-    avoidPreviousWinners: "Nao sortear nomes ja sorteados",
-    separationCriteria: "Qual o criterio de separacao",
+    avoidPreviousWinners: "Não sortear nomes já sorteados",
+    separationCriteria: "Qual o critério de separação",
     drawButton: "SORTEAR AGORA",
     drawingButton: "Sorteando...",
     invalidDraw: "Adicione pelo menos um item valido para sortear.",
@@ -146,19 +146,19 @@ const uiByLocale: Record<AppLocale, Ui> = {
     shareLink: "Compartilhar link",
     exitResult: "Sair",
     copied: "Copiado",
-    fairnessTitle: "Transparencia e Justica",
-    fairnessSeed: "Seed",
+    fairnessTitle: "Transparência e Justiça",
+    fairnessSeed: "Identificador",
     fairnessAlgorithm: "Algoritmo",
-    simulationTitle: "Simulacao (1000 sorteios)",
+    simulationTitle: "Simulação (1000 sorteios)",
     simulationDescription:
-      "Valide a distribuicao e confira se os pesos estao corretos.",
-    simulateButton: "Rodar simulacao",
+      "Valide a distribuição e confira se os pesos estão corretos.",
+    simulateButton: "Rodar simulação",
     simulationHits: "Vezes",
     simulationShare: "%",
     localNote:
-      "Processamento 100% local. Nenhum dado e enviado para servidor.",
-    copyError: "Nao foi possivel copiar.",
-    shareError: "Nao foi possivel gerar link.",
+      "O sorteio é feito no navegador. A lista não é enviada ao servidor, mas aparece no link se você usar \"Compartilhar link\".",
+    copyError: "Não foi possível copiar.",
+    shareError: "Não foi possível gerar o link.",
     teamResult: "Equipe",
   },
   en: {
@@ -396,7 +396,7 @@ const rouletteColors = [
 const countdownPresetOptions = [3, 5, 10, 15, 30, 60];
 
 const defaultSourceInput =
-  "Joao\nMaria\nPedro\nAna\nCarlos\nBeatriz\nRafael\nJulia";
+  "João\nMaria\nPedro\nAna\nCarlos\nBeatriz\nRafael\nJúlia";
 
 const storageKey = "tool:sorteador:v2";
 

@@ -1,35 +1,35 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const audioVideoTranscriptionIntro =
-  'Transcreva áudio e vídeo no navegador, revise os trechos com timestamp e crie um vídeo com legendas personalizadas. Ajuste a posição, o tamanho, a cor e a fonte, sem enviar sua mídia para um servidor.';
+  'Transcreva áudio e vídeo para texto no navegador, revise os trechos com timestamp e gere um vídeo com legendas personalizadas. Seu arquivo não é enviado a um servidor.';
 
 export const audioVideoTranscriptionContentBlocks: ContentBlock[] = [
   {
-    title: 'Transcrição de áudio e vídeo no navegador',
+    title: 'Como transcrever áudio e vídeo no navegador',
     paragraphs: [
-      'A ferramenta usa Whisper para transformar falas em texto e dividir o resultado em trechos com timestamps. Você pode enviar arquivos de áudio como MP3, WAV, M4A, AAC, OGG, OPUS ou FLAC, além de vídeos MP4, MOV, WEBM e MKV. Em vídeos, o navegador extrai a faixa de áudio para reconhecer a fala.',
-      'O modelo funciona no seu dispositivo. Se o navegador permitir, a transcrição usa WebGPU; caso contrário, executa pela CPU com um modelo leve sugerido para celulares e aparelhos de menor capacidade. Na primeira utilização, os arquivos do modelo precisam ser baixados e podem ocupar espaço em cache.',
+      'A ferramenta usa o modelo de reconhecimento de fala Whisper para transformar a fala em texto e dividir o resultado em trechos com timestamps. Envie áudio (MP3, WAV, M4A, AAC, OGG, OPUS, FLAC) ou vídeo (MP4, MOV, WEBM, MKV e outros): em vídeos, o navegador extrai a faixa de áudio antes de reconhecer a fala. O arquivo pode ter até 2 GB e até 4 horas de duração.',
+      'Você pode deixar o idioma em detecção automática ou escolher português, inglês, espanhol, francês, alemão, italiano, japonês, coreano, chinês ou russo. Também existe o modo de traduzir a fala para inglês. Em Qualidade, as opções são Rápido (modelo tiny, cerca de 75 MB), Equilibrado (modelo base, cerca de 135 MB, a opção recomendada) e Alta qualidade (modelo small, de 250 a 410 MB), que é mais lenta e usa mais memória.',
     ],
   },
   {
-    title: 'Revise o texto e reduza repetições inesperadas',
+    title: 'Velocidade, primeiro uso e precisão',
     paragraphs: [
-      'O reconhecimento automático pode errar nomes, sotaques, falas sobrepostas, trechos cantados ou áudio com ruído. A ferramenta reduz loops longos de frases repetidas que podem aparecer quando o modelo perde o contexto, mantendo algumas repetições que fazem parte de uma fala normal. Essa limpeza evita blocos enormes de palavras duplicadas, mas não substitui a revisão do resultado.',
-      'Na aba de segmentos, confira cada frase junto do timestamp e use o player para ouvir aquele ponto. Para preparar legendas, os trechos longos são separados em linhas menores e ficam disponíveis para edição. Corrija palavras e pontuação antes de gerar o arquivo final.',
+      'Na primeira transcrição, os arquivos do modelo escolhido são baixados e guardados no cache do navegador; nas próximas vezes eles já estão no aparelho. Se o navegador tiver WebGPU, a transcrição usa a placa de vídeo. Sem ela, roda pelo processador, mais devagar, e em celulares e aparelhos modestos a ferramenta sugere o modelo Rápido. Não há tempo fixo: depende do aparelho, do modelo e do tamanho do arquivo, e em gravações longas pelo processador pode levar mais do que a duração do áudio.',
+      'O reconhecimento automático erra. Nomes próprios, sotaques, termos técnicos, fala sobreposta, música e áudio com ruído costumam gerar trechos incorretos, e o modelo pode repetir frases quando perde o contexto. A ferramenta reduz repetições longas, mas isso não substitui a revisão. Confira cada trecho junto do timestamp e use o player para ouvir aquele ponto.',
     ],
   },
   {
-    title: 'Personalize e exporte legendas para vídeo',
+    title: 'Edite o texto e gere legendas para vídeo',
     paragraphs: [
-      'Depois de transcrever um vídeo, escolha “Legendar vídeo” no resultado. A prévia acompanha a reprodução e permite colocar o texto em cima, no centro ou embaixo. Ajuste o tamanho, escolha uma cor, use uma fonte sem serifa, com serifa ou monoespaçada e ative um fundo escuro para dar contraste.',
-      'Ao gerar o vídeo, as legendas ficam gravadas na imagem. O navegador renderiza o arquivo localmente e em tempo real; mantenha a página aberta até terminar. A resolução de saída é limitada a 1920 por 1080 pixels, e o formato depende do suporte do navegador, geralmente WebM ou MP4. Se a gravação não estiver disponível, exporte SRT ou WebVTT e aplique as legendas em outro editor.',
+      'Cada trecho tem um campo editável que mantém o timestamp. Trechos longos são divididos em linhas menores, próprias para legenda. Corrija palavras, pontuação e nomes antes de exportar. Depois, copie o texto ou baixe em TXT, TXT com timestamps, SRT, VTT ou JSON.',
+      'Para um vídeo com legendas gravadas na imagem, escolha “Legendar vídeo” no resultado. A prévia acompanha a reprodução e permite colocar o texto em cima, no centro ou embaixo, ajustar tamanho e cor, escolher fonte (sem serifa, com serifa ou monoespaçada) e ativar um fundo escuro. O navegador regrava o vídeo em tempo real: mantenha a página aberta até terminar. A saída é limitada a 1920 por 1080 pixels e o formato (geralmente WebM ou MP4) depende do navegador. Se a gravação não estiver disponível, baixe o SRT ou o VTT e aplique as legendas em outro editor.',
     ],
   },
   {
-    title: 'Privacidade, desempenho e formatos de exportação',
+    title: 'Privacidade e limites',
     paragraphs: [
-      'Áudio, vídeo, transcrição e vídeo legendado são processados no navegador e não são enviados aos nossos servidores nem incluídos em eventos de análise. Apenas os arquivos do modelo de transcrição são baixados de uma fonte externa para que o reconhecimento funcione.',
-      'A velocidade depende do aparelho, do tamanho do arquivo e do suporte a WebGPU. Sem aceleração por GPU, a CPU pode levar mais tempo que a duração do áudio, especialmente em gravações extensas. Você pode cancelar a transcrição e, ao terminar, copiar o texto ou exportar TXT, timestamps, SRT, WebVTT e JSON.',
+      'Áudio, vídeo, transcrição e vídeo legendado são processados no seu aparelho e não são enviados aos nossos servidores nem incluídos em eventos de análise. O que é baixado de fora é o modelo de transcrição, hospedado na Hugging Face, na primeira vez que você o usa.',
+      'Arquivos longos exigem memória. Se o aparelho ficar sem memória, a transcrição falha com uma mensagem de erro; nesse caso, tente o modelo Rápido ou divida a gravação em partes menores. Você pode cancelar a transcrição a qualquer momento.',
     ],
   },
 ];
@@ -38,26 +38,26 @@ export const audioVideoTranscriptionFaq: FaqItem[] = [
   {
     question: 'Meu áudio ou vídeo é enviado para algum servidor?',
     answer:
-      'Não. O reconhecimento, a prévia e a renderização das legendas acontecem localmente no navegador. Apenas os arquivos do modelo de transcrição são baixados para o aparelho.',
+      'Não. O reconhecimento, a prévia e a renderização das legendas acontecem no navegador. Só os arquivos do modelo de transcrição são baixados na primeira vez e ficam em cache.',
   },
   {
-    question: 'Como criar um vídeo com as legendas gravadas na imagem?',
+    question: 'Quais idiomas são aceitos e quanto a transcrição é precisa?',
     answer:
-      'Envie um vídeo, transcreva o áudio e escolha “Legendar vídeo”. Revise os textos com timestamp, ajuste posição, tamanho, cor e fonte e gere uma nova cópia do vídeo.',
+      'Português, inglês, espanhol, francês, alemão, italiano, japonês, coreano, chinês e russo, ou detecção automática. A precisão varia com a qualidade do áudio, o sotaque, o ruído e o modelo escolhido, então revise o texto antes de usar.',
   },
   {
-    question: 'Posso corrigir palavras antes de exportar?',
+    question: 'Quanto tempo leva e qual modelo devo escolher?',
     answer:
-      'Sim. Cada trecho da legenda tem um campo editável e mantém seu timestamp. Você pode corrigir palavras, pontuação e nomes antes de gerar o vídeo.',
+      'Depende do aparelho e do tamanho do arquivo. Equilibrado (modelo base) é o recomendado; Rápido (tiny) é mais leve para celulares; Alta qualidade (small) erra menos, mas baixa mais dados e usa mais memória. Sem WebGPU, a transcrição roda pelo processador e pode demorar mais que o próprio áudio.',
   },
   {
-    question: 'Por que a transcrição pode repetir palavras?',
+    question: 'Posso corrigir o texto e gerar um vídeo com legendas?',
     answer:
-      'Modelos de fala podem entrar em loops quando há música, ruído, silêncio ou fala difícil de entender. A ferramenta reduz repetições longas e você pode revisar cada trecho antes de exportar.',
+      'Sim. Cada trecho é editável e mantém o timestamp. Escolha “Legendar vídeo” para ajustar posição, tamanho, cor e fonte e gerar uma cópia do vídeo com as legendas gravadas. Também dá para baixar SRT, VTT, TXT ou JSON.',
   },
   {
-    question: 'A transcrição funciona no celular sem WebGPU?',
+    question: 'Existe limite de tamanho ou duração?',
     answer:
-      'Sim. Sem WebGPU, o navegador usa um modelo mais leve pela CPU. Isso pode demorar mais, mas evita depender de uma placa de vídeo compatível. A renderização do vídeo legendado também acontece no aparelho e em tempo real.',
+      'O arquivo pode ter até 2 GB e 4 horas de duração. Em aparelhos com pouca memória, arquivos longos podem falhar: use o modelo Rápido ou divida a gravação em partes.',
   },
 ];

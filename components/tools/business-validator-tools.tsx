@@ -61,14 +61,14 @@ const cnpjUi = {
     validatorTitle: 'Validar CNPJ',
     validatorPlaceholder: '00.000.000/0001-00',
     validate: 'Validar',
-    valid: 'CNPJ valido',
-    invalid: 'CNPJ invalido',
+    valid: 'CNPJ válido',
+    invalid: 'CNPJ inválido',
     formatted: 'Formatado',
-    digits: 'Somente numeros',
+    digits: 'Somente números',
     generatorTitle: 'Gerar CNPJs',
     quantity: 'Quantidade',
     branch: 'Filial',
-    branchHint: 'Use 0001 para matriz ou informe outro codigo de filial.',
+    branchHint: 'Use 0001 para matriz ou informe outro código de filial.',
     withMask: 'Com pontuacao',
     withoutMask: 'Sem pontuacao',
     generate: 'Gerar',
@@ -83,10 +83,10 @@ const cnpjUi = {
     exportJson: 'JSON',
     clear: 'Limpar',
     resultTitle: 'Resultado',
-    generatedCount: 'CNPJ(s) valido(s) gerado(s).',
+    generatedCount: 'CNPJ(s) válido(s) gerado(s).',
     invalidQuantity: 'Informe uma quantidade entre 1 e 200.',
-    copyError: 'Nao foi possivel copiar.',
-    localProcessingNote: 'A geracao acontece localmente no navegador. Nenhum CNPJ e enviado para servidor.',
+    copyError: 'Não foi possível copiar.',
+    localProcessingNote: 'A geração acontece localmente no navegador. Nenhum CNPJ é enviado para servidor.',
     empty: 'Gere CNPJs para visualizar a lista.',
   },
   en: {
@@ -410,34 +410,34 @@ export function CnpjValidatorGeneratorTool({ locale = 'pt-br' }: Readonly<{ loca
 
 const boletoUi = {
   'pt-br': {
-    title: 'Validador de boleto e linha digitavel',
-    intro: 'Cole linha digitavel ou codigo de barras para validar DACs, converter formatos e extrair vencimento, valor e campo livre.',
-    input: 'Linha digitavel ou codigo de barras',
+    title: 'Validador de boleto e linha digitável',
+    intro: 'Cole a linha digitável ou o código de barras para validar os dígitos verificadores, converter formatos e ler vencimento, valor e campo livre.',
+    input: 'Linha digitável ou código de barras',
     placeholder: '34191.09008 72564.898723 32408.290008 1 10010000082831',
     validate: 'Validar boleto',
-    startCamera: 'Abrir camera',
-    stopCamera: 'Parar camera',
-    cameraTitle: 'Scanner por camera',
-    cameraHint: 'Aponte a camera para o codigo de barras. Se o navegador nao liberar a camera, cole a linha digitavel no campo acima.',
-    cameraFound: 'Codigo lido pela camera.',
-    copyBarcode: 'Copiar codigo de barras',
-    copyLine: 'Copiar linha digitavel',
+    startCamera: 'Abrir câmera',
+    stopCamera: 'Parar câmera',
+    cameraTitle: 'Scanner por câmera',
+    cameraHint: 'Aponte a câmera para o código de barras. Se o navegador não liberar a câmera, cole a linha digitável no campo acima.',
+    cameraFound: 'Código lido pela câmera.',
+    copyBarcode: 'Copiar código de barras',
+    copyLine: 'Copiar linha digitável',
     exportJson: 'Exportar JSON',
     copied: 'Copiado',
-    valid: 'Boleto valido',
+    valid: 'Boleto válido',
     invalid: 'Boleto com divergencias',
     kind: 'Tipo',
     amount: 'Valor',
     bank: 'Banco',
     due: 'Vencimento',
-    barcode: 'Codigo de barras',
+    barcode: 'Código de barras',
     freeField: 'Campo livre',
     issues: 'Inconsistencias',
     noIssues: 'Nenhuma divergencia encontrada.',
-    bankBoleto: 'Boleto bancario',
-    collectionBoleto: 'Arrecadacao/concessionaria',
+    bankBoleto: 'Boleto bancário',
+    collectionBoleto: 'Arrecadação/concessionária',
     partsTitle: 'Partes explicadas',
-    segmentedLine: 'Linha digitavel segmentada',
+    segmentedLine: 'Linha digitável segmentada',
   },
   en: {
     title: 'Boleto and digitable line validator',
@@ -541,21 +541,21 @@ type BoletoVisualSegment = {
 const boletoSegmentText = {
   'pt-br': {
     bankCode: 'Banco',
-    bankCodeDesc: 'Os 3 primeiros digitos identificam a instituicao emissora.',
+    bankCodeDesc: 'Os 3 primeiros dígitos identificam a instituição emissora.',
     currency: 'Moeda',
-    currencyDesc: 'Codigo da moeda. Em boletos comuns, 9 representa Real.',
+    currencyDesc: 'Código da moeda. Em boletos comuns, 9 representa Real.',
     generalDac: 'DAC geral',
-    generalDacDesc: 'Digito verificador do codigo de barras inteiro.',
+    generalDacDesc: 'Dígito verificador do código de barras inteiro.',
     dueFactor: 'Vencimento',
     dueFactorDesc: 'Fator que aponta a data de vencimento do boleto.',
     amount: 'Valor',
-    amountDesc: 'Valor codificado em centavos dentro do codigo de barras.',
+    amountDesc: 'Valor codificado em centavos dentro do código de barras.',
     freeField: 'Campo livre',
-    freeFieldDesc: 'Area usada pelo banco ou convenio para dados internos.',
+    freeFieldDesc: 'Área usada pelo banco ou convênio para dados internos.',
     field: 'Campo',
-    fieldDesc: 'Bloco da linha digitavel com digito verificador proprio.',
-    collectionType: 'Tipo de arrecadacao',
-    collectionTypeDesc: 'Indica convenio, concessionaria ou formato de arrecadacao.',
+    fieldDesc: 'Bloco da linha digitável com dígito verificador próprio.',
+    collectionType: 'Tipo de arrecadação',
+    collectionTypeDesc: 'Os 4 primeiros dígitos: produto (8 = arrecadação), segmento, identificação do valor e o DAC geral.',
   },
   en: {
     bankCode: 'Bank',
@@ -640,7 +640,15 @@ const getBoletoVisualSegments = (result: BoletoParseResult, locale: AppLocale): 
   if (result.kind === 'collection' && barcode.length === 44) {
     return [
       { label: text.collectionType, value: barcode.slice(0, 4), description: text.collectionTypeDesc, className: boletoSegmentClasses[0] },
-      { label: text.currency, value: barcode.slice(2, 3), description: text.currencyDesc, className: boletoSegmentClasses[1] },
+      {
+        label: locale === 'pt-br' ? 'Identificação do valor' : text.currency,
+        value: barcode.slice(2, 3),
+        description:
+          locale === 'pt-br'
+            ? 'Indica se o valor é efetivo ou de referência e o módulo do DAC: 6 e 7 usam módulo 10; 8 e 9 usam módulo 11.'
+            : text.currencyDesc,
+        className: boletoSegmentClasses[1],
+      },
       { label: text.generalDac, value: barcode.slice(3, 4), description: text.generalDacDesc, className: boletoSegmentClasses[2] },
       { label: text.amount, value: barcode.slice(4, 15), description: `${text.amountDesc} ${result.amountDisplay ?? ''}`.trim(), className: boletoSegmentClasses[4] },
       { label: text.freeField, value: barcode.slice(15), description: text.freeFieldDesc, className: boletoSegmentClasses[5] },
@@ -780,7 +788,7 @@ export function BoletoValidatorTool({ locale = 'pt-br' }: Readonly<{ locale?: Ap
       setCameraActive(true);
       setCameraMessage('');
     } catch (error) {
-      setCameraMessage(error instanceof Error ? error.message : 'Falha ao abrir camera.');
+      setCameraMessage(error instanceof Error ? error.message : 'Falha ao abrir a câmera.');
       setCameraActive(false);
       trackEvent('tool_error', {
         tool: TOOL_ID.boletoValidator,

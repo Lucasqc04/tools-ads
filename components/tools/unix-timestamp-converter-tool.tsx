@@ -36,7 +36,7 @@ type UnixUi = {
 
 const uiByLocale: Record<AppLocale, UnixUi> = {
   'pt-br': {
-    localNote: 'Conversao local no navegador. Ideal para logs, API, JWT e banco de dados.',
+    localNote: 'Conversão local no navegador. Ideal para logs, API, JWT e banco de dados.',
     forwardTitle: 'Timestamp -> Data',
     forwardPlaceholder: 'Ex.: 1716890240 ou 1716890240000',
     localLabel: 'Local',

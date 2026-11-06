@@ -19,7 +19,7 @@ const contentByLocale: Record<AppLocale, ZplLabelEditorContent> = {
   'pt-br': {
     name: 'Editor de Etiquetas ZPL',
     shortDescription:
-      'Importe ZPL, adicione uma descrição diferente em cada etiqueta e gere um único PDF para imprimir.',
+      'Importe ZPL, escreva uma descrição diferente em cada etiqueta e gere um único PDF para imprimir.',
     primaryKeyword: 'editor de etiquetas zpl',
     secondaryKeywords: [
       'adicionar descrição em etiqueta shopee',
@@ -30,37 +30,38 @@ const contentByLocale: Record<AppLocale, ZplLabelEditorContent> = {
     ],
     searchIntent:
       'Vendedores e equipes de expedição que precisam incluir identificação interna em várias etiquetas ZPL antes de imprimir.',
-    seoTitle: 'Editor de Etiquetas ZPL para Shopee | Adicionar Descrição e Gerar PDF',
+    seoTitle: 'Editor de Etiquetas ZPL para Shopee | Descrição e PDF',
     seoDescription:
-      'Importe etiquetas ZPL da Shopee, adicione um produto em cada etiqueta, revise em grade e exporte um único PDF para imprimir.',
+      'Importe etiquetas ZPL (Shopee e outras), escreva a descrição do produto em cada uma, revise em grade e exporte um PDF único, PNG ou o ZPL editado.',
     h1: 'Editor de Etiquetas ZPL',
     intro:
-      'Importe etiquetas da Shopee ou qualquer arquivo ZPL, adicione informações por pedido e gere tudo em um único PDF.',
+      'Importe um arquivo ZPL, como o de etiquetas da Shopee, escreva o produto de cada pedido na etiqueta correspondente e exporte tudo em um único PDF.',
     contentBlocks: [
       {
-        title: 'Adicione a identificação interna antes de imprimir',
+        title: 'Escreva a identificação interna em cada etiqueta',
         paragraphs: [
-          'Arquivos ZPL de transportadoras normalmente trazem os dados de envio, mas não a identificação que ajuda a separar produtos no estoque. Este editor divide automaticamente cada bloco ^XA ... ^XZ, permitindo registrar uma descrição diferente para cada etiqueta sem alterar o arquivo de origem.',
-          'Você pode preencher uma sequência inteira com o teclado: escreva o produto, pressione Enter e a próxima etiqueta já fica pronta para receber a informação. A lista mostra o avanço do lote e leva você diretamente às pendências quando for hora de revisar.',
+          'Arquivos ZPL de marketplaces e transportadoras trazem os dados de envio, mas não o nome do produto que ajuda a separar os pedidos na embalagem. Este editor divide o arquivo em etiquetas (cada bloco entre ^XA e ^XZ) e permite escrever uma descrição, e uma observação opcional, para cada uma.',
+          'Você preenche o lote só com o teclado: escreva o produto, pressione Enter e a próxima etiqueta abre pronta para receber o texto. O contador mostra quantas etiquetas já foram preenchidas, e o filtro "Pendentes" leva direto às que faltam.',
         ],
         list: [
-          'Importe .zpl e .txt ou cole o código.',
-          'Preencha descrições individuais em sequência.',
-          'Revise o lote em modo individual ou em grade.',
+          'Importe um arquivo .zpl ou .txt, ou cole o código.',
+          'Preencha as descrições em sequência e revise em modo individual ou em grade.',
+          'Exporte PDF, ZPL editado ou o PNG da etiqueta atual.',
         ],
       },
       {
-        title: 'Posição e estilo compartilhados, conteúdo individual',
+        title: 'Posição e estilo do texto',
         paragraphs: [
-          'Defina uma vez a posição, largura, alinhamento, tamanho de fonte, linhas e rotação da descrição. Depois, aplique esse estilo ao lote inteiro: cada etiqueta mantém seu próprio produto, enquanto a apresentação permanece consistente para a operação de embalagem.',
-          'O preview ajuda a posicionar a informação sem transformar a tela principal em um editor técnico. Se precisar, o modo avançado abre o ZPL da etiqueta selecionada, mostra avisos básicos de estrutura e preserva o ZPL original para que você possa restaurá-lo.',
+          'Defina uma vez a posição, a largura, o alinhamento, o tamanho da fonte, o máximo de linhas e a rotação do texto. Ao aplicar o estilo, ele vale para todo o lote, e cada etiqueta mantém seu próprio texto. A posição também pode ser ajustada direto no preview.',
+          'O ZPL original de cada etiqueta é preservado: a descrição é inserida em um bloco separado, antes do ^XZ, e o botão "Restaurar etiqueta original" remove o que foi acrescentado. O modo avançado mostra o código da etiqueta selecionada e avisa sobre problemas simples, como ^XA/^XZ ausentes, falta de campo ^FD ou coordenada ^FO inválida.',
         ],
       },
       {
-        title: 'PDF único e limites de renderização',
+        title: 'PDF, prévia e limites',
         paragraphs: [
-          'Ao gerar o PDF, cada etiqueta recebe uma página com o ZPL e sua descrição já aplicada. O código ZPL completo também pode ser exportado para guardar ou enviar à impressora. Para rótulos complexos, o preview preciso usa um renderizador ZPL compatível; se ele estiver indisponível, a ferramenta mostra uma prévia local simplificada para que o lote continue editável.',
-          'O lote e as descrições são salvos temporariamente no navegador para evitar perda de trabalho após um recarregamento. Ao usar a renderização precisa, somente a etiqueta em processamento é encaminhada ao serviço de renderização; os dados nunca são enviados aos eventos de análise do site.',
+          'O PDF tem uma página por etiqueta do lote, inclusive as que ficaram sem descrição, no tamanho em milímetros e no DPI definidos no estilo. As páginas são imagens: o texto não pode ser selecionado.',
+          'Para a prévia fiel e para o PDF, cada etiqueta, já com a descrição, é enviada ao servidor do site, que a repassa ao serviço de renderização Labelary. Como etiquetas de envio costumam ter nome e endereço, use a ferramenta apenas se isso for aceitável para você. Se o serviço estiver indisponível, o editor usa uma prévia local simplificada (texto, caixas e códigos de barras aproximados), que pode diferir da etiqueta impressa. Cada envio aceita até 3 MB de ZPL.',
+          'O lote fica salvo neste navegador por até 7 dias, para que você retome o trabalho após recarregar a página, e pode ser descartado a qualquer momento. Os dados das etiquetas não vão para os eventos de análise do site.',
         ],
       },
     ],
@@ -68,27 +69,27 @@ const contentByLocale: Record<AppLocale, ZplLabelEditorContent> = {
       {
         question: 'Consigo editar várias etiquetas da Shopee de uma vez?',
         answer:
-          'Sim. O arquivo é separado automaticamente em etiquetas e cada uma recebe sua própria descrição, enquanto a posição e o estilo podem ser aplicados a todo o lote.',
+          'Sim. O arquivo é separado em etiquetas e cada uma recebe sua própria descrição. A posição e o estilo do texto valem para todo o lote. A ferramenta lê qualquer arquivo ZPL com blocos ^XA e ^XZ.',
       },
       {
         question: 'Preciso entender comandos ZPL?',
         answer:
-          'Não. O modo padrão trabalha com descrição, posição e preview. O editor de código fica disponível apenas no modo avançado.',
+          'Não. O uso comum envolve digitar a descrição e ajustar a posição no preview. O editor de código só aparece no modo avançado, para quem conhece ZPL.',
       },
       {
         question: 'O PDF contém todas as etiquetas?',
         answer:
-          'Sim. A exportação principal cria um PDF único com uma página por etiqueta modificada.',
+          'Sim. O PDF tem uma página para cada etiqueta do lote, com ou sem descrição. Se faltarem descrições, a ferramenta avisa antes e você pode revisar as pendentes ou gerar mesmo assim.',
       },
       {
         question: 'O arquivo original é alterado?',
         answer:
-          'Não. A ferramenta mantém o ZPL original de cada etiqueta e gera uma versão modificada separada, que pode ser restaurada a qualquer momento.',
+          'Não. O arquivo importado não é modificado. A ferramenta guarda o ZPL original de cada etiqueta e gera uma versão com a descrição, que pode ser restaurada. Para guardar o resultado, exporte o ZPL editado ou o PDF.',
       },
       {
-        question: 'O lote fica salvo se eu atualizar a página?',
+        question: 'Os dados das etiquetas ficam só no meu navegador?',
         answer:
-          'Sim, por tempo limitado. O rascunho fica no armazenamento deste navegador e pode ser retomado ou descartado ao voltar.',
+          'O lote fica salvo no navegador, mas a prévia e o PDF dependem de um serviço externo de renderização (Labelary), que recebe cada etiqueta pelo servidor do site. Se isso não for aceitável para você, não use a ferramenta com etiquetas que tenham dados pessoais.',
       },
     ],
   },

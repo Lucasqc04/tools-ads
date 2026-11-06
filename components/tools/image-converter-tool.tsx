@@ -192,7 +192,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
   'pt-br': {
     title: 'Conversor de Imagem e PDF',
     description:
-      'Converta entre mais de 20 formatos de imagem e PDF, grátis, sem cadastro e com processamento local no navegador.',
+      'Converta imagens entre PNG, JPEG, WEBP, AVIF e outros formatos, ou entre imagem e PDF. O processamento acontece no navegador.',
     fromFormat: 'Formato de origem',
     toFormat: 'Formato de destino',
     sourceFile: 'Arquivo de origem',

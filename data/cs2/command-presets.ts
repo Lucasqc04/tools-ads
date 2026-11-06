@@ -42,9 +42,9 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
     ],
     locales: {
       'pt-br': {
-        title: 'Treino basico',
+        title: 'Treino básico',
         description:
-          'Preset rapido para abrir treino local com dinheiro alto, tempo longo, granadas e repeticao imediata.',
+          'Preset rápido para abrir treino local com dinheiro alto, tempo longo, granadas e repetição imediata.',
       },
       en: {
         title: 'Basic practice',
@@ -95,7 +95,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Treino de granadas',
         description:
-          'Foco em lineups com preview de trajetoria, impactos, rethrow e noclip para iterar rapido.',
+          'Foco em lineups com preview de trajetória, impactos, rethrow e noclip para iterar rápido.',
       },
       en: {
         title: 'Grenade practice',
@@ -132,7 +132,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Treino de smoke',
         description:
-          'Preset enxuto para treinar smoke em servidor local com rastro, rethrow e movimentacao livre.',
+          'Preset enxuto para treinar smoke em servidor local com rastro, rethrow e movimentação livre.',
       },
       en: {
         title: 'Smoke practice',
@@ -166,7 +166,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Treino de spray',
         description:
-          'Mostra impacto dos tiros com municao infinita para ajustar recoil e controle de spray.',
+          'Mostra impacto dos tiros com munição infinita para ajustar recoil e controle de spray.',
       },
       en: {
         title: 'Spray practice',
@@ -204,7 +204,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Treino com bots',
         description:
-          'Configura bots estaticos para treinar pre-fire, peek e reposicionamento em cenario controlado.',
+          'Configura bots estáticos para treinar pre-fire, peek e reposicionamento em cenário controlado.',
       },
       en: {
         title: 'Bot practice',
@@ -238,7 +238,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Regras de scrim privada',
         description:
-          'Ajusta overtime, dinheiro da prorrogacao, limite de rounds e pausas taticas em um servidor controlado por voce.',
+          'Ajusta overtime, dinheiro da prorrogação, limite de rounds e pausas táticas em um servidor controlado por você.',
       },
       en: {
         title: 'Private scrim rules',
@@ -272,7 +272,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Radar competitivo',
         description:
-          'Preset de radar para leitura rapida de espacamento e tomada de decisao em partida oficial.',
+          'Preset de radar para leitura rápida de espaçamento e tomada de decisão em partida oficial.',
       },
       en: {
         title: 'Competitive radar',
@@ -304,7 +304,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Viewmodel limpo',
         description:
-          'Preset visual limpo para abrir campo de visao sem remover informacoes importantes.',
+          'Preset visual limpo para abrir campo de visão sem remover informações importantes.',
       },
       en: {
         title: 'Clean viewmodel',
@@ -339,7 +339,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'FPS e telemetria',
         description:
-          'Preset para controlar limite de FPS e expor telemetria basica sem prometer ganho fixo.',
+          'Preset para controlar limite de FPS e expor telemetria básica sem prometer ganho fixo.',
       },
       en: {
         title: 'FPS and telemetry',
@@ -387,7 +387,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Config competitiva segura',
         description:
-          'Preset sem sv_cheats e sem automacao arriscada, focado em comandos client-side comuns.',
+          'Preset sem sv_cheats e sem automação arriscada, focado em comandos client-side comuns.',
       },
       en: {
         title: 'Safe competitive config',
@@ -419,9 +419,9 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
     ],
     locales: {
       'pt-br': {
-        title: 'Binds seguros de comunicacao e utilitarios',
+        title: 'Binds seguros de comunicação e utilitários',
         description:
-          'Atalhos de uma unica acao para ping, clutch, mao e granadas. Ajuste as teclas antes de copiar para nao sobrescrever seu layout.',
+          'Atalhos de uma única ação para ping, clutch, mão e granadas. Ajuste as teclas antes de copiar para não sobrescrever seu layout.',
       },
       en: {
         title: 'Safe communication and utility binds',
@@ -462,7 +462,7 @@ export const cs2CommandPresets: Cs2CommandPreset[] = [
       'pt-br': {
         title: 'Comandos divertidos para servidor privado',
         description:
-          'Preset fun para lobby privado/local com variacoes de gravidade, respawn e tempo de jogo.',
+          'Preset fun para lobby privado/local com variações de gravidade, respawn e tempo de jogo.',
       },
       en: {
         title: 'Fun private server commands',

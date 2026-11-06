@@ -62,7 +62,7 @@ export class TranscriptionClient {
       if (this.activeJobId) {
         this.activeJobId = null;
         this.callbacks.onError?.(
-          new TranscriptionError('worker_error', 'O processo de transcricao falhou inesperadamente.'),
+          new TranscriptionError('worker_error', 'O processo de transcrição falhou inesperadamente.'),
         );
       }
     });

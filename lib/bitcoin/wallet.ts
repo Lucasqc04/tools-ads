@@ -43,7 +43,7 @@ const buildWalletMaterial = (
   const networkConfig = getBitcoinNetworkConfig(networkId);
 
   if (!keyPair.privateKey) {
-    throw new Error('Nao foi possivel obter chave privada para esta carteira.');
+    throw new Error('Não foi possível obter chave privada para esta carteira.');
   }
 
   const payment = payments.p2wpkh({
@@ -52,7 +52,7 @@ const buildWalletMaterial = (
   });
 
   if (!payment.address) {
-    throw new Error('Nao foi possivel gerar endereco SegWit para esta carteira.');
+    throw new Error('Não foi possível gerar endereço SegWit para esta carteira.');
   }
 
   return {
@@ -80,7 +80,7 @@ export const deriveWalletFromMnemonic = (params: {
   const normalizedMnemonic = normalizeMnemonic(params.mnemonic);
 
   if (!validateEnglishMnemonic(normalizedMnemonic)) {
-    throw new Error('Seed phrase invalida. Use uma mnemonic BIP39 em ingles.');
+    throw new Error('Seed phrase inválida. Use uma seed BIP39 em inglês.');
   }
 
   const networkConfig = getBitcoinNetworkConfig(params.networkId);
@@ -90,7 +90,7 @@ export const deriveWalletFromMnemonic = (params: {
   const child = root.derive(derivationPath);
 
   if (!child.privateKey) {
-    throw new Error('Nao foi possivel derivar chave privada para este caminho BIP84.');
+    throw new Error('Não foi possível derivar chave privada para este caminho BIP84.');
   }
 
   const keyPair = ECPair.fromPrivateKey(Buffer.from(child.privateKey), {
@@ -109,7 +109,7 @@ export const deriveWalletFromWif = (params: {
   const trimmedWif = params.wif.trim();
 
   if (!trimmedWif) {
-    throw new Error('Informe uma private key WIF valida.');
+    throw new Error('Informe uma chave privada WIF válida.');
   }
 
   let keyPair: ECPairInterface;
@@ -117,7 +117,7 @@ export const deriveWalletFromWif = (params: {
   try {
     keyPair = ECPair.fromWIF(trimmedWif, networkConfig.bitcoinNetwork);
   } catch {
-    throw new Error('WIF invalida para a rede selecionada.');
+    throw new Error('WIF inválida para a rede selecionada.');
   }
 
   if (!keyPair.compressed) {
@@ -136,6 +136,6 @@ export const getSignerFromWif = (
   try {
     return ECPair.fromWIF(wif.trim(), networkConfig.bitcoinNetwork);
   } catch {
-    throw new Error('Nao foi possivel criar assinador a partir da WIF informada.');
+    throw new Error('Não foi possível criar assinador a partir da WIF informada.');
   }
 };

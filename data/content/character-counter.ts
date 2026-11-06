@@ -60,7 +60,7 @@ const contentByLocale: Record<AppLocale, CharacterCounterLocaleContent> = {
   'pt-br': {
     name: 'Contador de Caracteres e Palavras Online',
     shortDescription:
-      'Conte caracteres, palavras, linhas, frases, paragrafos, emojis e limites para SEO, redes sociais, redacao e programacao.',
+      'Conte caracteres, palavras, linhas, frases, parágrafos, emojis e hashtags, e confira limites de SEO, Instagram, X, WhatsApp e outras plataformas.',
     primaryKeyword: 'contador de caracteres e palavras online',
     secondaryKeywords: [
       'contador de caracteres',
@@ -74,61 +74,67 @@ const contentByLocale: Record<AppLocale, CharacterCounterLocaleContent> = {
     ],
     searchIntent:
       'Usuarios que precisam analisar texto de forma completa para SEO, social media, estudos, redacao e tarefas tecnicas.',
-    seoTitle:
-      'Contador de Caracteres e Palavras Online | SEO, Instagram, X, YouTube e Redacao',
+    seoTitle: 'Contador de Caracteres e Palavras Online | Limites por Rede',
     seoDescription:
-      'Ferramenta completa para contar caracteres, palavras, linhas, frases, emojis, hashtags e limites por plataforma com analise e exportacao.',
+      'Conte caracteres, palavras, linhas, frases, emojis e hashtags, veja se o texto cabe nos limites de SEO, Instagram, X e WhatsApp e exporte as métricas.',
     h1: 'Contador de Caracteres e Palavras Online',
     intro:
-      'Conte caracteres, palavras, linhas, frases, paragrafos, emojis, espacos e analise limites para SEO, Instagram, X, YouTube, redacao e programacao.',
+      'Cole um texto para contar caracteres (com e sem espaços), palavras, linhas, frases e parágrafos, e ver na hora se ele cabe no limite de um post, de uma meta description ou de um SMS.',
     contentBlocks: [
       {
-        title: 'Mais que contador: analise, limpeza e adaptacao por objetivo',
+        title: 'O que o contador mostra',
         paragraphs: [
-          'Esta ferramenta foi criada para ir alem de um simples numero de caracteres. Ela mostra um painel completo com palavras, frases, paragrafos, links, hashtags, mencoes, emails, telefones, datas e tamanho em bytes UTF-8.',
-          'Com presets por objetivo, voce pode validar texto para SEO, redes sociais, redacao e uso tecnico sem trocar de ferramenta. Isso reduz retrabalho e acelera revisao de conteudo.',
+          'Ao colar ou digitar um texto, o painel atualiza na hora: caracteres com e sem espaços, caracteres visuais, palavras, palavras únicas, frases, parágrafos, linhas, emojis, hashtags, menções, links, tamanho em bytes UTF-8 e tempos estimados de leitura (200 palavras por minuto) e de fala (130 palavras por minuto).',
+          'O número de "Caracteres" segue a contagem do navegador, em que alguns emojis e símbolos valem 2. Já "Visuais" conta cada símbolo como uma unidade, do jeito que você enxerga na tela. Em "Sem espaços", espaços, tabs e quebras de linha ficam de fora.',
         ],
       },
       {
-        title: 'Modos de uso para SEO, social, redacao e programacao',
+        title: 'Limites por plataforma e modos de uso',
         paragraphs: [
-          'No modo SEO voce acompanha title, meta description e outros limites aproximados com alertas de faixa, sem depender de uma regra fixa unica. No modo social, os presets ajudam a validar texto para Instagram, X, YouTube, LinkedIn, WhatsApp e SMS.',
-          'No modo redacao, a ferramenta destaca repeticoes, frases longas e paragrafos extensos. No modo programacao, exibe linhas vazias, linhas de comentario, tabs, trailing spaces e tamanho de payload.',
+          'Escolha um modo (Simples, Avançado, Programação, SEO, Redes sociais ou Redação) e um limite predefinido. A barra de progresso e o status indicam se o texto está na faixa ideal, perto do limite (acima da faixa ideal) ou acima do máximo. Há limites para title (ideal de 40 a 60 caracteres), meta description (120 a 155), H1, legenda do Instagram (máximo de 2.200), post no X (280), descrição do YouTube (5.000), LinkedIn (3.000), WhatsApp (4.096) e SMS (160). Você também pode informar sua própria meta máxima.',
+          'Faixas de SEO são aproximadas, porque o trecho exibido nos buscadores varia com o dispositivo. Exemplo: uma meta description de 180 caracteres aparece com alerta de que passou do limite, e você pode enxugá-la até voltar à faixa ideal.',
+        ],
+        list: [
+          'Alertas de palavras repetidas, frases com mais de 28 palavras e parágrafos longos.',
+          'Contagem de linhas vazias, linhas de comentário e tabs, útil para código.',
+          'Detecção de espaço de largura zero, ZWJ e espaço não separável.',
+          'Dividir um texto longo em partes de até N caracteres, com numeração (1/3, 2/3...).',
+          'Ações rápidas: remover espaços duplos, quebras, acentos, emojis ou links; mudar a caixa; gerar slug, snake_case e camelCase.',
         ],
       },
       {
-        title: 'Privacidade e performance no navegador',
+        title: 'Rascunho, exportação e privacidade',
         paragraphs: [
-          'Toda analise e feita localmente no navegador. O texto digitado nao precisa ser enviado para servidor para gerar metricas, relatorios e exportacoes.',
-          'Esse fluxo melhora privacidade, reduz latencia e facilita uso rapido em desktop e mobile.',
+          'Todo o cálculo acontece no seu navegador e o texto não é enviado ao servidor. Você pode copiar o texto e salvar um rascunho, que fica no armazenamento local deste navegador e é recarregado na próxima visita, então evite salvar dados sensíveis em computadores compartilhados.',
+          'As exportações em TXT, JSON e CSV trazem as métricas (como caracteres, palavras e bytes), não o texto. Para guardar o texto, use a opção de copiar.',
         ],
       },
     ],
     faq: [
       {
-        question: 'Qual a diferenca entre caracteres com e sem espacos?',
+        question: 'Qual a diferença entre caracteres com e sem espaços?',
         answer:
-          'Com espacos conta todos os caracteres do texto. Sem espacos remove espacos, tabs e quebras de linha da contagem.',
+          'Com espaços, a contagem inclui todos os caracteres do texto. Sem espaços, a ferramenta tira espaços, tabs e quebras de linha antes de contar.',
       },
       {
-        question: 'Essa ferramenta conta emojis e hashtags?',
+        question: 'Por que o número de caracteres de um emoji parece maior?',
         answer:
-          'Sim. O painel avancado identifica emojis, hashtags, mencoes, links, emails e outras estruturas comuns de texto.',
+          'O campo "Caracteres" segue a contagem do navegador, em que alguns emojis valem 2. O campo "Visuais" conta cada emoji como um. Para limites de plataforma, confirme qual contagem ela usa.',
       },
       {
-        question: 'Posso usar para validar title e meta description?',
+        question: 'Posso usar para conferir title e meta description?',
         answer:
-          'Sim. Existem presets de SEO com alertas aproximados de faixa para ajudar na revisao de snippets.',
+          'Sim. Há limites de referência para title tag, meta description e H1. As faixas são aproximadas, porque o buscador pode cortar o trecho de acordo com a largura do dispositivo.',
       },
       {
-        question: 'O texto e enviado para servidor?',
+        question: 'O texto fica salvo ou é enviado para algum servidor?',
         answer:
-          'Nao por padrao. O processamento principal ocorre localmente no navegador para maior privacidade.',
+          'A análise é feita no navegador e o texto não vai para o servidor. Só é guardado, no armazenamento local deste navegador, se você clicar em "Salvar rascunho".',
       },
       {
-        question: 'Posso exportar os resultados?',
+        question: 'O que as exportações TXT, JSON e CSV incluem?',
         answer:
-          'Sim. Voce pode exportar em TXT, JSON e CSV, alem de copiar o texto e salvar rascunho local.',
+          'Incluem as métricas calculadas, como caracteres com e sem espaços, palavras, frases, parágrafos, linhas, emojis, hashtags, menções, links, e-mails, telefones e bytes. O texto original não faz parte do arquivo.',
       },
     ],
   },
@@ -356,11 +362,11 @@ const contentByLocale: Record<AppLocale, CharacterCounterLocaleContent> = {
 
 const uiByLocale: Record<AppLocale, CharacterCounterUiCopy> = {
   'pt-br': {
-    textInputLabel: 'Texto para analise',
+    textInputLabel: 'Texto para análise',
     textInputPlaceholder: 'Cole ou digite seu texto aqui...',
     modeLabel: 'Modo',
-    presetLabel: 'Preset de limite',
-    targetLabel: 'Meta personalizada (max caracteres)',
+    presetLabel: 'Limite predefinido',
+    targetLabel: 'Meta personalizada (máx. de caracteres)',
     targetPlaceholder: 'Ex.: 280',
     clearText: 'Limpar texto',
     copyText: 'Copiar texto',
@@ -375,14 +381,14 @@ const uiByLocale: Record<AppLocale, CharacterCounterUiCopy> = {
     splitResultTitle: 'Texto dividido',
     splitLimitLabel: 'Limite por parte',
     splitNumberedLabel: 'Numerar partes automaticamente',
-    metricsTitle: 'Dashboard de metricas',
+    metricsTitle: 'Painel de métricas',
     qualityTitle: 'Qualidade do texto',
     topWordsTitle: 'Top palavras',
     repeatedWordsTitle: 'Palavras repetidas',
     alertsTitle: 'Alertas inteligentes',
-    transformsTitle: 'Acoes rapidas de transformacao',
+    transformsTitle: 'Ações rápidas de transformação',
     privacyTitle: 'Privacidade',
-    privacyText: 'Seu texto e processado localmente no navegador. Nada e enviado para servidor por padrao.',
+    privacyText: 'Seu texto é processado no navegador e não é enviado ao servidor. Ele só fica guardado neste navegador se você salvar um rascunho.',
     statusByLimit: {
       'too-short': 'Muito curto',
       ideal: 'Faixa ideal',
@@ -390,11 +396,11 @@ const uiByLocale: Record<AppLocale, CharacterCounterUiCopy> = {
       'over-limit': 'Passou do limite',
       ok: 'OK',
     },
-    statusDetailIdeal: 'Dentro da faixa recomendada para este preset.',
+    statusDetailIdeal: 'Dentro da faixa recomendada para este limite.',
     statusDetailOver: 'Reduza o texto para evitar truncamento ou bloqueio de limite.',
     statusDetailShort: 'Texto curto para este objetivo. Pode perder contexto.',
-    statusDetailNear: 'Proximo do limite maximo. Revise para evitar corte.',
-    statusDetailOk: 'Sem alerta critico para o preset atual.',
+    statusDetailNear: 'Próximo do limite máximo. Revise para evitar corte.',
+    statusDetailOk: 'Sem alerta crítico para o limite escolhido.',
   },
   en: {
     textInputLabel: 'Text to analyze',
@@ -537,7 +543,7 @@ const presetsByLocale: Record<AppLocale, CharacterCounterPreset[]> = {
     { id: 'seo-h1', mode: 'seo', label: 'SEO - H1', idealMin: 20, idealMax: 70, max: 90 },
     { id: 'instagram-caption', mode: 'social', label: 'Instagram - Legenda', idealMin: 80, idealMax: 400, max: 2200 },
     { id: 'x-post', mode: 'social', label: 'X/Twitter - Post', idealMin: 40, idealMax: 240, max: 280 },
-    { id: 'youtube-description', mode: 'social', label: 'YouTube - Descricao', idealMin: 200, idealMax: 1200, max: 5000 },
+    { id: 'youtube-description', mode: 'social', label: 'YouTube - Descrição', idealMin: 200, idealMax: 1200, max: 5000 },
     { id: 'linkedin-post', mode: 'social', label: 'LinkedIn - Post', idealMin: 150, idealMax: 900, max: 3000 },
     { id: 'whatsapp-message', mode: 'social', label: 'WhatsApp - Mensagem', idealMin: 60, idealMax: 600, max: 4096 },
     { id: 'sms', mode: 'social', label: 'SMS', idealMin: 40, idealMax: 140, max: 160 },
@@ -607,11 +613,11 @@ const presetsByLocale: Record<AppLocale, CharacterCounterPreset[]> = {
 const modesByLocale: Record<AppLocale, Array<{ id: CharacterCounterMode; label: string }>> = {
   'pt-br': [
     { id: 'simple', label: 'Simples' },
-    { id: 'advanced', label: 'Avancado' },
-    { id: 'programming', label: 'Programacao' },
+    { id: 'advanced', label: 'Avançado' },
+    { id: 'programming', label: 'Programação' },
     { id: 'seo', label: 'SEO' },
     { id: 'social', label: 'Redes sociais' },
-    { id: 'writing', label: 'Redacao' },
+    { id: 'writing', label: 'Redação' },
   ],
   en: [
     { id: 'simple', label: 'Simple' },

@@ -61,9 +61,9 @@ const uiByLocale: Record<AppLocale, CsvViewerUi> = {
     localNotice:
       'Processamento local no navegador. Cole CSV ou envie arquivo para visualizar, ajustar separador e exportar.',
     pasteLabel: 'Cole seu CSV',
-    pastePlaceholder: 'nome;idade;cidade\nLucas;31;Sao Paulo\nAna;28;Porto',
+    pastePlaceholder: 'nome;idade;cidade\nLucas;31;São Paulo\nAna;28;Porto',
     uploadLabel: 'Ou envie um arquivo CSV/TXT',
-    uploadHelp: 'Aceita .csv e .txt. O arquivo e lido localmente.',
+    uploadHelp: 'Aceita .csv e .txt. O arquivo é lido localmente.',
     autoSeparatorLabel: 'Separador detectado automaticamente',
     sourceSeparatorLabel: 'Separador de leitura',
     outputSeparatorLabel: 'Separador para CSV convertido',
@@ -76,23 +76,23 @@ const uiByLocale: Record<AppLocale, CsvViewerUi> = {
     copied: 'Copiado',
     exportConvertedCsv: 'Baixar CSV convertido',
     exportXlsx: 'Exportar XLSX',
-    firstRowHeader: 'Primeira linha como cabecalho',
-    parseError: 'Nao foi possivel interpretar o CSV com esse separador.',
-    fileReadError: 'Nao foi possivel ler o arquivo.',
+    firstRowHeader: 'Primeira linha como cabeçalho',
+    parseError: 'Não foi possível interpretar o CSV com esse separador.',
+    fileReadError: 'Não foi possível ler o arquivo.',
     chooseSeparatorAuto: 'Auto',
-    filtersTitle: 'Ordenacao e filtros da tabela',
+    filtersTitle: 'Ordenação e filtros da tabela',
     globalFilterLabel: 'Filtro geral',
     globalFilterPlaceholder: 'Filtrar em todas as colunas...',
     columnFilterPlaceholder: 'Filtrar coluna...',
-    clearFiltersAndSort: 'Limpar filtros e ordenacao',
-    filteredRowsLabel: 'Linhas visiveis',
+    clearFiltersAndSort: 'Limpar filtros e ordenação',
+    filteredRowsLabel: 'Linhas visíveis',
     sortAsc: 'Crescente',
     sortDesc: 'Decrescente',
-    rowsPerPageLabel: 'Linhas por pagina',
-    pageLabel: 'Pagina',
+    rowsPerPageLabel: 'Linhas por página',
+    pageLabel: 'Página',
     ofLabel: 'de',
     prevPage: 'Anterior',
-    nextPage: 'Proxima',
+    nextPage: 'Próxima',
   },
   en: {
     localNotice:
@@ -332,11 +332,11 @@ export function CsvViewerTool({ locale = 'pt-br' }: CsvViewerToolProps) {
     }
 
     if (!useHeaderRow) {
-      return Array.from({ length: parsed.columnCount }, (_, index) => `Column ${index + 1}`);
+      return Array.from({ length: parsed.columnCount }, (_, index) => `${locale === 'pt-br' ? 'Coluna' : 'Column'} ${index + 1}`);
     }
 
-    return tableRows[0].map((value, index) => value || `Column ${index + 1}`);
-  }, [parsed.columnCount, tableRows, useHeaderRow]);
+    return tableRows[0].map((value, index) => value || `${locale === 'pt-br' ? 'Coluna' : 'Column'} ${index + 1}`);
+  }, [locale, parsed.columnCount, tableRows, useHeaderRow]);
 
   const bodyRows = useMemo(() => {
     if (!tableRows.length) {

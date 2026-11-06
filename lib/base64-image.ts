@@ -98,7 +98,7 @@ export const parseBase64ImageInput = (
   const normalizedPayload = normalizeBase64Payload(payloadCandidate);
 
   if (!normalizedPayload || !isValidBase64(normalizedPayload)) {
-    throw new Error('Base64 invalido. Revise o conteudo e tente novamente.');
+    throw new Error('Base64 inválido. Revise o conteúdo e tente novamente.');
   }
 
   let bytes: Uint8Array;
@@ -106,11 +106,11 @@ export const parseBase64ImageInput = (
   try {
     bytes = base64ToBytes(normalizedPayload);
   } catch {
-    throw new Error('Nao foi possivel decodificar esse Base64.');
+    throw new Error('Não foi possível decodificar esse Base64.');
   }
 
   if (bytes.length === 0) {
-    throw new Error('O Base64 informado nao contem dados de imagem.');
+    throw new Error('O Base64 informado não contém dados de imagem.');
   }
 
   const extension = resolveExtensionFromMime(mimeType);

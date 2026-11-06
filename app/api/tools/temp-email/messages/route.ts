@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   if (!isValidTempEmailToken(token)) {
     return NextResponse.json(
       {
-        error: 'Token invalido.',
+        error: 'Token inválido.',
       },
       {
         status: 400,
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
     if (error instanceof TempEmailStoreUnavailableError) {
       return NextResponse.json(
         {
-          error: 'Servico de inbox temporaria indisponivel no momento. Tente novamente.',
+          error: 'Serviço de inbox temporária indisponível no momento. Tente novamente.',
         },
         {
           status: 503,
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       {
-        error: 'Nao foi possivel consultar mensagens agora.',
+        error: 'Não foi possível consultar mensagens agora.',
       },
       {
         status: 500,

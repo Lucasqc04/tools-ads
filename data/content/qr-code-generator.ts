@@ -1,69 +1,68 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const qrCodeGeneratorIntro =
-  'Cole texto, URL, PIX copia-e-cola ou qualquer conteúdo e gere QR Code grátis em segundos, sem cadastro, sem conta e sem pagar nada, com logo central, cores personalizadas e exportação em PNG, JPEG, WEBP, SVG e PDF.';
+  'Cole um texto, link ou código Pix copia-e-cola e gere um QR Code grátis, sem cadastro, com logo no centro, cores personalizadas e download em PNG, JPEG, WEBP, SVG ou PDF.';
 
 export const qrCodeGeneratorContentBlocks: ContentBlock[] = [
   {
-    title: 'Como usar o gerador de QR Code',
+    title: 'Como gerar um QR Code com logo',
     paragraphs: [
-      'Digite ou cole o conteúdo no campo principal e o QR Code é renderizado no navegador em tempo real. Você pode usar texto simples, links, payload de pagamento e identificadores internos para operações de suporte ou logística.',
-      'A ferramenta é gratuita, não exige login e não pede criação de conta. Você pode gerar quantos QR Codes precisar, incluindo versões para testes, campanhas e uso interno.',
-      'Depois da geração, ajuste o estilo visual: cor dos módulos, cor de fundo, tipo de pontos, margem, nível de correção de erro e tamanho final da imagem. Se quiser reforçar branding, adicione um logo no centro.',
+      'Digite ou cole o conteúdo no campo principal e o QR Code aparece na hora. Funciona com texto simples, links, mensagens e códigos de pagamento, como o Pix copia-e-cola. Cada vez que o conteúdo muda, o código é refeito, então basta trocar o texto para gerar outra versão.',
+      'Depois ajuste o visual: estilos prontos (Básico, Redondo, Quadrado e Alto contraste), cor dos módulos e do fundo, formato dos pontos e dos cantos, margem, tamanho de 220 a 900 px e nível de correção de erro. Para usar sua marca, envie uma imagem de logo e defina o tamanho e a margem dela no centro do código.',
     ],
   },
   {
-    title: 'Grátis, sem cadastro e com uso ilimitado',
+    title: 'Formatos de download e exemplos de uso',
     paragraphs: [
-      'Este gerador foi pensado para reduzir fricção: sem formulário de cadastro, sem assinatura e sem bloqueio por quantidade de uso. Você consegue criar e baixar QR Codes de forma imediata.',
-      'Isso é útil para operações do dia a dia em que velocidade importa, como atendimento, logística, cardápio digital, material impresso, onboarding e campanhas de marketing com troca rápida de links.',
+      'Você pode baixar o QR Code em PNG, JPEG, WEBP ou SVG, copiar a imagem para a área de transferência ou gerar um PDF em A4. O PNG serve para web e redes sociais; o SVG é vetorial e mantém a nitidez em impressos grandes; o PDF contém o QR Code como imagem, centralizado na página.',
+      'Exemplos comuns: um QR Code para o cardápio de um restaurante, para o Wi-Fi da recepção, para o perfil de uma rede social impresso em um cartão, ou para o código de rastreio de um pedido em uma etiqueta. Para Wi-Fi e contato (vCard), a ferramenta de QR Wi-Fi, vCard e Evento monta o conteúdo no formato correto.',
     ],
   },
   {
-    title: 'Boas práticas de legibilidade e escaneamento',
+    title: 'Como garantir que o código seja lido',
     paragraphs: [
-      'Para manter leitura robusta, prefira contraste alto entre QR e fundo. Também evite logo central grande demais, pois isso reduz área útil de leitura. O nível de correção de erro ajuda, mas não compensa excesso de interferência visual.',
-      'Se o QR for impresso, valide em mais de um dispositivo antes de publicar. Para uso em tela, teste tamanho mínimo em mobile e desktop, principalmente em ambientes de iluminação ruim.',
+      'Prefira módulos escuros sobre fundo claro e mantenha o logo pequeno: quanto maior a imagem no centro, menos área o leitor tem para decodificar. O nível de correção de erro mais alto tolera mais interferência, mas deixa o código mais denso, e todo QR Code tem capacidade máxima, de cerca de 3 mil caracteres. Textos muito longos geram um padrão pequeno e difícil de ler.',
+      'Antes de imprimir ou publicar, teste a leitura em mais de um celular e no tamanho final. Em materiais impressos, deixe a margem em branco ao redor e evite colocar o código sobre fotos ou fundos coloridos.',
     ],
     list: [
-      'Use fundo claro e módulos escuros para máximo contraste.',
-      'Mantenha o logo pequeno e com margem interna adequada.',
-      'Teste o QR em iOS e Android antes de distribuir.',
+      'Use fundo claro e módulos escuros para obter contraste máximo.',
+      'Mantenha o logo pequeno, com margem interna.',
+      'Teste em iPhone e Android antes de distribuir.',
     ],
   },
   {
-    title: 'Privacidade e processamento local',
+    title: 'Privacidade e limites',
     paragraphs: [
-      'Toda a geração acontece localmente no navegador. O texto digitado, a imagem de logo e os arquivos exportados não são enviados para servidor por padrão nesta ferramenta.',
-      'Esse modelo reduz latência, aumenta controle do usuário e facilita uso em contextos sensíveis, como payloads internos de operação, dados de onboarding e links de uso temporário.',
+      'O QR Code, o logo e os arquivos exportados são gerados no seu navegador. O texto digitado e a imagem do logo não são enviados ao servidor do site para gerar o código.',
+      'O QR Code gerado é estático: ele guarda o conteúdo informado e não tem contador de acessos nem pode ser alterado depois de impresso. Se o destino mudar, é preciso gerar e imprimir um novo código.',
     ],
   },
 ];
 
 export const qrCodeGeneratorFaq: FaqItem[] = [
   {
-    question: 'O gerador de QR Code é gratuito mesmo?',
+    question: 'Preciso criar conta ou pagar para gerar e baixar o QR Code?',
     answer:
-      'Sim. A ferramenta é gratuita, sem necessidade de cadastro, sem login e sem pagamento para gerar ou baixar QR Code.',
+      'Não. Você gera e baixa o QR Code sem cadastro e sem login. Não há marca d\'água sobre o código.',
   },
   {
-    question: 'Existe limite de uso por dia ou por arquivo?',
+    question: 'Posso colocar um logo no centro do QR Code?',
     answer:
-      'Não há limite prático de uso na interface da ferramenta. Você pode gerar quantos QR Codes precisar para uso pessoal ou profissional.',
-  },
-  {
-    question: 'Posso gerar QR Code com logo no centro?',
-    answer:
-      'Sim. Basta enviar uma imagem para o logo central. A ferramenta ajusta o QR mantendo uma área protegida, mas é importante testar leitura após personalização.',
+      'Sim. Envie uma imagem de logo e ajuste o tamanho (15% a 45% do código) e a margem. O logo cobre parte do código, então use o nível de correção Q ou H e teste a leitura depois de gerar.',
   },
   {
     question: 'Quais formatos de download estão disponíveis?',
     answer:
-      'Você pode exportar em PNG, JPEG, WEBP, SVG e PDF. Também é possível copiar a imagem do QR para a área de transferência em navegadores compatíveis.',
+      'PNG, JPEG, WEBP, SVG e PDF. Também é possível copiar a imagem para a área de transferência, nos navegadores que permitem essa ação.',
   },
   {
-    question: 'A ferramenta envia meu texto para servidor?',
+    question: 'O QR Code deixa de funcionar depois de algum tempo?',
     answer:
-      'Não. O processamento é local no navegador e o conteúdo inserido não é transmitido para backend por padrão.',
+      'Não. É um código estático: o conteúdo fica dentro da imagem e ele funciona enquanto o destino existir, por exemplo, enquanto o link continuar no ar. Não há como editar o conteúdo depois de gerado.',
+  },
+  {
+    question: 'A ferramenta envia meu texto ou meu logo para um servidor?',
+    answer:
+      'Não. A geração, a prévia e as exportações acontecem no navegador. O conteúdo e o logo não são enviados ao servidor do site.',
   },
 ];

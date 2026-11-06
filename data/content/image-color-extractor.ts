@@ -2,40 +2,40 @@ import type { AppLocale } from '@/lib/i18n/config';
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const imageColorExtractorIntro =
-  'Extraia cores de qualquer imagem direto no navegador, gere paletas, copie variáveis CSS e crie temas para seus projetos — tudo localmente.';
+  'Envie uma imagem ou logo, veja as cores predominantes em HEX, RGB e HSL e copie a paleta como variáveis CSS, SCSS, JSON ou Tailwind. A análise é feita no seu navegador.';
 
 export const imageColorExtractorContentBlocks: ContentBlock[] = [
   {
-    title: 'Extração de cores com processamento 100% local',
+    title: 'Como extrair a paleta de uma imagem',
     paragraphs: [
-      'Esta ferramenta analisa imagens enviadas e extrai automaticamente as cores mais predominantes. Todo o processamento ocorre no navegador usando Canvas, sem enviar dados para servidor.',
-      'Você pode ajustar a quantidade de cores extraídas, filtrar brancos/pretos, e exportar a paleta em diversos formatos usados em CSS, Tailwind e ferramentas de design.',
+      'Envie uma imagem em JPG, PNG, WebP, GIF, SVG ou BMP (uma por vez) e a ferramenta mostra as cores mais presentes, cada uma com valores em HEX, RGB e HSL e a porcentagem aproximada de pixels. Use o controle deslizante para pedir de 3 a 16 cores (o padrão é 8) e clique em extrair para refazer a análise.',
+      'Por padrão, tons quase brancos e quase pretos são ignorados, porque costumam ser fundo ou sombra e não a identidade da imagem. Desmarque “Ignorar brancos” ou “Ignorar pretos” se o branco ou o preto fazem parte do que você quer. Pixels bem transparentes também ficam de fora.',
     ],
   },
   {
-    title: 'Formatos de exportação disponíveis',
+    title: 'Como ler o resultado e quais são os limites',
     paragraphs: [
-      'A ferramenta oferece múltiplos formatos de exportação para facilitar o uso imediato da paleta em projetos reais.',
+      'Para ser rápido, o programa reduz a imagem para no máximo 400 pixels no lado maior, analisa uma amostra dos pixels, agrupa tons parecidos e junta os que ficam muito próximos. Por isso os valores são aproximados: o HEX exibido pode ser um tom vizinho da cor exata do arquivo. Se você precisa do valor exato de um logo, confirme com o arquivo original ou com o manual da marca.',
+      'A porcentagem indica a fatia aproximada da imagem analisada que aquela cor ocupa. Como brancos, pretos e áreas transparentes podem ser ignorados, a soma das porcentagens pode ficar abaixo de 100%. Fotos com muitos tons, como paisagens, geram paletas diferentes conforme a quantidade de cores pedida.',
+    ],
+  },
+  {
+    title: 'Copiar a paleta para CSS, Tailwind e outros formatos',
+    paragraphs: [
+      'Cada botão de exportação copia o código para a área de transferência. Clicar em uma cor da paleta copia só o HEX. A seta ao lado de cada cor abre o Conversor de Cores com aquele valor, para você ver outros formatos e variações.',
     ],
     list: [
-      'Variáveis CSS: --color-1: #7c3aed; pronto para copiar no :root.',
-      'JSON: array com hex, rgb e hsl de cada cor.',
-      'Tailwind config: theme.extend.colors com nomes automáticos.',
-      'Sass/SCSS: variáveis $color-1: #7c3aed.',
-      'HEX lista: lista simples de códigos hex.',
+      'Variáveis CSS: bloco :root com --color-1, --color-2 e assim por diante.',
+      'JSON: lista com HEX, RGB, HSL e porcentagem de cada cor.',
+      'Tailwind config: trecho para theme.extend.colors com os nomes palette-1, palette-2 etc. Renomeie conforme o seu projeto.',
+      'SCSS: variáveis $color-1, $color-2 e assim por diante.',
+      'Lista HEX: um código por linha.',
     ],
   },
   {
-    title: 'Uso em design systems e temas',
+    title: 'Privacidade',
     paragraphs: [
-      'Ao extrair cores de uma imagem de marca ou foto de referência, você pode gerar rapidamente um conjunto de cores base para um design system. A ferramenta sugere nome e peso (light, main, dark) para uso direto em componentes.',
-      'Cada cor extraída pode ser aberta diretamente no Conversor de Cores para explorar variações, verificar contraste e gerar escalas.',
-    ],
-  },
-  {
-    title: 'Privacidade e segurança',
-    paragraphs: [
-      'Nenhuma imagem sai do seu dispositivo. O processamento acontece via Canvas API do navegador. A ferramenta funciona offline após o carregamento inicial.',
+      'A imagem é lida e analisada no seu navegador, com a API Canvas, e não é enviada a nenhum servidor. Depois que a página carrega, a análise não depende de conexão com a internet.',
     ],
   },
 ];
@@ -44,37 +44,27 @@ export const imageColorExtractorFaq: FaqItem[] = [
   {
     question: 'A imagem é enviada para algum servidor?',
     answer:
-      'Não. Todo processamento é local no navegador usando Canvas API. Nenhuma imagem sai do seu dispositivo.',
+      'Não. A análise acontece no navegador, com a API Canvas, e a imagem não sai do seu dispositivo.',
   },
   {
     question: 'Quais formatos de imagem são aceitos?',
     answer:
-      'JPG, PNG, WebP, GIF, SVG e BMP. Qualquer formato que o navegador consiga renderizar.',
+      'JPG, PNG, WebP, GIF, SVG e BMP, uma imagem por vez. Em fotos tiradas pelo celular, escolha o arquivo da galeria ou use a câmera, se o navegador oferecer essa opção.',
   },
   {
-    question: 'Posso ajustar quantas cores são extraídas?',
+    question: 'Quantas cores posso extrair e por que brancos e pretos somem?',
     answer:
-      'Sim. Use o controle deslizante para selecionar de 3 a 16 cores. Mais cores geram paletas mais detalhadas.',
+      'De 3 a 16 cores. Por padrão, tons quase brancos e quase pretos são ignorados para destacar as cores da imagem. Desmarque as opções “Ignorar brancos” e “Ignorar pretos” e clique em extrair para incluí-los.',
   },
   {
-    question: 'O que significam as porcentagens nas cores?',
+    question: 'O HEX extraído é exatamente a cor do arquivo?',
     answer:
-      'Representam a proporção aproximada de pixels daquela cor na imagem. Cores com maior porcentagem são mais predominantes.',
+      'Nem sempre. A ferramenta analisa uma versão reduzida da imagem e agrupa tons parecidos, então o resultado é aproximado. As porcentagens mostram a fatia aproximada de cada cor entre os pixels analisados.',
   },
   {
-    question: 'Como exportar a paleta como CSS?',
+    question: 'Como uso a paleta no CSS ou no Tailwind?',
     answer:
-      'Clique no botão de exportação e escolha "Variáveis CSS". O código será copiado para a área de transferência pronto para colar no seu arquivo CSS.',
-  },
-  {
-    question: 'Posso usar cores extraídas no Tailwind?',
-    answer:
-      'Sim. Use a exportação "Tailwind Config" para gerar um snippet que pode ser colado diretamente em tailwind.config.ts no extend.colors.',
-  },
-  {
-    question: 'A ferramenta funciona no celular?',
-    answer:
-      'Sim. Você pode fazer upload de fotos da galeria ou tirar fotos da câmera. A interface é responsiva para qualquer tela.',
+      'Clique em “Variáveis CSS” ou em “Tailwind Config” para copiar o código e cole no seu projeto. No Tailwind, os nomes saem como palette-1, palette-2 e assim por diante; renomeie conforme o seu projeto.',
   },
 ];
 

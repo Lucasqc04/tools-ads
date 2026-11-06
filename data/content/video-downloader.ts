@@ -61,7 +61,7 @@ const ptBr: VideoDownloaderLocaleContent = {
     {
       title: 'Limitações, privacidade e uso responsável',
       paragraphs: [
-        'Só funcionam posts e pins públicos que ainda estejam disponíveis. Conteúdo protegido, apagado ou que exige login não pode ser acessado; a ferramenta não contorna essas proteções nem remove DRM.',
+        'Só funcionam posts e pins públicos que ainda estejam disponíveis. Conteúdo protegido, apagado ou que exige login não pode ser acessado; a ferramenta não contorna essas proteções nem remove DRM. Se o post tiver mais de um vídeo, só o primeiro aparece na lista, e o download dentro do navegador é limitado a arquivos de até 1 GB.',
         'O link que você cola é enviado ao nosso servidor para localizar a mídia pública; o arquivo de vídeo ou imagem abre direto da plataforma e não é armazenado pela ferramenta. A conversão para MP3 acontece no seu dispositivo. Salve somente conteúdo que você tem direito de usar e respeite os direitos autorais.',
       ],
     },

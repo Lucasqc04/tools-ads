@@ -35,13 +35,13 @@ export type BoletoParseResult = {
 const BANK_NAMES: Record<string, string> = {
   '001': 'Banco do Brasil',
   '033': 'Santander',
-  '104': 'Caixa Economica Federal',
+  '104': 'Caixa Econômica Federal',
   '237': 'Bradesco',
   '260': 'Nu Pagamentos',
   '290': 'PagSeguro',
   '323': 'Mercado Pago',
   '336': 'C6 Bank',
-  '341': 'Itau',
+  '341': 'Itaú',
   '380': 'PicPay',
   '422': 'Safra',
   '633': 'Rendimento',
@@ -188,19 +188,19 @@ const parseBankBarcode = (barcode: string, inputDigits: string): BoletoParseResu
   fields.forEach((field) => {
     const expected = modulo10(field.body);
     if (expected !== field.digit) {
-      issues.push(buildIssue(field.name, expected, field.digit, 'Digito verificador do campo nao confere.'));
+      issues.push(buildIssue(field.name, expected, field.digit, 'Dígito verificador do campo não confere.'));
     }
   });
 
   if (barcode[3] !== '9') {
     issues.push(
-      buildIssue('moeda', '9', barcode[3], 'Codigo de moeda do boleto bancario nao confere.'),
+      buildIssue('moeda', '9', barcode[3], 'Código de moeda do boleto bancário não confere.'),
     );
   }
 
   const expectedGeneral = modulo11Boleto(`${barcode.slice(0, 4)}${barcode.slice(5)}`);
   if (expectedGeneral !== barcode[4]) {
-    issues.push(buildIssue('codigo de barras', expectedGeneral, barcode[4], 'DAC geral do boleto nao confere.'));
+    issues.push(buildIssue('código de barras', expectedGeneral, barcode[4], 'DAC geral do boleto não confere.'));
   }
 
   const amountCents = Number(barcode.slice(9, 19));
@@ -214,7 +214,7 @@ const parseBankBarcode = (barcode: string, inputDigits: string): BoletoParseResu
     barcode,
     formattedLine: formatBankLine(lineDigits),
     bankCode: barcode.slice(0, 3),
-    bankName: BANK_NAMES[barcode.slice(0, 3)] ?? 'Banco nao identificado',
+    bankName: BANK_NAMES[barcode.slice(0, 3)] ?? 'Banco não identificado',
     currencyCode: barcode[3],
     amountCents,
     amountDisplay: formatCurrency(amountCents),
@@ -237,19 +237,19 @@ const parseCollectionBarcode = (barcode: string, inputDigits: string): BoletoPar
     const expected = algorithm(body);
 
     if (expected !== actual) {
-      issues.push(buildIssue(`campo ${groupIndex + 1}`, expected, actual, 'Digito verificador do campo nao confere.'));
+      issues.push(buildIssue(`campo ${groupIndex + 1}`, expected, actual, 'Dígito verificador do campo não confere.'));
     }
   }
 
   if (barcode[0] !== '8') {
     issues.push(
-      buildIssue('identificacao do produto', '8', barcode[0], 'Codigo de arrecadacao deve comecar com 8.'),
+      buildIssue('identificação do produto', '8', barcode[0], 'Código de arrecadação deve começar com 8.'),
     );
   }
 
   if (!['6', '7', '8', '9'].includes(barcode[2])) {
     issues.push(
-      buildIssue('tipo de valor', '6, 7, 8 ou 9', barcode[2], 'Tipo de valor do codigo de arrecadacao nao confere.'),
+      buildIssue('tipo de valor', '6, 7, 8 ou 9', barcode[2], 'Tipo de valor do código de arrecadação não confere.'),
     );
   }
 
@@ -257,10 +257,10 @@ const parseCollectionBarcode = (barcode: string, inputDigits: string): BoletoPar
   if (expectedGeneral !== barcode[3]) {
     issues.push(
       buildIssue(
-        'codigo de barras',
+        'código de barras',
         expectedGeneral,
         barcode[3],
-        'DAC geral do codigo de arrecadacao nao confere.',
+        'DAC geral do código de arrecadação não confere.',
       ),
     );
   }
@@ -294,7 +294,7 @@ export const parseBoleto = (value: string): BoletoParseResult => {
         {
           field: 'tamanho',
           actual: String(inputDigits.length),
-          message: 'Informe uma linha digitavel de 47/48 digitos ou codigo de barras de 44 digitos.',
+          message: 'Informe uma linha digitável de 47/48 dígitos ou código de barras de 44 dígitos.',
         },
       ],
     };

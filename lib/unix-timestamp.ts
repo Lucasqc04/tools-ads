@@ -14,21 +14,21 @@ const formatRelative = (diffMs: number): string => {
   const absSeconds = Math.round(Math.abs(diffMs) / 1000);
 
   if (absSeconds < 60) {
-    return diffMs < 0 ? `ha ${absSeconds}s` : `daqui ${absSeconds}s`;
+    return diffMs < 0 ? `há ${absSeconds}s` : `daqui ${absSeconds}s`;
   }
 
   const absMinutes = Math.round(absSeconds / 60);
   if (absMinutes < 60) {
-    return diffMs < 0 ? `ha ${absMinutes} min` : `daqui ${absMinutes} min`;
+    return diffMs < 0 ? `há ${absMinutes} min` : `daqui ${absMinutes} min`;
   }
 
   const absHours = Math.round(absMinutes / 60);
   if (absHours < 48) {
-    return diffMs < 0 ? `ha ${absHours} h` : `daqui ${absHours} h`;
+    return diffMs < 0 ? `há ${absHours} h` : `daqui ${absHours} h`;
   }
 
   const absDays = Math.round(absHours / 24);
-  return diffMs < 0 ? `ha ${absDays} dias` : `daqui ${absDays} dias`;
+  return diffMs < 0 ? `há ${absDays} dias` : `daqui ${absDays} dias`;
 };
 
 const parseRawAsMs = (valueRaw: string): number | undefined => {
@@ -67,7 +67,7 @@ export const parseTimestampInput = (valueRaw: string): TimestampParseResult => {
   if (ms === undefined) {
     return {
       ok: false,
-      error: 'Valor invalido. Informe timestamp (s/ms) ou data reconhecivel.',
+      error: 'Valor inválido. Informe um timestamp (s/ms) ou uma data reconhecível.',
     };
   }
 
@@ -76,7 +76,7 @@ export const parseTimestampInput = (valueRaw: string): TimestampParseResult => {
   if (Number.isNaN(date.getTime())) {
     return {
       ok: false,
-      error: 'Data invalida. Revise o valor informado.',
+      error: 'Data inválida. Revise o valor informado.',
     };
   }
 
@@ -109,7 +109,7 @@ export const toUnixFromDateTime = (datePart: string, timePart: string): Timestam
   if (Number.isNaN(date.getTime())) {
     return {
       ok: false,
-      error: 'Data/hora invalida para conversao.',
+      error: 'Data/hora inválida para conversão.',
     };
   }
 

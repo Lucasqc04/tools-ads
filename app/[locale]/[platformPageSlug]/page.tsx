@@ -58,6 +58,22 @@ import { ShareScreenTool } from '@/components/tools/share-screen-tool';
 import { CelularComoWebcamTool } from '@/components/tools/celular-como-webcam-tool';
 import { TimelapseCreatorTool } from '@/components/tools/timelapse-creator-tool';
 import { UniversalConverterTool } from '@/components/tools/universal-converter-tool';
+import { CssGeneratorTool } from '@/components/tools/css-generator-tool';
+import { ImageColorExtractorTool } from '@/components/tools/image-color-extractor-tool';
+import { IpDiscoveryTool } from '@/components/tools/ip-discovery-tool';
+import { CodeConverterTool } from '@/components/tools/code-converter-tool';
+import { ColorConverterTool } from '@/components/tools/color-converter-tool';
+import { TempEmailTool } from '@/components/tools/temp-email-tool';
+import { RegexTesterTool } from '@/components/tools/regex-tester-tool';
+import { UnixTimestampConverterTool } from '@/components/tools/unix-timestamp-converter-tool';
+import { LightningDecoderTool } from '@/components/tools/lightning-decoder-tool';
+import { RemoveAccentsTool } from '@/components/tools/remove-accents-tool';
+import { CharacterCounterTool } from '@/components/tools/character-counter-tool';
+import { UrlEncoderDecoderTool } from '@/components/tools/url-encoder-decoder-tool';
+import { SlugGeneratorTool } from '@/components/tools/slug-generator-tool';
+import { JwtDecoderTool } from '@/components/tools/jwt-decoder-tool';
+import { UuidNanoIdGeneratorTool } from '@/components/tools/uuid-nanoid-generator-tool';
+import { TransferToolWrapper } from '@/components/tools/transfer-tool-wrapper';
 import {
   getFeaturedCryptoConversionPages,
   getLocalizedCryptoConversionContent,
@@ -791,6 +807,23 @@ const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
   sorteador: ({ locale }) => <SorteadorTool locale={locale} />,
   'calculadora-juros-compostos': ({ locale }) => <CompoundInterestTool locale={locale} />,
   'pix-decoder': ({ locale }) => <PixDecoderTool locale={locale} />,
+  'password-generator': ({ locale }) => <PasswordGeneratorTool locale={locale} />,
+  'css-generator': ({ locale }) => <CssGeneratorTool locale={locale} />,
+  'image-color-extractor': ({ locale }) => <ImageColorExtractorTool locale={locale} />,
+  'descobrir-ip-publico': ({ locale }) => <IpDiscoveryTool locale={locale} />,
+  'code-converter': ({ locale }) => <CodeConverterTool locale={locale} />,
+  'color-converter': ({ locale }) => <ColorConverterTool locale={locale} />,
+  'email-temporario': ({ locale }) => <TempEmailTool locale={locale} />,
+  'regex-tester': ({ locale }) => <RegexTesterTool locale={locale} />,
+  'conversor-unix-timestamp': ({ locale }) => <UnixTimestampConverterTool locale={locale} />,
+  'lightning-decoder': ({ locale }) => <LightningDecoderTool locale={locale} />,
+  'remover-acentos': ({ locale }) => <RemoveAccentsTool locale={locale} />,
+  'contador-de-caracteres': ({ locale }) => <CharacterCounterTool locale={locale} />,
+  'url-encoder-decoder': ({ locale }) => <UrlEncoderDecoderTool locale={locale} />,
+  'gerador-de-slug': ({ locale }) => <SlugGeneratorTool locale={locale} />,
+  'jwt-decoder': ({ locale }) => <JwtDecoderTool locale={locale} />,
+  'gerador-de-uuid-e-nanoid': ({ locale }) => <UuidNanoIdGeneratorTool locale={locale} />,
+  transfer: ({ locale }) => <TransferToolWrapper locale={locale} />,
 };
 
 const resolveCryptoAliasUi = (

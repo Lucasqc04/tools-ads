@@ -40,7 +40,7 @@ type UrlUi = {
 
 const uiByLocale: Record<AppLocale, UrlUi> = {
   'pt-br': {
-    localNote: 'Codificacao/decodificacao local no navegador. Sem login e sem backend obrigatorio.',
+    localNote: 'Codificação e decodificação locais no navegador. Sem login e sem envio ao servidor.',
     sourceLabel: 'Texto ou URL original',
     encodedHint: 'O texto parece ja estar codificado.',
     encodeError: 'Falha ao codificar.',
@@ -101,7 +101,7 @@ const examples = [
   'https://site.com/produto especial?utm_source=google ads&utm_campaign=lancamento',
   'https%3A%2F%2Fsite.com%2Fbusca%3Fq%3Dcamisa%2520azul',
   'redirect=https://dominio.com/pagamento?order=123&ref=abc',
-  'nome=Joao da Silva&cidade=Sao Paulo',
+  'nome=João da Silva&cidade=São Paulo',
 ];
 
 export function UrlEncoderDecoderTool({ locale = 'pt-br' }: UrlEncoderDecoderToolProps) {
@@ -203,7 +203,7 @@ export function UrlEncoderDecoderTool({ locale = 'pt-br' }: UrlEncoderDecoderToo
             }}
           >
             <option value="full">URL completa</option>
-            <option value="param">Parametro</option>
+            <option value="param">Parâmetro</option>
           </Select>
         </label>
         <label className="space-y-2 md:col-span-2">

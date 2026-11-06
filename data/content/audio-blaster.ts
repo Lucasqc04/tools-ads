@@ -14,7 +14,7 @@ export const audioBlasterContentBlocks: ContentBlock[] = [
   {
     title: 'Presets e controles para encontrar o efeito',
     paragraphs: [
-      'Os presets Estouro clássico, Rádio ruim, 8-bit e Overdrive meme servem como ponto de partida. Depois você pode trocar o algoritmo e regular ganho entre 0 e 30 dB, drive, mistura e, no bitcrush, profundidade de bits e redução de amostras. Aumentar o ganho e o drive costuma intensificar a distorção, enquanto diminuir a mistura deixa mais do áudio limpo na saída.',
+      'Os presets Estouro clássico, Rádio ruim, 8-bit e Overdrive meme servem como ponto de partida. Depois você pode trocar o algoritmo e regular os controles. O ganho (0 a 30 dB) aumenta o volume antes do efeito; o drive (1× a 16×) empurra o sinal contra o limite; a mistura (0 a 100%) define quanto do áudio processado entra na saída em relação ao original. No bitcrush, a resolução (2 a 16 bits) diminui o detalhe de cada amostra e a redução de amostras (1× a 32×) faz várias amostras seguidas repetirem o mesmo valor. Aumentar o ganho e o drive intensifica a distorção, e diminuir a mistura deixa mais do áudio limpo. O ponto de partida é clipping seco com 12 dB de ganho, drive 3× e mistura de 100%.',
       'Use uma frase curta para criar uma reação exagerada, aumente o bitcrush para um efeito digital retrô ou escolha rádio para uma voz estreita e áspera. A exportação oferece WAV para evitar nova compressão e MP3 com taxa de bits ajustável para compartilhar um arquivo menor.',
     ],
     list: [

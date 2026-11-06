@@ -143,12 +143,12 @@ const uiByLocale: Record<AppLocale, HtmlViewerUi> = {
   'pt-br': {
     title: 'HTML Editor com Preview, CSS, JS e Console',
     intro:
-      'Edite HTML, CSS e JavaScript com highlight, numeros de linha, preview em sandbox, console capturado e exportacao em um arquivo .html.',
+      'Edite HTML, CSS e JavaScript com highlight, números de linha, preview em sandbox, console capturado e exportação em um arquivo .html.',
     editorTitle: 'Editor',
     htmlLabel: 'HTML',
     cssLabel: 'CSS',
     jsLabel: 'JavaScript',
-    htmlPlaceholder: '<main><h1>Ola, mundo</h1></main>',
+    htmlPlaceholder: '<main><h1>Olá, mundo</h1></main>',
     cssPlaceholder: 'body { font-family: sans-serif; }',
     jsPlaceholder: "console.log('Preview pronto');",
     run: 'Executar',
@@ -158,16 +158,16 @@ const uiByLocale: Record<AppLocale, HtmlViewerUi> = {
     copyDocument: 'Copiar HTML final',
     copied: 'Copiado',
     download: 'Baixar .html',
-    templatesLabel: 'Template rapido',
-    templatesHint: 'Use um ponto de partida e ajuste o codigo no editor.',
+    templatesLabel: 'Template rápido',
+    templatesHint: 'Use um ponto de partida e ajuste o código no editor.',
     filesLabel: 'Importar arquivos',
     filesHint: 'Carregue .html, .css e .js para popular o editor.',
     htmlEntryLabel: 'HTML principal',
     unsupportedFilesWarning:
-      'Alguns arquivos foram ignorados por extensao nao suportada. Use apenas .html, .css ou .js.',
+      'Alguns arquivos foram ignorados por extensão não suportada. Use apenas .html, .css ou .js.',
     noHtmlFileWarning:
       'Nenhum arquivo HTML foi encontrado. Inclua ao menos um .html para montar o preview.',
-    fileReadError: 'Nao foi possivel ler um ou mais arquivos selecionados. Tente novamente.',
+    fileReadError: 'Não foi possível ler um ou mais arquivos selecionados. Tente novamente.',
     loadedFilesTitle: 'Arquivos carregados',
     previewTitle: 'Preview',
     previewHint: 'O iframe executa CSS e JS em sandbox e envia logs para o console abaixo.',
@@ -185,7 +185,7 @@ const uiByLocale: Record<AppLocale, HtmlViewerUi> = {
     issuesTitle: 'Checagens',
     noIssues: 'Nenhum problema simples encontrado.',
     securityHint:
-      'Dica de seguranca: execute apenas codigo confiavel. Scripts rodam no preview sandboxed.',
+      'Dica de segurança: execute apenas código confiável. Scripts rodam no preview sandboxed.',
     emptyPreviewHint: 'Adicione HTML para visualizar o resultado.',
     themeLight: 'Claro',
     themeDark: 'Escuro',
@@ -344,11 +344,11 @@ const uiByLocale: Record<AppLocale, HtmlViewerUi> = {
 
 const templateLabels: Record<AppLocale, Record<TemplateId, Pick<HtmlTemplate, 'label' | 'description'>>> = {
   'pt-br': {
-    starter: { label: 'Componente inicial', description: 'Pagina simples com botao e interacao.' },
+    starter: { label: 'Componente inicial', description: 'Página simples com botão e interação.' },
     landing: { label: 'Secao de landing', description: 'Hero com CTA, lista de beneficios e prova.' },
-    email: { label: 'Email HTML', description: 'Estrutura compativel com emails e tabela.' },
-    form: { label: 'Formulario', description: 'Formulario com validacao JavaScript simples.' },
-    table: { label: 'Tabela responsiva', description: 'Tabela com estilos e ordenacao basica.' },
+    email: { label: 'Email HTML', description: 'Estrutura compatível com emails e tabela.' },
+    form: { label: 'Formulario', description: 'Formulario com validação JavaScript simples.' },
+    table: { label: 'Tabela responsiva', description: 'Tabela com estilos e ordenação básica.' },
     blank: { label: 'Em branco', description: 'Comece do zero.' },
   },
   en: {
@@ -743,13 +743,13 @@ const templateCodeByLocale: Record<AppLocale, Record<TemplateId, Pick<HtmlTempla
   <p class="eyebrow">HTML Viewer</p>
   <h1>Preview em tempo real</h1>
   <p>Edite HTML, CSS e JS e veja mensagens do console direto do sandbox.</p>
-  <button id="cta">Executar interacao</button>
+  <button id="cta">Executar interação</button>
 </main>`,
       js: `const button = document.getElementById('cta');
 
 button?.addEventListener('click', () => {
-  console.log('Botao clicado no preview sandbox');
-  button.textContent = 'Interacao funcionando';
+  console.log('Botão clicado no preview sandbox');
+  button.textContent = 'Interação funcionando';
   button.style.background = '#0f766e';
 });`,
     },
@@ -760,18 +760,18 @@ button?.addEventListener('click', () => {
     <div>
       <p class="eyebrow">Novidade do produto</p>
       <h1>Crie um fluxo melhor para testar HTML</h1>
-      <p class="lead">Use este template para testar espacamento, botoes, cards, responsividade e comportamento de scripts.</p>
+      <p class="lead">Use este template para testar espaçamento, botões, cards, responsividade e comportamento de scripts.</p>
       <a href="#features" class="button">Ver recursos</a>
     </div>
     <aside class="proof">
       <strong>98%</strong>
-      <span>ciclo de QA mais rapido</span>
+      <span>ciclo de QA mais rápido</span>
     </aside>
   </section>
   <section id="features" class="features">
     <article>Preview desktop e mobile.</article>
     <article>Logs de console em poucos segundos.</article>
-    <article>Exportacao de HTML completo.</article>
+    <article>Exportação de HTML completo.</article>
   </section>
 </main>`,
       js: `document.querySelectorAll('.features article').forEach((card, index) => {
@@ -786,14 +786,14 @@ button?.addEventListener('click', () => {
       html: `<table role="presentation" class="email" cellspacing="0" cellpadding="0">
   <tr>
     <td class="header">
-      <h1>Relatorio semanal</h1>
-      <p>Resumo, metricas e proximas acoes.</p>
+      <h1>Relatório semanal</h1>
+      <p>Resumo, métricas e próximas acoes.</p>
     </td>
   </tr>
   <tr>
     <td class="body">
-      <p>Ola,</p>
-      <p>Este template de email HTML mantem a estrutura simples para maior compatibilidade.</p>
+      <p>Olá,</p>
+      <p>Este template de email HTML mantém a estrutura simples para maior compatibilidade.</p>
       <a class="button" href="https://example.com">Abrir painel</a>
     </td>
   </tr>
@@ -818,7 +818,7 @@ const message = document.getElementById('message');
 form?.addEventListener('submit', (event) => {
   event.preventDefault();
   const valid = email?.value.includes('@');
-  message.textContent = valid ? 'Pronto para enviar.' : 'Digite um email valido.';
+  message.textContent = valid ? 'Pronto para enviar.' : 'Digite um e-mail válido.';
   console[valid ? 'log' : 'warn'](message.textContent);
 });`,
     },

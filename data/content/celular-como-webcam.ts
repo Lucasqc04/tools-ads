@@ -37,7 +37,7 @@ const contentByLocale: Record<AppLocale, CelularWebcamContent> = {
         title: 'Como conectar o celular ao computador',
         paragraphs: [
           'Abra esta ferramenta no computador e crie uma sessão temporária. Leia o QR Code com o celular, permita o acesso à câmera e confirme a conexão na tela do computador. Depois da aprovação, o telefone envia o vídeo diretamente ao navegador do PC usando WebRTC. O processo não exige cadastro nem aplicativo instalado no celular; o navegador do telefone precisa aceitar captura de câmera e abrir a página por HTTPS.',
-          'O servidor é usado somente para parear os dois navegadores e trocar os dados necessários para iniciar a conexão. Ofertas, respostas e candidatos de rede ficam temporariamente no Redis e são removidos ao encerrar a sessão ou expiram automaticamente. O vídeo e o áudio opcional não passam pelo Redis, pelo Next.js ou por um servidor de mídia.',
+          'O servidor é usado somente para parear os dois navegadores e trocar os dados necessários para iniciar a conexão. Esses dados ficam guardados por pouco tempo e são removidos ao encerrar a sessão ou expiram sozinhos: a sessão dura no máximo 4 horas. O vídeo e o áudio opcional não são enviados ao servidor do site nem a um servidor de mídia.',
         ],
       },
       {
@@ -57,15 +57,15 @@ const contentByLocale: Record<AppLocale, CelularWebcamContent> = {
       {
         title: 'Privacidade, conexão e limites práticos',
         paragraphs: [
-          'A sessão usa identificadores e credenciais aleatórios, permite um celular por vez e exige aprovação explícita no computador antes de começar a transmissão. O servidor guarda hashes dos segredos, estado temporário e mensagens de sinalização com prazo de expiração; não grava câmera, microfone ou capturas. Os dados de conexão do WebRTC são trocados para estabelecer a rota e não são enviados à análise do site.',
-          'Uma conexão P2P pode revelar informações de conectividade, inclusive o endereço IP, aos navegadores conectados; P2P não significa anonimato de rede. A configuração padrão usa STUN e não inclui relay TURN. Alguns firewalls e roteadores impedem a conexão direta; nesses casos, a transmissão não começa até configurar um servidor TURN compatível. Mantenha a página aberta: o navegador ou o sistema pode pausar a câmera quando o celular vai para segundo plano ou bloqueia a tela.',
+          'A sessão usa identificadores e credenciais aleatórios, permite um celular por vez e exige aprovação explícita no computador antes de começar a transmissão. O servidor guarda apenas versões embaralhadas (hash) dos segredos, o estado temporário da sessão e as mensagens de conexão, todos com prazo de expiração; ele não grava câmera, microfone ou capturas.',
+          'Uma conexão P2P pode revelar informações de conectividade, inclusive o endereço IP, aos navegadores conectados; P2P não significa anonimato de rede. A conexão usa STUN para descobrir a rota e só passa por um servidor de retransmissão (TURN) se o site tiver um configurado; nesse caso, o vídeo é retransmitido por ele. Alguns firewalls e roteadores impedem a conexão direta, e sem TURN a transmissão não começa. Mantenha a página aberta: o navegador ou o sistema pode pausar a câmera quando o celular vai para segundo plano ou bloqueia a tela.',
         ],
       },
     ],
     faq: [
       { question: 'Preciso instalar um aplicativo no celular?', answer: 'Não. Leia o QR Code e abra a página no navegador do celular. A câmera só é solicitada quando você toca em Iniciar câmera.' },
-      { question: 'O vídeo é enviado ao servidor?', answer: 'Não. O vídeo segue por WebRTC entre o celular e o computador. O servidor troca somente mensagens temporárias de sinalização para estabelecer a conexão.' },
-      { question: 'Por que o celular às vezes não conecta ao PC?', answer: 'Firewalls e alguns roteadores bloqueiam conexões diretas. A versão padrão usa STUN e não tem relay TURN configurado; configure um TURN compatível no servidor para redes que exigem retransmissão.' },
+      { question: 'O vídeo é enviado ao servidor?', answer: 'Normalmente não. O vídeo segue por WebRTC direto entre o celular e o computador, e o servidor só troca mensagens temporárias para estabelecer a conexão. Se a rede bloquear a conexão direta e houver um servidor de retransmissão (TURN) ativo, o vídeo passa por ele para chegar ao outro aparelho. O site não grava o vídeo.' },
+      { question: 'Por que o celular às vezes não conecta ao PC?', answer: 'Firewalls e alguns roteadores bloqueiam conexões diretas, e esta ferramenta pode não ter retransmissão (TURN) disponível. Tente colocar o celular e o computador na mesma rede Wi-Fi ou use outra rede.' },
       { question: 'A ferramenta cria uma webcam virtual para o Windows ou macOS?', answer: 'Não. Ela fornece uma janela limpa para captura. No OBS, capture essa janela e inicie a Câmera Virtual do OBS para selecioná-la em outros aplicativos.' },
       { question: 'O celular pode ficar com a tela bloqueada?', answer: 'Não há garantia. Navegadores e sistemas móveis podem suspender a câmera ou a conexão em segundo plano; mantenha a tela ativa durante a transmissão.' },
     ],

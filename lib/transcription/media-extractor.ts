@@ -103,7 +103,7 @@ export const extractAudioAsWav = async (file: File): Promise<File> => {
     ]);
 
     if (exitCode !== 0) {
-      throw new Error('Falha ao extrair audio deste arquivo.');
+      throw new Error('Falha ao extrair o áudio deste arquivo.');
     }
 
     const outputData = await ffmpeg.readFile(outputName);

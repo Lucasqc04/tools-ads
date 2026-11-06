@@ -18,42 +18,42 @@ export type UrlEncoderDecoderLocaleContent = {
 const contentByLocale: Record<AppLocale, UrlEncoderDecoderLocaleContent> = {
   'pt-br': {
     name: 'URL Encoder e Decoder',
-    shortDescription: 'Codifique e decodifique URLs e parametros com suporte a caracteres especiais, query params e copia rapida.',
+    shortDescription: 'Codifique e decodifique uma URL inteira ou só o valor de um parâmetro, veja os query params em tabela e reconstrua o link.',
     primaryKeyword: 'url encoder e decoder online',
     secondaryKeywords: ['encode url', 'decode url', 'url encode parametro', 'decode query string', 'utm encoder'],
-    searchIntent: 'Devs, analistas e marketing que precisam codificar/decodificar links e parametros com seguranca.',
-    seoTitle: 'URL Encoder e Decoder Online | Encode/Decode de URL e Parametros',
-    seoDescription: 'Ferramenta para codificar e decodificar URL, query params e textos com acentos/simbolos. Inclui parser de parametros e reconstruir URL.',
+    searchIntent: 'Devs, analistas e marketing que precisam codificar e decodificar links e parâmetros com segurança.',
+    seoTitle: 'URL Encoder e Decoder Online | Encode e Decode de URL',
+    seoDescription: 'Codifique e decodifique URL completa ou valor de parâmetro, edite os query params em tabela e monte o link final. Roda no navegador.',
     h1: 'URL Encoder e Decoder Online',
-    intro: 'Transforme texto e links em formatos seguros para query params, redirects, APIs e campanhas.',
+    intro: 'Codifique ou decodifique uma URL ou um parâmetro (espaços, acentos e símbolos) para usar em links, redirects, APIs e campanhas.',
     contentBlocks: [
       {
-        title: 'Quando usar URL encode e decode',
+        title: 'URL completa ou parâmetro: qual modo usar',
         paragraphs: [
-          'Encode e util quando voce precisa enviar parametros com espacos, acentos e simbolos em links, APIs e formulários.',
-          'Decode faz o caminho inverso, ajudando na leitura e depuracao de URLs que chegam codificadas.',
+          'Cole o texto, escolha o modo e clique em Encode ou em Decode. No modo "URL completa", a ferramenta mantém a estrutura do endereço (: / ? & = #) e só codifica o que não pode aparecer em uma URL, como espaços e acentos. É o que você quer para um link inteiro. No modo "Parâmetro", tudo que tem função especial é codificado, inclusive & = ? / e #. Use esse modo para o valor de um único parâmetro, por exemplo uma URL de retorno (redirect) que vai dentro de outra URL.',
+          'Exemplo: no modo "URL completa", https://site.com/produto especial?utm_source=google ads vira https://site.com/produto%20especial?utm_source=google%20ads. No modo "Parâmetro", João & Maria = 50% vira Jo%C3%A3o%20%26%20Maria%20%3D%2050%25. A codificação usa UTF-8, então "ã" ocupa dois bytes (%C3%A3).',
         ],
       },
       {
-        title: 'Trabalho com query string',
+        title: 'Tabela de query params e reconstrução do link',
         paragraphs: [
-          'A ferramenta tambem separa query params em tabela para voce editar nome e valor com clareza.',
-          'Depois de ajustar os parametros, voce pode reconstruir a URL final e copiar o resultado rapidamente.',
+          'Depois de um Encode ou Decode, a ferramenta lê os parâmetros do resultado (o que vem depois do ?) e mostra cada nome e valor em campos editáveis. Ajuste os valores e clique em "Reconstruir URL final" para montar o link a partir do campo "Base URL", que precisa ser um endereço completo, como https://exemplo.com/pagina. O resultado vai para o campo Resultado.',
+          'Ao reconstruir, os parâmetros antigos da Base URL são substituídos pelos da tabela, o #fragmento é mantido, os espaços viram "+" e nomes repetidos ficam só com o último valor. Parâmetros sem nome são ignorados. O botão "Inverter origem/resultado" troca os dois campos para você aplicar uma operação em cima da outra.',
         ],
       },
       {
-        title: 'Limites e cuidados',
+        title: 'Avisos, limites e privacidade',
         paragraphs: [
-          'Nem todo texto codificado deve ser decodificado com a mesma funcao. Em alguns casos, voce precisa tratar URL completa e parametro individual de forma diferente.',
-          'Sempre valide o resultado final para evitar links quebrados em campanhas e integrações.',
+          'Se o texto colado já parece codificado (por exemplo, contém %20), aparece um aviso para você não codificar duas vezes. Se houver uma sequência % incompleta ou inválida, o Decode falha com a mensagem "Falha ao decodificar o valor informado". O Decode do modo "URL completa" não desfaz caracteres reservados como %2F, %3F e %26 (eles continuam codificados), então use o modo "Parâmetro" para decodificar tudo.',
+          'O processamento acontece no navegador e os links e parâmetros digitados não são enviados ao nosso servidor.',
         ],
       },
     ],
     faq: [
-      { question: 'Qual a diferenca entre encodeURI e encodeURIComponent?', answer: 'encodeURI e melhor para URL completa; encodeURIComponent e ideal para valor de parametro.' },
-      { question: 'Posso decodificar query string completa?', answer: 'Sim. Voce pode colar URL inteira e extrair parametros.' },
-      { question: 'A ferramenta detecta texto ja codificado?', answer: 'Sim. Existe aviso quando o texto aparenta estar codificado.' },
-      { question: 'Funciona no navegador sem backend?', answer: 'Sim. Todo processamento e local.' },
+      { question: 'Qual a diferença entre URL completa e parâmetro?', answer: 'URL completa (encodeURI) preserva os caracteres que estruturam o endereço, como / ? & = e #. Parâmetro (encodeURIComponent) codifica todos eles e serve para o valor de um parâmetro.' },
+      { question: 'Posso decodificar uma query string completa?', answer: 'Sim. Cole a URL ou só a parte depois do ?, clique em Decode e veja os parâmetros na tabela. Para decodificar tudo, inclusive %26 e %3D, use o modo "Parâmetro".' },
+      { question: 'A ferramenta avisa quando o texto já está codificado?', answer: 'Sim. Quando a decodificação do texto muda o conteúdo, aparece um aviso. Ele serve para evitar uma codificação dupla, como %2520.' },
+      { question: 'Os meus links são enviados para algum servidor?', answer: 'Não. Todo o processamento é feito no navegador.' },
     ],
   },
   en: {

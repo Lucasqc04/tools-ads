@@ -693,7 +693,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'text',
     to: 'binary',
     labelByLocale: {
-      'pt-br': 'Texto para binario',
+      'pt-br': 'Texto para binário',
       en: 'Text to binary',
       es: 'Texto a binario',
       zh: 'Text to binary',
@@ -717,7 +717,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'binary',
     to: 'text',
     labelByLocale: {
-      'pt-br': 'Binario para texto',
+      'pt-br': 'Binário para texto',
       en: 'Binary to text',
       es: 'Binario a texto',
       zh: 'Binary to text',
@@ -885,7 +885,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'decimal',
     to: 'binary',
     labelByLocale: {
-      'pt-br': 'Decimal para binario',
+      'pt-br': 'Decimal para binário',
       en: 'Decimal to binary',
       es: 'Decimal a binario',
       zh: 'Decimal to binary',
@@ -909,7 +909,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'binary',
     to: 'decimal',
     labelByLocale: {
-      'pt-br': 'Binario para decimal',
+      'pt-br': 'Binário para decimal',
       en: 'Binary to decimal',
       es: 'Binario a decimal',
       zh: 'Binary to decimal',
@@ -1029,7 +1029,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'binary',
     to: 'hexadecimal',
     labelByLocale: {
-      'pt-br': 'Binario para hexadecimal',
+      'pt-br': 'Binário para hexadecimal',
       en: 'Binary to hexadecimal',
       es: 'Binario a hexadecimal',
       zh: 'Binary to hexadecimal',
@@ -1053,7 +1053,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'hexadecimal',
     to: 'binary',
     labelByLocale: {
-      'pt-br': 'Hexadecimal para binario',
+      'pt-br': 'Hexadecimal para binário',
       en: 'Hexadecimal to binary',
       es: 'Hexadecimal a binario',
       zh: 'Hexadecimal to binary',
@@ -1451,7 +1451,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'text',
     to: 'caesar',
     labelByLocale: {
-      'pt-br': 'Texto para Cifra de Cesar',
+      'pt-br': 'Texto para Cifra de César',
       en: 'Text to Caesar cipher',
       es: 'Texto a Cifra de Cesar',
       zh: 'Text to Caesar cipher',
@@ -1475,7 +1475,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'caesar',
     to: 'text',
     labelByLocale: {
-      'pt-br': 'Cifra de Cesar para texto',
+      'pt-br': 'Cifra de César para texto',
       en: 'Caesar cipher to text',
       es: 'Cifra de Cesar a texto',
       zh: 'Caesar cipher to text',
@@ -1595,7 +1595,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'text',
     to: 'vigenere',
     labelByLocale: {
-      'pt-br': 'Texto para Vigenere',
+      'pt-br': 'Texto para Vigenère',
       en: 'Text to Vigenere',
       es: 'Texto a Vigenere',
       zh: 'Text to Vigenere',
@@ -1619,7 +1619,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'vigenere',
     to: 'text',
     labelByLocale: {
-      'pt-br': 'Vigenere para texto',
+      'pt-br': 'Vigenère para texto',
       en: 'Vigenere to text',
       es: 'Vigenere a texto',
       zh: 'Vigenere to text',
@@ -1933,7 +1933,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'text',
     to: 'text no invisible',
     labelByLocale: {
-      'pt-br': 'Remover caracteres invisiveis',
+      'pt-br': 'Remover caracteres invisíveis',
       en: 'Remove invisible characters',
       es: 'Quitar caracteres invisibles',
       zh: 'Remove invisible characters',
@@ -1957,7 +1957,7 @@ export const universalConversions: UniversalConversionDefinition[] = [
     from: 'text',
     to: 'visible markers',
     labelByLocale: {
-      'pt-br': 'Mostrar caracteres invisiveis',
+      'pt-br': 'Mostrar caracteres invisíveis',
       en: 'Show invisible characters',
       es: 'Mostrar caracteres invisibles',
       zh: 'Show invisible characters',
@@ -2003,7 +2003,7 @@ export const universalPresets: UniversalPreset[] = [
       'text-to-crc32',
     ],
     warningByLocale: {
-      'pt-br': 'Hashes nao sao reversiveis por design.',
+      'pt-br': 'Hashes não são reversíveis por design.',
       en: 'Hashes are not reversible by design.',
       es: 'Los hashes no son reversibles por diseno.',
       zh: 'Hashes are not reversible by design.',
@@ -2022,7 +2022,7 @@ export const universalPresets: UniversalPreset[] = [
   {
     id: 'all-bases',
     labelByLocale: {
-      'pt-br': 'Numero para todas as bases',
+      'pt-br': 'Número para todas as bases',
       en: 'Number to all bases',
       es: 'Numero a todas las bases',
       zh: 'Number to all bases',
@@ -2032,14 +2032,14 @@ export const universalPresets: UniversalPreset[] = [
   {
     id: 'all-classic-ciphers',
     labelByLocale: {
-      'pt-br': 'Texto para cifras classicas',
+      'pt-br': 'Texto para cifras clássicas',
       en: 'Text to classic ciphers',
       es: 'Texto a cifras clasicas',
       zh: 'Text to classic ciphers',
     },
     destinationIds: ['text-to-morse', 'text-to-caesar', 'text-to-rot13', 'text-to-atbash', 'text-to-vigenere', 'text-to-reverse'],
     warningByLocale: {
-      'pt-br': 'Cifras classicas sao educativas e nao substituem criptografia moderna.',
+      'pt-br': 'Cifras clássicas são educativas e não substituem criptografia moderna.',
       en: 'Classic ciphers are educational and not modern encryption.',
       es: 'Las cifras clasicas son educativas y no reemplazan cifrado moderno.',
       zh: 'Classic ciphers are educational and not modern encryption.',
@@ -2068,7 +2068,7 @@ export const universalPresets: UniversalPreset[] = [
   {
     id: 'prepare-for-code',
     labelByLocale: {
-      'pt-br': 'Preparar texto para codigo',
+      'pt-br': 'Preparar texto para código',
       en: 'Prepare text for code',
       es: 'Preparar texto para codigo',
       zh: 'Prepare text for code',
@@ -2078,7 +2078,7 @@ export const universalPresets: UniversalPreset[] = [
   {
     id: 'caesar-all-shifts',
     labelByLocale: {
-      'pt-br': 'Testar todos deslocamentos Cesar',
+      'pt-br': 'Testar todos deslocamentos César',
       en: 'Test all Caesar shifts',
       es: 'Probar todos los desplazamientos Cesar',
       zh: 'Test all Caesar shifts',
@@ -2095,7 +2095,7 @@ export const getUniversalPresetById = (id: UniversalPresetId): UniversalPreset |
 const unavailableHashResult = (algorithm: string): UniversalConversionResult => ({
   ok: false,
   output: '',
-  error: `Algoritmo ${algorithm} indisponivel no navegador nesta build.`,
+  error: `Algoritmo ${algorithm} indisponível no navegador nesta versão.`,
 });
 
 const successful = (output: string, warning?: string): UniversalConversionResult => ({
@@ -2129,7 +2129,7 @@ const ensureInputAllowed = (
 
 const hashWithWarning = async (algorithm: string, input: string): Promise<UniversalConversionResult> => {
   const output = await hashBySubtle(algorithm, input);
-  return output ? successful(output, 'Hash nao e reversivel.') : unavailableHashResult(algorithm);
+  return output ? successful(output, 'Hash não é reversível.') : unavailableHashResult(algorithm);
 };
 
 const conversionHandlers: Record<UniversalConversionId, ConversionHandler> = {
@@ -2137,73 +2137,73 @@ const conversionHandlers: Record<UniversalConversionId, ConversionHandler> = {
   'binary-to-text': async (input) => {
     const value = binaryToText(input);
     return value === undefined
-      ? failed('Formato binario invalido. Use grupos de 0 e 1 separados por espaco.')
+      ? failed('Formato binário inválido. Use grupos de 0 e 1 separados por espaço.')
       : successful(value);
   },
   'text-to-hex': async (input) => successful(toHex(textToBytes(input))),
   'hex-to-text': async (input) => {
     const bytes = fromHex(input);
-    return bytes ? successful(bytesToText(bytes)) : failed('Hexadecimal invalido.');
+    return bytes ? successful(bytesToText(bytes)) : failed('Hexadecimal inválido.');
   },
   'text-to-ascii-dec': async (input) => successful(textToAsciiDecimal(input)),
   'ascii-dec-to-text': async (input) => {
     const parsed = asciiDecimalToText(input);
-    return parsed === undefined ? failed('ASCII decimal invalido.') : successful(parsed);
+    return parsed === undefined ? failed('ASCII decimal inválido.') : successful(parsed);
   },
   'text-to-octal-text': async (input) => successful(textToOctalText(input)),
   'octal-text-to-text': async (input) => {
     const parsed = octalTextToText(input);
-    return parsed === undefined ? failed('Octal invalido para texto.') : successful(parsed);
+    return parsed === undefined ? failed('Octal inválido para texto.') : successful(parsed);
   },
   'decimal-to-binary': async (input) => {
     const n = parseNumeric(input, 10);
-    return n === undefined ? failed('Decimal invalido.') : successful(toBase(n, 2));
+    return n === undefined ? failed('Decimal inválido.') : successful(toBase(n, 2));
   },
   'binary-to-decimal': async (input) => {
     const n = parseNumeric(input, 2);
-    return n === undefined ? failed('Binario invalido.') : successful(String(n));
+    return n === undefined ? failed('Binário inválido.') : successful(String(n));
   },
   'decimal-to-hex': async (input) => {
     const n = parseNumeric(input, 10);
-    return n === undefined ? failed('Decimal invalido.') : successful(toBase(n, 16));
+    return n === undefined ? failed('Decimal inválido.') : successful(toBase(n, 16));
   },
   'hex-to-decimal': async (input) => {
     const n = parseNumeric(input, 16);
-    return n === undefined ? failed('Hexadecimal invalido.') : successful(String(n));
+    return n === undefined ? failed('Hexadecimal inválido.') : successful(String(n));
   },
   'decimal-to-octal': async (input) => {
     const n = parseNumeric(input, 10);
-    return n === undefined ? failed('Decimal invalido.') : successful(toBase(n, 8));
+    return n === undefined ? failed('Decimal inválido.') : successful(toBase(n, 8));
   },
   'octal-to-decimal': async (input) => {
     const n = parseNumeric(input, 8);
-    return n === undefined ? failed('Octal invalido.') : successful(String(n));
+    return n === undefined ? failed('Octal inválido.') : successful(String(n));
   },
   'binary-to-hex': async (input) => {
     const n = parseNumeric(input, 2);
-    return n === undefined ? failed('Binario invalido.') : successful(toBase(n, 16));
+    return n === undefined ? failed('Binário inválido.') : successful(toBase(n, 16));
   },
   'hex-to-binary': async (input) => {
     const n = parseNumeric(input, 16);
-    return n === undefined ? failed('Hexadecimal invalido.') : successful(toBase(n, 2));
+    return n === undefined ? failed('Hexadecimal inválido.') : successful(toBase(n, 2));
   },
   'octal-to-hex': async (input) => {
     const n = parseNumeric(input, 8);
-    return n === undefined ? failed('Octal invalido.') : successful(toBase(n, 16));
+    return n === undefined ? failed('Octal inválido.') : successful(toBase(n, 16));
   },
   'hex-to-octal': async (input) => {
     const n = parseNumeric(input, 16);
-    return n === undefined ? failed('Hexadecimal invalido.') : successful(toBase(n, 8));
+    return n === undefined ? failed('Hexadecimal inválido.') : successful(toBase(n, 8));
   },
   'decimal-to-base36': async (input) => {
     const n = parseNumeric(input, 10);
-    return n === undefined ? failed('Decimal invalido.') : successful(toBase(n, 36));
+    return n === undefined ? failed('Decimal inválido.') : successful(toBase(n, 36));
   },
   'base36-to-decimal': async (input) => {
     const n = parseFlexibleBaseNumber(input, 36);
-    return n === undefined ? failed('Base36 invalida.') : successful(String(n));
+    return n === undefined ? failed('Base36 inválida.') : successful(String(n));
   },
-  'text-to-md5': async (input) => successful(md5(input), 'Hash nao e reversivel.'),
+  'text-to-md5': async (input) => successful(md5(input), 'Hash não é reversível.'),
   'text-to-sha1': async (input) => hashWithWarning('SHA-1', input),
   'text-to-sha224': async () => unavailableHashResult('SHA-224'),
   'text-to-sha256': async (input) => hashWithWarning('SHA-256', input),
@@ -2213,16 +2213,16 @@ const conversionHandlers: Record<UniversalConversionId, ConversionHandler> = {
   'text-to-sha3-512': async () => unavailableHashResult('SHA3-512'),
   'text-to-ripemd160': async () => unavailableHashResult('RIPEMD-160'),
   'text-to-crc32': async (input) => successful(crc32(input), 'Checksum nao e reversivel.'),
-  'text-to-morse': async (input) => successful(textToMorse(input), 'Cifra educativa, nao criptografia moderna.'),
+  'text-to-morse': async (input) => successful(textToMorse(input), 'Cifra educativa, não é criptografia moderna.'),
   'morse-to-text': async (input) => {
     const parsed = morseToText(input);
     return parsed === undefined
-      ? failed('Morse invalido. Use pontos, tracos e / para espacos.')
-      : successful(parsed, 'Cifra educativa, nao criptografia moderna.');
+      ? failed('Morse inválido. Use pontos, traços e / para espaços.')
+      : successful(parsed, 'Cifra educativa, não é criptografia moderna.');
   },
   'text-to-caesar': async (input, options) => {
     const shift = Number.isFinite(options.shift) ? Math.trunc(options.shift ?? 0) : 3;
-    return successful(caesarEncode(input, shift), 'Cifra classica educativa.');
+    return successful(caesarEncode(input, shift), 'Cifra clássica educativa.');
   },
   'caesar-to-text': async (input, options) => {
     const shift = Number.isFinite(options.shift) ? Math.trunc(options.shift ?? 0) : 3;
@@ -2235,21 +2235,21 @@ const conversionHandlers: Record<UniversalConversionId, ConversionHandler> = {
   'text-to-vigenere': async (input, options) => {
     const transformed = vigenereTransform(input, options.key ?? '', false);
     return transformed === undefined
-      ? failed('Informe uma chave alfabetica para Vigenere.')
-      : successful(transformed, 'Cifra classica educativa.');
+      ? failed('Informe uma chave alfabética para Vigenère.')
+      : successful(transformed, 'Cifra clássica educativa.');
   },
   'vigenere-to-text': async (input, options) => {
     const transformed = vigenereTransform(input, options.key ?? '', true);
     return transformed === undefined
-      ? failed('Informe a mesma chave usada na codificacao.')
-      : successful(transformed, 'Cifra classica educativa.');
+      ? failed('Informe a mesma chave usada na codificação.')
+      : successful(transformed, 'Cifra clássica educativa.');
   },
   'text-to-reverse': async (input) => successful(Array.from(input).reverse().join('')),
   'reverse-to-text': async (input) => successful(Array.from(input).reverse().join('')),
   'text-to-json-escaped': async (input) => successful(escapeJsonString(input)),
   'json-escaped-to-text': async (input) => {
     const parsed = unescapeJsonString(input);
-    return parsed === undefined ? failed('String JSON escapada invalida.') : successful(parsed);
+    return parsed === undefined ? failed('String JSON escapada inválida.') : successful(parsed);
   },
   'text-to-html-entities': async (input) => successful(escapeHtmlEntities(input)),
   'html-entities-to-text': async (input) => successful(unescapeHtmlEntities(input)),
@@ -2262,16 +2262,16 @@ const conversionHandlers: Record<UniversalConversionId, ConversionHandler> = {
         'Tambem existe a ferramenta dedicada URL Encoder/Decoder.',
       );
     } catch {
-      return failed('URL encoded invalido para decodeURIComponent.');
+      return failed('URL encoded inválido para decodeURIComponent.');
     }
   },
   'query-string-to-json': async (input) => {
     const parsed = convertQueryStringToJson(input);
-    return parsed === undefined ? failed('Query string invalida.') : successful(parsed);
+    return parsed === undefined ? failed('Query string inválida.') : successful(parsed);
   },
   'json-to-query-string': async (input) => {
     const parsed = convertJsonToQueryString(input);
-    return parsed === undefined ? failed('JSON invalido para query string.') : successful(parsed);
+    return parsed === undefined ? failed('JSON inválido para query string.') : successful(parsed);
   },
   'text-to-slug': async (input) => {
     const slug = buildSlug(input, {
@@ -2283,7 +2283,7 @@ const conversionHandlers: Record<UniversalConversionId, ConversionHandler> = {
       removePunctuation: true,
       removeEmojis: true,
     });
-    return successful(slug, 'Tambem existe a ferramenta dedicada Gerador de Slug.');
+    return successful(slug, 'Também existe a ferramenta dedicada Gerador de Slug.');
   },
   'text-remove-accents': async (input) => {
     const result = removeAccentsText(input, {
@@ -2295,7 +2295,7 @@ const conversionHandlers: Record<UniversalConversionId, ConversionHandler> = {
       spaceReplacement: 'none',
       toSlug: false,
     });
-    return successful(result.value, 'Tambem existe a ferramenta dedicada Remover Acentos.');
+    return successful(result.value, 'Também existe a ferramenta dedicada Remover Acentos.');
   },
   'text-remove-invisible': async (input) =>
     successful(input ? removeInvisibleCharacters(input) : '', 'Tambem existe a ferramenta dedicada de caractere invisivel.'),
@@ -2315,7 +2315,7 @@ export const convertById = async (
 
   const handler = conversionHandlers[conversionId];
   if (!handler) {
-    return failed('Conversao ainda nao implementada.');
+    return failed('Conversão ainda não implementada.');
   }
 
   return handler(input, options);
@@ -2513,7 +2513,7 @@ export const categoryLabelByLocale: Record<
   Record<AppLocale, string>
 > = {
   'text-encoding': {
-    'pt-br': 'Texto e Encoding',
+    'pt-br': 'Texto e codificação',
     en: 'Text and Encoding',
     es: 'Texto y Encoding',
     zh: 'Text and Encoding',
@@ -2525,19 +2525,19 @@ export const categoryLabelByLocale: Record<
     zh: 'Hashes and checksums',
   },
   'numeric-bases': {
-    'pt-br': 'Bases numericas',
+    'pt-br': 'Bases numéricas',
     en: 'Numeric bases',
     es: 'Bases numericas',
     zh: 'Numeric bases',
   },
   'classic-ciphers': {
-    'pt-br': 'Cifras classicas',
+    'pt-br': 'Cifras clássicas',
     en: 'Classic ciphers',
     es: 'Cifras clasicas',
     zh: 'Classic ciphers',
   },
   'web-programming': {
-    'pt-br': 'Web e programacao',
+    'pt-br': 'Web e programação',
     en: 'Web and programming',
     es: 'Web y programacion',
     zh: 'Web and programming',
@@ -2657,6 +2657,6 @@ export const convertBetweenCustomBases = (
 ): UniversalConversionResult => {
   const output = convertBaseCustom(value, fromBase, toBase);
   return output === undefined
-    ? failed('Conversao de base personalizada invalida. Use bases entre 2 e 36.')
+    ? failed('Conversão de base personalizada inválida. Use bases entre 2 e 36.')
     : successful(output);
 };

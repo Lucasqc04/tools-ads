@@ -43,18 +43,18 @@ const uiByLocale: Record<AppLocale, PasswordUi> = {
   'pt-br': {
     title: 'Gerador de senha forte',
     intro:
-      'Crie senha segura automaticamente com controle total de tamanho e tipos de caracteres.',
-    lengthLabel: 'Numero de caracteres da senha',
+      'Crie uma senha aleatória escolhendo o tamanho e os tipos de caracteres.',
+    lengthLabel: 'Número de caracteres da senha',
     lengthHint:
-      'Sem limite fixo no campo. Em tamanhos muito altos, a geracao pode levar mais tempo no dispositivo.',
-    sliderLabel: 'Ajuste rapido com slider (1 a 200)',
+      'Sem limite fixo no campo. Em tamanhos muito altos, a geração pode levar mais tempo no dispositivo.',
+    sliderLabel: 'Ajuste rápido com slider (1 a 200)',
     sliderHint:
-      'O slider facilita o ajuste rapido. Para valores acima de 200, use o campo numerico.',
+      'O slider facilita o ajuste rápido. Para valores acima de 200, use o campo numérico.',
     usedCharsTitle: 'Caracteres utilizados',
-    uppercase: 'Letra maiuscula',
-    lowercase: 'Letra minuscula',
-    numbers: 'Numeros',
-    symbols: 'Simbolos',
+    uppercase: 'Letra maiúscula',
+    lowercase: 'Letra minúscula',
+    numbers: 'Números',
+    symbols: 'Símbolos',
     generatedPasswordTitle: 'Senha gerada',
     emptyPassword: 'Selecione pelo menos um tipo de caractere para gerar a senha.',
     noneOptionError: 'Marque ao menos uma opcao de caractere.',
@@ -63,8 +63,8 @@ const uiByLocale: Record<AppLocale, PasswordUi> = {
     regenerate: 'Regenerar',
     clear: 'Limpar',
     processingNote:
-      'A senha e gerada localmente no navegador e nao e enviada para servidor por padrao.',
-    copyError: 'Nao foi possivel copiar agora. Tente novamente.',
+      'A senha é gerada no navegador e não é enviada ao servidor do site.',
+    copyError: 'Não foi possível copiar agora. Tente novamente.',
   },
   en: {
     title: 'Strong password generator',

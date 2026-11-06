@@ -281,7 +281,7 @@ const buildExecutiveSummary = (metrics: DiffMetrics): string => {
   const growth = metrics.charDiff >= 0 ? `+${metrics.charDiff}` : `${metrics.charDiff}`;
 
   return [
-    `Similaridade geral de ${metrics.similarityPercent}% entre as versoes.`,
+    `Similaridade geral de ${metrics.similarityPercent}% entre as versões.`,
     `Foram adicionadas ${metrics.addedUnits} unidades e removidas ${metrics.removedUnits}.`,
     `O tamanho final variou ${growth} caracteres e ${metrics.wordDiff} palavras.`,
   ].join(' ');
@@ -314,15 +314,15 @@ export const compareTexts = (textA: string, textB: string, options: DiffOptions)
 export const buildDiffReport = (result: TextDiffResult): string => {
   const header = [
     `Similaridade: ${result.metrics.similarityPercent}%`,
-    `Adicoes: ${result.metrics.addedUnits}`,
-    `Remocoes: ${result.metrics.removedUnits}`,
-    `Diferenca de caracteres: ${result.metrics.charDiff}`,
-    `Diferenca de palavras: ${result.metrics.wordDiff}`,
+    `Adições: ${result.metrics.addedUnits}`,
+    `Remoções: ${result.metrics.removedUnits}`,
+    `Diferença de caracteres: ${result.metrics.charDiff}`,
+    `Diferença de palavras: ${result.metrics.wordDiff}`,
     '',
     'Resumo:',
     result.executiveSummary,
     '',
-    'Alteracoes:',
+    'Alterações:',
   ];
 
   const operations = result.operations

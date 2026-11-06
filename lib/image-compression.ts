@@ -113,7 +113,7 @@ const readImageDimensions = async (
         resolve({ width: image.naturalWidth, height: image.naturalHeight });
       };
 
-      image.onerror = () => reject(new Error('Falha ao ler dimensoes da imagem.'));
+      image.onerror = () => reject(new Error('Falha ao ler as dimensões da imagem.'));
       image.src = objectUrl;
     });
   } finally {

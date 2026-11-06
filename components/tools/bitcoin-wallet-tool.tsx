@@ -135,7 +135,7 @@ const uiByLocale: Record<AppLocale, Ui> = {
     intro:
       'Gere ou importe carteira BIP39/BIP84, consulte saldo e UTXOs, e envie BTC direto do navegador usando mempool API.',
     networkLabel: 'Rede',
-    networkTestnet: 'Testnet (padrao recomendado)',
+    networkTestnet: 'Testnet (padrão recomendado)',
     networkMainnet: 'Mainnet',
     modeLabel: 'Modo da carteira',
     modeGenerate: 'Gerar carteira',
@@ -143,23 +143,23 @@ const uiByLocale: Record<AppLocale, Ui> = {
     modeImportWif: 'Importar WIF',
     generateTitle: 'Gerar nova carteira BIP39',
     generateDescription:
-      'Cria mnemonic em ingles e deriva endereco SegWit nativo (BIP84).',
+      'Cria uma seed phrase de 12 palavras em inglês e deriva o endereço SegWit nativo (BIP84).',
     generateButton: 'Gerar carteira',
     generatedMnemonicLabel: 'Seed phrase gerada',
     importMnemonicTitle: 'Importar via seed phrase',
     importMnemonicDescription:
-      'Cole sua mnemonic BIP39 em ingles para derivar endereco BIP84.',
+      'Cole sua seed phrase BIP39 em inglês para derivar o endereço BIP84.',
     mnemonicInputPlaceholder: 'seed phrase com 12 ou 24 palavras...',
     importMnemonicButton: 'Importar seed',
     importWifTitle: 'Importar via private key (WIF)',
     importWifDescription:
-      'Cole a WIF da rede selecionada para reconstruir endereco e enviar.',
+      'Cole a WIF da rede selecionada para reconstruir o endereço e enviar.',
     wifInputPlaceholder: 'L1... / K... / c... / 9...',
     importWifButton: 'Importar WIF',
     walletDetailsTitle: 'Dados da carteira',
-    addressLabel: 'Endereco',
-    publicKeyLabel: 'Chave publica',
-    derivationPathLabel: 'Caminho de derivacao',
+    addressLabel: 'Endereço',
+    publicKeyLabel: 'Chave pública',
+    derivationPathLabel: 'Caminho de derivação',
     showSeed: 'Mostrar seed',
     hideSeed: 'Ocultar seed',
     showWif: 'Mostrar WIF',
@@ -169,58 +169,58 @@ const uiByLocale: Record<AppLocale, Ui> = {
     refreshWalletData: 'Atualizar saldo e UTXOs',
     balanceTitle: 'Saldo da carteira',
     confirmedBalance: 'Confirmado',
-    unconfirmedBalance: 'Nao confirmado',
+    unconfirmedBalance: 'Não confirmado',
     totalBalance: 'Total',
-    utxosTitle: 'UTXOs disponiveis',
-    utxosEmpty: 'Nenhum UTXO encontrado para este endereco.',
+    utxosTitle: 'UTXOs disponíveis',
+    utxosEmpty: 'Nenhum UTXO encontrado para este endereço.',
     utxosCount: (count) => `${count} UTXO(s) carregados`,
     txidLabel: 'TXID',
     amountLabel: 'Valor',
     statusLabel: 'Status',
     sendTitle: 'Enviar BTC',
-    destinationLabel: 'Endereco de destino',
+    destinationLabel: 'Endereço de destino',
     destinationPlaceholder: 'bc1... ou tb1...',
     amountBtcLabel: 'Valor em BTC',
     amountBtcPlaceholder: '0.0001',
     feeRateLabel: 'Fee rate (sat/vB)',
-    feeRateHint: 'Use fee maior para confirmar mais rapido.',
-    includeUnconfirmedLabel: 'Incluir UTXOs nao confirmados',
-    sendButton: 'Criar e enviar transacao',
+    feeRateHint: 'Use uma fee maior para confirmar mais rápido.',
+    includeUnconfirmedLabel: 'Incluir UTXOs não confirmados',
+    sendButton: 'Criar e enviar transação',
     sendingButton: 'Enviando...',
-    feeRecommendation: 'Sugestao de fee (mempool)',
-    feeFast: 'Rapida',
+    feeRecommendation: 'Sugestão de fee (mempool)',
+    feeFast: 'Rápida',
     feeHalfHour: '30 min',
     feeHour: '1 hora',
-    feeMin: 'Minima',
-    txSuccess: 'Transacao enviada com sucesso.',
+    feeMin: 'Mínima',
+    txSuccess: 'Transação enviada com sucesso.',
     txId: 'Txid',
     txFee: 'Fee paga',
     txInputs: 'Inputs usados',
     txChange: 'Troco',
     viewOnExplorer: 'Ver no explorer',
-    viewAddressOnExplorer: 'Ver endereco no explorer',
+    viewAddressOnExplorer: 'Ver endereço no explorer',
     testnetFaucetTitle: 'Precisa de BTC de teste?',
     testnetFaucetDescription:
       'Use um faucet da testnet4 para receber moedas de teste e validar envios sem risco.',
     openFaucet: 'Abrir faucet testnet4',
     localSecurityNote:
-      'Esta tool roda no navegador e nao guarda seed/WIF no servidor. Mesmo assim, use valores pequenos e ambiente confiavel.',
+      'Esta ferramenta roda no navegador e não envia a seed nem a WIF ao servidor do site. Mesmo assim, use valores pequenos e um ambiente confiável.',
     mainnetWarning:
-      'Voce esta em MAINNET. Qualquer envio usa BTC real. Revise endereco, valor e fee antes de confirmar.',
+      'Você está em MAINNET. Qualquer envio usa BTC real. Revise endereço, valor e fee antes de confirmar.',
     testnetDefaultHint:
-      'A rede padrao e Testnet para testes seguros antes de operar em Mainnet.',
+      'A rede padrão é a Testnet, para testar com segurança antes de operar na Mainnet.',
     walletMissingHint:
       'Gere ou importe uma carteira para consultar saldo e enviar BTC.',
     loadingWalletData: 'Carregando saldo e UTXOs...',
     networkSwitchHint:
-      'Ao trocar rede, a carteira e rederivada automaticamente (seed) ou validada novamente (WIF).',
+      'Ao trocar a rede, a carteira é derivada de novo (seed) ou validada novamente (WIF).',
     invalidSend:
-      'Preencha endereco destino, valor e fee valida para enviar.',
+      'Preencha o endereço de destino, o valor e uma fee válida para enviar.',
     includeConfirmedOnlyHint:
-      'Se desmarcado, somente UTXOs confirmados serao usados na selecao de inputs.',
-    mempoolFallbackWarningTitle: 'API mempool.space instavel',
+      'Se desmarcado, somente UTXOs confirmados serão usados na seleção de inputs.',
+    mempoolFallbackWarningTitle: 'API do mempool.space instável',
     mempoolFallbackWarningBody:
-      'A API principal esta lenta ou retornou erro. Usando Blockstream como fallback — proceda com calma.',
+      'A API principal está lenta ou retornou erro. Usando a Blockstream como alternativa. Prossiga com calma.',
   },
   en: {
     title: 'Bitcoin Wallet for Testnet and Mainnet',
@@ -612,7 +612,7 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
       setWalletErrorMessage('');
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Erro ao trocar rede para a carteira atual.';
+        error instanceof Error ? error.message : 'Erro ao trocar a rede para a carteira atual.';
       setWalletSession(null);
       setWalletData(initialWalletDataState);
       setWalletErrorMessage(message);
@@ -857,7 +857,7 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
       const feeRate = Number(feeRateInput);
 
       if (!Number.isFinite(feeRate) || feeRate < 1) {
-        throw new Error('Fee rate invalida.');
+        throw new Error('Fee inválida.');
       }
 
       const signed = createAndSignSendTransaction({
@@ -888,7 +888,7 @@ export function BitcoinWalletTool({ locale = 'pt-br' }: BitcoinWalletToolProps) 
 
       await loadWalletData(walletSession.address);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Falha ao enviar transacao.';
+      const message = error instanceof Error ? error.message : 'Falha ao enviar a transação.';
       setTxState({
         isSending: false,
         errorMessage: message,

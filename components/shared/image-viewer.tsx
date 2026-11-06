@@ -234,7 +234,7 @@ export function ImageViewer({ src, alt, isOpen, onClose, onDownload }: ImageView
                 setPosition({ x: 0, y: 0 });
               }}
               className="rounded-full p-2 text-white transition-colors hover:bg-black/40"
-              aria-label="Resetar visualizacao"
+              aria-label="Restaurar visualização"
             >
               Reset
             </button>

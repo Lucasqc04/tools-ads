@@ -2,43 +2,36 @@ import type { AppLocale } from '@/lib/i18n/config';
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const cssGeneratorIntro =
-  'Crie gradientes, sombras, bordas, border-radius, glassmorphism, filtros, transforms e animações CSS visualmente com sliders e copie o código pronto.';
+  'Ajuste sombras, gradientes, bordas arredondadas, glassmorphism, filtros, transforms e animações com sliders, veja o resultado ao vivo e copie o CSS pronto.';
 
 export const cssGeneratorContentBlocks: ContentBlock[] = [
   {
-    title: 'Gerador visual de CSS com preview em tempo real',
+    title: 'Como usar o gerador visual de CSS',
     paragraphs: [
-      'Esta ferramenta permite criar efeitos CSS complexos sem precisar memorizar propriedades ou valores. Basta ajustar os sliders e ver o resultado ao vivo no preview à direita.',
-      'Todos os efeitos populares estão disponíveis: box-shadow com múltiplas camadas, border-radius avançado com sintaxe elíptica, gradientes lineares, radiais e cônicos, glassmorphism com backdrop-filter, bordas com gradiente, transforms 3D, filtros de imagem e animações CSS.',
+      'Escolha uma categoria (presets, sombra, border radius, gradiente, glassmorphism, borda, texto, tamanho, transform, filtros ou animação) e mova os sliders. O preview mostra o resultado na hora, em um elemento que você pode trocar entre card, botão, input, badge, hero e toast, sobre fundos como sólido, gradiente, pontos, escuro ou xadrez. O código aparece em uma área própria e o botão "Copiar" leva o texto para a área de transferência.',
+      'No computador, as categorias ficam em um painel à esquerda e o preview à direita. No celular, o preview vem primeiro, e as categorias e os controles ficam em abas logo abaixo. Há botões para resetar tudo ou só a seção atual.',
     ],
   },
   {
-    title: 'Como usar o gerador de CSS visual',
+    title: 'O que dá para gerar',
     paragraphs: [
-      'Escolha uma categoria no painel esquerdo (sombra, gradiente, border-radius, glassmorphism, bordas, texto, transforms, filtros ou animações). Cada categoria oferece sliders específicos para ajustar as propriedades CSS.',
-      'O preview à direita atualiza em tempo real conforme você move os sliders. Você pode alterar o tipo de elemento (card, botão, input, badge) e o fundo do preview para testar diferentes cenários.',
-      'Quando estiver satisfeito com o resultado, copie o código CSS gerado com um clique. O código está disponível em CSS puro, HTML + CSS, Tailwind aproximado e CSS variables.',
+      'O código é gerado para uma classe chamada .element e pode ser copiado em quatro formas: CSS, HTML + CSS (um exemplo de elemento com um bloco style), Tailwind (uma aproximação com classes utilitárias, que pode usar valores arbitrários em colchetes) e Variables (propriedades personalizadas, como --el-width e --el-shadow, para você reaproveitar valores).',
     ],
     list: [
-      'Ajuste sombras com múltiplas camadas e direção de luz.',
-      'Crie border-radius orgânico com sintaxe avançada.',
-      'Gere gradientes com múltiplas cores e ângulo personalizado.',
-      'Configure glassmorphism com blur, saturação e borda translúcida.',
-      'Aplique transforms 3D, filtros e animações com presets.',
+      'Sombra: várias camadas de box-shadow, com deslocamento, blur, espalhamento, cor e opção de sombra interna.',
+      'Border radius: um valor para todos os cantos ou um valor por canto, em px ou %.',
+      'Gradiente: linear, radial (circular) ou cônico, com cores e ângulo ajustáveis.',
+      'Glassmorphism: fundo translúcido com backdrop-filter (blur, saturação e brilho) e borda translúcida.',
+      'Transform e filtros: rotate, scale, skew e translate; blur, brilho, contraste, escala de cinza, rotação de matiz, saturação e sépia.',
+      'Animações prontas: pulse, float, glow, spin, shimmer e bounce, com o @keyframes incluído no código.',
     ],
   },
   {
-    title: 'Presets prontos para começar rápido',
+    title: 'Presets, compatibilidade e privacidade',
     paragraphs: [
-      'A ferramenta oferece dezenas de presets visuais para você começar sem configurar nada. Cards com sombra suave, botões com gradiente, efeitos glassmorphism, neumorphism e neon estão disponíveis com um clique.',
-      'Cada preset pode ser personalizado depois. Carregue um preset como ponto de partida e ajuste os sliders conforme sua necessidade.',
-    ],
-  },
-  {
-    title: 'Privacidade e compatibilidade',
-    paragraphs: [
-      'Todo o processamento acontece localmente no navegador. Nenhum dado é enviado para servidor. Você pode usar a ferramenta offline depois de carregar a página.',
-      'O CSS gerado é compatível com todos os navegadores modernos. Para propriedades como backdrop-filter, o prefixo -webkit- é incluído automaticamente para garantir suporte em Safari.',
+      'Os 25 presets cobrem estilos como sombra suave, neumorphism, glassmorphism, neon, claymorphism, aurora, botão com gradiente e brutalista. Carregue um e ajuste os sliders a partir dele.',
+      'Para glassmorphism, o código inclui o backdrop-filter e também a versão com prefixo -webkit-, usada pelo Safari. O efeito depende do navegador do visitante: confira o suporte ao backdrop-filter se a sua página precisa funcionar em versões antigas. As configurações não ficam salvas: ao recarregar a página, tudo volta ao padrão, então copie o código antes de sair.',
+      'A ferramenta funciona no navegador e nada do que você configura é enviado ao nosso servidor.',
     ],
   },
 ];
@@ -47,32 +40,27 @@ export const cssGeneratorFaq: FaqItem[] = [
   {
     question: 'Posso copiar o CSS gerado e usar no meu projeto?',
     answer:
-      'Sim. O código CSS gerado é 100% funcional e pode ser copiado diretamente para qualquer projeto web, React, Next.js, Vue ou HTML puro.',
+      'Sim. O código usa CSS padrão (uma classe .element) e pode ser colado em qualquer projeto, seja HTML puro, React, Next.js ou Vue. Troque o nome da classe se precisar.',
   },
   {
     question: 'O glassmorphism funciona em todos os navegadores?',
     answer:
-      'O backdrop-filter funciona nos navegadores modernos (Chrome, Firefox, Safari, Edge). O prefixo -webkit-backdrop-filter é incluído automaticamente para Safari.',
+      'O backdrop-filter funciona nos navegadores atuais, como Chrome, Firefox, Safari e Edge. O código inclui também o prefixo -webkit-backdrop-filter, usado pelo Safari. Em navegadores muito antigos, o efeito pode não aparecer.',
   },
   {
     question: 'Posso gerar código Tailwind?',
     answer:
-      'Sim. A ferramenta gera uma aproximação em classes Tailwind CSS. Nem todas as propriedades CSS têm equivalente exato em Tailwind, mas os valores mais comuns são convertidos.',
+      'Sim. A aba Tailwind gera uma aproximação com classes utilitárias, usando valores arbitrários quando não há uma classe pronta. Nem toda propriedade tem equivalente exato, então revise o resultado.',
   },
   {
     question: 'A ferramenta salva meus estilos?',
     answer:
-      'Sim. Você pode salvar presets no navegador via localStorage e exportar/importar configurações em JSON para compartilhar ou fazer backup.',
-  },
-  {
-    question: 'Funciona no celular?',
-    answer:
-      'Sim. A interface é responsiva e adaptada para telas menores. No mobile, o preview aparece primeiro e os controles ficam em abas abaixo.',
+      'Não. As configurações não ficam salvas no navegador nem na nossa base. Ao recarregar a página, tudo volta ao padrão. Copie o código antes de sair.',
   },
   {
     question: 'Preciso instalar algo ou criar conta?',
     answer:
-      'Não. A ferramenta funciona diretamente no navegador, sem instalação, sem cadastro e sem envio de dados.',
+      'Não. A ferramenta funciona direto no navegador, sem instalação nem cadastro, e as suas configurações não são enviadas ao nosso servidor.',
   },
 ];
 
@@ -96,7 +84,7 @@ const contentByLocale: Record<AppLocale, CssGeneratorLocaleContent> = {
   'pt-br': {
     name: 'Gerador Visual de CSS',
     shortDescription:
-      'Crie gradientes, sombras, bordas, border-radius, glassmorphism, filtros e animações com sliders e copie o CSS pronto.',
+      'Crie sombras, gradientes, border-radius, glassmorphism, filtros e animações com sliders, veja o preview ao vivo e copie o CSS pronto.',
     primaryKeyword: 'gerador de css visual online',
     secondaryKeywords: [
       'gerador de gradiente css',
@@ -112,7 +100,7 @@ const contentByLocale: Record<AppLocale, CssGeneratorLocaleContent> = {
       'Desenvolvedores e designers que precisam criar efeitos CSS visualmente sem memorizar propriedades e valores.',
     seoTitle: 'Gerador Visual de CSS Online | Gradiente, Sombra, Glass, Radius',
     seoDescription:
-      'Crie CSS visual com sliders: gradientes, box-shadow, border-radius, glassmorphism, filtros, transforms e animações. Preview ao vivo e código pronto para copiar.',
+      'Crie CSS com sliders: box-shadow, gradientes, border-radius, glassmorphism, filtros e animações. Veja o preview ao vivo e copie em CSS, HTML ou Tailwind.',
     h1: 'Gerador Visual de CSS com Preview em Tempo Real',
     intro: cssGeneratorIntro,
     contentBlocks: cssGeneratorContentBlocks,

@@ -1,64 +1,64 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const imageConverterIntro =
-  'Converta arquivos entre mais de 20 formatos de imagem e PDF direto no navegador, grátis, sem cadastro, sem login e com download rápido em desktop e mobile.';
+  'Converta uma imagem entre PNG, JPEG, WEBP, AVIF e outros formatos, transforme uma imagem em PDF ou extraia as páginas de um PDF como imagens. Tudo no navegador, sem cadastro.';
 
 export const imageConverterContentBlocks: ContentBlock[] = [
   {
-    title: 'Como funciona o conversor de imagem e PDF',
+    title: 'Como usar o conversor de imagem e PDF',
     paragraphs: [
-      'A ferramenta foi criada para cenários reais de produção em que você precisa mudar formato com rapidez: publicar imagem otimizada para web, preparar arquivo para impressão, gerar PDF de um arquivo visual ou extrair páginas de PDF como imagens para revisão e edição.',
-      'Todo processamento acontece localmente no navegador. Isso significa menor latência, mais controle sobre o arquivo e menos risco de exposição de conteúdo sensível em upload para terceiros.',
+      'Escolha o formato de origem, o formato de destino e selecione um arquivo. A ferramenta converte um arquivo por vez e libera o download no mesmo lugar. Em formatos com perda, como JPEG, WEBP e AVIF, há um controle de qualidade (o padrão é 90%): valores mais altos mantêm mais detalhe e geram arquivos maiores.',
+      'O PDF funciona nos dois sentidos. Ao converter imagem para PDF, o resultado é um PDF de uma página com o mesmo tamanho da imagem, e áreas transparentes ficam brancas. Ao converter PDF para imagem, cada página vira um arquivo separado. Por padrão são convertidas as 5 primeiras páginas, e você pode aumentar o limite até 120 páginas por vez.',
     ],
   },
   {
-    title: 'Conversões para mais de 20 formatos',
+    title: 'Formatos de saída e o que esperar de cada um',
     paragraphs: [
-      'Você pode converter rapidamente entre formatos populares e profissionais como PNG, JPEG, WEBP, AVIF, BMP, TIFF, ICO, GIF, SVG, HEIC, HEIF, TGA, DDS, HDR, EXR, PSD, RAW, CR2, NEF, ARW e PDF.',
-      'A interface foi pensada para reduzir passos: escolha o arquivo, ajuste opções quando necessário e baixe o resultado em segundos.',
+      'Os formatos de destino disponíveis são PNG, JPEG, WEBP, AVIF, BMP, ICO, SVG, TGA e PDF. AVIF e WEBP dependem de o seu navegador saber gerar esses arquivos; se ele não souber, a ferramenta avisa em vez de entregar um arquivo errado. O BMP é salvo em 24 bits, sem transparência, e o TGA em 32 bits sem compressão.',
+      'Dois destinos têm particularidades. O SVG gerado apenas embute a imagem como PNG dentro de um arquivo SVG, então não vira um desenho vetorial editável. O ICO contém uma única imagem no tamanho original; para um conjunto completo de ícones de site, use o gerador de favicon.',
     ],
     list: [
-      'PNG para JPEG para reduzir peso em imagens sem transparência.',
-      'JPEG para WEBP para melhorar desempenho em páginas web.',
-      'HEIC para JPEG para compatibilidade ampla em sites e sistemas.',
-      'TIFF para PNG para manter qualidade em arte e assets de design.',
-      'Imagem para PDF para envio de documentos e anexos.',
-      'PDF para imagem com 1 arquivo de imagem gerado por página do PDF.',
+      'PNG para JPEG: reduz o peso de imagens sem transparência.',
+      'JPEG para WEBP ou AVIF: costuma gerar arquivos menores para páginas web.',
+      'HEIC de iPhone para JPEG: deixa a foto aberta em qualquer sistema.',
+      'Imagem para PDF: junta uma foto ou digitalização em um documento para anexar.',
+      'PDF para PNG ou JPEG: extrai páginas para revisar ou editar como imagem.',
     ],
   },
   {
-    title: 'Boas práticas para preservar qualidade e performance',
+    title: 'Formatos de origem, HEIC e limites',
     paragraphs: [
-      'Formatos com compressão com perdas (JPEG e WEBP) permitem ajustar qualidade. Em geral, valores entre 80% e 92% equilibram bem nitidez e tamanho final para uso web.',
-      'Na conversão de PDF para imagem, cada página gera uma imagem separada. Em arquivos longos, limitar páginas por lote melhora a experiência em celular e evita travamentos em dispositivos de menor memória.',
+      'A lista de origem inclui também TIFF, DDS, HDR, EXR, PSD e formatos RAW de câmera (CR2, NEF, ARW), mas quem lê o arquivo é o próprio navegador. Formatos comuns da web, como PNG, JPEG, WEBP, GIF, BMP e SVG, abrem sem problema. Os profissionais e RAW normalmente não abrem, e nesse caso a conversão termina com uma mensagem de erro. Se isso acontecer, exporte antes o arquivo para PNG ou JPEG no programa onde ele foi criado.',
+      'Todo o processamento de imagens e PDFs acontece no navegador, com uma exceção: se o navegador não conseguir abrir uma foto HEIC ou HEIF (o Safari costuma conseguir), o arquivo é enviado ao servidor do site, convertido em JPEG e descartado ao fim do pedido. Esse envio só vale para HEIC/HEIF e tem limite de 50 MB. O leitor de PDF também carrega um script de apoio de um CDN público, mas o conteúdo do seu PDF não é enviado.',
+      'Arquivos muito grandes ou PDFs com muitas páginas dependem da memória do aparelho. No celular, converta poucas páginas por vez. A conversão não preserva camadas, animações de GIF nem metadados da imagem original.',
     ],
   },
 ];
 
 export const imageConverterFaq: FaqItem[] = [
   {
-    question: 'Esse conversor é gratuito?',
+    question: 'Meus arquivos são enviados para um servidor?',
     answer:
-      'Sim. O uso é gratuito e sem necessidade de conta para converter entre formatos de imagem e PDF.',
+      'Normalmente não: a conversão roda no navegador. A única exceção são fotos HEIC ou HEIF que o navegador não consegue abrir. Nesse caso, o arquivo (até 50 MB) é enviado ao servidor do site só para virar JPEG e não é guardado.',
   },
   {
-    question: 'Meus arquivos são enviados para servidor?',
+    question: 'Para quais formatos posso converter?',
     answer:
-      'Não. O processamento ocorre localmente no navegador por padrão, sem upload automático para backend.',
+      'PNG, JPEG, WEBP, AVIF, BMP, ICO, SVG, TGA e PDF. AVIF e WEBP dependem de o navegador conseguir gerar o arquivo. O SVG gerado contém a imagem embutida como PNG, não um desenho vetorial.',
   },
   {
     question: 'Consigo converter PDF para imagem e imagem para PDF?',
     answer:
-      'Sim. A ferramenta suporta os dois fluxos, incluindo extração de páginas de PDF como imagens (1 imagem por página) e geração de PDF a partir de imagem.',
+      'Sim. No PDF para imagem, cada página gera um arquivo (5 páginas por padrão, até 120 por vez). Na imagem para PDF, o resultado é um PDF de uma página com o tamanho da imagem.',
   },
   {
-    question: 'Qual formato escolher para web?',
+    question: 'Por que meu arquivo PSD, RAW ou TIFF não abriu?',
     answer:
-      'Para web, WEBP e JPEG costumam entregar boa relação entre qualidade e tamanho. PNG é indicado quando você precisa preservar transparência.',
+      'Esses formatos aparecem na lista, mas a leitura depende do navegador, que em geral não abre PSD, EXR, DDS e RAW de câmera. Exporte o arquivo como PNG ou JPEG no programa original e converta em seguida.',
   },
   {
-    question: 'Funciona no celular?',
+    question: 'Qual formato escolher para usar em um site?',
     answer:
-      'Sim. A interface foi desenhada para telas pequenas, sem scroll horizontal e com ações principais acessíveis em mobile.',
+      'WEBP ou JPEG costumam dar boa relação entre qualidade e tamanho. Use PNG se precisar de transparência. Teste a qualidade (o padrão é 90%) e compare o tamanho do arquivo antes de publicar.',
   },
 ];

@@ -17,87 +17,87 @@ export type NicknameSymbolGeneratorContent = {
 
 const contentByLocale: Record<AppLocale, NicknameSymbolGeneratorContent> = {
   'pt-br': {
-    name: 'Gerador de Simbolos para Nickname',
+    name: 'Gerador de Símbolos para Nickname',
     shortDescription:
-      'Crie nicknames com mais de 650 simbolos e emojis, 28 molduras e 12 estilos de letras para Fortnite, Free Fire, Roblox, Valorant, COD Mobile e outros jogos.',
-    primaryKeyword: 'simbolos para nickname fortnite',
+      'Crie nicknames com mais de 650 símbolos e emojis, 28 molduras e 12 estilos de letras para Fortnite, Free Fire, Roblox, Valorant, COD Mobile e outros jogos.',
+    primaryKeyword: 'símbolos para nickname fortnite',
     secondaryKeywords: [
-      'gerador de nickname com simbolos',
-      'simbolos para nome de jogo',
-      'simbolos para nick free fire',
-      'nome com simbolos roblox',
-      'simbolos para nome valorant',
+      'gerador de nickname com símbolos',
+      'símbolos para nome de jogo',
+      'símbolos para nick free fire',
+      'nome com símbolos roblox',
+      'símbolos para nome valorant',
       'nickname gamer copiar e colar',
     ],
     searchIntent:
-      'Jogadores que querem decorar um nickname com simbolos Unicode, molduras e estilos de letra antes de copiar para o perfil do jogo.',
-    seoTitle: 'Simbolos para Nickname Fortnite e Jogos | Gerador Online',
+      'Jogadores que querem decorar um nickname com símbolos Unicode, molduras e estilos de letra antes de copiar para o perfil do jogo.',
+    seoTitle: 'Símbolos para Nickname Fortnite e Jogos | Gerador Online',
     seoDescription:
-      'Monte nicknames para Fortnite e outros jogos com teclado de simbolos. Insira caracteres no meio do nome, escolha molduras e copie sem cadastro.',
-    h1: 'Gerador de Simbolos para Nickname de Fortnite e Jogos',
+      'Monte nicknames para Fortnite e outros jogos com teclado de símbolos. Insira caracteres no meio do nome, escolha molduras e copie sem cadastro.',
+    h1: 'Gerador de Símbolos para Nickname de Fortnite e Jogos',
     intro:
-      'Digite seu nome e use o teclado para inserir mais de 650 simbolos e emojis em qualquer posicao. Explore 22 categorias, 28 molduras e 12 estilos Unicode.',
+      'Digite seu nome e use o teclado para inserir mais de 650 símbolos e emojis em qualquer posição. Explore 22 categorias, 28 molduras e 12 estilos Unicode.',
     contentBlocks: [
       {
-        title: 'Como criar um nickname gamer com simbolos',
+        title: 'Como criar um nickname gamer com símbolos',
         paragraphs: [
-          'Comece digitando o nome que voce ja usa ou uma palavra curta que represente seu estilo. Posicione o cursor antes, depois ou entre as letras e toque no teclado de simbolos para montar a combinacao livremente. Tambem e possivel selecionar um trecho, substitui-lo por um simbolo, apagar e limpar tudo sem depender de um preset.',
-          'O preview personalizado permite combinar a montagem livre com prefixos, sufixos e 12 estilos de letras, incluindo original, small caps, largura completa, negrito, italico, circulado, quadrado, espacado e sublinhado. Quando encontrar uma combinacao legivel, copie o resultado e teste no campo real do perfil antes de confirmar a alteracao.',
+          'Comece digitando o nome que você já usa ou uma palavra curta que represente seu estilo. Posicione o cursor antes, depois ou entre as letras e toque no teclado de símbolos para montar a combinação livremente. Também é possível selecionar um trecho, substituí-lo por um símbolo, apagar e limpar tudo sem depender de um preset.',
+          'O preview personalizado permite combinar a montagem livre com prefixos, sufixos e 12 estilos de letras, incluindo original, small caps, largura completa, negrito, itálico, circulado, quadrado, espaçado e sublinhado. Quando encontrar uma combinação legível, copie o resultado e teste no campo real do perfil antes de confirmar a alteração.',
         ],
       },
       {
         title: 'Presets para Fortnite, Free Fire, Roblox e outros jogos',
         paragraphs: [
-          'Cada jogo exibe nomes em lugares diferentes. No Fortnite, o nickname precisa continuar facil de reconhecer no lobby e na lista de amigos. No Free Fire e no COD Mobile, a leitura em telas pequenas favorece molduras compactas. No Roblox, nome de usuario e nome de exibicao podem seguir filtros diferentes. Por isso a ordem dos presets muda conforme a plataforma selecionada.',
-          'As paginas dedicadas usam a mesma ferramenta completa, mas iniciam com o jogo e os estilos mais relevantes ja selecionados. Isso reduz tentativa e erro sem fingir que existe um simbolo universalmente aceito.',
+          'Cada jogo exibe nomes em lugares diferentes. No Fortnite, o nickname precisa continuar fácil de reconhecer no lobby e na lista de amigos. No Free Fire e no COD Mobile, a leitura em telas pequenas favorece molduras compactas. No Roblox, nome de usuário e nome de exibição podem seguir filtros diferentes. Por isso a ordem dos presets muda conforme a plataforma selecionada.',
+          'As páginas dedicadas usam a mesma ferramenta completa, mas iniciam com o jogo e os estilos mais relevantes já selecionados. Isso reduz tentativa e erro sem fingir que existe um símbolo universalmente aceito.',
         ],
         list: [
-          'Fortnite: raios, katakana, laminas e decoracao curta.',
+          'Fortnite: raios, katakana, lâminas e decoração curta.',
           'Free Fire: molduras, coroas, asas e estilos small caps.',
           'Valorant e CS2: formatos curtos para placar e feed.',
-          'Roblox: combinacoes simples para chat e nome de exibicao.',
+          'Roblox: combinações simples para chat e nome de exibição.',
         ],
       },
       {
         title: 'Compatibilidade de Unicode e limite do nickname',
         paragraphs: [
-          'Os resultados usam caracteres Unicode reais, nao imagens. Mesmo assim, jogos, contas vinculadas, consoles, celulares e fontes podem exibir o mesmo simbolo de maneiras diferentes. Um caractere pode aparecer normalmente no navegador e virar um quadrado vazio dentro do jogo. Emoji e molduras complexas costumam variar mais que simbolos de texto simples.',
-          'O contador mostra o tamanho do resultado gerado, incluindo as decoracoes. Use isso para comparar opcoes, mas confirme o limite diretamente no jogo porque as regras podem mudar. Se a primeira versao for rejeitada, remova a moldura, volte ao estilo original ou teste um preset mais curto.',
+          'Os resultados usam caracteres Unicode reais, não imagens. Mesmo assim, jogos, contas vinculadas, consoles, celulares e fontes podem exibir o mesmo símbolo de maneiras diferentes. Um caractere pode aparecer normalmente no navegador e virar um quadrado vazio dentro do jogo. Emoji e molduras complexas costumam variar mais que símbolos de texto simples.',
+          'O campo do nome aceita até 48 caracteres, e os campos de prefixo e sufixo aceitam 8 cada. O contador mostra o tamanho do resultado final, já com molduras e estilo. Use isso para comparar opções, mas confirme o limite diretamente no jogo porque as regras podem mudar. Se a primeira versão for rejeitada, remova a moldura, volte ao estilo original ou teste um preset mais curto.',
         ],
       },
       {
-        title: 'Copia local, privacidade e uso responsavel',
+        title: 'Cópia local, privacidade e uso responsável',
         paragraphs: [
-          'A criacao do nickname acontece localmente no navegador. O nome digitado nao precisa ser enviado para uma API e pode ser substituido ou limpo a qualquer momento. Os botoes de copia usam apenas a area de transferencia do dispositivo.',
-          'Os nomes dos jogos sao usados somente para orientar presets e exemplos. A ferramenta nao e afiliada aos publishers e nao verifica disponibilidade de nickname. Evite imitar criadores, jogadores profissionais ou marcas de forma enganosa e respeite as regras de cada comunidade.',
+          'A criação do nickname acontece localmente no navegador. O nome digitado não precisa ser enviado para uma API e pode ser substituído ou limpo a qualquer momento. Os botões de cópia usam apenas a área de transferência do dispositivo.',
+          'Os nomes dos jogos são usados somente para orientar presets e exemplos. A ferramenta não é afiliada aos publishers e não verifica disponibilidade de nickname. Evite imitar criadores, jogadores profissionais ou marcas de forma enganosa e respeite as regras de cada comunidade.',
         ],
       },
     ],
     faq: [
       {
-        question: 'Quais simbolos posso usar no nome do Fortnite?',
+        question: 'Quais símbolos posso usar no nome do Fortnite?',
         answer:
-          'A aceitacao pode mudar. Comece por simbolos de texto curtos como ϟ, ツ, 乂, ★ e molduras simples. Copie o resultado e valide no campo de nome da Epic antes de confirmar.',
+          'A aceitação pode mudar. Comece por símbolos de texto curtos como ϟ, ツ, 乂, ★ e molduras simples. Copie o resultado e valide no campo de nome da Epic antes de confirmar.',
       },
       {
         question: 'O gerador funciona para outros jogos?',
         answer:
-          'Sim. A ferramenta e generica e inclui presets para Fortnite, Free Fire, Roblox, Valorant, COD Mobile, PUBG Mobile, CS2, Minecraft, Brawl Stars e Rocket League.',
+          'Sim. A ferramenta é genérica e inclui presets para Fortnite, Free Fire, Roblox, Valorant, COD Mobile, PUBG Mobile, CS2, Minecraft, Brawl Stars e Rocket League, além de outros 16 jogos.',
       },
       {
-        question: 'Por que alguns simbolos aparecem como quadrados?',
+        question: 'Por que alguns símbolos aparecem como quadrados?',
         answer:
-          'Isso acontece quando a fonte do jogo ou do aparelho nao possui aquele glifo Unicode. Tente um simbolo mais simples ou mantenha as letras no estilo original.',
+          'Isso acontece quando a fonte do jogo ou do aparelho não possui aquele glifo Unicode. Tente um símbolo mais simples ou mantenha as letras no estilo original.',
       },
       {
-        question: 'A ferramenta verifica se o nickname esta disponivel?',
+        question: 'A ferramenta verifica se o nickname está disponível?',
         answer:
-          'Nao. Ela cria e copia variacoes, mas a disponibilidade e a validacao final dependem do jogo e da sua conta.',
+          'Não. Ela cria e copia variações, mas a disponibilidade e a validação final dependem do jogo e da sua conta.',
       },
       {
-        question: 'Posso colocar simbolos no meio do nickname?',
+        question: 'Posso colocar símbolos no meio do nickname?',
         answer:
-          'Sim. Toque no ponto desejado dentro do campo de edicao, mantenha a opcao No cursor selecionada e depois toque nos simbolos. Eles entram exatamente naquela posicao.',
+          'Sim. Toque no ponto desejado dentro do campo do nickname e depois toque nos símbolos do catálogo: eles entram exatamente na posição do cursor. Se houver um trecho selecionado, o símbolo o substitui.',
       },
     ],
   },

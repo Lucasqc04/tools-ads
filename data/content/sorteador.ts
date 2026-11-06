@@ -1,35 +1,36 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const sorteadorIntro =
-  'Sorteie nomes, numeros e listas completas com parsing inteligente, roleta visual, multiplos resultados e compartilhamento por link.';
+  'Cole uma lista e sorteie nomes, números ou equipes online, com roleta, contagem regressiva, resultado em CSV e link para compartilhar a configuração.';
 
 export const sorteadorContentBlocks: ContentBlock[] = [
   {
-    title: 'Sorteador online completo para nomes, numeros e roleta',
+    title: 'Três formas de sortear em uma só página',
     paragraphs: [
-      'Esta ferramenta foi desenhada para funcionar como hub de sorteio. Voce pode colar qualquer lista, detectar separadores automaticamente e rodar sorteios com ou sem repeticao.',
-      'A interface tambem cobre casos comuns como sorteio de nomes para dinamicas, sorteio de numeros para rifas e embaralhamento completo para definir ordem aleatoria.',
+      'A aba Nomes sorteia itens de qualquer lista: cole os participantes, informe quantos quer sortear e clique em "Sortear agora". Cada item sorteado sai da rodada, então o mesmo nome não aparece duas vezes no mesmo resultado. A aba Números sorteia dentro de um intervalo, como 1 a 100 para uma rifa. A aba Equipes embaralha a lista e a divide em quantas equipes ou grupos você escolher.',
+      'Exemplo: com a lista "Ana, Bruno, Carla, Diego, Elisa, Fábio" e 2 equipes, os participantes são embaralhados e distribuídos um a um entre as equipes, que ficam com 3 pessoas cada.',
     ],
   },
   {
-    title: 'Parsing inteligente e configuracoes de sorteio',
+    title: 'Como a lista é lida',
     paragraphs: [
-      'A lista aceita multiplos formatos: virgula, quebra de linha, espaco, tab, ponto, pipe, barra e ponto e virgula. Isso reduz friccao quando voce copia dados de planilha, chat ou bloco de notas.',
-      'Antes do sorteio, voce pode limpar a lista removendo duplicados, espacos extras e itens vazios. Tambem existe suporte a pesos para dar chances diferentes a cada item.',
+      'Cada linha, ou cada trecho separado por vírgula, ponto e vírgula, barra vertical (|), tab, barra (/), ponto ou espaço, vira um item. A opção "Detectar automaticamente" procura os separadores nessa ordem: quebra de linha, vírgula, ponto e vírgula, barra vertical, tab, barra, ponto e, por último, espaço.',
+      'Se seus itens têm mais de uma palavra, como "Maria Silva", use uma linha para cada item ou separe por vírgula. Com o separador de espaço, cada palavra vira um item, e com o ponto, abreviações como "Dr. Silva" são cortadas.',
     ],
     list: [
-      'Sortear 1 ou varios resultados com controle de quantidade.',
-      'Definir suspense de 0, 3, 5 ou 10 segundos.',
-      'Ativar roleta visual com animacao.',
-      'Evitar repetir nomes ja sorteados.',
-      'Rodar simulacao de 1000 sorteios para validar distribuicao.',
+      'Remover itens repetidos da lista; espaços extras e linhas vazias são ignorados automaticamente.',
+      'Não sortear itens que já saíram em rodadas anteriores desta sessão.',
+      'Embaralhar a lista antes de sortear e ordenar os resultados.',
+      'Contagem regressiva de 3, 5, 10, 15, 30 ou 60 segundos, e roleta visual com até 12 itens da lista.',
+      'Aplicar pesos: com a opção de remover repetidos ligada, um nome que aparece mais vezes na lista ganha mais chances.',
     ],
   },
   {
-    title: 'Transparencia, privacidade e compartilhamento',
+    title: 'Como o resultado é gerado e como compartilhar',
     paragraphs: [
-      'O sorteio utiliza aleatoriedade local do navegador com crypto.getRandomValues e mostra seed de referencia junto ao algoritmo aplicado.',
-      'Por padrao, o processamento acontece localmente no dispositivo. Voce ainda pode copiar resultado, baixar CSV e compartilhar o setup via URL para auditoria rapida.',
+      'O sorteio usa o gerador de números aleatórios do navegador (crypto.getRandomValues) com seleção sem viés. A tela de resultado mostra um identificador do sorteio e o algoritmo usado. O identificador é só uma referência: ele não permite repetir o mesmo sorteio. O botão "Rodar simulação" faz 1000 sorteios de teste e mostra a distribuição, útil para conferir o efeito dos pesos.',
+      'Você pode copiar o resultado, copiar a lista numerada, baixar um CSV com posição e item, ou copiar um link que reabre a página com a lista, a aba, o separador, a quantidade, a roleta, os pesos e a contagem já definidos. O sorteio é feito no navegador e a lista não é enviada ao servidor, mas, ao compartilhar o link, os nomes ficam escritos no endereço. Quem receber o link vê a lista.',
+      'Para sorteios com valor legal ou premiação, como promoções, este recurso não substitui regras formais nem o registro do processo. Mostre o resultado em tela ou em gravação para dar transparência aos participantes.',
     ],
   },
 ];
@@ -38,26 +39,26 @@ export const sorteadorFaq: FaqItem[] = [
   {
     question: 'Como sortear nomes online sem repetir?',
     answer:
-      'Cole a lista, escolha o modo sem repeticao e defina a quantidade de resultados. A ferramenta remove os sorteados da pool da rodada.',
+      'Cole um nome por linha, informe a quantidade de itens e sorteie. Em um mesmo resultado, nenhum item sai duas vezes. Para não repetir o nome em novos sorteios, ligue "Não sortear nomes já sorteados".',
   },
   {
-    question: 'Posso sortear numeros aleatorios tambem?',
+    question: 'Posso sortear números aleatórios?',
     answer:
-      'Sim. Quando a lista possui apenas numeros, o modo numerico aparece e voce pode gerar intervalo automatico para sorteio.',
+      'Sim. Na aba Números, informe o valor inicial e o final (por exemplo, de 1 a 100) e a quantidade de números que você quer sortear.',
   },
   {
-    question: 'O sorteio e realmente aleatorio?',
+    question: 'O sorteio é realmente aleatório?',
     answer:
-      'A selecao usa aleatoriedade local com crypto.getRandomValues e exibicao de seed/algoritmo para transparencia do processo.',
+      'Ele usa o gerador aleatório do navegador (crypto.getRandomValues), com seleção sem viés. A tela de resultado mostra o algoritmo usado. A simulação de 1000 sorteios permite conferir a distribuição, mas cada sorteio real é independente.',
   },
   {
-    question: 'Consigo compartilhar a configuracao do sorteio?',
+    question: 'Posso dividir uma turma em equipes?',
     answer:
-      'Sim. O botao de link compartilhavel gera URL com parametros como itens, quantidade, modo e tempo de suspense.',
+      'Sim. Na aba Equipes, cole os participantes, um por linha, escolha o número de equipes ou grupos e sorteie. A lista é embaralhada e distribuída em sequência entre as equipes.',
   },
   {
-    question: 'Os dados da lista vao para o servidor?',
+    question: 'A lista é enviada ao servidor?',
     answer:
-      'Nao por padrao. A lista e processada localmente no navegador.',
+      'Não. O sorteio acontece no navegador. A lista só passa a fazer parte de um endereço se você usar "Compartilhar link", pois os nomes vão escritos na URL.',
   },
 ];

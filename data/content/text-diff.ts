@@ -1,35 +1,34 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const textDiffIntro =
-  'Compare duas versoes de texto online com diff visual, resumo executivo, metricas de mudanca e modo para listas.';
+  'Cole duas versões de um texto e veja o que foi adicionado e removido, com diff por caractere, palavra, linha, parágrafo ou lista e um resumo das mudanças.';
 
 export const textDiffContentBlocks: ContentBlock[] = [
   {
-    title: 'Comparador de textos para contratos, redacao, SEO e codigo',
+    title: 'Como comparar duas versões de um texto',
     paragraphs: [
-      'Esta ferramenta compara texto original e texto novo para destacar adicoes, remocoes e alteracoes em poucos segundos. Ela funciona bem para revisar termos, artigos, documentacao tecnica, descricoes de produto e trechos de codigo.',
-      'Voce pode alternar o nivel de comparacao por caractere, palavra, linha, paragrafo ou lista, dependendo do tipo de conteudo que esta analisando.',
+      'Cole o texto original no primeiro campo e o texto novo no segundo (ou envie arquivos .txt, .md, .csv, .json, .html, .xml e .log) e clique em "Comparar textos". O resultado mostra o que saiu em vermelho, o que entrou em verde e o que ficou igual, lado a lado e em uma leitura contínua, além de uma lista de alterações. O botão "Trocar lados" inverte original e novo.',
+      'A escolha do modo muda a unidade comparada. Palavra (o padrão) serve para revisar frases e artigos, caractere mostra mudanças pequenas como um erro de digitação, e linha ou parágrafo são melhores para código, contratos e documentação. Exemplo: ao comparar "O gato preto dorme." com "O gato branco dorme." no modo palavra, só "preto" aparece como removido e "branco" como adicionado, com similaridade de 75%.',
     ],
   },
   {
-    title: 'Metricas praticas para tomada de decisao',
+    title: 'Como ler os números e as opções',
     paragraphs: [
-      'A pagina mostra similaridade, variacao de tamanho, quantidade de adicoes e remocoes e resumo executivo com foco no impacto da mudanca. Isso facilita revisoes rapidas por times de conteudo, juridico, suporte e produto.',
-      'Tambem e possivel ignorar diferencas cosmeticas, como maiusculas, acentos, espacos extras e pontuacao, para focar no que realmente mudou no texto.',
+      'A similaridade é a parcela de unidades iguais sobre o total de unidades (iguais, adicionadas e removidas). No modo palavra, os espaços entre palavras também contam como unidades. "Adições" e "Remoções" são essas unidades. "Linhas alteradas" mostra o maior valor entre as duas e a diferença de tamanho mostra quantos caracteres a versão nova tem a mais ou a menos. O resumo executivo repete esses números em frases.',
+      'As opções permitem ignorar maiúsculas, acentos, espaços extras, pontuação e quebras de linha. A comparação é feita sobre o texto já ajustado por essas opções, então o diff exibido também aparece sem as diferenças ignoradas. Atenção: "Ignorar espaços extras" vem marcado e junta todo o texto em uma única linha, inclusive as quebras de linha. Para comparar por linha, parágrafo ou lista, desmarque essa opção.',
     ],
     list: [
-      'Diff lado a lado para comparar versoes de forma clara.',
-      'Diff inline para leitura continua com destaques.',
-      'Lista de alteracoes para auditoria rapida.',
-      'Modo de comparacao de listas (itens em comum e divergentes).',
-      'Exportacao de relatorio em TXT e JSON.',
+      'Lista: mostra os itens em comum e os que aparecem só na lista A ou só na B. Itens repetidos aparecem no arquivo JSON exportado.',
+      'Exportar TXT: relatório com métricas, resumo e todas as alterações.',
+      'Exportar JSON: o resultado completo, com as operações do diff.',
+      'Copiar texto final: copia o conteúdo do campo "Texto novo".',
     ],
   },
   {
-    title: 'Privacidade e processamento local',
+    title: 'Limites e privacidade',
     paragraphs: [
-      'Os textos comparados permanecem no navegador. O processamento e local por padrao, sem necessidade de envio para servidor para gerar diff e estatisticas.',
-      'Para textos muito grandes, o desempenho depende do dispositivo. Em cenarios extensos, vale dividir em blocos para manter a interface fluida em mobile.',
+      'A comparação é feita no navegador e os textos não são enviados ao nosso servidor. Para manter a página rápida, quando a quantidade de unidades de um texto multiplicada pela do outro passa de 250 mil (por exemplo, mais de 500 caracteres, 500 linhas ou cerca de 250 palavras em cada lado), a ferramenta não calcula as partes iguais: marca todo o texto original como removido e todo o novo como adicionado, e a similaridade fica em 0%. Nesses casos, compare por partes, ou use um modo de unidade maior, como linha ou parágrafo.',
+      'A lista de alterações na tela mostra as 120 primeiras. O relatório TXT traz todas. O diff de caracteres e palavras não entende o significado do texto, só a sequência de símbolos: uma frase reescrita com as mesmas ideias aparece como várias trocas.',
     ],
   },
 ];
@@ -38,26 +37,26 @@ export const textDiffFaq: FaqItem[] = [
   {
     question: 'Como comparar dois textos online?',
     answer:
-      'Cole o texto original e o texto novo, escolha o modo de comparacao e clique em comparar para ver o diff.',
+      'Cole o texto original e o texto novo (ou envie arquivos), escolha o modo de comparação e clique em "Comparar textos". O resultado mostra adições, remoções, similaridade e um resumo.',
   },
   {
-    question: 'A ferramenta mostra o que foi adicionado e removido?',
+    question: 'Qual modo de comparação devo usar?',
     answer:
-      'Sim. O resultado exibe adicoes, remocoes e resumo das mudancas por versao.',
-  },
-  {
-    question: 'Posso comparar contratos e codigo?',
-    answer:
-      'Sim. O comparador funciona para contratos, artigos, redacao, markdown, html e blocos de codigo.',
+      'Use palavra para frases e artigos, caractere para achar mudanças pequenas, linha para código ou listas de itens longos, parágrafo para documentos e lista para ver quais itens estão em um lado e no outro. Nos modos linha, parágrafo e lista, desmarque "Ignorar espaços extras" para preservar as quebras de linha.',
   },
   {
     question: 'Existe modo para comparar listas?',
     answer:
-      'Sim. No modo lista, voce ve itens em comum, itens unicos e duplicados de cada lado.',
+      'Sim. No modo lista, cada linha é um item e o resultado mostra os itens em comum, os que só existem na lista A e os que só existem na B. A ordem dos itens não importa.',
   },
   {
-    question: 'Meus textos sao enviados para servidor?',
+    question: 'Por que a similaridade aparece como 0% em textos grandes?',
     answer:
-      'Nao por padrao. O diff e as metricas sao calculados localmente no navegador.',
+      'Em textos muito grandes, a ferramenta não calcula as partes iguais, para não travar o navegador. Nesse caso, tudo aparece como removido e adicionado. Compare por partes ou use o modo linha ou parágrafo.',
+  },
+  {
+    question: 'Meus textos são enviados para algum servidor?',
+    answer:
+      'Não. O diff e as métricas são calculados no navegador e o conteúdo não sai do seu aparelho.',
   },
 ];

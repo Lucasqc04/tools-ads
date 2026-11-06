@@ -18,42 +18,47 @@ export type RemoveAccentsLocaleContent = {
 const contentByLocale: Record<AppLocale, RemoveAccentsLocaleContent> = {
   'pt-br': {
     name: 'Remover Acentos de Texto',
-    shortDescription: 'Remova acentos, cedilha e caracteres especiais de textos para URL, arquivo, planilha e padronizacao de dados.',
+    shortDescription: 'Remova acentos, cedilha e caracteres especiais de textos para URL, arquivo, planilha e padronização de dados.',
     primaryKeyword: 'remover acentos de texto online',
     secondaryKeywords: ['tirar acento', 'remover cedilha', 'texto sem acento', 'normalizar texto', 'gerar texto para slug'],
     searchIntent: 'Usuarios e devs que precisam normalizar texto para sistemas, arquivos, URLs e integracoes.',
-    seoTitle: 'Remover Acentos de Texto Online | Tirar Cedilha e Caracteres Especiais',
-    seoDescription: 'Converta texto com acentos para versao limpa, com opcoes de caixa, remocao de simbolos, emojis e geracao estilo slug.',
+    seoTitle: 'Remover Acentos de Texto Online | Tirar Cedilha e Til',
+    seoDescription: 'Tire acentos, til e cedilha de um texto colado, escolha maiúsculas ou minúsculas, limpe símbolos e emojis, troque espaços por hífen ou underscore e copie o resultado.',
     h1: 'Remover Acentos de Texto Online',
-    intro: 'Transforme textos com acentos e cedilha em versoes normalizadas para uso tecnico e operacional.',
+    intro: 'Cole um texto com acentos, til e cedilha e veja na hora a versão sem acentos, pronta para nomes de arquivo, planilhas, URLs e sistemas que não aceitam caracteres especiais.',
     contentBlocks: [
       {
-        title: 'Quando remover acentos',
+        title: 'Como remover os acentos de um texto',
         paragraphs: [
-          'Em muitos sistemas, nomes de arquivo, chaves tecnicas e URLs funcionam melhor sem acentos. Essa normalizacao reduz conflitos e facilita integracoes.',
-          'A ferramenta converte rapidamente caracteres como acao para acao, Joao para Joao e Sao Paulo para Sao Paulo sem alterar o significado principal.',
+          'Cole ou digite o texto no campo "Texto original". O resultado aparece abaixo, já sem acentos, til, trema e cedilha: "ação" vira "acao", "João" vira "Joao" e "São Paulo" vira "Sao Paulo". Depois é só copiar, baixar em TXT ou usar "Substituir original" para continuar editando.',
+          'Os botões "Carregar exemplo" e "Limpar" ajudam a testar. O campo de resultado também pode ser editado, e o texto digitado ali volta para o campo original.',
         ],
       },
       {
-        title: 'Opcoes de limpeza e padronizacao',
+        title: 'Opções de limpeza e padronização',
         paragraphs: [
-          'Voce pode manter caixa original, forcar minusculas/maiusculas, remover simbolos, colapsar espacos e trocar espacos por hifen ou underscore.',
-          'Tambem e possivel gerar versao estilo slug para reaproveitar em URLs e identificadores.',
+          'Você pode manter a caixa original ou converter para minúsculas ou MAIÚSCULAS, remover pontuação e símbolos, e trocar os espaços por hífen ou underscore. O modo slug gera um texto só com letras minúsculas, números e hífens, útil para URLs.',
+          'Duas opções vêm ligadas por padrão: remover emojis e juntar espaços e quebras de linha. Com a segunda ligada, o texto de várias linhas vira uma única linha. Para manter a estrutura de linhas, desmarque "juntar espaços e quebras de linha".',
+        ],
+        list: [
+          'Nomes de arquivos e pastas que serão enviados a sistemas antigos.',
+          'Colunas de planilhas e chaves de importação sem acento.',
+          'Termos de busca, tags e identificadores.',
         ],
       },
       {
-        title: 'Diferenca entre normalizar e traduzir',
+        title: 'Limites',
         paragraphs: [
-          'Remover acentos nao traduz idioma nem corrige contexto gramatical. A acao apenas adapta caracteres para uma versao mais simples.',
-          'Alguns alfabetos especiais podem exigir tratamento adicional dependendo do sistema de destino.',
+          'A ferramenta apenas troca letras acentuadas por letras sem acento. Não traduz, não corrige a ortografia e pode deixar o texto ambíguo, porque palavras como "pôde" e "pode" passam a ser iguais. Letras como "ß", "ø" ou "æ", e alfabetos como o cirílico, não têm acento para remover e permanecem como estão.',
+          'O indicador "Caracteres alterados" compara o texto antes e depois posição por posição, e serve só como referência: se um caractere for removido, os seguintes também podem ser contados como alterados. O processamento é feito no navegador, e o texto não é enviado ao servidor.',
         ],
       },
     ],
     faq: [
-      { question: 'A ferramenta remove cedilha tambem?', answer: 'Sim. Caracteres como c e C com cedilha sao convertidos para c e C.' },
-      { question: 'Posso manter estrutura de multiplas linhas?', answer: 'Sim. O texto e processado sem obrigar perda de quebras de linha.' },
-      { question: 'Consigo gerar versao para slug?', answer: 'Sim. Existe opcao para gerar formato mais amigavel para URL.' },
-      { question: 'Os dados ficam locais?', answer: 'Sim. O processamento acontece no navegador.' },
+      { question: 'A ferramenta remove o cedilha também?', answer: 'Sim. "ç" vira "c" e "Ç" vira "C", além de til, circunflexo, agudo, grave e trema.' },
+      { question: 'Posso manter as quebras de linha do texto?', answer: 'Sim, mas é preciso desmarcar a opção "juntar espaços e quebras de linha", que vem ligada e transforma o texto em uma linha só.' },
+      { question: 'Consigo gerar uma versão para URL?', answer: 'Sim. O modo slug deixa o texto em minúsculas, só com letras, números e hífens. Para mais controle sobre o tamanho e o prefixo da URL, use o Gerador de Slug.' },
+      { question: 'Os emojis são removidos?', answer: 'Por padrão, sim. Desmarque "remover emojis" para mantê-los no resultado.' },
     ],
   },
   en: {

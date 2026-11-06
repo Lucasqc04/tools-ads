@@ -266,7 +266,7 @@ const compressVideoViaApi = async (
   options: VideoCompressionOptions,
 ): Promise<File> => {
   if (typeof window === 'undefined') {
-    throw new Error('API de compressao indisponivel fora do navegador.');
+    throw new Error('API de compressão indisponível fora do navegador.');
   }
 
   const formData = new FormData();
@@ -421,7 +421,7 @@ export const readVideoMetadata = async (file: File): Promise<VideoMetadata> => {
         });
       };
 
-      video.onerror = () => reject(new Error('Nao foi possivel ler metadados do video.'));
+      video.onerror = () => reject(new Error('Não foi possível ler os metadados do vídeo.'));
       video.src = objectUrl;
     });
   } finally {
@@ -439,7 +439,7 @@ export const compressVideoFile = async (
   profile: VideoCompressionProfile;
   storageFileName?: string;
 }> => {
-  emitLog(options, `Inicializando compressao para ${file.name}...`);
+  emitLog(options, `Inicializando compressão para ${file.name}...`);
 
   const metadata = await readVideoMetadata(file);
   const profile = getVideoCompressionProfile(options.compressionLevel);
@@ -463,9 +463,9 @@ export const compressVideoFile = async (
   }
 
   try {
-    emitLog(options, 'Tentando compressao via API do servidor...');
+    emitLog(options, 'Tentando compressão via servidor do site...');
     const serverOutputFile = await compressVideoViaApi(file, options);
-    emitLog(options, 'Compressao concluida via API do servidor.');
+    emitLog(options, 'Compressão concluída via servidor do site.');
 
     return {
       file: serverOutputFile,
@@ -475,7 +475,7 @@ export const compressVideoFile = async (
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    emitLog(options, `API indisponivel: ${message}. Iniciando fallback local (FFmpeg.wasm).`);
+    emitLog(options, `Servidor indisponível: ${message}. Iniciando o processamento local (FFmpeg.wasm).`);
   }
 
   let ffmpeg: FFmpeg;

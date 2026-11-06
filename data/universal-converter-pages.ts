@@ -85,26 +85,26 @@ const buildBlocks = (
 
   return [
     {
-      title: `Como funciona a conversao de ${fromLabel} para ${toLabel}`,
+      title: `Como funciona a conversão de ${fromLabel} para ${toLabel}`,
       paragraphs: [
-        `Esta pagina abre o conversor universal ja configurado para ${fromLabel} -> ${toLabel}. Cole a entrada, converta e copie o resultado rapidamente.`,
-        'A validacao acontece antes do processamento para evitar saidas silenciosas com formato incorreto.',
+        `Esta página abre o conversor universal já configurado para ${fromLabel} -> ${toLabel}. Cole a entrada, converta e copie o resultado.`,
+        'A validação acontece antes da conversão e mostra uma mensagem de erro quando o formato da entrada não é compatível.',
       ],
     },
     {
-      title: 'Quando usar esta rota especifica',
+      title: 'Quando usar esta conversão',
       paragraphs: [
-        `Use esta conversao para transformar ${fromLabel} em ${toLabel}, com suporte a lote e multiplas saidas quando disponivel.`,
-        'O motor e o mesmo da ferramenta universal principal, mas aqui o fluxo ja chega pre-configurado para voce comecar mais rapido.',
+        `Use esta conversão para transformar ${fromLabel} em ${toLabel}, com modo lote (uma linha por entrada) e vários resultados de uma vez quando a conversão permite.`,
+        'O motor é o mesmo da ferramenta universal principal, mas aqui a conversão já vem escolhida para você começar mais rápido.',
       ],
     },
     {
       title: 'Limites e privacidade',
       paragraphs: [
-        'O processamento ocorre localmente no navegador sempre que o algoritmo permite. Hashes sao de mao unica e nao podem ser revertidos para o texto original.',
+        'A conversão acontece no navegador, sem enviar a entrada ao servidor do site. Hashes são de mão única e não podem ser revertidos para o texto original.',
         dedicatedToolSlug
-          ? `Tambem existe ferramenta dedicada em /tools/${dedicatedToolSlug} para fluxo especializado.`
-          : 'Cifras classicas presentes nesta central sao educativas e nao substituem criptografia moderna.',
+          ? `Também existe uma ferramenta dedicada em /tools/${dedicatedToolSlug} com mais controles.`
+          : 'Cifras clássicas presentes nesta central são educativas e não substituem criptografia moderna.',
       ],
     },
   ];
@@ -130,12 +130,17 @@ const buildFaq = (locale: AppLocale): FaqItem[] => {
   }
 
   return [
-    { question: 'Essa conversao roda localmente?', answer: 'Sim. O processamento e local no navegador sempre que o algoritmo suporta.' },
-    { question: 'Da para reverter qualquer resultado?', answer: 'Nao. Hashes sao unidirecionais e nao voltam para texto original.' },
-    { question: 'Posso converter em lote?', answer: 'Sim. O conversor universal oferece modo lote para conversoes compativeis.' },
-    { question: 'Existe ferramenta dedicada para alguns formatos?', answer: 'Sim. Algumas conversoes tem pagina propria e link relacionado.' },
+    { question: 'Essa conversão roda no navegador?', answer: 'Sim. A conversão acontece no navegador e a entrada não é enviada ao servidor do site.' },
+    { question: 'Dá para reverter qualquer resultado?', answer: 'Não. Hashes são unidirecionais e não voltam ao texto original. Conversões como texto e binário têm o caminho inverso.' },
+    { question: 'Posso converter em lote?', answer: 'Sim. O conversor universal oferece modo lote, uma linha por entrada, nas conversões compatíveis.' },
+    { question: 'Existe ferramenta dedicada para alguns formatos?', answer: 'Sim. Algumas conversões têm uma ferramenta própria, com mais controles, indicada nos links relacionados.' },
   ];
 };
+
+const lowerCommonWord = (value: string): string =>
+  ['Texto', 'Binário', 'Decimal', 'Hexadecimal', 'Octal'].includes(value)
+    ? value.toLowerCase()
+    : value;
 
 const landing = (
   slug: string,
@@ -144,50 +149,54 @@ const landing = (
 ): UniversalConversionLandingPage => {
   const conversion = getUniversalConversionById(conversionId);
   if (!conversion) {
-    throw new Error(`Conversao inexistente: ${conversionId}`);
+    throw new Error(`Conversão inexistente: ${conversionId}`);
   }
 
   const fromLabel = conversion.from;
   const toLabel = conversion.to;
+  const ptLabel = conversion.labelByLocale['pt-br'];
+  const [ptFromRaw, ptToRaw] = ptLabel.split(' para ');
+  const ptFrom = lowerCommonWord(ptFromRaw);
+  const ptTo = lowerCommonWord(ptToRaw ?? ptFromRaw);
 
   return {
     slug,
     conversionId,
     h1ByLocale: {
-      'pt-br': `${fromLabel} para ${toLabel} online`,
+      'pt-br': `${ptLabel} online`,
       en: `${fromLabel} to ${toLabel} online`,
       es: `${fromLabel} a ${toLabel} online`,
       zh: `${fromLabel} to ${toLabel} online`,
     },
     introByLocale: {
-      'pt-br': `Converta ${fromLabel} para ${toLabel} usando o motor universal de conversoes, com validacao clara e copia rapida do resultado.`,
+      'pt-br': `Converta ${ptFrom} para ${ptTo} no conversor universal, com validação da entrada e cópia rápida do resultado.`,
       en: `Convert ${fromLabel} to ${toLabel} using the universal conversion engine with clear validation and quick copy output.`,
       es: `Convierte ${fromLabel} a ${toLabel} usando el motor universal con validacion clara y copia rapida.`,
       zh: `Convert ${fromLabel} to ${toLabel} using the universal conversion engine with clear validation and quick copy output.`,
     },
     seoTitleByLocale: {
-      'pt-br': `${fromLabel} para ${toLabel} Online | Conversor Universal`,
+      'pt-br': `${ptLabel} Online | Conversor Universal`,
       en: `${fromLabel} to ${toLabel} Online | Universal Converter`,
       es: `${fromLabel} a ${toLabel} Online | Conversor Universal`,
       zh: `${fromLabel} to ${toLabel} Online | Universal Converter`,
     },
     seoDescriptionByLocale: {
-      'pt-br': `Ferramenta para ${fromLabel} para ${toLabel} com conversao local, validacao de entrada e suporte a lote quando aplicavel.`,
+      'pt-br': `Converta ${ptFrom} para ${ptTo} no navegador, com validação da entrada, cópia do resultado e modo lote nas conversões compatíveis.`,
       en: `Tool for ${fromLabel} to ${toLabel} with local conversion, input validation, and batch mode when available.`,
       es: `Herramienta para ${fromLabel} a ${toLabel} con conversion local, validacion y modo lote cuando aplica.`,
       zh: `Tool for ${fromLabel} to ${toLabel} with local conversion, input validation, and batch mode when available.`,
     },
     primaryKeywordByLocale: {
-      'pt-br': `${fromLabel} para ${toLabel}`,
+      'pt-br': ptLabel.toLowerCase(),
       en: `${fromLabel} to ${toLabel}`,
       es: `${fromLabel} a ${toLabel}`,
       zh: `${fromLabel} to ${toLabel}`,
     },
     secondaryKeywordsByLocale: {
       'pt-br': [
-        `converter ${fromLabel} para ${toLabel}`,
-        `${fromLabel} para ${toLabel} online`,
-        `ferramenta ${fromLabel} ${toLabel}`,
+        `converter ${ptFrom} para ${ptTo}`,
+        `${ptLabel.toLowerCase()} online`,
+        `ferramenta ${ptFrom} ${ptTo}`,
       ],
       en: [
         `convert ${fromLabel} to ${toLabel}`,
@@ -206,14 +215,14 @@ const landing = (
       ],
     },
     searchIntentByLocale: {
-      'pt-br': `Usuarios que precisam converter ${fromLabel} para ${toLabel} rapidamente sem depender de instalacao.`,
+      'pt-br': `Usuários que precisam converter ${ptFrom} para ${ptTo} rapidamente, sem instalar nada.`,
       en: `Users looking to convert ${fromLabel} to ${toLabel} quickly without installing software.`,
       es: `Usuarios que necesitan convertir ${fromLabel} a ${toLabel} rapidamente sin instalar software.`,
       zh: `Users looking to convert ${fromLabel} to ${toLabel} quickly without installing software.`,
     },
     exampleInput,
     contentBlocksByLocale: {
-      'pt-br': buildBlocks('pt-br', fromLabel, toLabel, conversion.existingDedicatedToolSlug),
+      'pt-br': buildBlocks('pt-br', ptFrom, ptTo, conversion.existingDedicatedToolSlug),
       en: buildBlocks('en', fromLabel, toLabel, conversion.existingDedicatedToolSlug),
       es: buildBlocks('es', fromLabel, toLabel, conversion.existingDedicatedToolSlug),
       zh: buildBlocks('en', fromLabel, toLabel, conversion.existingDedicatedToolSlug),

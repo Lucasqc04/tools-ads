@@ -267,7 +267,7 @@ const buildContentBlocks = (
   platform: InvisiblePlatform,
 ): ContentBlock[] => {
   const recommended = getInvisibleCombinationById(platform.recommendedCombinationId);
-  const recommendedLabel = recommended?.label ?? 'Combinacao recomendada';
+  const recommendedLabel = recommended?.label ?? 'Combinação recomendada';
   const compatibilityLabel = compatibilityLabelByLocale[locale][platform.compatibility];
   const categoryLabel = categoryLabelByLocale[locale][platform.category];
   const platformHint = platform.validationHint[locale];
@@ -370,30 +370,31 @@ const buildContentBlocks = (
 
   return [
     {
-      title: `Caractere invisivel para ${platform.name}: o que tende a funcionar`,
+      title: `Caractere invisível para ${platform.name}: o que testar primeiro`,
       paragraphs: [
-        `${platform.name} possui validacoes proprias para nickname e nome de exibicao. O resultado pode mudar conforme regiao, tipo de conta, versao do app e regras anti-abuso.`,
-        `Cenario atual: ${compatibilityLabel}. Padrao recomendado para começar: ${recommendedLabel}.`,
+        `${platform.name} tem validação própria para nickname e nome de exibição, e o resultado pode mudar conforme região, tipo de conta e versão do app. ${platformHint}`,
+        `O padrão recomendado para começar é "${recommendedLabel}"${
+          recommended ? ` (${recommended.descriptionByLocale['pt-br']})` : ''
+        }. Indicação da ferramenta: ${compatibilityLabel.toLowerCase()}. Isso orienta o teste, mas não garante que o nome será aceito.`,
       ],
     },
     {
-      title: 'Como usar sem perder tempo com tentativa e erro',
+      title: `Como testar no ${platform.name}`,
       paragraphs: [
-        `Esta pagina foi otimizada para ${categoryLabel}. Comece pelo padrao recomendado e use as 20 variantes prontas se a validacao falhar.`,
-        platformHint,
+        `Esta página abre a ferramenta com ${platform.name} selecionado e o padrão recomendado já carregado. Se o campo de nome recusar o resultado, passe para as 20 variantes prontas, que combinam 4 padrões com 5 posições do invisível.`,
       ],
       list: [
-        'Copie um caractere ou combinacao invisivel pronta.',
-        'Gere variantes antes, depois, entre letras, em volta ou sem nickname visivel.',
-        'Cole no campo do perfil e valide.',
-        'Se bloquear, troque o padrao e teste novamente.',
+        'Copie o padrão recomendado e cole no campo de nome.',
+        'Se aparecer erro, copie uma variante com outra posição ou outro padrão.',
+        'Confira como o nome aparece no perfil e no jogo antes de confirmar.',
+        'Se o nome já foi salvo e aparece estranho, cole no detector para ver e remover os caracteres ocultos.',
       ],
     },
     {
-      title: 'Por que esta pagina e mais util que uma lista generica',
+      title: 'Limites e privacidade',
       paragraphs: [
-        'Aqui voce nao recebe apenas uma lista estatica: ha recomendacao por plataforma, gerador de variantes, matriz Unicode e detector de caracteres invisiveis para auditoria.',
-        'Esse contexto reduz tentativa e erro, permite limpar texto oculto e oferece alternativas quando jogos e redes sociais mudam seus filtros.',
+        'Plataformas e jogos podem normalizar, remover ou bloquear caracteres invisíveis, e atualizações mudam essas regras sem aviso. Use o recurso com bom senso e respeite as regras de uso de cada serviço.',
+        'A geração e a detecção acontecem no seu navegador. O texto digitado ou colado não é enviado para um servidor.',
       ],
     },
   ];
@@ -469,22 +470,26 @@ const buildFaq = (locale: AppLocale, platform: InvisiblePlatform): FaqItem[] => 
 
   return [
     {
-      question: `Nome invisivel funciona no ${platform.name}?`,
-      answer: `Pode funcionar dependendo da validacao atual. Nivel de compatibilidade do ${platform.name}: ${compatibilityLabelByLocale['pt-br'][platform.compatibility]}.`,
+      question: `Nome invisível funciona no ${platform.name}?`,
+      answer: `Pode funcionar, dependendo da validação atual. Indicação da ferramenta para ${platform.name}: ${compatibilityLabelByLocale['pt-br'][platform.compatibility].toLowerCase()}. Teste no campo de nome real, porque essa indicação não é uma garantia.`,
     },
     {
-      question: 'Por que 1 caractere invisivel falha e 2 ou 3 podem passar?',
+      question: `O que fazer se o ${platform.name} recusar o nome?`,
+      answer: `${platform.validationHint['pt-br']} Troque o padrão, mude a posição do invisível ou use outra das 20 variantes prontas.`,
+    },
+    {
+      question: 'Por que 1 caractere invisível falha e 2 ou 3 podem passar?',
       answer:
-        'Muitos validadores exigem tamanho minimo de nickname ou bloqueiam pontos Unicode isolados. Testar varias variantes prontas pode aumentar a taxa de aprovacao.',
+        'Alguns validadores podem exigir um tamanho mínimo de nickname ou bloquear pontos Unicode isolados. Testar variantes com mais caracteres ou em outra posição pode ajudar, mas não há garantia.',
     },
     {
-      question: 'Essa ferramenta de caractere invisivel e gratis?',
+      question: 'Essa ferramenta de caractere invisível é grátis?',
       answer:
-        'Sim. Copiar, gerar e testar caractere invisivel e gratuito, sem cadastro obrigatorio.',
+        'Sim. Copiar, gerar e testar caractere invisível é gratuito e não exige cadastro.',
     },
     {
-      question: 'Meu texto e enviado para servidor?',
-      answer: 'Nao por padrao. A geracao e deteccao de invisiveis acontecem localmente no navegador.',
+      question: 'Meu texto é enviado para servidor?',
+      answer: 'Não. A geração e a detecção de invisíveis acontecem no navegador, e a ferramenta não salva o texto.',
     },
   ];
 };
@@ -531,11 +536,11 @@ const buildFallbackLocalizedContent = (
   }
 
   return {
-    title: 'Gerador de Caractere Invisivel',
-    intro: 'Copie e gere texto invisivel para jogos e redes sociais.',
-    seoTitle: 'Caractere Invisivel Copiar e Colar',
+    title: 'Gerador de Caractere Invisível',
+    intro: 'Copie e gere texto invisível para jogos e redes sociais.',
+    seoTitle: 'Caractere Invisível Copiar e Colar',
     seoDescription:
-      'Gere nomes invisiveis com multiplos padroes Unicode para jogos e redes sociais.',
+      'Gere nomes invisíveis com múltiplos padrões Unicode para jogos e redes sociais.',
     keywords: [],
     contentBlocks: [],
     faq: [],
@@ -586,10 +591,10 @@ const buildLocalizedContentForPlatform = (
   }
 
   return {
-    title: `Caractere Invisivel para ${platform.name} (Copiar e Colar)`,
-    intro: `Copie e gere nome invisivel para ${platform.name} com 20 variantes prontas, padroes Unicode, detector e fluxo de teste por validacao.`,
-    seoTitle: `Caractere Invisivel para ${platform.name} | Copiar e Colar`,
-    seoDescription: `Copie caractere invisivel para ${platform.name}, gere 20 variantes de nickname, inspecione Unicode e teste combinacoes que podem passar na validacao. Compatibilidade atual: ${compatibilityLabel}.`,
+    title: `Caractere Invisível para ${platform.name} (Copiar e Colar)`,
+    intro: `Copie e gere nome invisível para ${platform.name} com 20 variantes prontas, padrões Unicode, detector e fluxo de teste por validação.`,
+    seoTitle: `Caractere Invisível para ${platform.name} | Copiar e Colar`,
+    seoDescription: `Copie caractere invisível para ${platform.name}, gere 20 variantes de nickname, inspecione Unicode e teste combinações que podem passar na validação. Compatibilidade atual: ${compatibilityLabel}.`,
     keywords,
     contentBlocks: buildContentBlocks('pt-br', platform),
     faq: buildFaq('pt-br', platform),

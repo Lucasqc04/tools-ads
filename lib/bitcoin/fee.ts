@@ -12,7 +12,7 @@ export const btcToSats = (value: string): number => {
   const normalized = normalizeBtcText(value);
 
   if (!/^\d+(\.\d{1,8})?$/.test(normalized)) {
-    throw new Error('Valor de BTC invalido. Use ate 8 casas decimais.');
+    throw new Error('Valor de BTC inválido. Use até 8 casas decimais.');
   }
 
   const [whole, fractional = ''] = normalized.split('.');

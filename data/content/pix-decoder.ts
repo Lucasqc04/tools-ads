@@ -2,48 +2,55 @@ import type { AppLocale } from '@/lib/i18n/config';
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const pixDecoderIntro =
-  'Gere Pix Copia e Cola estático ou dinâmico, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador.';
+  'Gere, valide e decodifique Pix Copia e Cola: veja os campos EMV, confira o CRC16 e baixe o QR Code. Tudo no navegador.';
 
 export const pixDecoderContentBlocks: ContentBlock[] = [
   {
     title: 'O que é Pix Copia e Cola?',
     paragraphs: [
-      'Pix Copia e Cola é uma representação textual do QR Code Pix. É um payload no formato EMV (Europay, Mastercard, Visa) que contém os dados necessários para realizar um pagamento Pix: chave do recebedor, valor, nome, cidade e identificador.',
-      'O formato é padronizado pelo Banco Central do Brasil e segue a especificação BR Code. Quando escaneado ou colado no app bancário, os dados são interpretados automaticamente para iniciar a transação.',
+      'Pix Copia e Cola é a versão em texto do QR Code Pix. É um payload no formato EMV (Europay, Mastercard, Visa) que reúne os dados do pagamento: chave do recebedor, nome, cidade, identificador e, se houver, o valor.',
+      'O formato é padronizado pelo Banco Central do Brasil e segue a especificação BR Code. Quando o QR Code é lido ou o texto é colado no app do banco, esses dados são interpretados para iniciar a transação.',
     ],
   },
   {
     title: 'Pix estático vs. dinâmico',
     paragraphs: [
-      'QR Code Pix estático pode ser reutilizado infinitas vezes. Contém a chave Pix do recebedor diretamente no payload. Ideal para lojas, autônomos e doações.',
-      'QR Code Pix dinâmico é de uso único. Contém uma URL/location fornecida pelo PSP (Prestador de Serviços de Pagamento) que retorna os dados do pagamento em tempo real. É usado em cobranças específicas e e-commerce.',
+      'O Pix estático pode ser reutilizado quantas vezes quiser e leva a chave Pix do recebedor dentro do próprio código. É o tipo usado por lojas, autônomos e doações. Se o campo de valor (54) não existir, quem paga digita o valor.',
+      'O Pix dinâmico leva uma URL (location) fornecida pelo PSP, o banco ou a fintech que emitiu a cobrança, e os dados do pagamento são buscados nela. Costuma valer para uma cobrança específica, como em e-commerce. Esta ferramenta monta o código a partir da URL que você informa, mas não a consulta e não cria cobranças: isso depende do seu PSP.',
     ],
     list: [
-      'Estático: chave Pix no campo 26.01, Point of Initiation = 11.',
-      'Dinâmico: URL no campo 26.25, Point of Initiation = 12.',
-      'Ambos usam GUI br.gov.bcb.pix no campo 26.00.',
-      'CRC16-CCITT valida integridade do payload.',
+      'Estático: a chave Pix fica no subcampo 26.01 e o Point of Initiation Method (campo 01) é 11.',
+      'Dinâmico: a URL fica no subcampo 26.25, sem https://, e o campo 01 é 12. Chave e URL não podem aparecer juntas.',
+      'Os dois usam o identificador br.gov.bcb.pix no subcampo 26.00.',
+      'Ao ler um código, a ferramenta o trata como dinâmico se o campo 01 for 12 ou se houver URL; caso contrário, como estático.',
     ],
   },
   {
-    title: 'CRC16 — o que é e como funciona',
+    title: 'Como ler o resultado da validação',
     paragraphs: [
-      'CRC16-CCITT é um checksum de 4 caracteres hexadecimais no final do payload (campo 63). Ele garante que o payload não foi corrompido ou alterado.',
-      'O cálculo usa polinômio 0x1021 com valor inicial 0xFFFF. Se o CRC estiver incorreto, o app bancário pode rejeitar o pagamento. Esta ferramenta permite detectar e corrigir CRC inválido.',
+      'O resultado pode ser "Válido", "Válido com avisos", "Inválido", "CRC inválido" ou "Não parece Pix" (quando o identificador br.gov.bcb.pix não é encontrado). São erros: campo obrigatório ausente (52, 53, 58, 59, 60 ou 63), tamanho declarado diferente do real, CRC ausente ou fora do fim do código e chave e URL juntas. São avisos: moeda diferente de BRL (986), país diferente de BR, nome com mais de 25 caracteres, cidade com mais de 15, valor fora do formato e campos repetidos.',
+      'Na geração, a ferramenta confere o formato da chave (dígitos de CPF e CNPJ, e-mail, telefone ou chave aleatória), corta o nome em 25 caracteres e a cidade em 15, grava o valor com duas casas e usa "***" quando não há TXID. O TXID deve ter até 25 letras e números, e a ferramenta avisa quando não for assim.',
     ],
   },
   {
-    title: 'Privacidade e processamento local',
+    title: 'CRC16: o que é e como funciona',
     paragraphs: [
-      'Todo o processamento — parsing, validação, geração de QR Code e CRC — acontece 100% no navegador. Nenhum dado de pagamento é enviado ao servidor.',
-      'A ferramenta não consulta o DICT (Diretório de Identificadores de Contas) do Banco Central, não valida titularidade de chaves e não confirma pagamentos.',
+      'O CRC16-CCITT é um checksum de 4 caracteres hexadecimais no final do payload (campo 63). Ele é calculado sobre todo o texto, do início até "6304", com polinômio 0x1021 e valor inicial 0xFFFF. Se um caractere mudar, o CRC deixa de bater e o app do banco pode recusar o código.',
+      'O botão de correção recalcula só o CRC do final do código. Ele não confere o conteúdo: se alguém trocou a chave ou o valor, o código corrigido terá CRC válido e dados diferentes do original. Use a correção apenas em códigos que você mesmo montou.',
+    ],
+  },
+  {
+    title: 'Privacidade e limites',
+    paragraphs: [
+      'A leitura, a validação, o cálculo do CRC e a geração do QR Code acontecem no navegador. Chave, valor e payload não são enviados ao servidor do site.',
+      'A ferramenta não consulta o DICT (Diretório de Identificadores de Contas Transacionais) do Banco Central, não confirma quem é o dono da chave e não mostra se um pagamento foi feito.',
     ],
   },
   {
     title: 'Avisos de segurança',
     paragraphs: [
-      'Um CRC válido NÃO significa que o recebedor é confiável. Sempre confira os dados (nome, chave, valor) no app do seu banco antes de confirmar um pagamento Pix.',
-      'QR Codes Pix podem ser usados em golpes. Nunca pague sem verificar o destinatário. Esta ferramenta é apenas para análise técnica e geração de payloads legítimos.',
+      'Um CRC válido não significa que o recebedor é confiável. Confira nome, chave e valor no app do seu banco antes de confirmar um Pix.',
+      'QR Codes Pix também são usados em golpes: nunca pague sem verificar o destinatário. Esta ferramenta serve para análise técnica e para gerar códigos dos seus próprios recebimentos.',
     ],
   },
 ];
@@ -51,43 +58,23 @@ export const pixDecoderContentBlocks: ContentBlock[] = [
 export const pixDecoderFaq: FaqItem[] = [
   {
     question: 'O que é Pix Copia e Cola?',
-    answer: 'É a versão textual do QR Code Pix. Um payload no formato EMV que contém os dados do pagamento (chave, valor, nome, cidade) e pode ser colado no app bancário para iniciar a transação.',
-  },
-  {
-    question: 'Essa ferramenta gera Pix real?',
-    answer: 'Sim, o Pix estático gerado é real e pode ser usado para receber pagamentos. Para Pix dinâmico real, é necessário um PSP (como banco ou fintech) que forneça a URL/location.',
+    answer: 'É a versão em texto do QR Code Pix: um payload no formato EMV com os dados do pagamento (chave, nome, cidade e, às vezes, valor), que pode ser colado no app do banco para iniciar o Pix.',
   },
   {
     question: 'Qual a diferença entre Pix estático e dinâmico?',
-    answer: 'Estático é reutilizável, contém a chave diretamente. Dinâmico é de uso único, contém URL de um PSP que retorna os dados em tempo real.',
+    answer: 'O estático leva a chave Pix no código e pode ser reutilizado. O dinâmico leva a URL de uma cobrança criada pelo PSP e costuma valer para um pagamento. A ferramenta mostra o tipo ao decodificar um código.',
   },
   {
-    question: 'O que é CRC do Pix?',
-    answer: 'CRC16-CCITT é um checksum de 4 caracteres no final do payload que valida integridade. Se estiver errado, o app bancário pode rejeitar o código.',
+    question: 'O que significa CRC inválido e posso corrigir?',
+    answer: 'O CRC é o checksum de 4 caracteres no fim do código. Se ele não bater com o conteúdo, o código foi alterado ou cortado. A ferramenta mostra o CRC esperado e pode recalculá-lo, mas isso não verifica se chave, nome e valor estão certos.',
   },
   {
-    question: 'Posso corrigir um Pix com CRC inválido?',
-    answer: 'Sim. A ferramenta recalcula o CRC correto e gera o payload corrigido. Útil para payloads editados manualmente ou corrompidos.',
+    question: 'A ferramenta valida a chave ou confirma pagamentos?',
+    answer: 'Não. Ela confere só o formato (por exemplo, os dígitos de um CPF) e não consulta o DICT. O código gerado segue o padrão BR Code e funciona se a chave existir, mas a ferramenta não cria chaves nem cobranças dinâmicas. Leia o QR Code no app do banco e confira o recebedor antes de divulgá-lo.',
   },
   {
-    question: 'A chave Pix é validada no Banco Central?',
-    answer: 'Não. A ferramenta valida apenas formato e estrutura. Não consulta o DICT nem confirma titularidade. Sempre confira os dados no app do banco.',
-  },
-  {
-    question: 'A ferramenta confirma se o pagamento foi feito?',
-    answer: 'Não. Confirmação de pagamento depende do PSP/banco. Esta ferramenta apenas gera, valida e decodifica payloads.',
-  },
-  {
-    question: 'A ferramenta envia meus dados para o servidor?',
-    answer: 'Não. Todo processamento é local no navegador. Nenhum dado de chave, valor ou payload sai do seu dispositivo.',
-  },
-  {
-    question: 'Posso baixar o QR Code Pix?',
-    answer: 'Sim. Você pode baixar em PNG, SVG ou PDF, copiar como imagem e personalizar cores e tamanho.',
-  },
-  {
-    question: 'Posso usar o QR Code gerado em uma loja?',
-    answer: 'Sim. O QR Code estático gerado é válido e funcional. Imprima ou exiba digitalmente para receber pagamentos.',
+    question: 'Meus dados saem do navegador? Posso baixar o QR Code?',
+    answer: 'Não, o processamento é local e nada é enviado ao site. O QR Code pode ser baixado em PNG ou SVG, com cor e tamanho ajustáveis, e os dados podem ser exportados em TXT, JSON ou CSV.',
   },
 ];
 
@@ -128,7 +115,7 @@ const contentByLocale: Record<AppLocale, PixDecoderLocaleContent> = {
       'Desenvolvedores, lojistas e usuários que precisam gerar, validar, decodificar ou corrigir payloads Pix Copia e Cola (BR Code EMV).',
     seoTitle: 'Gerador e Validador de Pix Copia e Cola Online | Decoder EMV',
     seoDescription:
-      'Gere Pix Copia e Cola, valide payload, decodifique campos EMV, corrija CRC16, visualize árvore e baixe QR Code. 100% local no navegador.',
+      'Gere, valide e decodifique Pix Copia e Cola: veja os campos EMV, confira o CRC16 e baixe o QR Code. Tudo no navegador, sem enviar dados.',
     h1: 'Validador e Gerador de Pix Copia e Cola Online',
     intro: pixDecoderIntro,
     contentBlocks: pixDecoderContentBlocks,

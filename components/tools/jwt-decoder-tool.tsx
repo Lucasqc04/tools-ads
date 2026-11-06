@@ -54,12 +54,12 @@ const uiByLocale: Record<AppLocale, JwtUi> = {
     resultSignature: 'Signature',
     warningsTitle: 'Avisos importantes',
     claimsTitle: 'Claims comuns',
-    expired: 'Token expirado',
-    valid: 'Token ainda valido',
+    expired: 'Prazo de validade (exp) vencido',
+    valid: 'Prazo de validade (exp) ainda não venceu',
     wrapToken: 'Mostrar com quebra de linha',
-    singleLine: 'Mostrar em linha unica',
+    singleLine: 'Mostrar em linha única',
     localOnlyTitle: 'Importante',
-    localOnlyText: 'Esta ferramenta apenas decodifica o JWT. Ela NAO valida assinatura e NAO garante autenticidade do token.',
+    localOnlyText: 'Esta ferramenta apenas decodifica o JWT. Ela NÃO valida a assinatura e NÃO garante a autenticidade do token.',
     noClaims: 'Nenhuma claim comum encontrada.',
   },
   en: {
@@ -139,12 +139,12 @@ const uiByLocale: Record<AppLocale, JwtUi> = {
 const JWT_MESSAGE_TRANSLATIONS_ZH: Record<string, string> = {
   'Informe um token JWT para continuar.': '请输入 JWT 令牌。',
   'JWT malformado: o token precisa ter 3 partes separadas por ponto.': 'JWT 格式错误：令牌必须包含由点号分隔的三部分。',
-  'Header decodificado, mas nao e um objeto JSON valido.': 'Header 已解码，但不是有效的 JSON 对象。',
-  'Nao foi possivel decodificar o header do JWT.': '无法解码 JWT Header。',
-  'Payload decodificado, mas nao e um objeto JSON valido.': 'Payload 已解码，但不是有效的 JSON 对象。',
-  'Nao foi possivel decodificar o payload do JWT.': '无法解码 JWT Payload。',
-  'A parte de assinatura esta vazia. Isso pode indicar token incompleto.': '签名部分为空，令牌可能不完整。',
-  'Este resultado apenas decodifica o JWT e NAO valida assinatura, emissor ou confiabilidade.': '此结果仅用于解码 JWT，不会验证签名、签发者或令牌可信度。',
+  'Header decodificado, mas não é um objeto JSON válido.': 'Header 已解码，但不是有效的 JSON 对象。',
+  'Não foi possível decodificar o header do JWT.': '无法解码 JWT Header。',
+  'Payload decodificado, mas não é um objeto JSON válido.': 'Payload 已解码，但不是有效的 JSON 对象。',
+  'Não foi possível decodificar o payload do JWT.': '无法解码 JWT Payload。',
+  'A parte de assinatura está vazia. Isso pode indicar token incompleto.': '签名部分为空，令牌可能不完整。',
+  'Este resultado apenas decodifica o JWT e NÃO valida assinatura, emissor ou confiabilidade.': '此结果仅用于解码 JWT，不会验证签名、签发者或令牌可信度。',
 };
 
 const localizeJwtMessage = (

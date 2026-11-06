@@ -19,7 +19,7 @@ const contentByLocale: Record<AppLocale, DataConverterLocaleContent> = {
   'pt-br': {
     name: 'Conversor de JSON, SQL, XLSX, CSV e TSV',
     shortDescription:
-      'Converta dados tabulares entre JSON, SQL INSERT, XLSX, CSV e TSV com colar, upload, deteccao automatica e processamento local.',
+      'Converta tabelas entre JSON, SQL INSERT, XLSX, CSV e TSV: cole o texto ou envie um arquivo e o formato é detectado sozinho. Tudo no navegador.',
     primaryKeyword: 'conversor json csv xlsx online',
     secondaryKeywords: [
       'converter json para csv',
@@ -30,40 +30,38 @@ const contentByLocale: Record<AppLocale, DataConverterLocaleContent> = {
       'tsv para xlsx',
     ],
     searchIntent:
-      'Usuarios, analistas e devs que precisam transformar dados tabulares entre formatos comuns de planilha, API e banco de dados sem instalar software.',
+      'Usuários, analistas e devs que precisam transformar dados tabulares entre formatos comuns de planilha, API e banco de dados sem instalar software.',
     seoTitle: 'Conversor JSON, CSV, XLSX, TSV e SQL Online | Sem Cadastro',
     seoDescription:
-      'Cole ou envie arquivo para converter JSON, SQL INSERT, XLSX, CSV e TSV no navegador. Detecta formato automaticamente e exporta para planilha ou texto.',
+      'Converta JSON, SQL INSERT, XLSX, CSV e TSV no navegador. Cole o texto ou envie o arquivo, confira a prévia e copie ou baixe o resultado.',
     h1: 'Conversor de JSON, SQL, XLSX, CSV e TSV Online',
     intro:
-      'Cole dados do clipboard ou envie arquivo para converter tabelas entre JSON, SQL INSERT, XLSX, CSV e TSV direto no navegador, gratis e sem cadastro.',
+      'Cole dados da área de transferência ou envie um arquivo para converter tabelas entre JSON, SQL INSERT, XLSX, CSV e TSV direto no navegador, grátis e sem cadastro.',
     contentBlocks: [
       {
-        title: 'Conversao de dados tabulares em um fluxo unico',
+        title: 'O que o conversor aceita e como lê a entrada',
         paragraphs: [
-          'Esta ferramenta transforma os formatos mais comuns de dados tabulares: JSON de API, CSV exportado por sistemas, TSV copiado de planilhas, XLSX do Excel e comandos SQL INSERT usados em bancos de dados.',
-          'O fluxo foi feito para operacoes rapidas: cole o conteudo, envie um arquivo ou importe TXT, confirme o formato detectado e escolha o destino. O preview ajuda a validar linhas e colunas antes de copiar ou baixar o resultado.',
+          'A ferramenta transforma qualquer entrada em uma tabela de linhas e colunas e depois grava essa tabela no formato de destino. Você pode colar texto (ou usar o botão "Colar") ou enviar arquivos .json, .sql, .csv, .tsv, .txt, .xlsx e .xls. Em arquivos XLSX e XLS, só a primeira aba é lida.',
+          'No formato "Detectar automaticamente", a ferramenta reconhece JSON válido, SQL com INSERT INTO ... VALUES, CSV (vírgula, ponto e vírgula ou barra vertical) e TSV (tabulação). Quando a detecção erra, escolha o formato de origem manualmente. Um JSON que é uma lista de objetos vira uma tabela com uma coluna por chave, e valores aninhados (objetos ou listas dentro de uma célula) são gravados como texto JSON. Em SQL, vários INSERT na mesma entrada são juntados em uma só tabela.',
         ],
       },
       {
-        title: 'Quando usar JSON, SQL, XLSX, CSV ou TSV',
+        title: 'Como ler o resultado',
         paragraphs: [
-          'JSON e util para APIs, automacoes e integrações entre sistemas. CSV e TSV sao ideais para troca simples de tabelas, logs e bases pequenas. XLSX facilita abertura em Excel, Google Sheets e ferramentas administrativas. SQL INSERT ajuda a preparar cargas pequenas, fixtures e massas de teste.',
-          'Como cada formato tem limites próprios, a ferramenta normaliza a entrada como tabela. Objetos JSON viram colunas, comandos INSERT viram linhas, e arquivos XLSX usam a primeira aba da planilha.',
+          'A prévia mostra as primeiras 80 linhas lidas, e o resultado em texto aparece abaixo para copiar ou baixar. A opção "Primeira linha como cabeçalho" decide se a primeira linha vira o nome das colunas: no JSON ela vira as chaves dos objetos e no SQL vira a lista de colunas. Sem ela, o JSON sai como lista de listas e as colunas SQL recebem os nomes column_1, column_2 e assim por diante.',
+          'Exemplo: com as linhas id,nome,total, 1,Ana,120.50 e 2,Lucas,89.90, escolher JSON gera uma lista de objetos como {"id":"1","nome":"Ana","total":"120.50"} (valores de CSV são texto), e escolher SQL com a tabela vendas gera um único INSERT INTO vendas (id, nome, total) VALUES com uma linha para cada pessoa.',
         ],
         list: [
-          'JSON para CSV quando voce precisa abrir payload de API em planilha.',
-          'CSV para JSON para alimentar scripts, testes e importadores.',
-          'XLSX para TSV quando precisa colar dados em sistemas internos.',
-          'SQL INSERT para CSV para revisar cargas em tabela.',
-          'CSV ou TSV para SQL INSERT para montar dados de teste rapidamente.',
+          'CSV e TSV geram texto com vírgula e tabulação, respectivamente. Campos com aspas, quebra de linha ou o separador saem entre aspas.',
+          'No SQL, o nome da tabela e das colunas é simplificado: letras minúsculas, números e sublinhado, e acentos viram sublinhado.',
+          'Ao escolher XLSX como destino, o arquivo é baixado direto, com uma aba chamada Data.',
         ],
       },
       {
-        title: 'Privacidade, deteccao automatica e limites praticos',
+        title: 'Limites e privacidade',
         paragraphs: [
-          'O processamento principal acontece localmente no navegador. Arquivos e textos colados nao precisam ser enviados para backend para detectar formato, montar preview ou gerar saidas de texto.',
-          'A deteccao automatica cobre JSON valido, SQL INSERT, CSV e TSV. Arquivos TXT sao tratados como texto e passam pela mesma deteccao do conteudo colado. Em arquivos muito grandes, especialmente XLSX com muitas abas ou milhares de linhas, dividir o dataset melhora a performance em celular.',
+          'A leitura, a conversão e a geração do XLSX acontecem no navegador, e os dados não são enviados ao nosso servidor. O botão "Colar" depende da permissão do navegador para ler a área de transferência; se ela for negada, cole com o teclado no campo de texto.',
+          'Texto vindo de CSV, TSV e SQL é lido como texto, e valores de CSV e TSV não são convertidos em números ou datas. A geração de SQL não cria tipos de coluna nem cobre CREATE TABLE, apenas INSERT. Arquivos de texto são lidos como UTF-8. Planilhas com milhares de linhas ou várias abas podem pesar no celular, e abas além da primeira são ignoradas.',
         ],
       },
     ],
@@ -71,27 +69,27 @@ const contentByLocale: Record<AppLocale, DataConverterLocaleContent> = {
       {
         question: 'Quais formatos essa ferramenta converte?',
         answer:
-          'Ela converte entre JSON, SQL INSERT, XLSX, CSV e TSV. TXT tambem pode ser enviado como entrada de texto para deteccao automatica.',
+          'Ela lê JSON, SQL INSERT, CSV, TSV, TXT, XLSX e XLS e grava em JSON, SQL INSERT, CSV, TSV ou XLSX. Arquivos TXT passam pela mesma detecção do texto colado.',
       },
       {
-        question: 'Posso colar do clipboard?',
+        question: 'Meus arquivos são enviados para algum servidor?',
         answer:
-          'Sim. Voce pode colar manualmente no campo de texto ou usar o botao de colar quando o navegador permitir acesso ao clipboard.',
+          'Não. A leitura do arquivo (inclusive XLSX), a conversão e a geração do XLSX acontecem no navegador e o conteúdo não sai do seu aparelho.',
       },
       {
-        question: 'Arquivos XLSX sao enviados para servidor?',
+        question: 'Como funciona a conversão para SQL?',
         answer:
-          'Nao por padrao. A leitura da primeira aba e a exportacao XLSX acontecem localmente no navegador.',
+          'A ferramenta gera um INSERT INTO com os valores de todas as linhas. Com "Primeira linha como cabeçalho" marcado, essa linha vira os nomes das colunas. Você pode definir o nome da tabela. Números e TRUE/FALSE só saem sem aspas quando vêm tipados (JSON, XLSX ou outro SQL); valores lidos de CSV e TSV saem como texto entre aspas simples.',
       },
       {
-        question: 'Como funciona a conversao para SQL?',
+        question: 'Qual aba do XLSX é convertida?',
         answer:
-          'A ferramenta gera comandos INSERT INTO usando a primeira linha como cabecalho quando essa opcao esta marcada. Tambem e possivel definir o nome da tabela.',
+          'Só a primeira aba da planilha. Para converter outra aba, mova-a para a primeira posição no Excel ou exporte-a como CSV antes de enviar.',
       },
       {
-        question: 'Funciona no celular?',
+        question: 'O botão Colar não funcionou. O que fazer?',
         answer:
-          'Sim. A interface usa preview com rolagem interna para evitar scroll horizontal da pagina em telas pequenas.',
+          'O navegador pode bloquear o acesso à área de transferência. Nesse caso, clique no campo de texto e cole com Ctrl+V (ou o gesto de colar do celular).',
       },
     ],
   },

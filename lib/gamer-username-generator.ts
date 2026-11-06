@@ -68,6 +68,8 @@ const randomInt = (min: number, max: number): number =>
 
 const pickRandom = <T,>(items: T[]): T => items[randomInt(0, items.length - 1)];
 
+export const hasGameWordBank = (gameId: string): boolean => gameId in flavorWordBankByGameId;
+
 const getWordBank = (gameId?: string): WordBank =>
   (gameId ? flavorWordBankByGameId[gameId] : undefined) ?? genericWordBank;
 

@@ -271,7 +271,7 @@ export function GtaCheatCodesTool({
                 <th className="px-4 py-3">Cheat</th>
                 <th className="px-4 py-3">Jogo</th>
                 <th className="px-4 py-3">Categoria</th>
-                <th className="px-4 py-3">Codigos</th>
+                <th className="px-4 py-3">Códigos</th>
               </tr>
             </thead>
             <tbody>

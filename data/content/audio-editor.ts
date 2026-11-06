@@ -1,72 +1,62 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const audioEditorIntro =
-  'Extraia audio de videos, importe arquivos de audio ou URLs diretas de midia, corte pela waveform, renomeie trechos e baixe cada clip separado em MP3 ou outros formatos.';
+  'Extraia o áudio de um vídeo, ou abra um áudio que você já tem, marque trechos na forma de onda (waveform) e baixe cada corte separado em MP3, WAV, M4A, OGG ou WEBM. Tudo no navegador.';
 
 export const audioEditorContentBlocks: ContentBlock[] = [
   {
-    title: 'Extrair audio de video e editar no mesmo fluxo',
+    title: 'Como extrair o áudio de um vídeo e cortar trechos',
     paragraphs: [
-      'Esta ferramenta foi criada para quem precisa pegar sons especificos de um video e transformar em arquivos de audio prontos para uso. Voce pode enviar um video, importar uma URL direta de arquivo de midia, extrair a faixa de audio e abrir o editor com waveform para selecionar exatamente o trecho desejado.',
-      'O fluxo tambem aceita audio importado diretamente. Isso ajuda quando voce ja tem um MP3, WAV, M4A, OGG ou FLAC e quer apenas recortar, renomear e exportar partes menores sem instalar um editor pesado.',
-    ],
-  },
-  {
-    title: 'Cortes por waveform, preview e exportacao por trecho',
-    paragraphs: [
-      'Depois que a faixa e carregada, a pagina mostra a onda sonora para facilitar a localizacao de picos, pausas, falas e efeitos. Clique para posicionar o cursor, arraste na waveform para criar selecoes e use as alcas do trecho para mover ou redimensionar cortes com precisao.',
-      'Cada corte pode ter um nome proprio antes do download. Isso e util para organizar efeitos de jogo, falas, sons ambientes, samples, trilhas curtas, audios para redes sociais e materiais de referencia.',
+      'Envie um vídeo (MP4, MOV, WEBM, MKV e outros formatos que o FFmpeg consiga ler) ou um áudio (MP3, WAV, M4A, OGG, FLAC). Os arquivos podem ter até 1 GB. Para vídeos, clique em extrair áudio e a faixa abre no editor. Se o vídeo tiver mais de uma faixa de áudio, marque a opção de separar faixas internas para tentar abrir até 4 delas, como narração, jogo e trilha em faixas diferentes.',
+      'No editor, a forma de onda mostra picos, pausas e falas. Clique para posicionar o cursor, arraste para criar uma seleção e mova as alças para ajustar o início e o fim. Você pode ouvir a seleção, repetir em loop, dividir no cursor, criar vários cortes e dar um nome a cada um. Ao final, exporte o corte selecionado, todos os cortes ou a faixa inteira.',
     ],
     list: [
-      'Extrair audio de video em MP3, WAV, M4A, OGG ou WEBM.',
-      'Importar URLs diretas de audio ou video quando o servidor permitir acesso pelo navegador.',
-      'Tentar separar multiplas faixas internas de audio quando o arquivo tiver streams diferentes.',
-      'Ouvir a selecao antes de exportar.',
-      'Criar varios cortes e baixar os arquivos separados.',
-      'Renomear cada trecho antes do download.',
+      'Formatos de saída: MP3, WAV, M4A, OGG e WEBM.',
+      'Qualidade de 128 a 320 kbps (padrão 192 kbps); no WAV, sem compressão, essa opção não se aplica.',
+      'Vários cortes por arquivo, cada um exportado separadamente.',
+      'Importação por URL direta de arquivo de áudio ou vídeo, com até 100 MB.',
     ],
   },
   {
-    title: 'Exemplos praticos de uso',
+    title: 'Exemplos de uso',
     paragraphs: [
-      'Um desenvolvedor de jogo pode enviar um video gravado no celular, encontrar o som de agua, porta, passos ou impacto, cortar apenas a parte limpa e baixar um MP3 separado para testar no projeto.',
-      'Criadores de conteudo podem remover sobras no inicio e no fim de uma gravacao, dividir uma entrevista em partes menores ou extrair audio de um video curto para reaproveitar em edicoes futuras.',
+      'Quem faz um jogo ou um vídeo pode enviar uma gravação feita no celular, localizar o som de uma porta ou de passos, cortar só a parte limpa e baixar em MP3. Em uma entrevista longa, dá para criar um corte por pergunta e baixar cada trecho com um nome claro. Também serve para tirar o silêncio do início e do fim de uma gravação de voz ou reaproveitar o áudio de um vídeo curto.',
     ],
   },
   {
-    title: 'Privacidade, formatos e limites',
+    title: 'Privacidade, URLs e limites',
     paragraphs: [
-      'O editor foi pensado para processamento local no navegador. A waveform, o preview e a exportacao com FFmpeg rodam no dispositivo do usuario, sem envio automatico dos arquivos para servidor por esta ferramenta.',
-      'URLs diretas dependem de CORS e permissao do servidor de origem. Links de plataformas como YouTube, X/Twitter e Facebook nao sao baixados diretamente pela ferramenta; nesses casos, use um arquivo local que voce tenha permissao para editar.',
-      'Arquivos muito longos ou pesados podem exigir bastante memoria e CPU. Em celulares simples, prefira trabalhar com videos menores ou exportar poucos cortes por vez. Alguns formatos antigos ou muito especificos dependem do suporte do FFmpeg no navegador.',
+      'O corte e a exportação acontecem no seu aparelho, com FFmpeg rodando no navegador, e os arquivos que você envia não vão para o nosso servidor. No primeiro uso, o navegador baixa os componentes do FFmpeg (do próprio site ou, se necessário, de CDNs públicas), então a primeira extração pode demorar mais.',
+      'Na importação por URL, o seu navegador baixa o arquivo direto do endereço informado, e esse servidor pode ver o acesso. Só funciona com links diretos de arquivos de áudio ou vídeo, e o servidor de origem precisa permitir o acesso pelo navegador (CORS). Links do YouTube, X/Twitter e Facebook são bloqueados: use um arquivo que você tenha permissão para editar.',
+      'Arquivos grandes exigem muita memória, principalmente no celular; nesse caso, trabalhe com vídeos menores ou exporte poucos cortes por vez. A ferramenta separa as faixas que já existem no arquivo, mas não isola voz, música e efeitos misturados em uma única faixa. Alguns formatos antigos podem não ser lidos.',
     ],
   },
 ];
 
 export const audioEditorFaq: FaqItem[] = [
   {
-    question: 'Consigo extrair audio de video e baixar em MP3?',
+    question: 'Consigo extrair o áudio de um vídeo e baixar em MP3?',
     answer:
-      'Sim. Envie o video ou importe uma URL direta de arquivo, clique para extrair o audio e escolha MP3 como formato de saida antes de exportar os cortes.',
+      'Sim. Envie o vídeo, clique em extrair áudio, marque os cortes (ou use a faixa inteira) e escolha MP3 como formato de saída antes de exportar. Há também WAV, M4A, OGG e WEBM.',
   },
   {
-    question: 'Posso importar um audio pronto e apenas recortar?',
+    question: 'Posso abrir um áudio pronto e só recortar?',
     answer:
-      'Sim. A ferramenta aceita arquivos de audio como MP3, WAV, M4A, OGG e FLAC para cortar, ouvir e exportar trechos separados.',
+      'Sim. Aceita MP3, WAV, M4A, OGG e FLAC. Você marca os trechos na forma de onda, ouve a seleção e baixa cada corte separado.',
   },
   {
-    question: 'Da para separar faixas internas de audio de um video?',
+    question: 'Dá para separar as faixas de áudio de um vídeo?',
     answer:
-      'A ferramenta tenta separar streams de audio quando o arquivo possui mais de uma faixa interna. Se o video tiver tudo misturado em uma unica faixa, nao ha como isolar vozes, musica ou efeitos perfeitamente sem separacao por inteligencia artificial.',
+      'Só quando o arquivo tem mais de uma faixa de áudio. Nesse caso, a opção de separar faixas internas abre até 4 delas. Se tudo estiver misturado em uma única faixa, a ferramenta não consegue isolar voz, música e efeitos.',
   },
   {
-    question: 'Os arquivos sao enviados para servidor?',
+    question: 'Meus arquivos são enviados para algum servidor?',
     answer:
-      'Nao por padrao. O processamento da ferramenta acontece no navegador usando APIs locais e FFmpeg carregado no cliente.',
+      'Não. O corte e a exportação rodam no navegador. Na importação por URL, o navegador baixa o arquivo direto do endereço que você informou, e esse servidor pode ver o acesso.',
   },
   {
-    question: 'Posso colar link do YouTube, X/Twitter ou Facebook?',
+    question: 'Posso colar um link do YouTube, X ou Facebook?',
     answer:
-      'Nao para download direto dessas plataformas. A ferramenta aceita upload local e URLs diretas de arquivos de midia quando o servidor permite acesso pelo navegador.',
+      'Não, esses links são bloqueados. A ferramenta aceita arquivos do seu aparelho e URLs diretas de áudio ou vídeo (até 100 MB) em servidores que permitam o acesso pelo navegador.',
   },
 ];

@@ -38,7 +38,7 @@ const contentByLocale: Record<AppLocale, RegexTesterLocaleContent> = {
     seoTitle: 'Regex Studio Online | Testador, Gerador e Explicador de Regex',
     seoDescription: 'Teste, gere, explique e valide regex online. Biblioteca de padrões, construtor visual, extração de dados, substituição, diagnóstico e código para JS, Python, PHP, Java, C# e Go.',
     h1: 'Regex Studio: Testador, Gerador e Explicador de Expressões Regulares',
-    intro: 'Ferramenta completa para regex: teste padrões com destaque visual, gere regex a partir de categorias, explique token a token, valide formatos, extraia dados de texto, substitua com presets e gere código para 7 linguagens — tudo 100% local no navegador usando o motor JavaScript.',
+    intro: 'Ferramenta completa para regex: teste padrões com destaque visual, gere regex a partir de categorias, explique token a token, valide formatos, extraia dados de texto, substitua com presets e gere código para 7 linguagens — tudo no navegador, com o motor de regex do JavaScript.',
     contentBlocks: [
       {
         title: 'Testador de regex com resultados detalhados',
@@ -50,7 +50,7 @@ const contentByLocale: Record<AppLocale, RegexTesterLocaleContent> = {
       {
         title: 'Gerador de regex por categoria',
         paragraphs: [
-          'Escolha o que quer encontrar (e-mail, CPF, CNPJ, telefone, URL, UUID, data, etc.) e configure opções específicas. A regex é gerada automaticamente com explicação e texto de teste.',
+          'Escolha o que quer encontrar em uma das 25 categorias (e-mail, CPF, CNPJ, telefone, URL, UUID, data, etc.) e configure opções específicas. A regex é gerada automaticamente com explicação e texto de teste.',
           'Cada gerador avisa sobre limitações. Por exemplo: regex de CPF valida formato, mas não verifica dígito verificador.',
         ],
       },
@@ -64,7 +64,7 @@ const contentByLocale: Record<AppLocale, RegexTesterLocaleContent> = {
       {
         title: 'Biblioteca de padrões prontos',
         paragraphs: [
-          'Mais de 30 padrões organizados em categorias: Brasil (CPF, CNPJ, CEP, telefone, placa), Web (e-mail, URL, domínio, slug), Dev (UUID, IP, hex color, JSON key), Texto (hashtag, menção, espaços), Datas, Números e Segurança.',
+          '29 padrões organizados em categorias: Brasil (CPF, CNPJ, CEP, telefone, placa), Web (e-mail, URL, domínio, slug), Dev (UUID, IP, hex color, JSON key), Texto (hashtag, menção, espaços), Datas, Números e Segurança.',
           'Cada padrão inclui explicação, texto de teste, limitações e botão para usar diretamente no testador.',
         ],
       },
@@ -86,20 +86,17 @@ const contentByLocale: Record<AppLocale, RegexTesterLocaleContent> = {
       {
         title: 'Privacidade e motor JavaScript',
         paragraphs: [
-          'Todo processamento é local no navegador. Nenhum código ou texto é enviado para servidor.',
-          'O motor utilizado é o de regex do JavaScript (ECMAScript). Algumas funcionalidades como lookbehind podem não funcionar em navegadores antigos. Para uso em outras linguagens, verifique a compatibilidade.',
+          'Todo processamento é feito no navegador. Nenhum texto ou regex é enviado ao nosso servidor.',
+          'O motor utilizado é o de regex do JavaScript (ECMAScript). Algumas funcionalidades como lookbehind podem não funcionar em navegadores antigos. Para uso em outras linguagens, verifique a compatibilidade. A regex roda na própria aba: padrões com repetições aninhadas, como (a+)+, podem demorar muito em textos longos e travar a página. O tempo de execução aparece junto ao resultado, com o aviso "Regex lenta" quando passa de 100 ms.',
         ],
       },
     ],
     faq: [
-      { question: 'O que é regex?', answer: 'Regex (expressão regular) é um padrão de busca usado para encontrar, validar e substituir texto. É amplamente usado em programação, editores de texto e ferramentas de busca.' },
       { question: 'Essa ferramenta usa qual motor de regex?', answer: 'Usa o motor de regex nativo do JavaScript (ECMAScript) do seu navegador. O comportamento pode diferir de Python, Java ou PCRE em recursos avançados.' },
-      { question: 'Posso gerar regex automaticamente?', answer: 'Sim. Na aba Gerar, escolha a categoria (e-mail, CPF, telefone, etc.) e configure opções. A regex é gerada com explicação e exemplo.' },
       { question: 'A regex funciona em Python, Java e PHP?', answer: 'A maioria dos padrões básicos funciona. A aba Código gera snippets adaptados para cada linguagem, mas sempre revise: operadores como lookbehind podem não estar disponíveis em todos os motores.' },
-      { question: 'Como validar uma string inteira?', answer: 'Use as âncoras ^ (início) e $ (fim). Exemplo: ^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$ para CPF completo.' },
+      { question: 'Como validar uma string inteira?', answer: 'Use as âncoras ^ (início) e $ (fim). Exemplo: ^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$ para CPF completo. A regex de CPF confere só o formato, não os dígitos verificadores.' },
       { question: 'Como extrair vários resultados?', answer: 'Na aba Extrair, cole o texto e escolha o tipo (e-mails, links, telefones, etc.). Os resultados podem ser exportados em JSON, CSV ou TXT.' },
-      { question: 'Como substituir texto usando regex?', answer: 'Na aba Substituir, escolha um preset (remover espaços, mascarar dados, etc.) ou use o campo replacement no testador para substituição personalizada.' },
-      { question: 'Meus dados são enviados para o servidor?', answer: 'Não. Todo processamento é 100% local no navegador. Nenhum texto ou regex é transmitido.' },
+      { question: 'Meus dados são enviados para o servidor?', answer: 'Não. O teste, a extração e a substituição são feitos no navegador. Nenhum texto ou regex é transmitido.' },
     ],
   },
   en: {

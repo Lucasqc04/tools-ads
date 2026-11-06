@@ -161,21 +161,21 @@ const neighborhoods = [
   'Centro',
   'Jardim Primavera',
   'Vila Nova',
-  'Santa Cecilia',
+  'Santa Cecília',
   'Boa Vista',
   'Jardim Europa',
   'Liberdade',
-  'Sao Jose',
-  'Santo Antonio',
+  'São José',
+  'Santo Antônio',
   'Parque das Flores',
   'Alto da Serra',
   'Cidade Nova',
 ];
 
-const streetPrefixes = ['Rua', 'Avenida', 'Alameda', 'Travessa', 'Praca', 'Largo'];
+const streetPrefixes = ['Rua', 'Avenida', 'Alameda', 'Travessa', 'Praça', 'Largo'];
 
 const streetNames = [
-  'das Acacias',
+  'das Acácias',
   'dos Jasmins',
   'das Palmeiras',
   'Santos Dumont',
@@ -183,13 +183,13 @@ const streetNames = [
   'Presidente Vargas',
   'Marechal Deodoro',
   'Dom Pedro II',
-  'Antonio Carlos',
+  'Antônio Carlos',
   'Rui Barbosa',
   'Bela Vista',
   'Campo Grande',
   'Monte Alegre',
   'das Laranjeiras',
-  'da Esperanca',
+  'da Esperança',
 ];
 
 const popularEmailDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
@@ -250,16 +250,16 @@ const statesCatalog: StateData[] = [
     name: 'Alagoas',
     region: 'Nordeste',
     cities: [
-      { name: 'Maceio', ddd: '82', cepMin: 57000000, cepMax: 57099999 },
+      { name: 'Maceió', ddd: '82', cepMin: 57000000, cepMax: 57099999 },
       { name: 'Arapiraca', ddd: '82', cepMin: 57300000, cepMax: 57319999 },
     ],
   },
   {
     uf: 'AP',
-    name: 'Amapa',
+    name: 'Amapá',
     region: 'Norte',
     cities: [
-      { name: 'Macapa', ddd: '96', cepMin: 68900000, cepMax: 68911999 },
+      { name: 'Macapá', ddd: '96', cepMin: 68900000, cepMax: 68911999 },
       { name: 'Santana', ddd: '96', cepMin: 68925000, cepMax: 68929999 },
     ],
   },
@@ -283,7 +283,7 @@ const statesCatalog: StateData[] = [
   },
   {
     uf: 'CE',
-    name: 'Ceara',
+    name: 'Ceará',
     region: 'Nordeste',
     cities: [
       { name: 'Fortaleza', ddd: '85', cepMin: 60000000, cepMax: 60999999 },
@@ -295,34 +295,34 @@ const statesCatalog: StateData[] = [
     name: 'Distrito Federal',
     region: 'Centro-Oeste',
     cities: [
-      { name: 'Brasilia', ddd: '61', cepMin: 70000000, cepMax: 72799999 },
+      { name: 'Brasília', ddd: '61', cepMin: 70000000, cepMax: 72799999 },
       { name: 'Taguatinga', ddd: '61', cepMin: 72000000, cepMax: 72199999 },
     ],
   },
   {
     uf: 'ES',
-    name: 'Espirito Santo',
+    name: 'Espírito Santo',
     region: 'Sudeste',
     cities: [
-      { name: 'Vitoria', ddd: '27', cepMin: 29000000, cepMax: 29099999 },
+      { name: 'Vitória', ddd: '27', cepMin: 29000000, cepMax: 29099999 },
       { name: 'Vila Velha', ddd: '27', cepMin: 29100000, cepMax: 29139999 },
     ],
   },
   {
     uf: 'GO',
-    name: 'Goias',
+    name: 'Goiás',
     region: 'Centro-Oeste',
     cities: [
-      { name: 'Goiania', ddd: '62', cepMin: 74000000, cepMax: 74899999 },
-      { name: 'Anapolis', ddd: '62', cepMin: 75000000, cepMax: 75139999 },
+      { name: 'Goiânia', ddd: '62', cepMin: 74000000, cepMax: 74899999 },
+      { name: 'Anápolis', ddd: '62', cepMin: 75000000, cepMax: 75139999 },
     ],
   },
   {
     uf: 'MA',
-    name: 'Maranhao',
+    name: 'Maranhão',
     region: 'Nordeste',
     cities: [
-      { name: 'Sao Luis', ddd: '98', cepMin: 65000000, cepMax: 65099999 },
+      { name: 'São Luís', ddd: '98', cepMin: 65000000, cepMax: 65099999 },
       { name: 'Imperatriz', ddd: '99', cepMin: 65900000, cepMax: 65919999 },
     ],
   },
@@ -331,8 +331,8 @@ const statesCatalog: StateData[] = [
     name: 'Mato Grosso',
     region: 'Centro-Oeste',
     cities: [
-      { name: 'Cuiaba', ddd: '65', cepMin: 78000000, cepMax: 78109999 },
-      { name: 'Rondonopolis', ddd: '66', cepMin: 78700000, cepMax: 78759999 },
+      { name: 'Cuiabá', ddd: '65', cepMin: 78000000, cepMax: 78109999 },
+      { name: 'Rondonópolis', ddd: '66', cepMin: 78700000, cepMax: 78759999 },
     ],
   },
   {
@@ -350,30 +350,30 @@ const statesCatalog: StateData[] = [
     region: 'Sudeste',
     cities: [
       { name: 'Belo Horizonte', ddd: '31', cepMin: 30000000, cepMax: 31999999 },
-      { name: 'Uberlandia', ddd: '34', cepMin: 38400000, cepMax: 38419999 },
+      { name: 'Uberlândia', ddd: '34', cepMin: 38400000, cepMax: 38419999 },
     ],
   },
   {
     uf: 'PA',
-    name: 'Para',
+    name: 'Pará',
     region: 'Norte',
     cities: [
-      { name: 'Belem', ddd: '91', cepMin: 66000000, cepMax: 66999999 },
-      { name: 'Santarem', ddd: '93', cepMin: 68000000, cepMax: 68040999 },
+      { name: 'Belém', ddd: '91', cepMin: 66000000, cepMax: 66999999 },
+      { name: 'Santarém', ddd: '93', cepMin: 68000000, cepMax: 68040999 },
     ],
   },
   {
     uf: 'PB',
-    name: 'Paraiba',
+    name: 'Paraíba',
     region: 'Nordeste',
     cities: [
-      { name: 'Joao Pessoa', ddd: '83', cepMin: 58000000, cepMax: 58099999 },
+      { name: 'João Pessoa', ddd: '83', cepMin: 58000000, cepMax: 58099999 },
       { name: 'Campina Grande', ddd: '83', cepMin: 58400000, cepMax: 58429999 },
     ],
   },
   {
     uf: 'PR',
-    name: 'Parana',
+    name: 'Paraná',
     region: 'Sul',
     cities: [
       { name: 'Curitiba', ddd: '41', cepMin: 80000000, cepMax: 82999999 },
@@ -391,11 +391,11 @@ const statesCatalog: StateData[] = [
   },
   {
     uf: 'PI',
-    name: 'Piaui',
+    name: 'Piauí',
     region: 'Nordeste',
     cities: [
       { name: 'Teresina', ddd: '86', cepMin: 64000000, cepMax: 64099999 },
-      { name: 'Parnaiba', ddd: '86', cepMin: 64200000, cepMax: 64219999 },
+      { name: 'Parnaíba', ddd: '86', cepMin: 64200000, cepMax: 64219999 },
     ],
   },
   {
@@ -404,7 +404,7 @@ const statesCatalog: StateData[] = [
     region: 'Sudeste',
     cities: [
       { name: 'Rio de Janeiro', ddd: '21', cepMin: 20000000, cepMax: 23799999 },
-      { name: 'Niteroi', ddd: '21', cepMin: 24000000, cepMax: 24399999 },
+      { name: 'Niterói', ddd: '21', cepMin: 24000000, cepMax: 24399999 },
     ],
   },
   {
@@ -413,7 +413,7 @@ const statesCatalog: StateData[] = [
     region: 'Nordeste',
     cities: [
       { name: 'Natal', ddd: '84', cepMin: 59000000, cepMax: 59139999 },
-      { name: 'Mossoro', ddd: '84', cepMin: 59600000, cepMax: 59619999 },
+      { name: 'Mossoró', ddd: '84', cepMin: 59600000, cepMax: 59619999 },
     ],
   },
   {
@@ -427,11 +427,11 @@ const statesCatalog: StateData[] = [
   },
   {
     uf: 'RO',
-    name: 'Rondonia',
+    name: 'Rondônia',
     region: 'Norte',
     cities: [
       { name: 'Porto Velho', ddd: '69', cepMin: 76800000, cepMax: 76899999 },
-      { name: 'Ji-Parana', ddd: '69', cepMin: 76900000, cepMax: 76909999 },
+      { name: 'Ji-Paraná', ddd: '69', cepMin: 76900000, cepMax: 76909999 },
     ],
   },
   {
@@ -440,7 +440,7 @@ const statesCatalog: StateData[] = [
     region: 'Norte',
     cities: [
       { name: 'Boa Vista', ddd: '95', cepMin: 69300000, cepMax: 69339999 },
-      { name: 'Rorainopolis', ddd: '95', cepMin: 69373000, cepMax: 69373999 },
+      { name: 'Rorainópolis', ddd: '95', cepMin: 69373000, cepMax: 69373999 },
     ],
   },
   {
@@ -448,16 +448,16 @@ const statesCatalog: StateData[] = [
     name: 'Santa Catarina',
     region: 'Sul',
     cities: [
-      { name: 'Florianopolis', ddd: '48', cepMin: 88000000, cepMax: 88099999 },
+      { name: 'Florianópolis', ddd: '48', cepMin: 88000000, cepMax: 88099999 },
       { name: 'Joinville', ddd: '47', cepMin: 89200000, cepMax: 89239999 },
     ],
   },
   {
     uf: 'SP',
-    name: 'Sao Paulo',
+    name: 'São Paulo',
     region: 'Sudeste',
     cities: [
-      { name: 'Sao Paulo', ddd: '11', cepMin: 1000000, cepMax: 5999999 },
+      { name: 'São Paulo', ddd: '11', cepMin: 1000000, cepMax: 5999999 },
       { name: 'Campinas', ddd: '19', cepMin: 13000000, cepMax: 13109999 },
       { name: 'Santos', ddd: '13', cepMin: 11000000, cepMax: 11099999 },
     ],
@@ -477,14 +477,14 @@ const statesCatalog: StateData[] = [
     region: 'Norte',
     cities: [
       { name: 'Palmas', ddd: '63', cepMin: 77000000, cepMax: 77299999 },
-      { name: 'Araguaina', ddd: '63', cepMin: 77800000, cepMax: 77829999 },
+      { name: 'Araguaína', ddd: '63', cepMin: 77800000, cepMax: 77829999 },
     ],
   },
 ];
 
 const brazilianMaleNames: NameCatalog = {
   common: [
-    'Joao',
+    'João',
     'Gabriel',
     'Lucas',
     'Pedro',
@@ -496,9 +496,9 @@ const brazilianMaleNames: NameCatalog = {
     'Diego',
     'Caio',
     'Thiago',
-    'Andre',
+    'André',
     'Daniel',
-    'Vinicius',
+    'Vinícius',
     'Leandro',
     'Eduardo',
     'Henrique',
@@ -511,16 +511,16 @@ const brazilianMaleNames: NameCatalog = {
     'Cassiano',
     'Davi Lucca',
     'Everaldo',
-    'Fabricio',
+    'Fabrício',
     'Gael',
     'Heitor',
-    'Icaro',
+    'Ícaro',
     'Joaquim',
-    'Kaua',
-    'Lourenco',
+    'Kauã',
+    'Lourenço',
     'Murilo',
     'Nicolas',
-    'Otavio',
+    'Otávio',
   ],
 };
 
@@ -528,13 +528,13 @@ const brazilianFemaleNames: NameCatalog = {
   common: [
     'Maria',
     'Ana',
-    'Julia',
+    'Júlia',
     'Beatriz',
     'Larissa',
     'Amanda',
     'Camila',
     'Fernanda',
-    'Patricia',
+    'Patrícia',
     'Juliana',
     'Isabela',
     'Carolina',
@@ -545,7 +545,7 @@ const brazilianFemaleNames: NameCatalog = {
     'Natasha',
     'Sabrina',
     'Gabriela',
-    'Leticia',
+    'Letícia',
   ],
   rare: [
     'Alana',
@@ -553,7 +553,7 @@ const brazilianFemaleNames: NameCatalog = {
     'Catarina',
     'Dandara',
     'Eloa',
-    'Flavia',
+    'Flávia',
     'Giovanna',
     'Helena',
     'Iolanda',
@@ -562,7 +562,7 @@ const brazilianFemaleNames: NameCatalog = {
     'Luiza',
     'Mirela',
     'Nayara',
-    'Olivia',
+    'Olívia',
   ],
 };
 
@@ -619,7 +619,7 @@ const surnames = [
   'Santos',
   'Nascimento',
   'Lima',
-  'Araujo',
+  'Araújo',
   'Fernandes',
   'Gomes',
   'Carvalho',
@@ -1337,17 +1337,17 @@ const genderLabelsByLocale: Record<AppLocale, Record<FakeGender, string>> = {
 
 const zodiacByLocale: Record<AppLocale, Record<string, string>> = {
   'pt-br': {
-    Aries: 'Aries',
+    Aries: 'Áries',
     Touro: 'Touro',
-    Gemeos: 'Gemeos',
-    Cancer: 'Cancer',
-    Leao: 'Leao',
+    Gemeos: 'Gêmeos',
+    Cancer: 'Câncer',
+    Leao: 'Leão',
     Virgem: 'Virgem',
     Libra: 'Libra',
-    Escorpiao: 'Escorpiao',
-    Sagitario: 'Sagitario',
-    Capricornio: 'Capricornio',
-    Aquario: 'Aquario',
+    Escorpiao: 'Escorpião',
+    Sagitario: 'Sagitário',
+    Capricornio: 'Capricórnio',
+    Aquario: 'Aquário',
     Peixes: 'Peixes',
   },
   en: {
@@ -1462,15 +1462,15 @@ const fieldLabelMapByLocale: Record<AppLocale, Record<LocalizedFieldId, string>>
     zodiacSign: 'Signo',
     cpf: 'CPF',
     rg: 'RG',
-    email: 'Email',
+    email: 'E-mail',
     mobilePhone: 'Celular',
     landlinePhone: 'Telefone fixo',
     state: 'Estado/Cidade',
-    address: 'Endereco',
-    motherName: 'Nome da mae',
+    address: 'Endereço',
+    motherName: 'Nome da mãe',
     fatherName: 'Nome do pai',
     password: 'Senha',
-    bloodType: 'Tipo sanguineo',
+    bloodType: 'Tipo sanguíneo',
     heightCm: 'Altura',
     weightKg: 'Peso',
     favoriteColor: 'Cor favorita',

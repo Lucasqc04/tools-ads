@@ -1,41 +1,41 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const backgroundRemoverIntro =
-  'Remova fundo de imagem por chroma key online, escolha a cor do fundo, compare 3 niveis de recorte e baixe PNG transparente no tamanho original.';
+  'Remova o fundo de uma imagem por chroma key: escolha a cor do fundo, compare três níveis de recorte e baixe um PNG transparente no tamanho original. Funciona melhor com fundo verde, magenta, branco ou de cor uniforme.';
 
 export const backgroundRemoverContentBlocks: ContentBlock[] = [
   {
     title: 'Como funciona o removedor de fundo por chroma key',
     paragraphs: [
-      'Esta ferramenta remove fundos de cor solida ou quase solida usando chroma key no navegador. Voce envia a imagem, escolhe a cor do fundo e compara tres recortes: leve, equilibrado e forte.',
-      'O algoritmo calcula a distancia de cada pixel ate a cor escolhida. Pixels muito proximos ficam transparentes; pixels intermediarios recebem uma transicao suave; pixels distantes permanecem opacos. Isso ajuda a preservar detalhes quando o fundo e verde, magenta, branco ou uma cor manual.',
+      'Esta ferramenta não usa inteligência artificial nem detecta objetos. Ela remove uma cor: você informa qual é a cor do fundo e todos os pixels parecidos com ela ficam transparentes. As opções de cor são magenta (#FF00FF), verde (#00FF00), branco (#FFFFFF), automática pelos cantos da imagem e uma cor manual em hexadecimal.',
+      'Para cada pixel, o programa mede a distância entre a cor dele e a cor do fundo. Pixels muito próximos ficam transparentes, os intermediários ganham uma transição suave e os distantes continuam opacos. Ao carregar a imagem, ela gera três recortes lado a lado (leve, equilibrada e forte) para você escolher o que preserva melhor os detalhes.',
     ],
   },
   {
-    title: 'Controle de threshold, softness e despill',
+    title: 'Tolerância, suavidade da borda e cor residual',
     paragraphs: [
-      'Threshold define o quanto a cor do fundo precisa ser parecida para ser removida. Se sobrar fundo ou halo colorido, aumentar esse valor tende a limpar mais. Se o recorte estiver comendo bordas, cabelo, textura ou detalhes pequenos, diminuir ajuda a preservar a imagem.',
-      'Softness controla a transicao da borda. Um valor maior cria uma borda mais suave e menos serrilhada; um valor menor faz um corte mais seco. O despill reduz vazamento de verde, magenta ou branco nas bordas semi-transparentes.',
+      'A tolerância define o quanto um pixel pode se afastar da cor do fundo e ainda ser removido. Se sobrar fundo ou um contorno colorido, aumente. Se o recorte estiver comendo cabelo, tecido ou detalhes pequenos, diminua. A suavidade controla a transição da borda: valores maiores deixam a borda mais macia, e valores menores deixam o corte mais seco.',
+      'A opção de reduzir cor residual (despill) atenua o tom do fundo que fica nas bordas semitransparentes, como o contorno esverdeado de uma pessoa gravada diante de um pano verde. Também é possível recortar a imagem antes, em formato livre, quadrado ou redondo, para tirar áreas que não interessam.',
     ],
     list: [
-      'Use Leve para cabelo, tecido, fumaca e detalhes finos.',
-      'Use Equilibrada como primeiro teste na maioria das imagens.',
-      'Use Forte quando sobra contorno do fundo ou halo colorido.',
-      'Use Auto pelos cantos quando o fundo aparece limpo nos quatro cantos.',
+      'Leve: preserva cabelo, fumaça, tecido e detalhes finos.',
+      'Equilibrada: ponto de partida para a maioria das imagens.',
+      'Forte: remove mais halo e sobras de fundo nas bordas.',
+      'Automática pelos cantos: usa a cor média dos quatro cantos, útil quando o fundo é uniforme.',
     ],
   },
   {
-    title: 'PNG transparente sem perder resolucao',
+    title: 'PNG transparente no tamanho original',
     paragraphs: [
-      'As miniaturas sao reduzidas apenas para deixar a comparacao rapida. Quando voce baixa o resultado, o recorte e aplicado novamente sobre a imagem original, mantendo largura e altura originais.',
-      'A saida e PNG transparente, formato adequado para preservar alpha sem recompressao JPEG. Se a imagem de entrada era JPG, a qualidade original do JPG ja vem da propria fonte, mas a exportacao final nao recompacta em JPG.',
+      'As prévias são reduzidas (até 1200 px no lado maior) só para a comparação ficar rápida. Ao baixar, o recorte é refeito sobre a imagem original e o arquivo sai em PNG com transparência, sem recompressão JPEG e com a largura e a altura originais, salvo o recorte que você tiver aplicado.',
+      'Aceita PNG, JPG, JPEG, WEBP e BMP. As imagens não são enviadas ao servidor: todo o cálculo acontece no navegador.',
     ],
   },
   {
-    title: 'Limites praticos para melhores resultados',
+    title: 'Limites para ter bons resultados',
     paragraphs: [
-      'Chroma key funciona melhor quando o fundo tem cor uniforme e boa iluminacao. Sombras fortes, reflexos, fundo com textura e objeto com cor parecida com o fundo podem exigir ajustes finos ou um recorte manual complementar.',
-      'Em imagens muito grandes, celulares podem demorar mais por causa de memoria e CPU. Se o navegador ficar lento, teste primeiro com uma imagem menor ou use o desktop para arquivos de alta resolucao.',
+      'Como o método remove uma cor em toda a imagem, e não só o fundo ao redor do objeto, qualquer parte do objeto com tom parecido com o fundo também ficará transparente. Camisa verde diante de fundo verde, por exemplo, não funciona. Sombras fortes, reflexos, fundos com textura ou gradiente exigem ajuste fino ou um recorte manual em outro editor.',
+      'Fotos comuns, com cenário real e muitas cores, não são o caso de uso desta ferramenta. Em imagens muito grandes, o celular pode demorar mais por causa de memória e processador; se travar, teste com uma versão menor.',
     ],
   },
 ];
@@ -44,26 +44,26 @@ export const backgroundRemoverFaq: FaqItem[] = [
   {
     question: 'A ferramenta remove qualquer fundo automaticamente?',
     answer:
-      'Ela e focada em chroma key: fundos verdes, magenta, brancos ou de cor bem definida. Para fundos complexos, com cenario real ou muitas cores, o resultado pode exigir ajuste manual em outro editor.',
+      'Não. Ela remove uma cor de fundo uniforme (verde, magenta, branco ou outra que você escolher). Para cenários reais, com muitas cores e objetos, o resultado fica ruim e é melhor usar um editor com seleção manual.',
   },
   {
-    question: 'O download perde qualidade ou reduz a resolucao?',
+    question: 'O download perde qualidade ou reduz a resolução?',
     answer:
-      'Nao reduz a resolucao. O preview e menor para ficar rapido, mas o download processa a imagem original e gera PNG transparente no tamanho original.',
+      'Não reduz a resolução. A prévia é menor para ser rápida, mas o download refaz o processo na imagem original e gera um PNG transparente com o tamanho original (ou o do recorte, se você usou o recorte).',
   },
   {
-    question: 'Minhas imagens sao enviadas para servidor?',
+    question: 'Minhas imagens são enviadas para um servidor?',
     answer:
-      'Nao por padrao. O upload, o preview, o recorte e a geracao do PNG acontecem localmente no navegador.',
+      'Não. O upload, a prévia, o recorte e o PNG final são feitos no próprio navegador, sem envio a servidor.',
   },
   {
-    question: 'Qual formato de saida e gerado?',
+    question: 'Por que parte do objeto também ficou transparente?',
     answer:
-      'A ferramenta gera PNG com transparencia, porque PNG preserva o canal alpha e e adequado para usar em design, ecommerce, thumbnails e posts.',
+      'O recorte remove todos os pixels parecidos com a cor escolhida, inclusive os que estão dentro do objeto. Diminua a tolerância, teste a opção leve ou use um fundo de cor diferente das cores do objeto.',
   },
   {
-    question: 'Funciona no celular?',
+    question: 'Quais formatos de imagem posso enviar?',
     answer:
-      'Sim. A interface e responsiva, mas imagens muito grandes podem ser mais lentas em celulares com pouca memoria.',
+      'PNG, JPG, JPEG, WEBP e BMP. O arquivo gerado é sempre PNG com transparência.',
   },
 ];

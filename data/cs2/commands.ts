@@ -72,7 +72,7 @@ type CommandSeed = Omit<Cs2Command, 'locales'> & {
 
 const automationWarning = {
   'pt-br':
-    'Servidores oficiais podem bloquear automacoes que combinam movimento ou ataque no mesmo input. Prefira binds de uma unica acao.',
+    'Servidores oficiais podem bloquear automações que combinam movimento ou ataque no mesmo input. Prefira binds de uma única ação.',
   en:
     'Official servers can block automation that combines movement or attack actions on one input. Prefer one-action binds.',
   es:
@@ -83,7 +83,7 @@ const automationWarning = {
 
 const localCheatWarning = {
   'pt-br':
-    'Este comando exige sv_cheats 1 e deve ser usado apenas em treino local, lobby privado ou servidor controlado por voce.',
+    'Este comando exige sv_cheats 1 e deve ser usado apenas em treino local, lobby privado ou servidor controlado por você.',
   en:
     'This command requires sv_cheats 1 and should only be used on local practice, private lobbies, or servers you control.',
   es:
@@ -172,13 +172,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInFunConfig: true,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Pausar o cronometro do aquecimento',
+      'pt-br': 'Pausar o cronômetro do aquecimento',
       en: 'Pause the warmup timer',
       es: 'Pausar el cronometro del calentamiento',
       zh: '暂停热身计时器',
     },
     description: {
-      'pt-br': 'Mantem o aquecimento pausado em uma sala local enquanto o servidor prepara o treino.',
+      'pt-br': 'Mantém o aquecimento pausado em uma sala local enquanto o servidor prepara o treino.',
       en: 'Keeps warmup paused in a local lobby while the server is being set up.',
       es: 'Mantiene pausado el calentamiento en una sala local mientras preparas el servidor.',
       zh: '在本地房间中暂停热身计时,方便准备训练服务器。',
@@ -220,7 +220,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: 'C4 计时 40 秒',
     },
     description: {
-      'pt-br': 'Ajusta o tempo da bomba em partidas locais para testar execucoes e retakes.',
+      'pt-br': 'Ajusta o tempo da bomba em partidas locais para testar execuções e retakes.',
       en: 'Changes the bomb timer in local matches for testing executes and retakes.',
       es: 'Cambia el tiempo de la bomba en partidas locales para probar ejecuciones y retakes.',
       zh: '更改本地比赛中的炸弹计时,用于练习进攻和回防。',
@@ -241,7 +241,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '30 回合上限',
     },
     description: {
-      'pt-br': 'Define o maximo de rounds em uma partida controlada por voce.',
+      'pt-br': 'Define o máximo de rounds em uma partida controlada por você.',
       en: 'Sets the maximum number of rounds in a match you control.',
       es: 'Define el maximo de rondas en una partida que controlas.',
       zh: '设置你控制的比赛中的最大回合数。',
@@ -262,7 +262,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '启用加时赛',
     },
     description: {
-      'pt-br': 'Permite prorroga em uma partida privada configurada por voce.',
+      'pt-br': 'Permite prorroga em uma partida privada configurada por você.',
       en: 'Allows overtime in a private match configured by you.',
       es: 'Permite prorroga en una partida privada que configuras.',
       zh: '允许你配置的私人比赛进入加时赛。',
@@ -283,7 +283,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '加时赛每半场六回合',
     },
     description: {
-      'pt-br': 'Define seis rounds para cada metade da prorrogacao em um servidor privado.',
+      'pt-br': 'Define seis rounds para cada metade da prorrogação em um servidor privado.',
       en: 'Sets six rounds for each overtime half on a private server.',
       es: 'Configura seis rondas por cada mitad de la prorroga en un servidor privado.',
       zh: '在私人服务器中将加时赛每半场设置为六回合。',
@@ -304,7 +304,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '加时赛初始资金',
     },
     description: {
-      'pt-br': 'Define o dinheiro inicial dos lados durante a prorrogacao em servidor privado.',
+      'pt-br': 'Define o dinheiro inicial dos lados durante a prorrogação em servidor privado.',
       en: 'Sets the starting money for each side during private-server overtime.',
       es: 'Define el dinero inicial de cada lado durante la prorroga en un servidor privado.',
       zh: '设置私人服务器加时赛中双方的初始资金。',
@@ -319,13 +319,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInPracticeConfig: true,
     showInFunConfig: true,
     name: {
-      'pt-br': 'Ate quatro pausas taticas',
+      'pt-br': 'Até quatro pausas táticas',
       en: 'Up to four team timeouts',
       es: 'Hasta cuatro tiempos muertos por equipo',
       zh: '每队最多四次暂停',
     },
     description: {
-      'pt-br': 'Define o limite de pausas taticas por equipe em partidas privadas.',
+      'pt-br': 'Define o limite de pausas táticas por equipe em partidas privadas.',
       en: 'Sets the number of team timeouts allowed in a private match.',
       es: 'Define el limite de tiempos muertos por equipo en partidas privadas.',
       zh: '设置私人比赛中每队可使用的暂停次数。',
@@ -340,13 +340,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInPracticeConfig: true,
     showInFunConfig: true,
     name: {
-      'pt-br': 'Pausa tatica de 30 segundos',
+      'pt-br': 'Pausa tática de 30 segundos',
       en: '30-second team timeout',
       es: 'Tiempo muerto de 30 segundos',
       zh: '30 秒团队暂停',
     },
     description: {
-      'pt-br': 'Ajusta a duracao de cada pausa tatica em partidas privadas.',
+      'pt-br': 'Ajusta a duração de cada pausa tática em partidas privadas.',
       en: 'Sets the length of each team timeout in a private match.',
       es: 'Ajusta la duracion de cada tiempo muerto en una partida privada.',
       zh: '设置私人比赛中每次团队暂停的时长。',
@@ -361,7 +361,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInPracticeConfig: true,
     showInFunConfig: true,
     name: {
-      'pt-br': 'Colete gratis',
+      'pt-br': 'Colete grátis',
       en: 'Free armor',
       es: 'Chaleco gratis',
       zh: '免费护甲',
@@ -389,7 +389,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '启用队友伤害',
     },
     description: {
-      'pt-br': 'Permite causar dano a aliados em um servidor privado, util para treinar disciplina de tiro.',
+      'pt-br': 'Permite causar dano a aliados em um servidor privado, útil para treinar disciplina de tiro.',
       en: 'Allows damage to teammates on a private server, useful for practicing shot discipline.',
       es: 'Permite hacer dano a companeros en un servidor privado, util para practicar disciplina de tiro.',
       zh: '允许在私人服务器中伤害队友,可用于练习射击纪律。',
@@ -425,13 +425,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInPracticeConfig: true,
     showInFunConfig: true,
     name: {
-      'pt-br': 'Dano apenas na cabeca',
+      'pt-br': 'Dano apenas na cabeça',
       en: 'Headshot-only damage',
       es: 'Dano solo con disparos a la cabeza',
       zh: '仅爆头造成伤害',
     },
     description: {
-      'pt-br': 'Restringe o dano a tiros na cabeca em uma partida local de treino.',
+      'pt-br': 'Restringe o dano a tiros na cabeça em uma partida local de treino.',
       en: 'Restricts damage to headshots in a local training match.',
       es: 'Restringe el dano a disparos a la cabeza en una partida local de practica.',
       zh: '在本地训练比赛中仅允许爆头造成伤害。',
@@ -452,7 +452,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '允许丢弃投掷物',
     },
     description: {
-      'pt-br': 'Permite largar granadas em um servidor controlado por voce.',
+      'pt-br': 'Permite largar granadas em um servidor controlado por você.',
       en: 'Allows players to drop grenades on a server you control.',
       es: 'Permite soltar granadas en un servidor que controlas.',
       zh: '允许在你控制的服务器中丢弃投掷物。',
@@ -487,13 +487,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInPracticeConfig: true,
     showInFunConfig: true,
     name: {
-      'pt-br': 'Spawn aleatorio',
+      'pt-br': 'Spawn aleatório',
       en: 'Random spawns',
       es: 'Apariciones aleatorias',
       zh: '随机出生点',
     },
     description: {
-      'pt-br': 'Habilita aparicoes aleatorias em modos e mapas compativeis no servidor local.',
+      'pt-br': 'Habilita aparições aleatórias em modos e mapas compatíveis no servidor local.',
       en: 'Enables random spawns in supported modes and maps on a local server.',
       es: 'Activa apariciones aleatorias en modos y mapas compatibles del servidor local.',
       zh: '在本地服务器支持的模式和地图中启用随机出生点。',
@@ -508,13 +508,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInPracticeConfig: true,
     showInFunConfig: true,
     name: {
-      'pt-br': 'Liberar camera de espectador',
+      'pt-br': 'Liberar câmera de espectador',
       en: 'Allow free spectator camera',
       es: 'Permitir camara libre de espectador',
       zh: '允许自由观战视角',
     },
     description: {
-      'pt-br': 'Remove a restricao de espectador em uma partida privada. O efeito depende das regras do modo.',
+      'pt-br': 'Remove a restrição de espectador em uma partida privada. O efeito depende das regras do modo.',
       en: 'Removes spectator restrictions in a private match. The effect depends on the game mode.',
       es: 'Quita restricciones de espectador en una partida privada. El efecto depende del modo.',
       zh: '移除私人比赛中的观战限制,实际效果取决于游戏模式。',
@@ -535,7 +535,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '冻结 Bot',
     },
     description: {
-      'pt-br': 'Imobiliza bots para montar exercicios de pre-fire e verificacao de angulos.',
+      'pt-br': 'Imobiliza bots para montar exercícios de pre-fire e verificação de ângulos.',
       en: 'Freezes bots to set up pre-fire and angle-check drills.',
       es: 'Inmoviliza bots para preparar ejercicios de pre-fire y revisar angulos.',
       zh: '冻结 Bot,用于准备预瞄和角度检查训练。',
@@ -556,7 +556,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: 'Bot 忽略敌人',
     },
     description: {
-      'pt-br': 'Faz bots ignorarem adversarios durante exercicios controlados.',
+      'pt-br': 'Faz bots ignorarem adversários durante exercícios controlados.',
       en: 'Makes bots ignore opponents during controlled drills.',
       es: 'Hace que los bots ignoren a los rivales durante ejercicios controlados.',
       zh: '让 Bot 在受控训练中忽略对手。',
@@ -640,7 +640,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: 'Bot 蹲下',
     },
     description: {
-      'pt-br': 'Mantem bots agachados para praticar alinhamentos de mira em alvos baixos.',
+      'pt-br': 'Mantém bots agachados para praticar alinhamentos de mira em alvos baixos.',
       en: 'Keeps bots crouched for practicing crosshair placement on lower targets.',
       es: 'Mantiene a los bots agachados para practicar la colocacion de la mira en objetivos bajos.',
       zh: '让 Bot 保持蹲姿,用于练习瞄准较低目标。',
@@ -656,13 +656,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInPracticeConfig: true,
     warningLevel: 'caution',
     name: {
-      'pt-br': 'Mostrar impactos de penetracao',
+      'pt-br': 'Mostrar impactos de penetração',
       en: 'Show penetration impacts',
       es: 'Mostrar impactos de penetracion',
       zh: '显示穿透命中效果',
     },
     description: {
-      'pt-br': 'Exibe informacao visual de penetracao para analisar tiros em paredes no treino local.',
+      'pt-br': 'Exibe informação visual de penetração para analisar tiros em paredes no treino local.',
       en: 'Displays penetration feedback for reviewing wallbangs in local practice.',
       es: 'Muestra informacion de penetracion para revisar disparos a traves de paredes en practica local.',
       zh: '显示穿透反馈,用于分析本地训练中的穿墙射击。',
@@ -739,7 +739,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '准星跟随后坐力',
     },
     description: {
-      'pt-br': 'Faz a mira acompanhar o recuo da arma como recurso visual de treino; nao reduz o recoil.',
+      'pt-br': 'Faz a mira acompanhar o recuo da arma como recurso visual de treino; não reduz o recoil.',
       en: 'Makes the crosshair follow weapon recoil as a visual training aid; it does not reduce recoil.',
       es: 'Hace que la mira siga el retroceso como ayuda visual de practica; no reduce el recoil.',
       zh: '让准星跟随武器后坐力以辅助训练;它不会降低后坐力。',
@@ -758,7 +758,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '关闭准星队友提示',
     },
     description: {
-      'pt-br': 'Oculta o aviso visual de aliado sob a mira. A comunicacao e a identificacao continuam importantes.',
+      'pt-br': 'Oculta o aviso visual de aliado sob a mira. A comunicação e a identificação continuam importantes.',
       en: 'Hides the teammate indicator under the crosshair. Team awareness still matters.',
       es: 'Oculta el indicador de companero bajo la mira. La comunicacion y la identificacion siguen siendo importantes.',
       zh: '隐藏准星下方的队友提示。仍需保持队伍意识并确认目标。',
@@ -777,7 +777,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: 'T 形准星',
     },
     description: {
-      'pt-br': 'Ativa o formato T, que remove a linha superior da mira estatica.',
+      'pt-br': 'Ativa o formato T, que remove a linha superior da mira estática.',
       en: 'Enables the T shape by removing the top bar from a static crosshair.',
       es: 'Activa la forma de T al quitar la linea superior de una mira estatica.',
       zh: '启用 T 形准星,移除静态准星的上方线段。',
@@ -796,7 +796,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '狙击镜准星线宽',
     },
     description: {
-      'pt-br': 'Ajusta a largura das linhas da mira telescopica.',
+      'pt-br': 'Ajusta a largura das linhas da mira telescópica.',
       en: 'Adjusts the line width of the sniper scope crosshair.',
       es: 'Ajusta el ancho de las lineas de la mira telescopica.',
       zh: '调整狙击镜准星线条的宽度。',
@@ -814,7 +814,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '烟雾弹投掷准星',
     },
     description: {
-      'pt-br': 'Mostra o auxilio de mira para arremessos de smoke.',
+      'pt-br': 'Mostra o auxílio de mira para arremessos de smoke.',
       en: 'Shows the throw-assist crosshair for smoke grenades.',
       es: 'Muestra la mira de asistencia para lanzar smokes.',
       zh: '显示烟雾弹投掷辅助准星。',
@@ -832,7 +832,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '闪光弹投掷准星',
     },
     description: {
-      'pt-br': 'Mostra o auxilio de mira para arremessos de flashbang.',
+      'pt-br': 'Mostra o auxílio de mira para arremessos de flashbang.',
       en: 'Shows the throw-assist crosshair for flashbangs.',
       es: 'Muestra la mira de asistencia para lanzar flashbangs.',
       zh: '显示闪光弹投掷辅助准星。',
@@ -850,7 +850,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '燃烧弹投掷准星',
     },
     description: {
-      'pt-br': 'Mostra o auxilio de mira para molotov e incendiaria.',
+      'pt-br': 'Mostra o auxílio de mira para molotov e incendiária.',
       en: 'Shows the throw-assist crosshair for molotov and incendiary grenades.',
       es: 'Muestra la mira de asistencia para molotov e incendiarias.',
       zh: '显示燃烧瓶和燃烧弹的投掷辅助准星。',
@@ -868,7 +868,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '高爆手雷投掷准星',
     },
     description: {
-      'pt-br': 'Mostra o auxilio de mira para granadas explosivas.',
+      'pt-br': 'Mostra o auxílio de mira para granadas explosivas.',
       en: 'Shows the throw-assist crosshair for HE grenades.',
       es: 'Muestra la mira de asistencia para granadas HE.',
       zh: '显示高爆手雷的投掷辅助准星。',
@@ -886,7 +886,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '诱饵弹投掷准星',
     },
     description: {
-      'pt-br': 'Mostra o auxilio de mira para granadas decoy.',
+      'pt-br': 'Mostra o auxílio de mira para granadas decoy.',
       en: 'Shows the throw-assist crosshair for decoy grenades.',
       es: 'Muestra la mira de asistencia para granadas decoy.',
       zh: '显示诱饵弹的投掷辅助准星。',
@@ -904,7 +904,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '投掷时保留玩家准星',
     },
     description: {
-      'pt-br': 'Mantem a mira do jogador junto do indicador de arremesso de granada.',
+      'pt-br': 'Mantém a mira do jogador junto do indicador de arremesso de granada.',
       en: 'Keeps the player crosshair visible alongside the grenade throw indicator.',
       es: 'Mantiene visible la mira del jugador junto al indicador de lanzamiento.',
       zh: '在投掷辅助指示器旁保留玩家准星。',
@@ -917,13 +917,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInCompetitiveConfig: true,
     showInTournamentSafeConfig: true,
     name: {
-      'pt-br': 'Grafico de margem de recebimento do servidor',
+      'pt-br': 'Gráfico de margem de recebimento do servidor',
       en: 'Server receive-margin graph',
       es: 'Grafico del margen de recepcion del servidor',
       zh: '服务器接收延迟图表',
     },
     description: {
-      'pt-br': 'Exibe o grafico de margem de recebimento para investigar variacoes de rede durante a partida.',
+      'pt-br': 'Exibe o gráfico de margem de recebimento para investigar variações de rede durante a partida.',
       en: 'Shows the server receive-margin graph to inspect network variation during a match.',
       es: 'Muestra el grafico del margen de recepcion para revisar variaciones de red durante la partida.',
       zh: '显示服务器接收延迟图表,用于观察比赛中的网络波动。',
@@ -961,7 +961,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '关闭雷达背景模糊',
     },
     description: {
-      'pt-br': 'Remove o desfoque do fundo do radar para deixar o mapa mais nitido.',
+      'pt-br': 'Remove o desfoque do fundo do radar para deixar o mapa mais nítido.',
       en: 'Removes blur from the radar background for a sharper map.',
       es: 'Quita el desenfoque del fondo del radar para que el mapa se vea mas nitido.',
       zh: '移除雷达背景模糊,让地图更清晰。',
@@ -993,13 +993,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInCompetitiveConfig: true,
     showInTournamentSafeConfig: true,
     name: {
-      'pt-br': 'Escala dinamica do radar',
+      'pt-br': 'Escala dinâmica do radar',
       en: 'Dynamic radar scale',
       es: 'Escala dinamica del radar',
       zh: '动态雷达缩放',
     },
     description: {
-      'pt-br': 'Ativa o ajuste dinamico da escala do radar quando o modo atual oferece suporte.',
+      'pt-br': 'Ativa o ajuste dinâmico da escala do radar quando o modo atual oferece suporte.',
       en: 'Enables dynamic radar scaling when the current mode supports it.',
       es: 'Activa el ajuste dinamico de escala del radar cuando el modo actual lo admite.',
       zh: '在当前模式支持时启用雷达动态缩放。',
@@ -1017,7 +1017,7 @@ const currentBuildCommandAdditions: Cs2Command[] = [
       zh: '观战时在雷达显示所有玩家',
     },
     description: {
-      'pt-br': 'Exibe todos os jogadores no radar durante a observacao, quando permitido pelo modo.',
+      'pt-br': 'Exibe todos os jogadores no radar durante a observação, quando permitido pelo modo.',
       en: 'Shows all players on the radar while spectating when allowed by the game mode.',
       es: 'Muestra a todos los jugadores en el radar al observar, si el modo lo permite.',
       zh: '在游戏模式允许时,观战期间在雷达上显示所有玩家。',
@@ -1033,13 +1033,13 @@ const currentBuildCommandAdditions: Cs2Command[] = [
     showInPracticeConfig: true,
     warningLevel: 'caution',
     name: {
-      'pt-br': 'Duracao da trajetoria para espectadores',
+      'pt-br': 'Duração da trajetória para espectadores',
       en: 'Spectator grenade-trajectory duration',
       es: 'Duracion de trayectoria para espectadores',
       zh: '观战者手雷轨迹显示时长',
     },
     description: {
-      'pt-br': 'Define por quanto tempo a trajetoria da granada fica visivel para espectadores no treino.',
+      'pt-br': 'Define por quanto tempo a trajetória da granada fica visível para espectadores no treino.',
       en: 'Sets how long grenade trajectories remain visible to spectators during practice.',
       es: 'Define cuanto tiempo permanece visible la trayectoria para espectadores durante la practica.',
       zh: '设置训练中观战者可见手雷轨迹的持续时间。',
@@ -1074,7 +1074,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '在本地服务器上启用依赖 sv_cheats 的训练指令。',
     },
     exampleUse: {
-      'pt-br': 'Use no inicio do treino antes de noclip, rethrow e impactos.',
+      'pt-br': 'Use no início do treino antes de noclip, rethrow e impactos.',
       en: 'Use at practice start before noclip, rethrow and impacts.',
       es: 'Usalo al inicio antes de noclip, rethrow e impactos.',
       zh: '在使用 noclip、重抛道具和弹道显示前,先在训练开始时执行。',
@@ -1101,7 +1101,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '移除所有 Bot',
     },
     description: {
-      'pt-br': 'Limpa o servidor para treino individual sem interferencia dos bots.',
+      'pt-br': 'Limpa o servidor para treino individual sem interferência dos bots.',
       en: 'Clears the server for solo practice without bot interference.',
       es: 'Limpia el servidor para practicar en solitario sin bots.',
       zh: '清空服务器,进行无 Bot 干扰的单人训练。',
@@ -1127,7 +1127,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '结束热身',
     },
     description: {
-      'pt-br': 'Pula o warmup e inicia rapidamente a sessao de treino.',
+      'pt-br': 'Pula o warmup e inicia rapidamente a sessão de treino.',
       en: 'Skips warmup and starts practice quickly.',
       es: 'Salta el warmup e inicia la practica rapido.',
       zh: '跳过热身,快速开始训练。',
@@ -1147,13 +1147,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Sem tempo congelado no inicio da rodada',
+      'pt-br': 'Sem tempo congelado no início da rodada',
       en: 'No freeze time at round start',
       es: 'Sin freeze time al inicio de ronda',
       zh: '回合开始无冻结时间',
     },
     description: {
-      'pt-br': 'Remove espera no spawn para acelerar repeticao de treino.',
+      'pt-br': 'Remove espera no spawn para acelerar repetição de treino.',
       en: 'Removes spawn waiting time for faster repetitions.',
       es: 'Quita la espera en spawn para repetir mas rapido.',
       zh: '取消出生点等待时间,加快重复训练。',
@@ -1231,7 +1231,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '人质图延长计时',
     },
     description: {
-      'pt-br': 'Aumenta tempo em cenarios hostage para setups especificos.',
+      'pt-br': 'Aumenta tempo em cenários hostage para setups específicos.',
       en: 'Extends timer on hostage scenarios.',
       es: 'Aumenta tiempo en escenarios hostage.',
       zh: '延长人质模式场景的计时。',
@@ -1257,7 +1257,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '延长购买时间',
     },
     description: {
-      'pt-br': 'Permite comprar utilitarios durante toda a rodada de treino.',
+      'pt-br': 'Permite comprar utilitários durante toda a rodada de treino.',
       en: 'Allows buying utility for the whole practice round.',
       es: 'Permite comprar utilidad durante toda la ronda de practica.',
       zh: '允许整个训练回合内购买道具。',
@@ -1283,7 +1283,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '任意位置购买(开启)',
     },
     description: {
-      'pt-br': 'Libera compra fora do spawn para treino rapido de granadas.',
+      'pt-br': 'Libera compra fora do spawn para treino rápido de granadas.',
       en: 'Enables buying outside spawn for faster grenade practice.',
       es: 'Habilita compras fuera del spawn para practicar granadas.',
       zh: '开启出生点以外购买,加快投掷物训练。',
@@ -1309,7 +1309,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '任意位置购买(关闭)',
     },
     description: {
-      'pt-br': 'Retorna comportamento padrao do jogo para compra apenas no tempo permitido.',
+      'pt-br': 'Retorna comportamento padrão do jogo para compra apenas no tempo permitido.',
       en: 'Restores default buy behavior for regular matches.',
       es: 'Restaura el comportamiento normal de compra.',
       zh: '恢复默认购买规则,用于正式对局。',
@@ -1329,7 +1329,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Dinheiro maximo alto',
+      'pt-br': 'Dinheiro máximo alto',
       en: 'High max money',
       es: 'Dinero maximo alto',
       zh: '提高最高金钱上限',
@@ -1361,7 +1361,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '提高起始金钱',
     },
     description: {
-      'pt-br': 'Define economia inicial para comprar tudo no começo da sessao.',
+      'pt-br': 'Define economia inicial para comprar tudo no começo da sessão.',
       en: 'Sets high starting economy for instant loadout setup.',
       es: 'Define economia inicial alta para comprar utilitarios rapido.',
       zh: '设置较高的起始经济,便于立即配装。',
@@ -1387,7 +1387,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '提高回合结束后金钱',
     },
     description: {
-      'pt-br': 'Mantem dinheiro apos cada rodada em treino longo.',
+      'pt-br': 'Mantém dinheiro após cada rodada em treino longo.',
       en: 'Keeps funds high after each round during practice.',
       es: 'Mantiene dinero alto tras cada ronda de practica.',
       zh: '训练期间每回合结束后保持资金充裕。',
@@ -1413,7 +1413,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '取消队伍人数限制',
     },
     description: {
-      'pt-br': 'Permite adicionar bots sem restricao de balanceamento.',
+      'pt-br': 'Permite adicionar bots sem restrição de balanceamento.',
       en: 'Allows bot setups without team limit restrictions.',
       es: 'Permite agregar bots sin restricciones de equipo.',
       zh: '允许配置 Bot 数量而不受队伍人数限制。',
@@ -1439,7 +1439,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '关闭自动队伍平衡',
     },
     description: {
-      'pt-br': 'Evita troca automatica de bots entre times durante o treino.',
+      'pt-br': 'Evita troca automática de bots entre times durante o treino.',
       en: 'Prevents automatic bot balancing between teams.',
       es: 'Evita balanceo automatico entre equipos.',
       zh: '阻止系统自动在两队之间平衡 Bot。',
@@ -1471,7 +1471,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '2026 年 9 月新增的官方选项,供想隐藏战队标签的自定义服务器使用。',
     },
     warning: {
-      'pt-br': 'Use apenas em um servidor personalizado que voce administra. Isso nao altera as partidas oficiais.',
+      'pt-br': 'Use apenas em um servidor personalizado que você administra. Isso não altera as partidas oficiais.',
       en: 'Use only on a custom server you administer. This does not change official matchmaking.',
       es: 'Usalo solo en un servidor personalizado que administres. No cambia el emparejamiento oficial.',
       zh: '仅在你管理的自定义服务器上使用,不会更改官方匹配。',
@@ -1497,7 +1497,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '1秒后重启比赛',
     },
     description: {
-      'pt-br': 'Aplica varios comandos e reinicia rapidamente para entrar no estado correto.',
+      'pt-br': 'Aplica vários comandos e reinicia rapidamente para entrar no estado correto.',
       en: 'Quickly restarts match after applying practice settings.',
       es: 'Reinicia rapido la partida tras aplicar configuraciones.',
       zh: '应用训练设置后快速重启比赛。',
@@ -1517,13 +1517,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'caution',
     name: {
-      'pt-br': 'Ignorar condicoes de vitoria da rodada',
+      'pt-br': 'Ignorar condições de vitória da rodada',
       en: 'Ignore round win conditions',
       es: 'Ignorar condiciones de victoria',
       zh: '忽略回合胜利条件',
     },
     description: {
-      'pt-br': 'Mantem rodada viva para repeticao de granadas e posicionamentos.',
+      'pt-br': 'Mantém rodada viva para repetição de granadas e posicionamentos.',
       en: 'Keeps rounds active for repeated utility setups.',
       es: 'Mantiene ronda activa para repetir utilidades.',
       zh: '让回合持续进行,便于反复练习道具投掷。',
@@ -1544,13 +1544,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'caution',
     name: {
-      'pt-br': 'Municao infinita (modo 1)',
+      'pt-br': 'Munição infinita (modo 1)',
       en: 'Infinite ammo (mode 1)',
       es: 'Municion infinita (modo 1)',
       zh: '无限弹药(模式1)',
     },
     description: {
-      'pt-br': 'Mantem armas e utilitarios disponiveis para repeticao rapida no treino.',
+      'pt-br': 'Mantém armas e utilitários disponíveis para repetição rápida no treino.',
       en: 'Keeps weapons and utility available for fast repetitions.',
       es: 'Mantiene armas y utilidades disponibles para repetir.',
       zh: '保持武器和道具持续可用,便于快速重复训练。',
@@ -1603,7 +1603,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '开启投掷物弹道预览',
     },
     description: {
-      'pt-br': 'Mostra trajeto da granada para ajustar lineup com precisao.',
+      'pt-br': 'Mostra trajeto da granada para ajustar lineup com precisão.',
       en: 'Shows grenade trajectory to refine lineups.',
       es: 'Muestra trayectoria de granada para ajustar lineups.',
       zh: '显示投掷物弹道,便于优化点位。',
@@ -1630,7 +1630,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '关闭投掷物弹道预览',
     },
     description: {
-      'pt-br': 'Oculta o rastro quando quiser treinar sem assistencia visual.',
+      'pt-br': 'Oculta o rastro quando quiser treinar sem assistência visual.',
       en: 'Hides grenade path for no-assist practice.',
       es: 'Oculta trayectoria para practicar sin asistencia visual.',
       zh: '隐藏投掷物弹道,进行无辅助训练。',
@@ -1658,7 +1658,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '弹道轨迹保留10秒',
     },
     description: {
-      'pt-br': 'Usa o cvar atual de treino para deixar a trajetoria visivel apos o arremesso.',
+      'pt-br': 'Usa o cvar atual de treino para deixar a trajetória visível após o arremesso.',
       en: 'Uses the current practice cvar to keep the trajectory visible after the throw.',
       es: 'Usa el cvar actual de practica para mantener la trayectoria visible tras lanzar.',
       zh: '使用当前训练变量,让投掷后的弹道轨迹保留可见。',
@@ -1679,13 +1679,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'caution',
     name: {
-      'pt-br': 'Repetir ultima granada',
+      'pt-br': 'Repetir última granada',
       en: 'Rethrow last grenade',
       es: 'Repetir ultima granada',
       zh: '重新投掷上一个道具',
     },
     description: {
-      'pt-br': 'Reexecuta a ultima granada para comparar lineup e timing.',
+      'pt-br': 'Reexecuta a última granada para comparar lineup e timing.',
       en: 'Rethrows previous grenade for lineup comparisons.',
       es: 'Repite la ultima granada para comparar lineup.',
       zh: '重新投掷上一个道具,便于对比点位。',
@@ -1706,7 +1706,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'caution',
     name: {
-      'pt-br': 'Ativar marcacao de impactos de tiro',
+      'pt-br': 'Ativar marcação de impactos de tiro',
       en: 'Enable bullet impact markers',
       es: 'Activar marcadores de impacto',
       zh: '开启弹着点标记',
@@ -1733,7 +1733,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Desativar marcacao de impactos',
+      'pt-br': 'Desativar marcação de impactos',
       en: 'Disable bullet impact markers',
       es: 'Desactivar marcadores de impacto',
       zh: '关闭弹着点标记',
@@ -1761,13 +1761,13 @@ export const cs2Commands: Cs2Command[] = [
     needsValidation: true,
     warningLevel: 'caution',
     name: {
-      'pt-br': 'Aumentar tempo de exibicao dos impactos',
+      'pt-br': 'Aumentar tempo de exibição dos impactos',
       en: 'Increase impact marker duration',
       es: 'Aumentar duracion de marcadores',
       zh: '延长弹着点标记显示时间',
     },
     description: {
-      'pt-br': 'Mantem marcas de impacto por mais tempo para analise.',
+      'pt-br': 'Mantém marcas de impacto por mais tempo para análise.',
       en: 'Keeps impact markers visible longer for review.',
       es: 'Mantiene impactos visibles por mas tiempo.',
       zh: '让弹着点标记保持更久,便于复盘。',
@@ -1794,7 +1794,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '穿墙模式(自由飞行)',
     },
     description: {
-      'pt-br': 'Permite atravessar mapa para ajustar lineup e posicoes.',
+      'pt-br': 'Permite atravessar mapa para ajustar lineup e posições.',
       en: 'Lets you fly through map for lineup setup.',
       es: 'Permite volar por el mapa para lineups.',
       zh: '让你穿墙飞越地图,便于设置点位。',
@@ -1821,7 +1821,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '绑定 V 键为穿墙模式',
     },
     description: {
-      'pt-br': 'Atalho rapido para ativar/desativar voo no treino local.',
+      'pt-br': 'Atalho rápido para ativar/desativar voo no treino local.',
       en: 'Fast toggle for noclip in local practice.',
       es: 'Atajo rapido para noclip en practica local.',
       zh: '在本地训练中快速切换穿墙模式。',
@@ -1848,7 +1848,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '绑定 R 键重抛道具',
     },
     description: {
-      'pt-br': 'Atalho de treino para repetir utilitario sem refazer setup.',
+      'pt-br': 'Atalho de treino para repetir utilitário sem refazer setup.',
       en: 'Practice shortcut to rethrow utility without reset.',
       es: 'Atajo para repetir utilidad sin rearmar setup.',
       zh: '训练用快捷键,无需重置即可重抛道具。',
@@ -1904,7 +1904,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '清除当前闪光弹',
     },
     description: {
-      'pt-br': 'Comando util para resetar treino de flash rapidamente.',
+      'pt-br': 'Comando útil para resetar treino de flash rapidamente.',
       en: 'Useful command to reset flash practice quickly.',
       es: 'Comando util para resetear practica de flash.',
       zh: '用于快速重置闪光弹训练的实用指令。',
@@ -1960,7 +1960,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '清除当前燃烧瓶',
     },
     description: {
-      'pt-br': 'Tenta remover utilitario incendiario para repetir entrada.',
+      'pt-br': 'Tenta remover utilitário incendiário para repetir entrada.',
       en: 'Attempts to remove incendiary utility for fast retries.',
       es: 'Intenta eliminar incendiaria para repetir entrada.',
       zh: '尝试移除燃烧类道具,便于快速重试。',
@@ -1987,7 +1987,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '自动连跳(娱乐/本地)',
     },
     description: {
-      'pt-br': 'Comando de servidor para treino divertido e testes de movimentacao.',
+      'pt-br': 'Comando de servidor para treino divertido e testes de movimentação.',
       en: 'Server-side fun command for movement experiments.',
       es: 'Comando de servidor para pruebas divertidas de movimiento.',
       zh: '服务器端娱乐指令,用于移动实验。',
@@ -2014,7 +2014,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '启用服务器连跳',
     },
     description: {
-      'pt-br': 'Usado em treino local privado para experimentar movimentacao.',
+      'pt-br': 'Usado em treino local privado para experimentar movimentação.',
       en: 'Used on local private servers for movement experiments.',
       es: 'Usado en servidor privado para experimentar movimiento.',
       zh: '用于本地私人服务器的移动实验。',
@@ -2041,7 +2041,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '提高空中加速度',
     },
     description: {
-      'pt-br': 'Deixa strafe aereo muito mais permissivo para treino fun.',
+      'pt-br': 'Deixa strafe aéreo muito mais permissivo para treino fun.',
       en: 'Makes air strafe much more permissive in fun sessions.',
       es: 'Vuelve el strafe aereo muy permisivo en sesiones fun.',
       zh: '让空中变向在娱乐场景中更加宽松。',
@@ -2062,13 +2062,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Gravidade padrao',
+      'pt-br': 'Gravidade padrão',
       en: 'Default gravity',
       es: 'Gravedad estandar',
       zh: '默认重力',
     },
     description: {
-      'pt-br': 'Restaura gravidade comum apos testes em modo fun.',
+      'pt-br': 'Restaura gravidade comum após testes em modo fun.',
       en: 'Restores normal gravity after fun tests.',
       es: 'Restaura gravedad normal despues de pruebas fun.',
       zh: '在娱乐测试后恢复正常重力。',
@@ -2143,13 +2143,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Adicionar bot automatico',
+      'pt-br': 'Adicionar bot automático',
       en: 'Add automatic bot',
       es: 'Agregar bot automatico',
       zh: '自动添加 Bot',
     },
     description: {
-      'pt-br': 'Inclui bot automaticamente no time disponivel.',
+      'pt-br': 'Inclui bot automaticamente no time disponível.',
       en: 'Adds a bot to available team automatically.',
       es: 'Agrega bot automaticamente al equipo disponible.',
       zh: '自动为可用队伍添加一个 Bot。',
@@ -2175,7 +2175,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '添加 T 方 Bot',
     },
     description: {
-      'pt-br': 'Cria alvo ou suporte em time terrorista para praticar execucao.',
+      'pt-br': 'Cria alvo ou suporte em time terrorista para praticar execução.',
       en: 'Creates T-side bot for execute and entry training.',
       es: 'Crea bot T para practicar ejecuciones.',
       zh: '创建 T 方 Bot,用于执行和突破训练。',
@@ -2279,7 +2279,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '在准星处放置 Bot',
     },
     description: {
-      'pt-br': 'Posiciona bot no ponto de mira para simular angulos especificos.',
+      'pt-br': 'Posiciona bot no ponto de mira para simular ângulos específicos.',
       en: 'Places bot at crosshair location for angle drills.',
       es: 'Coloca bot en la mira para practicar angulos.',
       zh: '将 Bot 放置在准星位置,用于角度训练。',
@@ -2332,7 +2332,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'Bot 下蹲(关闭)',
     },
     description: {
-      'pt-br': 'Retorna comportamento padrao de postura dos bots.',
+      'pt-br': 'Retorna comportamento padrão de postura dos bots.',
       en: 'Restores default bot stance behavior.',
       es: 'Restaura postura normal de bots.',
       zh: '恢复 Bot 默认站姿。',
@@ -2358,7 +2358,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'Bot 不开枪',
     },
     description: {
-      'pt-br': 'Mantem bots passivos para praticar trajetoria e prefire.',
+      'pt-br': 'Mantém bots passivos para praticar trajetória e prefire.',
       en: 'Keeps bots passive for lineups and prefire drills.',
       es: 'Mantiene bots pasivos para practicar utilidades y prefire.',
       zh: '让 Bot 保持被动,用于点位和预瞄训练。',
@@ -2437,7 +2437,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'Bot 模仿玩家(关闭)',
     },
     description: {
-      'pt-br': 'Desativa mimic para retornar ao comportamento padrao.',
+      'pt-br': 'Desativa mimic para retornar ao comportamento padrão.',
       en: 'Disables mimic mode and restores defaults.',
       es: 'Desactiva mimic y restaura comportamiento normal.',
       zh: '关闭模仿模式,恢复默认行为。',
@@ -2464,7 +2464,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '设置 Bot 数量为10',
     },
     description: {
-      'pt-br': 'Define numero total de bots para cenario de treino.',
+      'pt-br': 'Define número total de bots para cenário de treino.',
       en: 'Sets total bot amount for scenario practice.',
       es: 'Define cantidad total de bots para practica.',
       zh: '为场景训练设置 Bot 总数。',
@@ -2490,7 +2490,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '自动填满 Bot 名额',
     },
     description: {
-      'pt-br': 'Preenche times automaticamente ate atingir bot_quota.',
+      'pt-br': 'Preenche times automaticamente até atingir bot_quota.',
       en: 'Auto-fills teams until bot_quota is reached.',
       es: 'Rellena equipos automaticamente hasta bot_quota.',
       zh: '自动填充队伍,直到达到 bot_quota 设置的数量。',
@@ -2510,7 +2510,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Dificuldade bot: facil',
+      'pt-br': 'Dificuldade bot: fácil',
       en: 'Bot difficulty: easy',
       es: 'Dificultad bot: facil',
       zh: 'Bot 难度:简单',
@@ -2542,7 +2542,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'Bot 难度:普通',
     },
     description: {
-      'pt-br': 'Nivel intermediario para treino de mira e peeking.',
+      'pt-br': 'Nível intermediário para treino de mira e peeking.',
       en: 'Intermediate level for aim and peeking practice.',
       es: 'Nivel intermedio para practicar aim y peeks.',
       zh: '中级难度,用于瞄准和探头训练。',
@@ -2562,7 +2562,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Dificuldade bot: dificil',
+      'pt-br': 'Dificuldade bot: difícil',
       en: 'Bot difficulty: hard',
       es: 'Dificultad bot: dificil',
       zh: 'Bot 难度:困难',
@@ -2594,7 +2594,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'Bot 难度:专家',
     },
     description: {
-      'pt-br': 'Configura bots no nivel maximo para treino intenso.',
+      'pt-br': 'Configura bots no nível máximo para treino intenso.',
       en: 'Sets bots to max difficulty for intense drills.',
       es: 'Configura bots al maximo para entrenamiento intenso.',
       zh: '将 Bot 设为最高难度,进行高强度训练。',
@@ -2614,7 +2614,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Respawn automatico CT',
+      'pt-br': 'Respawn automático CT',
       en: 'Auto-respawn CT',
       es: 'Respawn automatico CT',
       zh: 'CT 方自动重生',
@@ -2640,7 +2640,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Respawn automatico TR',
+      'pt-br': 'Respawn automático TR',
       en: 'Auto-respawn T',
       es: 'Respawn automatico T',
       zh: 'T 方自动重生',
@@ -2672,7 +2672,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '取消出生保护时间',
     },
     description: {
-      'pt-br': 'Remove invulnerabilidade para treino de ritmo continuo.',
+      'pt-br': 'Remove invulnerabilidade para treino de ritmo contínuo.',
       en: 'Removes spawn immunity for continuous rhythm practice.',
       es: 'Quita inmunidad para practica de ritmo continuo.',
       zh: '取消出生保护时间,便于连续节奏训练。',
@@ -2692,13 +2692,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Radar nao centralizado',
+      'pt-br': 'Radar não centralizado',
       en: 'Radar not always centered',
       es: 'Radar no siempre centrado',
       zh: '雷达不常驻居中',
     },
     description: {
-      'pt-br': 'Mostra mais area do mapa, comum em configuracao competitiva.',
+      'pt-br': 'Mostra mais área do mapa, comum em configuração competitiva.',
       en: 'Shows more map area, common in competitive configs.',
       es: 'Muestra mas area del mapa, comun en competitivo.',
       zh: '显示更大范围的地图区域,常用于竞技配置。',
@@ -2724,7 +2724,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '雷达始终居中',
     },
     description: {
-      'pt-br': 'Mantem jogador fixo no centro do radar.',
+      'pt-br': 'Mantém jogador fixo no centro do radar.',
       en: 'Keeps player fixed at radar center.',
       es: 'Mantiene jugador fijo en el centro del radar.',
       zh: '让玩家始终固定在雷达中心。',
@@ -2744,13 +2744,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Radar fixo (sem rotacao)',
+      'pt-br': 'Radar fixo (sem rotação)',
       en: 'Static radar (no rotation)',
       es: 'Radar fijo (sin rotacion)',
       zh: '雷达不旋转',
     },
     description: {
-      'pt-br': 'Mantem orientacao fixa para leitura rapida do mapa.',
+      'pt-br': 'Mantém orientação fixa para leitura rápida do mapa.',
       en: 'Keeps fixed orientation for quick map reading.',
       es: 'Mantiene orientacion fija para lectura rapida.',
       zh: '保持固定方向,便于快速读图。',
@@ -2776,7 +2776,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '雷达旋转',
     },
     description: {
-      'pt-br': 'Gira radar conforme direcao do jogador.',
+      'pt-br': 'Gira radar conforme direção do jogador.',
       en: 'Rotates radar with player direction.',
       es: 'Gira radar segun direccion del jugador.',
       zh: '雷达随玩家朝向旋转。',
@@ -2828,7 +2828,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '雷达缩放 0.5',
     },
     description: {
-      'pt-br': 'Valor equilibrado entre detalhes locais e visao geral.',
+      'pt-br': 'Valor equilibrado entre detalhes locais e visão geral.',
       en: 'Balanced value between local detail and map overview.',
       es: 'Valor equilibrado entre detalle y vision general.',
       zh: '在局部细节和整体视野之间取得平衡的数值。',
@@ -2854,7 +2854,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '雷达缩放 0.7',
     },
     description: {
-      'pt-br': 'Aumenta zoom para foco em area proxima.',
+      'pt-br': 'Aumenta zoom para foco em área próxima.',
       en: 'Higher zoom for nearby area focus.',
       es: 'Aumenta zoom para foco en zona cercana.',
       zh: '放大比例,聚焦附近区域。',
@@ -2880,7 +2880,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'HUD 雷达大小 1.0',
     },
     description: {
-      'pt-br': 'Mantem tamanho padrao do radar na interface.',
+      'pt-br': 'Mantém tamanho padrão do radar na interface.',
       en: 'Keeps standard radar size on HUD.',
       es: 'Mantiene tamano estandar del radar.',
       zh: '保持雷达在 HUD 上的标准大小。',
@@ -2906,7 +2906,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'HUD 雷达大小 1.15',
     },
     description: {
-      'pt-br': 'Leve aumento para leitura mais confortavel.',
+      'pt-br': 'Leve aumento para leitura mais confortável.',
       en: 'Slight increase for easier reading.',
       es: 'Ligero aumento para lectura comoda.',
       zh: '略微放大,便于阅读。',
@@ -2952,13 +2952,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Icones de radar menores',
+      'pt-br': 'Ícones de radar menores',
       en: 'Smaller radar icons',
       es: 'Iconos de radar mas pequenos',
       zh: '缩小雷达图标',
     },
     description: {
-      'pt-br': 'Reduz tamanho minimo dos icones para radar mais limpo.',
+      'pt-br': 'Reduz tamanho mínimo dos ícones para radar mais limpo.',
       en: 'Reduces minimum icon size for cleaner radar.',
       es: 'Reduce tamano minimo de iconos para radar limpio.',
       zh: '降低图标最小尺寸,让雷达更简洁。',
@@ -2978,13 +2978,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Icones de radar maiores',
+      'pt-br': 'Ícones de radar maiores',
       en: 'Larger radar icons',
       es: 'Iconos de radar mas grandes',
       zh: '放大雷达图标',
     },
     description: {
-      'pt-br': 'Aumenta legibilidade de posicoes no minimapa.',
+      'pt-br': 'Aumenta legibilidade de posições no minimapa.',
       en: 'Increases icon readability on minimap.',
       es: 'Aumenta legibilidad de posiciones en minimapa.',
       zh: '提高小地图图标的可读性。',
@@ -3036,7 +3036,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '显示队友颜色(模式1)',
     },
     description: {
-      'pt-br': 'Ativa identificacao de aliados por cor no HUD/radar.',
+      'pt-br': 'Ativa identificação de aliados por cor no HUD/radar.',
       en: 'Enables teammate color identification on HUD/radar.',
       es: 'Activa identificacion por color de aliados.',
       zh: '在 HUD/雷达上启用队友颜色识别。',
@@ -3088,7 +3088,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'HUD 缩放 0.85',
     },
     description: {
-      'pt-br': 'HUD mais compacto para liberar area de visao.',
+      'pt-br': 'HUD mais compacto para liberar área de visão.',
       en: 'Makes HUD compact to free screen space.',
       es: 'HUD mas compacto para liberar pantalla.',
       zh: '让 HUD 更紧凑,释放屏幕空间。',
@@ -3114,7 +3114,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'HUD 缩放 0.95',
     },
     description: {
-      'pt-br': 'Valor intermediario para equilibrar leitura e espaco.',
+      'pt-br': 'Valor intermediário para equilibrar leitura e espaço.',
       en: 'Middle value balancing readability and space.',
       es: 'Valor intermedio entre lectura y espacio.',
       zh: '在可读性和空间之间取得平衡的中间值。',
@@ -3140,7 +3140,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'HUD 缩放 1.0',
     },
     description: {
-      'pt-br': 'Retorna escala padrao de interface.',
+      'pt-br': 'Retorna escala padrão de interface.',
       en: 'Restores default interface scale.',
       es: 'Restaura escala predeterminada de interfaz.',
       zh: '恢复默认界面缩放。',
@@ -3167,7 +3167,7 @@ export const cs2Commands: Cs2Command[] = [
         zh: `HUD 颜色(${index})`,
       },
       description: {
-        'pt-br': 'Troca a paleta da HUD por valor numerico suportado pelo cliente.',
+        'pt-br': 'Troca a paleta da HUD por valor numérico suportado pelo cliente.',
         en: 'Switches HUD palette using client-side numeric value.',
         es: 'Cambia la paleta HUD con valor numerico del cliente.',
         zh: '使用客户端支持的数值切换 HUD 配色方案。',
@@ -3189,7 +3189,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Mostrar inventario na HUD',
+      'pt-br': 'Mostrar inventário na HUD',
       en: 'Show loadout on HUD',
       es: 'Mostrar equipamiento en HUD',
       zh: 'HUD 显示装备',
@@ -3215,7 +3215,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Ocultar inventario na HUD',
+      'pt-br': 'Ocultar inventário na HUD',
       en: 'Hide loadout on HUD',
       es: 'Ocultar equipamiento en HUD',
       zh: 'HUD 隐藏装备',
@@ -3247,7 +3247,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '极简 HUD(仅击杀信息)',
     },
     description: {
-      'pt-br': 'Util para gravacao/analise visual durante treino.',
+      'pt-br': 'Útil para gravação/análise visual durante treino.',
       en: 'Useful for recording and visual analysis sessions.',
       es: 'Util para grabacion y analisis visual.',
       zh: '适用于录像和画面分析场景。',
@@ -3273,7 +3273,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '完整 HUD',
     },
     description: {
-      'pt-br': 'Restaura informacoes completas de interface.',
+      'pt-br': 'Restaura informações completas de interface.',
       en: 'Restores full interface information.',
       es: 'Restaura informacion completa de HUD.',
       zh: '恢复完整的界面信息。',
@@ -3293,13 +3293,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Ocultar informacoes de build',
+      'pt-br': 'Ocultar informações de build',
       en: 'Hide build info',
       es: 'Ocultar informacion de build',
       zh: '隐藏构建信息',
     },
     description: {
-      'pt-br': 'Remove texto tecnico da tela para visual mais limpo.',
+      'pt-br': 'Remove texto técnico da tela para visual mais limpo.',
       en: 'Hides technical build text from screen.',
       es: 'Oculta texto tecnico de compilacion en pantalla.',
       zh: '隐藏屏幕上的技术性构建文本。',
@@ -3319,13 +3319,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Mostrar informacoes de build',
+      'pt-br': 'Mostrar informações de build',
       en: 'Show build info',
       es: 'Mostrar informacion de build',
       zh: '显示构建信息',
     },
     description: {
-      'pt-br': 'Exibe dados tecnicos util para depuracao local.',
+      'pt-br': 'Exibe dados técnicos útil para depuração local.',
       en: 'Displays technical build data for local debugging.',
       es: 'Muestra datos tecnicos utiles para depuracion local.',
       zh: '显示技术性构建数据,便于本地调试。',
@@ -3351,7 +3351,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'Viewmodel FOV 54(紧凑)',
     },
     description: {
-      'pt-br': 'Arma mais proxima para quem prefere menos destaque da viewmodel.',
+      'pt-br': 'Arma mais próxima para quem prefere menos destaque da viewmodel.',
       en: 'Brings weapon closer for compact viewmodel style.',
       es: 'Acerca arma para estilo de viewmodel compacto.',
       zh: '让武器视角更贴近,呈现紧凑的持枪风格。',
@@ -3377,7 +3377,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: 'Viewmodel FOV 60(均衡)',
     },
     description: {
-      'pt-br': 'Valor intermediario para equilibrar visibilidade da arma.',
+      'pt-br': 'Valor intermediário para equilibrar visibilidade da arma.',
       en: 'Middle value balancing weapon visibility.',
       es: 'Valor intermedio para equilibrar visibilidad del arma.',
       zh: '在武器可见度上取得平衡的中间值。',
@@ -3514,7 +3514,7 @@ export const cs2Commands: Cs2Command[] = [
         zh: `Viewmodel 预设 ${value}`,
       },
       description: {
-        'pt-br': 'Aplica preset rapido de posicao da arma.',
+        'pt-br': 'Aplica preset rápido de posição da arma.',
         en: 'Applies quick preset weapon position.',
         es: 'Aplica preset rapido de posicion de arma.',
         zh: '快速应用一套武器位置预设。',
@@ -3543,7 +3543,7 @@ export const cs2Commands: Cs2Command[] = [
       },
       description: {
         'pt-br':
-          'Ajusta limite de FPS do jogo. Ganho real depende do hardware e das configuracoes gerais.',
+          'Ajusta limite de FPS do jogo. Ganho real depende do hardware e das configurações gerais.',
         en:
           'Adjusts in-game FPS cap. Real gains still depend on hardware and overall settings.',
         es:
@@ -3608,7 +3608,7 @@ export const cs2Commands: Cs2Command[] = [
         zh: `显示 FPS 模式 ${value}`,
       },
       description: {
-        'pt-br': 'Alterna exibicao de FPS no HUD para monitorar desempenho.',
+        'pt-br': 'Alterna exibição de FPS no HUD para monitorar desempenho.',
         en: 'Toggles FPS display modes on HUD.',
         es: 'Alterna modos de visualizacion FPS en HUD.',
         zh: '切换 HUD 上 FPS 显示的不同模式,便于监控性能。',
@@ -3694,7 +3694,7 @@ export const cs2Commands: Cs2Command[] = [
         zh: `Low latency sleep after client tick ${value}`,
       },
       description: {
-        'pt-br': 'Parametro avancado de latencia com efeito variavel por hardware.',
+        'pt-br': 'Parâmetro avançado de latência com efeito variável por hardware.',
         en: 'Advanced latency parameter with hardware-dependent impact.',
         es: 'Parametro avanzado de latencia con impacto variable.',
         zh: '高级延迟参数,效果因硬件而异。',
@@ -3756,7 +3756,7 @@ export const cs2Commands: Cs2Command[] = [
         zh: value ? '启用语音' : '关闭语音',
       },
       description: {
-        'pt-br': 'Liga/desliga recepcao de voz no jogo.',
+        'pt-br': 'Liga/desliga recepção de voz no jogo.',
         en: 'Toggles incoming voice chat.',
         es: 'Activa/desactiva chat de voz entrante.',
         zh: '开启或关闭游戏内接收的语音聊天。',
@@ -3784,13 +3784,13 @@ export const cs2Commands: Cs2Command[] = [
       zh: '静音所有语音',
     },
     description: {
-      'pt-br': 'Silencia comunicacao de voz para foco total.',
+      'pt-br': 'Silencia comunicação de voz para foco total.',
       en: 'Mutes voice chat for full focus.',
       es: 'Silencia voz para foco total.',
       zh: '静音语音聊天,专注对局。',
     },
     warning: {
-      'pt-br': 'Se nao funcionar no seu build, use voice_modenable 0/1 como alternativa.',
+      'pt-br': 'Se não funcionar no seu build, use voice_modenable 0/1 como alternativa.',
       en: 'If it does not work on your build, use voice_modenable 0/1 instead.',
       es: 'Si no funciona en tu build, usa voice_modenable 0/1 como alternativa.',
       zh: '如果在你的版本中无效,可改用 voice_modenable 0/1。',
@@ -3823,7 +3823,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '恢复全局语音通讯。',
     },
     warning: {
-      'pt-br': 'Se nao funcionar no seu build, use voice_modenable 1 como alternativa.',
+      'pt-br': 'Se não funcionar no seu build, use voice_modenable 1 como alternativa.',
       en: 'If it does not work on your build, use voice_modenable 1 as fallback.',
       es: 'Si no funciona en tu build, usa voice_modenable 1 como alternativa.',
       zh: '如果在你的版本中无效,可改用 voice_modenable 1 作为备选。',
@@ -3849,7 +3849,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '绑定鼠标滚轮上滑跳跃',
     },
     description: {
-      'pt-br': 'Bind comum e seguro para consistencia de bunnyhop manual.',
+      'pt-br': 'Bind comum é seguro para consistência de bunnyhop manual.',
       en: 'Common safe bind for consistent manual jump timing.',
       es: 'Bind comun y seguro para consistencia de salto manual.',
       zh: '常见的安全绑定,可实现稳定的手动跳跃节奏。',
@@ -3875,7 +3875,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '绑定鼠标滚轮下滑跳跃',
     },
     description: {
-      'pt-br': 'Outra variacao segura para pulo no scroll.',
+      'pt-br': 'Outra variação segura para pulo no scroll.',
       en: 'Alternative safe scroll jump bind.',
       es: 'Variacion segura para salto en rueda.',
       zh: '另一种安全的滚轮跳跃绑定方式。',
@@ -3895,13 +3895,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Espaco para pulo',
+      'pt-br': 'Espaço para pulo',
       en: 'Space to jump',
       es: 'Espacio para salto',
       zh: '空格键跳跃',
     },
     description: {
-      'pt-br': 'Mantem bind padrao de salto.',
+      'pt-br': 'Mantém bind padrão de salto.',
       en: 'Keeps default jump binding.',
       es: 'Mantiene bind estandar de salto.',
       zh: '保持默认跳跃按键。',
@@ -3921,13 +3921,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Bind C para utilitario slot8',
+      'pt-br': 'Bind C para utilitário slot8',
       en: 'Bind C to slot8 utility',
       es: 'Bind C a utilidad slot8',
       zh: '绑定 C 键为8号道具槽',
     },
     description: {
-      'pt-br': 'Atalho simples para ciclo de utilitarios.',
+      'pt-br': 'Atalho simples para ciclo de utilitários.',
       en: 'Simple shortcut for utility slot usage.',
       es: 'Atajo simple para uso de utilidad.',
       zh: '简单的道具槽位使用快捷键。',
@@ -3947,13 +3947,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Bind X para utilitario slot7',
+      'pt-br': 'Bind X para utilitário slot7',
       en: 'Bind X to slot7 utility',
       es: 'Bind X a utilidad slot7',
       zh: '绑定 X 键为7号道具槽',
     },
     description: {
-      'pt-br': 'Atalho de utilitario sem automacao.',
+      'pt-br': 'Atalho de utilitário sem automação.',
       en: 'Utility shortcut without automation.',
       es: 'Atajo de utilidad sin automatizacion.',
       zh: '无自动化脚本的道具快捷键。',
@@ -3973,13 +3973,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Bind Z para utilitario slot6',
+      'pt-br': 'Bind Z para utilitário slot6',
       en: 'Bind Z to slot6 utility',
       es: 'Bind Z a utilidad slot6',
       zh: '绑定 Z 键为6号道具槽',
     },
     description: {
-      'pt-br': 'Outro atalho de utilitario simples para setup competitivo.',
+      'pt-br': 'Outro atalho de utilitário simples para setup competitivo.',
       en: 'Another simple utility bind for competitive setup.',
       es: 'Otro atajo de utilidad para setup competitivo.',
       zh: '另一个用于竞技配置的简单道具绑定。',
@@ -4005,7 +4005,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '数字4键绑定手雷槽',
     },
     description: {
-      'pt-br': 'Padrao simples para acesso de utilitario.',
+      'pt-br': 'Padrão simples para acesso de utilitário.',
       en: 'Simple standard grenade access bind.',
       es: 'Bind estandar simple para utilidad.',
       zh: '标准的手雷获取快捷键。',
@@ -4025,7 +4025,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Q para ultima arma',
+      'pt-br': 'Q para última arma',
       en: 'Q to last weapon',
       es: 'Q para ultima arma',
       zh: 'Q 键切换上一把武器',
@@ -4077,13 +4077,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Salvar configuracao atual',
+      'pt-br': 'Salvar configuração atual',
       en: 'Write current config',
       es: 'Guardar configuracion actual',
       zh: '写入当前配置',
     },
     description: {
-      'pt-br': 'Grava comandos atuais no arquivo de configuracao do jogo.',
+      'pt-br': 'Grava comandos atuais no arquivo de configuração do jogo.',
       en: 'Writes active settings into game configuration file.',
       es: 'Guarda configuraciones activas en archivo del juego.',
       zh: '将当前设置写入游戏配置文件。',
@@ -4109,7 +4109,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '执行 autoexec.cfg',
     },
     description: {
-      'pt-br': 'Carrega configuracoes gerais do jogador no client.',
+      'pt-br': 'Carrega configurações gerais do jogador no client.',
       en: 'Loads general player configuration on client.',
       es: 'Carga configuracion general del jugador en cliente.',
       zh: '在客户端加载通用玩家配置。',
@@ -4261,13 +4261,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'caution',
     name: {
-      'pt-br': 'Regeneracao de vida no treino',
+      'pt-br': 'Regeneração de vida no treino',
       en: 'Practice health regeneration',
       es: 'Regeneracion de vida en practica',
       zh: '训练用生命值回复',
     },
     description: {
-      'pt-br': 'Mantem a vida recuperando em servidor local para repetir angulos sem reiniciar a rodada.',
+      'pt-br': 'Mantém a vida recuperando em servidor local para repetir ângulos sem reiniciar a rodada.',
       en: 'Keeps health regenerating on a local server so you can repeat angles without restarting rounds.',
       es: 'Mantiene la vida regenerando en servidor local para repetir angulos sin reiniciar rondas.',
       zh: '在本地服务器上持续恢复生命值,便于反复练习点位而无需重启回合。',
@@ -4288,7 +4288,7 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Contagem numerica de jogadores vivos',
+      'pt-br': 'Contagem numérica de jogadores vivos',
       en: 'Numeric alive-player count',
       es: 'Conteo numerico de jugadores vivos',
       zh: '数字显示存活人数',
@@ -4320,7 +4320,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '队友名称与装备头顶显示',
     },
     description: {
-      'pt-br': 'Exibe identificacao e equipamento dos companheiros para leitura rapida de retakes e drops.',
+      'pt-br': 'Exibe identificação e equipamento dos companheiros para leitura rápida de retakes e drops.',
       en: 'Shows teammate identification and equipment for quicker retake and drop decisions.',
       es: 'Muestra identificacion y equipo de companeros para decisiones rapidas de retake y drops.',
       zh: '显示队友身份和装备信息,便于更快做出反打和丢枪决策。',
@@ -4346,7 +4346,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '静音敌方语音',
     },
     description: {
-      'pt-br': 'Mantem a comunicacao do seu time e reduz mensagens adversarias durante a partida.',
+      'pt-br': 'Mantém a comunicação do seu time e reduz mensagens adversárias durante a partida.',
       en: 'Keeps your team communication while reducing opponent messages during a match.',
       es: 'Mantiene comunicacion de tu equipo y reduce mensajes rivales durante la partida.',
       zh: '保留己方沟通的同时,减少对局中敌方消息的干扰。',
@@ -4366,13 +4366,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Mao direita preferida',
+      'pt-br': 'Mão direita preferida',
       en: 'Prefer right hand',
       es: 'Preferir mano derecha',
       zh: '偏好右手持枪',
     },
     description: {
-      'pt-br': 'Define a mao direita como preferencia persistente para o viewmodel.',
+      'pt-br': 'Define a mão direita como preferência persistente para o viewmodel.',
       en: 'Sets the right hand as the persistent viewmodel preference.',
       es: 'Define la mano derecha como preferencia persistente del viewmodel.',
       zh: '将右手设置为持久的持枪视角偏好。',
@@ -4392,13 +4392,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Mao esquerda preferida',
+      'pt-br': 'Mão esquerda preferida',
       en: 'Prefer left hand',
       es: 'Preferir mano izquierda',
       zh: '偏好左手持枪',
     },
     description: {
-      'pt-br': 'Define a mao esquerda como preferencia persistente para o viewmodel.',
+      'pt-br': 'Define a mão esquerda como preferência persistente para o viewmodel.',
       en: 'Sets the left hand as the persistent viewmodel preference.',
       es: 'Define la mano izquierda como preferencia persistente del viewmodel.',
       zh: '将左手设置为持久的持枪视角偏好。',
@@ -4424,7 +4424,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '仅在需要时显示帧时间遥测',
     },
     description: {
-      'pt-br': 'Mostra o indicador de frame time somente quando o jogo detectar condicao ruim.',
+      'pt-br': 'Mostra o indicador de frame time somente quando o jogo detectar condição ruim.',
       en: 'Shows the frame-time indicator only when the game detects poor conditions.',
       es: 'Muestra el indicador de frame time solo cuando el juego detecta condiciones malas.',
       zh: '仅在游戏检测到状况不佳时显示帧时间指示器。',
@@ -4444,13 +4444,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Ping somente em condicao ruim',
+      'pt-br': 'Ping somente em condição ruim',
       en: 'Show ping only in poor conditions',
       es: 'Mostrar ping solo en condiciones malas',
       zh: '仅在网络不佳时显示延迟',
     },
     description: {
-      'pt-br': 'Evita HUD permanente e revela latencia quando o jogo identifica conexao ruim.',
+      'pt-br': 'Evita HUD permanente e revela latência quando o jogo identifica conexão ruim.',
       en: 'Avoids a permanent HUD while revealing latency when the game identifies poor connectivity.',
       es: 'Evita HUD permanente y muestra latencia cuando el juego detecta conexion deficiente.',
       zh: '避免常驻显示,仅在游戏识别到网络状况不佳时显示延迟。',
@@ -4476,7 +4476,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '提示丢包异常',
     },
     description: {
-      'pt-br': 'Exibe a telemetria de perda e pacotes fora de ordem apenas em condicoes ruins.',
+      'pt-br': 'Exibe a telemetria de perda e pacotes fora de ordem apenas em condições ruins.',
       en: 'Shows loss and out-of-order packet telemetry only under poor conditions.',
       es: 'Muestra telemetria de perdida y paquetes fuera de orden solo en malas condiciones.',
       zh: '仅在网络状况不佳时显示丢包和乱序数据包的遥测信息。',
@@ -4496,13 +4496,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'info',
     name: {
-      'pt-br': 'Grafico de qualidade da rede quando necessario',
+      'pt-br': 'Gráfico de qualidade da rede quando necessário',
       en: 'Show network-quality graph when needed',
       es: 'Mostrar grafico de calidad de red cuando sea necesario',
       zh: '按需显示网络质量图表',
     },
     description: {
-      'pt-br': 'Ajuda a investigar jitter, perda e reordenacao de pacotes sem manter o grafico sempre visivel.',
+      'pt-br': 'Ajuda a investigar jitter, perda e reordenação de pacotes sem manter o gráfico sempre visível.',
       en: 'Helps investigate jitter, loss, and packet reordering without keeping the graph visible all the time.',
       es: 'Ayuda a investigar jitter, perdida y reordenacion de paquetes sin dejar el grafico siempre visible.',
       zh: '有助于排查抖动、丢包和乱序问题,而无需一直显示图表。',
@@ -4522,13 +4522,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Bind H para alternar mao',
+      'pt-br': 'Bind H para alternar mão',
       en: 'Bind H to switch hands',
       es: 'Bind H para cambiar de mano',
       zh: '绑定 H 键切换持枪手',
     },
     description: {
-      'pt-br': 'Alterna a mao do viewmodel com uma unica acao, sem script de automacao.',
+      'pt-br': 'Alterna a mão do viewmodel com uma única ação, sem script de automação.',
       en: 'Switches the viewmodel hand with one action and no automation script.',
       es: 'Cambia la mano del viewmodel con una sola accion y sin automatizacion.',
       zh: '一键切换持枪视角,不涉及自动化脚本。',
@@ -4580,7 +4580,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '绑定鼠标侧键3为标记',
     },
     description: {
-      'pt-br': 'Marca o ponto que voce esta mirando para comunicacao rapida com o time.',
+      'pt-br': 'Marca o ponto que você está mirando para comunicação rápida com o time.',
       en: 'Marks the point you are aiming at for quick team communication.',
       es: 'Marca el punto al que apuntas para comunicacion rapida con el equipo.',
       zh: '标记你瞄准的位置,便于快速团队沟通。',
@@ -4600,13 +4600,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: true,
     warningLevel: 'none',
     name: {
-      'pt-br': 'Bind V para molotov/incendiaria',
+      'pt-br': 'Bind V para molotov/incendiária',
       en: 'Bind V to molotov/incendiary',
       es: 'Bind V para molotov/incendiaria',
       zh: '绑定 V 键为燃烧瓶道具',
     },
     description: {
-      'pt-br': 'Seleciona diretamente o slot da granada incendiaria em uma unica acao.',
+      'pt-br': 'Seleciona diretamente o slot da granada incendiária em uma única ação.',
       en: 'Directly selects the incendiary-grenade slot with one action.',
       es: 'Selecciona directamente el slot de granada incendiaria con una accion.',
       zh: '一键直接选择燃烧类道具槽位。',
@@ -4659,7 +4659,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '无敌模式(God Mode)',
     },
     description: {
-      'pt-br': 'Comando fun para servidor privado. Validacao pode variar por update.',
+      'pt-br': 'Comando fun para servidor privado. Validação pode variar por update.',
       en: 'Fun private-server command. Availability may vary by update.',
       es: 'Comando fun para servidor privado. Puede cambiar con updates.',
       zh: '娱乐性私服指令,具体可用性可能因版本而异。',
@@ -4681,13 +4681,13 @@ export const cs2Commands: Cs2Command[] = [
     needsValidation: true,
     warningLevel: 'danger',
     name: {
-      'pt-br': 'Modo buddha (vida minima)',
+      'pt-br': 'Modo buddha (vida mínima)',
       en: 'Buddha mode (cannot die normally)',
       es: 'Modo buddha (no mueres normalmente)',
       zh: '佛祖模式(不会正常死亡)',
     },
     description: {
-      'pt-br': 'Comando fun de servidor local. Pode nao estar ativo em todas as versoes.',
+      'pt-br': 'Comando fun de servidor local. Pode não estar ativo em todas as versões.',
       en: 'Local fun command. Might not be enabled in every build.',
       es: 'Comando fun local. Puede no funcionar en todas las versiones.',
       zh: '本地娱乐指令,并非每个版本都会启用。',
@@ -4715,7 +4715,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '时间倍率0.5(慢动作)',
     },
     description: {
-      'pt-br': 'Modo fun para estudar trajetorias em velocidade reduzida.',
+      'pt-br': 'Modo fun para estudar trajetórias em velocidade reduzida.',
       en: 'Fun mode to review mechanics in slow motion.',
       es: 'Modo fun para estudiar mecanicas en camara lenta.',
       zh: '娱乐模式,用于在慢动作下复盘操作。',
@@ -4743,7 +4743,7 @@ export const cs2Commands: Cs2Command[] = [
       zh: '时间倍率1(正常)',
     },
     description: {
-      'pt-br': 'Restaura velocidade normal apos testes de timescale.',
+      'pt-br': 'Restaura velocidade normal após testes de timescale.',
       en: 'Restores normal speed after timescale tests.',
       es: 'Restaura velocidad normal tras pruebas de timescale.',
       zh: '在测试时间倍率后恢复正常速度。',
@@ -4792,13 +4792,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'danger',
     name: {
-      'pt-br': 'Jumpthrow automatizado (nao recomendado)',
+      'pt-br': 'Jumpthrow automatizado (não recomendado)',
       en: 'Automated jumpthrow (not recommended)',
       es: 'Jumpthrow automatizado (no recomendado)',
       zh: '自动化跳投(不推荐)',
     },
     description: {
-      'pt-br': 'Evite scripts de automacao de multiplas acoes em um unico input.',
+      'pt-br': 'Evite scripts de automação de múltiplas ações em um único input.',
       en: 'Avoid multi-action automation scripts on single input.',
       es: 'Evita scripts de automatizacion con multiples acciones.',
       zh: '请避免在单一按键上使用多动作自动化脚本。',
@@ -4819,13 +4819,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'danger',
     name: {
-      'pt-br': 'Null bind (nao recomendado)',
+      'pt-br': 'Null bind (não recomendado)',
       en: 'Null bind (not recommended)',
       es: 'Null bind (no recomendado)',
       zh: '空绑定(不推荐)',
     },
     description: {
-      'pt-br': 'Nao recomendamos binds com automacao de movimento simultaneo.',
+      'pt-br': 'Não recomendamos binds com automação de movimento simultâneo.',
       en: 'We do not recommend movement automation null binds.',
       es: 'No recomendamos null binds con automatizacion de movimiento.',
       zh: '我们不建议使用移动自动化的空绑定。',
@@ -4846,13 +4846,13 @@ export const cs2Commands: Cs2Command[] = [
     showInTournamentSafeConfig: false,
     warningLevel: 'danger',
     name: {
-      'pt-br': 'Snap Tap/SOCD (nao recomendado)',
+      'pt-br': 'Snap Tap/SOCD (não recomendado)',
       en: 'Snap Tap/SOCD (not recommended)',
       es: 'Snap Tap/SOCD (no recomendado)',
       zh: 'Snap Tap/SOCD(不推荐)',
     },
     description: {
-      'pt-br': 'Recursos de automacao de entrada podem ser invalidos em servidores oficiais.',
+      'pt-br': 'Recursos de automação de entrada podem ser inválidos em servidores oficiais.',
       en: 'Input automation features may be invalid on official servers.',
       es: 'Funciones de automatizacion de entrada pueden ser invalidas.',
       zh: '输入自动化功能在官方服务器上可能被判定为无效。',

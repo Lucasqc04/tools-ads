@@ -52,16 +52,16 @@ type UuidUi = {
 
 const uiByLocale: Record<AppLocale, UuidUi> = {
   'pt-br': {
-    localNote: 'Geracao local no navegador, sem login e sem backend obrigatorio.',
+    localNote: 'Os IDs são gerados no navegador, sem login e sem enviar dados ao servidor.',
     modeLabel: 'Tipo de ID',
-    uuidVersionLabel: 'Versao UUID',
+    uuidVersionLabel: 'Versão UUID',
     uuidNamespaceLabel: 'Namespace UUID (v3/v5)',
     uuidNameLabel: 'Nome UUID (v3/v5)',
     amountLabel: 'Quantidade',
     nanoLengthLabel: 'Tamanho NanoID',
     nanoAlphabetLabel: 'Alfabeto NanoID',
-    shortLengthWarning: 'Tamanhos muito pequenos aumentam risco de colisao.',
-    deterministicUuidWarning: 'UUID v3/v5 usa namespace+nome. Sem mudar nome, o resultado sera deterministico.',
+    shortLengthWarning: 'Tamanhos muito pequenos aumentam o risco de repetição.',
+    deterministicUuidWarning: 'UUID v3/v5 usa namespace + nome. Sem mudar o nome, o resultado será sempre o mesmo.',
     generate: 'Gerar IDs',
     regenerate: 'Gerar novamente',
     copyAll: 'Copiar todos',
@@ -73,12 +73,12 @@ const uiByLocale: Record<AppLocale, UuidUi> = {
     exportTxt: 'Exportar TXT',
     exportCsv: 'Exportar CSV',
     modeHintByMode: {
-      uuid: 'UUID com suporte a versoes v1, v3, v4, v5, v6 e v7.',
-      nanoid: 'NanoID com tamanho e alfabeto customizavel.',
-      ulid: 'ULID ordenavel por tempo, util para banco e logs.',
-      ksuid: 'KSUID com timestamp embutido para ordenacao cronologica.',
-      cuid2: 'CUID2 para IDs amigaveis, curtos e resistentes a colisao.',
-      objectid: 'ObjectId estilo MongoDB (24 chars hex) com timestamp no prefixo.',
+      uuid: 'UUID com suporte às versões v1, v3, v4, v5, v6 e v7.',
+      nanoid: 'NanoID com tamanho e alfabeto personalizáveis.',
+      ulid: 'ULID ordenável por tempo, útil para banco e logs.',
+      ksuid: 'KSUID com timestamp embutido para ordenação cronológica.',
+      cuid2: 'CUID2 para IDs curtos e resistentes a colisão.',
+      objectid: 'ObjectId no estilo MongoDB (24 caracteres hexadecimais) com timestamp no início.',
     },
     modeLabelByMode: {
       uuid: 'UUID',
@@ -91,7 +91,7 @@ const uiByLocale: Record<AppLocale, UuidUi> = {
     uuidVersionLabelByVersion: {
       v1: 'UUID v1 (time-based)',
       v3: 'UUID v3 (namespace + nome, MD5)',
-      v4: 'UUID v4 (aleatorio)',
+      v4: 'UUID v4 (aleatório)',
       v5: 'UUID v5 (namespace + nome, SHA-1)',
       v6: 'UUID v6 (time-ordered)',
       v7: 'UUID v7 (unix time + random)',

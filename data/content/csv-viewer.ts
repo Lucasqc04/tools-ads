@@ -1,58 +1,58 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const csvViewerIntro =
-  'Cole CSV ou envie arquivo para visualizar tabela, detectar separador automaticamente, trocar delimitador e exportar em XLSX sem cadastro.';
+  'Cole um CSV ou envie um arquivo para ver os dados em tabela, com separador detectado automaticamente, filtros, ordenação e exportação em XLSX.';
 
 export const csvViewerContentBlocks: ContentBlock[] = [
   {
-    title: 'Visualize CSV com deteccao inteligente de separador',
+    title: 'Como a ferramenta lê o seu CSV',
     paragraphs: [
-      'Esta ferramenta identifica automaticamente os separadores mais comuns, como virgula, ponto e virgula, tab e barra vertical. Isso facilita abrir planilhas exportadas de sistemas diferentes sem ajuste manual inicial.',
-      'Se a deteccao nao ficar do jeito que voce quer, basta trocar o separador em um clique e a tabela e recalculada na hora.',
+      'Cole o texto na caixa ou envie um arquivo .csv ou .txt. A ferramenta testa quatro separadores (vírgula, ponto e vírgula, tabulação e barra vertical) e escolhe o que deixa as linhas com o número de colunas mais consistente. Esse é o cenário típico de planilhas exportadas em português, que costumam usar ponto e vírgula. Se a escolha automática não ficar certa, selecione o separador de leitura manualmente e a tabela é refeita na hora.',
+      'Aspas duplas são respeitadas: um campo entre aspas pode conter o separador ou uma quebra de linha, e aspas duplas repetidas viram uma aspa dentro do texto. Linhas com menos colunas são completadas com células vazias e linhas vazias no final são descartadas.',
+      'Exemplo: com as linhas nome;idade;cidade, Lucas;31;São Paulo e Ana;28;Porto, o separador detectado é o ponto e vírgula e a tabela mostra 3 colunas e 2 linhas de dados, usando a primeira linha como cabeçalho.',
     ],
   },
   {
-    title: 'Cole texto, envie arquivo e converta para XLSX',
+    title: 'Tabela, filtros, conversão e exportação',
     paragraphs: [
-      'Voce pode colar o conteudo CSV diretamente na caixa de texto ou enviar arquivos .csv e .txt. A visualizacao mostra linhas e colunas de forma responsiva, inclusive em telas pequenas.',
-      'Depois da revisao, e possivel exportar para XLSX para continuar o trabalho em Excel, Google Sheets ou outras ferramentas de planilha.',
+      'A tabela mostra o número de linhas e colunas e permite ordenar por coluna, filtrar em todas as colunas ou em uma específica e escolher quantas linhas aparecem por página. A ordenação trata valores numéricos como números. A opção "Primeira linha como cabeçalho" define se a primeira linha vira o título das colunas.',
+      'Você também pode converter o CSV para outro separador: escolha o separador do arquivo de saída, copie o resultado ou baixe um novo CSV. Os campos que contêm o novo separador, aspas ou quebra de linha saem entre aspas. O botão "Exportar XLSX" gera uma planilha com uma aba chamada CSV.',
     ],
     list: [
-      'Upload de arquivo CSV/TXT e leitura local no navegador.',
-      'Tabela com rolagem interna para evitar scroll horizontal na pagina.',
-      'Selecao manual de separador quando necessario.',
-      'Exportacao em XLSX com um clique.',
-      'Conversao rapida para outro delimitador de CSV.',
+      'Aceita colar texto ou enviar .csv e .txt.',
+      'Separadores: vírgula, ponto e vírgula, tabulação e barra vertical.',
+      'A tabela mostra até 1.200 linhas, com ordenação, filtros e paginação.',
+      'A exportação XLSX e a conversão de separador usam todas as linhas lidas, sem aplicar filtros nem ordenação.',
     ],
   },
   {
-    title: 'Privacidade, qualidade e limites',
+    title: 'Limites e privacidade',
     paragraphs: [
-      'O processamento acontece localmente no navegador. Os dados do CSV nao precisam ser enviados para servidor para abrir a tabela ou gerar o XLSX.',
-      'Arquivos muito grandes podem exigir mais memoria no dispositivo. Para manter desempenho em celular, o ideal e revisar por partes quando o CSV tiver muitas linhas.',
+      'O arquivo é lido no navegador e os dados não são enviados ao nosso servidor. A leitura de arquivos usa a codificação UTF-8: se um arquivo salvo em outra codificação (como Windows-1252, comum em exportações antigas) mostrar acentos trocados, abra-o em um editor e salve como UTF-8 antes de enviar.',
+      'Todas as células são tratadas como texto, inclusive no XLSX: números e datas não são convertidos para tipos do Excel. Arquivos muito grandes dependem da memória do aparelho, e a pré-visualização é limitada às 1.200 primeiras linhas.',
     ],
   },
 ];
 
 export const csvViewerFaq: FaqItem[] = [
   {
-    question: 'Posso colar CSV e tambem enviar arquivo?',
+    question: 'Posso colar CSV e também enviar arquivo?',
     answer:
-      'Sim. A ferramenta aceita os dois fluxos: colar texto CSV ou enviar arquivo .csv/.txt.',
+      'Sim. Você pode colar o texto na caixa ou enviar um arquivo .csv ou .txt. Só o primeiro arquivo enviado é lido.',
   },
   {
-    question: 'A deteccao de separador e automatica?',
+    question: 'A detecção do separador é automática?',
     answer:
-      'Sim. A ferramenta tenta detectar automaticamente o delimitador, mas voce pode trocar manualmente quando quiser.',
+      'Sim, entre vírgula, ponto e vírgula, tabulação e barra vertical. Você pode trocar manualmente o separador de leitura quando a escolha automática não servir.',
   },
   {
-    question: 'Da para exportar para XLSX?',
+    question: 'Dá para exportar para XLSX?',
     answer:
-      'Sim. Depois de carregar o CSV, voce pode exportar a tabela para XLSX com um clique.',
+      'Sim. O botão "Exportar XLSX" baixa uma planilha com todas as linhas lidas, sem aplicar filtros e ordenação. Os valores são gravados como texto.',
   },
   {
-    question: 'Meus dados sao enviados para servidor?',
+    question: 'Meus dados são enviados para algum servidor?',
     answer:
-      'Nao por padrao. A leitura, visualizacao e exportacao acontecem localmente no navegador.',
+      'Não. A leitura, a tabela, a conversão e a exportação acontecem no navegador. O conteúdo do arquivo não sai do seu aparelho.',
   },
 ];

@@ -37,7 +37,7 @@ const uiByLocale: Record<AppLocale, Ui> = {
     discoverButton: 'Descobrir meu IP',
     clearButton: 'Limpar',
     fetching: 'Consultando...',
-    fetchError: 'Nao foi possivel recuperar o IP agora. Tente novamente em instantes.',
+    fetchError: 'Não foi possível recuperar o IP agora. Tente novamente em instantes.',
     ipLabel: 'Endereço IP',
     providerLabel: 'Provedor (ISP)',
     locationLabel: 'Localização aproximada',
@@ -52,7 +52,7 @@ const uiByLocale: Record<AppLocale, Ui> = {
     copyNoDots: 'Copiar (sem pontos)',
     copyAll: 'Copiar tudo',
     processingNote:
-      'A consulta é feita diretamente do seu navegador para um serviço público de informações de IP. Nenhum dado passa pelo nosso servidor.',
+      'A consulta é feita diretamente do seu navegador para um serviço público de informações de IP, sem passar por uma API deste site.',
   },
   en: {
     title: 'Discover Public IP',

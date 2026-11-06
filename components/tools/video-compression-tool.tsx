@@ -86,15 +86,15 @@ type VideoCompressionUi = {
 
 const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
   'pt-br': {
-    title: 'Compressor de video online',
+    title: 'Compressor de vídeo online',
     intro:
-      'Comprima varios videos no navegador, ajuste o nivel de compressao e compare preview antes do download.',
-    filesLabel: 'Videos para comprimir',
+      'Comprima vários vídeos, ajuste o nível de compressão e compare o resultado antes de baixar.',
+    filesLabel: 'Vídeos para comprimir',
     filesHint:
-      'Envio em lote para arquivos de ate 10 GB. Videos acima de 512 MB sao processados localmente em fluxo; arquivos menores podem usar o processamento do site.',
-    compressionLevelLabel: 'Nivel de compressao',
+      'Adicione vários arquivos de até 10 GB. Vídeos acima de 512 MB são processados no seu aparelho; arquivos menores podem usar o processamento do site.',
+    compressionLevelLabel: 'Nível de compressão',
     compressionLevelHint:
-      'Nivel maior reduz mais o tamanho (com impacto maior em qualidade e possivel reducao de resolucao).',
+      'Nível maior reduz mais o tamanho, com mais perda de qualidade e possível redução da resolução.',
     compressionLevelBadge: (value) => `${value}%`,
     compressAll: 'Comprimir todos',
     compressingAll: 'Comprimindo...',
@@ -102,38 +102,38 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     downloadAll: 'Baixar todos',
     sourcePreview: 'Original',
     resultPreview: 'Comprimido',
-    waitingCompression: 'Aguardando compressao.',
+    waitingCompression: 'Aguardando compressão.',
     processing: 'Processando...',
-    noFilesHint: 'Adicione videos para iniciar a compressao.',
+    noFilesHint: 'Adicione vídeos para iniciar a compressão.',
     estimatedSizeLabel: 'Estimativa',
     currentSizeLabel: 'Tamanho atual',
     finalSizeLabel: 'Tamanho final',
-    durationLabel: 'Duracao',
-    resolutionLabel: 'Resolucao',
-    savingsLabel: (value) => `Reducao: ${value.toFixed(1)}%`,
+    durationLabel: 'Duração',
+    resolutionLabel: 'Resolução',
+    savingsLabel: (value) => `Redução: ${value.toFixed(1)}%`,
     ffmpegWarmupNote:
-      'No primeiro uso, o mecanismo de compressao pode baixar recursos e iniciar mais devagar.',
+      'No primeiro uso, o mecanismo de compressão pode baixar recursos e iniciar mais devagar.',
     processingLocalNote:
-      'Videos acima de 512 MB ficam no aparelho e sao processados no navegador. Arquivos menores podem ser enviados para a API de processamento do site quando disponivel.',
-    done: 'Concluido',
+      'Vídeos acima de 512 MB ficam no aparelho e são processados no navegador. Arquivos menores podem ser enviados ao servidor do site para compressão, quando disponível.',
+    done: 'Concluído',
     pending: 'Pendente',
     error: 'Erro',
     compressButton: 'Comprimir',
     downloadButton: 'Baixar',
-    genericError: 'Nao foi possivel comprimir este video.',
+    genericError: 'Não foi possível comprimir este vídeo.',
     largeFileHint:
-      'Arquivos acima de 512 MB usam processamento local em fluxo. Em um video de 5 GB, a conversao pode levar bastante tempo e depende dos codecs do navegador e do espaco livre no aparelho.',
+      'Arquivos acima de 512 MB são processados no aparelho. Em um vídeo de 5 GB, a conversão pode levar bastante tempo e depende dos codecs do navegador e do espaço livre no aparelho.',
     largeFileNotice:
-      'Video grande: o processamento roda em uma tarefa separada para manter a pagina responsiva e tenta manter a tela ligada. Mantenha esta pagina aberta; ao trocar de aplicativo ou bloquear o celular, o navegador pode pausar a conversao.',
+      'Vídeo grande: o processamento roda em uma tarefa separada para manter a página responsiva e tenta manter a tela ligada. Mantenha esta página aberta; ao trocar de aplicativo ou bloquear o celular, o navegador pode pausar a conversão.',
     elapsedLabel: (value) => `Tempo: ${value}`,
     largeCodecError:
-      'Este navegador ou dispositivo nao oferece os codecs necessarios para comprimir este video. Tente um navegador atualizado em um computador.',
+      'Este navegador ou dispositivo não oferece os codecs necessários para comprimir este vídeo. Tente um navegador atualizado em um computador.',
     largeStorageError:
-      'O armazenamento local do navegador nao esta disponivel para salvar o video comprimido.',
+      'O armazenamento local do navegador não está disponível para salvar o vídeo comprimido.',
     largeQuotaError:
-      'Nao ha espaco livre suficiente no armazenamento do navegador para terminar esta compressao.',
+      'Não há espaço livre suficiente no armazenamento do navegador para terminar esta compressão.',
     largeProcessingError:
-      'Nao foi possivel processar este video grande. Mantenha a pagina aberta e tente novamente em um navegador atualizado.',
+      'Não foi possível processar este vídeo grande. Mantenha a página aberta e tente novamente em um navegador atualizado.',
   },
   en: {
     title: 'Online video compressor',

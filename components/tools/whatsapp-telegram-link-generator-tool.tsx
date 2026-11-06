@@ -33,11 +33,11 @@ type ToolUiCopy = {
 
 const uiByLocale: Record<AppLocale, ToolUiCopy> = {
   'pt-br': {
-    localNote: 'Geracao local no navegador. Sem cadastro e sem envio obrigatorio para servidor.',
-    targetLabel: 'Numero ou @nick',
+    localNote: 'Os links são gerados no navegador, sem cadastro e sem enviar sua mensagem ao servidor.',
+    targetLabel: 'Número ou @nick',
     targetPlaceholder: 'Ex.: 5511999998888 ou @meuperfil',
     messageLabel: 'Mensagem pronta',
-    messagePlaceholder: 'Ola! Quero saber mais sobre... ',
+    messagePlaceholder: 'Olá! Quero saber mais sobre... ',
     generate: 'Gerar links',
     clear: 'Limpar',
     copied: 'Copiado',
@@ -46,10 +46,10 @@ const uiByLocale: Record<AppLocale, ToolUiCopy> = {
     whatsappTitle: 'Link do WhatsApp',
     telegramTitle: 'Link do Telegram',
     resultEmpty: 'Preencha os campos e clique em gerar.',
-    invalidTarget: 'Informe um numero valido ou @nick com pelo menos 3 caracteres.',
-    whatsappNeedsPhone: 'Para WhatsApp use numero com codigo do pais. @nick funciona apenas no Telegram.',
-    parsedAsPhone: 'Detectado como numero internacional.',
-    parsedAsUsername: 'Detectado como @nick/usuario.',
+    invalidTarget: 'Informe um número válido ou @nick com pelo menos 3 caracteres.',
+    whatsappNeedsPhone: 'Para WhatsApp use número com código do país. @nick funciona apenas no Telegram.',
+    parsedAsPhone: 'Detectado como número internacional.',
+    parsedAsUsername: 'Detectado como @nick/usuário.',
   },
   en: {
     localNote: 'Local in-browser generation. No sign-up and no mandatory backend upload.',

@@ -46,22 +46,22 @@ const uiByLocale: Record<AppLocale, ViewerUi> = {
   'pt-br': {
     title: 'Leitor de Base64 para imagem',
     intro:
-      'Cole um Base64 e veja a imagem em tempo real. Depois baixe em varios formatos com um clique.',
+      'Cole um Base64 e veja a imagem em tempo real. Depois baixe em vários formatos com um clique.',
     inputLabel: 'Base64 da imagem',
     inputPlaceholder: 'Cole aqui um data URL ou Base64 puro da imagem',
-    fallbackMimeLabel: 'MIME padrao para Base64 puro',
+    fallbackMimeLabel: 'MIME padrão para Base64 puro',
     fallbackMimeHint:
-      'Quando o texto nao tiver prefixo data:image, este tipo sera usado para renderizar a imagem.',
+      'Quando o texto não tiver prefixo data:image, este tipo será usado para renderizar a imagem.',
     outputFormatLabel: 'Formato para download',
     outputFormatOriginal: 'Original decodificado',
     viewImage: 'Ver imagem',
     previewTitle: 'Preview da imagem',
-    previewEmpty: 'Cole um Base64 valido para ver a imagem aqui.',
+    previewEmpty: 'Cole um Base64 válido para ver a imagem aqui.',
     clear: 'Limpar',
     download: 'Baixar imagem',
     downloading: 'Baixando...',
     localNote:
-      'Decodificacao e preview acontecem localmente no navegador. O Base64 nao e enviado para servidor por padrao.',
+      'Decodificação e preview acontecem localmente no navegador. O Base64 não é enviado para nenhum servidor.',
     invalidPrefix: 'Erro:',
     mimeTypes: [
       { value: 'image/png', label: 'PNG (image/png)' },
@@ -245,7 +245,7 @@ export function Base64ImageViewerTool({ locale = 'pt-br' }: Base64ImageViewerToo
         trackEvent('tool_completed', { tool: TOOL_ID.base64ImageViewer, locale });
       } catch (error) {
         setParsed(null);
-        setErrorMessage(error instanceof Error ? error.message : 'Base64 invalido.');
+        setErrorMessage(error instanceof Error ? error.message : 'Base64 inválido.');
         trackEvent('tool_error', {
           tool: TOOL_ID.base64ImageViewer,
           locale,

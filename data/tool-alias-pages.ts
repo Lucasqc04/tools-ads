@@ -78,6 +78,9 @@ const TOOL_SLUGS_WITH_DEDICATED_LANDING_PAGES = new Set([
   'multiplication-table-quiz',
   'keyboard-shortcuts',
   'gamer-username-generator',
+  // Rotas canônicas próprias (sem renderizador de alias); evita URLs de alias que retornam 404.
+  'cs2-crosshair-codes',
+  'gta-cheat-codes',
 ]);
 
 const legacyZhToolAliases: Record<string, Array<{ slug: string; keyword: string }>> = {

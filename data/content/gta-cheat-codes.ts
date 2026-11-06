@@ -40,29 +40,29 @@ export type GtaCheatsLocaleContent = {
 
 const uiByLocale: Record<AppLocale, GtaCheatsUiCopy> = {
   'pt-br': {
-    searchLabel: 'Buscar codigo',
-    searchPlaceholder: 'Ex.: tanque, helicoptero, policia, vida, armas, clima',
+    searchLabel: 'Buscar código',
+    searchPlaceholder: 'Ex.: tanque, helicóptero, polícia, vida, armas, clima',
     gameLabel: 'Jogo',
     categoryLabel: 'Categoria',
     platformLabel: 'Plataforma',
     gameAll: 'Todos os jogos',
     categoryAll: 'Todas as categorias',
     platformAll: 'Todas as plataformas',
-    copyButton: 'Copiar codigo',
+    copyButton: 'Copiar código',
     copiedButton: 'Copiado',
     resultCount: 'resultado(s)',
-    noResults: 'Nenhum codigo encontrado com esses filtros.',
+    noResults: 'Nenhum código encontrado com esses filtros.',
     warningTitle: 'Aviso de uso',
     warningBody:
-      'Cheats sao para single-player/story mode. Em geral, podem desativar conquistas/trofeus na sessao e nao funcionam no GTA Online.',
-    noteLabel: 'Observacao',
-    needsValidationLabel: 'Revisao recomendada',
+      'Cheats são para single-player/story mode. Em geral, podem desativar conquistas/troféus na sessão e não funcionam no GTA Online.',
+    noteLabel: 'Observação',
+    needsValidationLabel: 'Revisão recomendada',
     categoryValues: {
       armas: 'Armas',
       'vida-armadura': 'Vida/Armadura',
-      policia: 'Policia',
-      veiculos: 'Veiculos',
-      'spawn-veiculos': 'Spawn de veiculos',
+      policia: 'Polícia',
+      veiculos: 'Veículos',
+      'spawn-veiculos': 'Spawn de veículos',
       clima: 'Clima',
       mundo: 'Mundo',
       npc: 'NPC/Pedestres',
@@ -74,7 +74,7 @@ const uiByLocale: Record<AppLocale, GtaCheatsUiCopy> = {
       habilidade: 'Habilidade',
       equipamento: 'Equipamento',
       player: 'Player',
-      musica: 'Musica',
+      musica: 'Música',
       episodes: 'Episodes',
     },
     gameValues: {
@@ -259,74 +259,75 @@ const uiByLocale: Record<AppLocale, GtaCheatsUiCopy> = {
 
 const contentByLocale: Record<AppLocale, GtaCheatsLocaleContent> = {
   'pt-br': {
-    name: 'Codigos GTA (San Andreas, V, IV, III e Vice City)',
+    name: 'Códigos GTA (San Andreas, V, IV, III e Vice City)',
     shortDescription:
-      'Busque e copie codigos GTA por jogo, categoria e plataforma com filtros inteligentes em pt-br/en/es.',
-    primaryKeyword: 'codigos gta',
+      'Busque e copie códigos GTA por jogo, categoria e plataforma, com busca em português, inglês e espanhol.',
+    primaryKeyword: 'códigos gta',
     secondaryKeywords: [
-      'codigos gta san andreas',
-      'codigos gta 5',
+      'códigos gta san andreas',
+      'códigos gta 5',
       'gta cheat codes',
-      'codigos armas gta',
-      'codigos tanque gta',
+      'códigos armas gta',
+      'códigos tanque gta',
     ],
     searchIntent:
-      'Usuarios que querem achar e copiar rapidamente cheats de GTA por jogo e intencao (carro, tanque, helicoptero, policia, vida, armas e clima).',
-    seoTitle: 'Codigos GTA: San Andreas, GTA 5, GTA 4, GTA 3 e Vice City',
+      'Usuários que querem achar e copiar rapidamente cheats de GTA por jogo e intenção (carro, tanque, helicóptero, polícia, vida, armas e clima).',
+    seoTitle: 'Códigos GTA: San Andreas, GTA 5, GTA 4, GTA 3 e Vice City',
     seoDescription:
-      'Copie codigos GTA por jogo com busca inteligente, filtros por categoria/plataforma e avisos de compatibilidade para single-player.',
-    h1: 'Codigos GTA por jogo, categoria e plataforma',
+      'Copie códigos GTA por jogo com busca inteligente, filtros por categoria/plataforma e avisos de compatibilidade para single-player.',
+    h1: 'Códigos GTA por jogo, categoria e plataforma',
     intro:
-      'Encontre codigos para GTA San Andreas, GTA V, GTA IV, GTA III e GTA Vice City. Filtre por categoria, busque por termos comuns e copie o codigo certo em segundos.',
+      'Encontre códigos para GTA San Andreas, GTA V, GTA IV, GTA III e GTA Vice City. Filtre por categoria, busque por termos comuns e copie o código certo em segundos.',
     contentBlocks: [
       {
-        title: 'Como usar esta tool de cheats GTA',
+        title: 'Como usar a lista de cheats de GTA',
         paragraphs: [
-          'A pagina foi montada para buscas reais: carro, tanque, helicoptero, policia, vida, armas, clima, moto e dinheiro. Em vez de listas longas sem organizacao, voce escolhe jogo, categoria e plataforma antes de copiar.',
-          'A base prioriza codigo textual de PC e numero de telefone quando existe. Isso deixa o fluxo mais rapido para quem joga no teclado e para quem usa o celular in-game no GTA V e GTA IV.',
+          'A página foi montada para buscas reais: carro, tanque, helicóptero, polícia, vida, armas, clima, moto e dinheiro. Em vez de listas longas sem organização, você escolhe jogo, categoria e plataforma antes de copiar.',
+          'A base reúne 235 códigos. GTA San Andreas, Vice City e GTA III trazem códigos digitados no teclado do PC; o GTA IV traz números de telefone; o GTA V traz as duas opções. Ainda não há combinações de botões para PlayStation, Xbox ou Switch, então esses filtros não retornam resultados.',
+          'Exemplo real: no GTA San Andreas, a entrada de vida e armadura mostra HESOYAM (também listado como INEEDSOMEHELP), que restaura vida e armadura e dá $250.000. Copie o código e digite no jogo, em single-player.',
         ],
       },
       {
         title: 'Single-player only e limites importantes',
         paragraphs: [
-          'Cheats sao para single-player/story mode. Em geral, podem desativar conquistas/trofeus durante a sessao e nao funcionam no GTA Online.',
-          'Antes de testar sequencias de spawn, clima e caos, faca save manual. Assim voce consegue experimentar sem comprometer uma run principal.',
+          'Cheats são para single-player/story mode. Em geral, podem desativar conquistas/troféus durante a sessão e não funcionam no GTA Online.',
+          'Antes de testar sequências de spawn, clima e caos, faça save manual. Assim você consegue experimentar sem comprometer uma run principal.',
         ],
         list: [
-          'Nao usar no GTA Online.',
-          'Pode desativar achievements/trofeus na sessao.',
-          'Alguns codigos variam por versao/remaster.',
+          'Não usar no GTA Online.',
+          'Pode desativar achievements/troféus na sessão.',
+          'Alguns códigos variam por versão/remaster.',
         ],
       },
       {
         title: 'Busca inteligente multi-idioma',
         paragraphs: [
-          'O motor de busca normaliza acentos e aceita termos em portugues, ingles e espanhol no mesmo indice. Tambem expande sinonimos como carro/car/coche, tanque/tank/rhino e policia/police.',
-          'Isso melhora o encontro de resultados mesmo quando o usuario nao sabe o nome exato do cheat ou pesquisa em outro idioma.',
+          'O motor de busca normaliza acentos e aceita termos em português, inglês e espanhol no mesmo índice. Também expande sinônimos como carro/car/coche, tanque/tank/rhino e polícia/police.',
+          'Isso melhora o encontro de resultados mesmo quando o usuário não sabe o nome exato do cheat ou pesquisa em outro idioma.',
         ],
       },
     ],
     faq: [
       {
-        question: 'Esses codigos funcionam no GTA Online?',
-        answer: 'Nao. A ferramenta e focada em single-player/story mode.',
+        question: 'Esses códigos funcionam no GTA Online?',
+        answer: 'Não. A ferramenta é focada em single-player/story mode.',
       },
       {
         question: 'Cheats desativam conquistas?',
         answer:
-          'Podem desativar conquistas/trofeus na sessao atual. Salve o jogo antes de usar cheats.',
+          'Podem desativar conquistas/troféus na sessão atual. Salve o jogo antes de usar cheats.',
       },
       {
-        question: 'A busca entende termos como tanque e helicoptero?',
-        answer: 'Sim. A busca usa sinonimos e indexacao multi-idioma para localizar melhor os codigos.',
+        question: 'A busca entende termos como tanque e helicóptero?',
+        answer: 'Sim. A busca ignora acentos e aceita termos em português, inglês e espanhol, com sinônimos como tanque/tank/rhino e helicóptero/helicopter.',
       },
       {
-        question: 'Tem codigos para GTA San Andreas, GTA 5, GTA 4, GTA 3 e Vice City?',
-        answer: 'Sim. A base cobre os cinco jogos e permite filtrar por jogo em um clique.',
+        question: 'Tem códigos para GTA San Andreas, GTA 5, GTA 4, GTA 3 e Vice City?',
+        answer: 'Sim. A base cobre os cinco jogos e permite filtrar por jogo. Os códigos de PC e telefone estão disponíveis; combinações de botões de console ainda não foram cadastradas.',
       },
       {
-        question: 'A tool e gratuita?',
-        answer: 'Sim. O uso e gratuito e sem cadastro.',
+        question: 'A ferramenta é gratuita?',
+        answer: 'Sim. O uso é gratuito e sem cadastro.',
       },
     ],
     ui: uiByLocale['pt-br'],

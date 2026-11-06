@@ -18,42 +18,49 @@ export type UuidNanoIdLocaleContent = {
 const contentByLocale: Record<AppLocale, UuidNanoIdLocaleContent> = {
   'pt-br': {
     name: 'Gerador de UUID, ULID, KSUID, CUID2 e NanoID',
-    shortDescription: 'Gere UUID v1-v7, NanoID, ULID, KSUID, CUID2 e ObjectId em lote, com copia rapida e exportacao TXT/CSV.',
+    shortDescription: 'Gere UUID v1 a v7, NanoID, ULID, KSUID, CUID2 e ObjectId em lote, com cópia rápida e exportação em TXT ou CSV.',
     primaryKeyword: 'gerador de uuid ulid ksuid cuid2 e nanoid online',
     secondaryKeywords: ['uuid v7 generator', 'uuid v1 v3 v4 v5 v6 v7', 'gerar nanoid', 'gerar ulid', 'gerar ksuid'],
     searchIntent: 'Devs que precisam gerar identificadores unicos para API, banco de dados, logs, testes e mocks.',
     seoTitle: 'Gerador de UUID v1-v7, ULID, KSUID, CUID2 e NanoID Online',
-    seoDescription: 'Crie IDs com UUID (todas as versoes), NanoID, ULID, KSUID, CUID2 e ObjectId com exportacao rapida em TXT/CSV.',
+    seoDescription: 'Gere até 500 IDs por vez no navegador: UUID v1 a v7, NanoID com alfabeto próprio, ULID, KSUID, CUID2 e ObjectId. Copie ou exporte em TXT e CSV.',
     h1: 'Gerador de UUID, ULID, KSUID, CUID2 e NanoID Online',
-    intro: 'Gere identificadores unicos no navegador para usar em testes, banco de dados, APIs, eventos e mocks.',
+    intro: 'Gere UUID, NanoID, ULID, KSUID, CUID2 e ObjectId no navegador, em lotes de até 500, para usar em testes, banco de dados, APIs, eventos e mocks.',
     contentBlocks: [
       {
-        title: 'Padroes modernos de IDs para cada tipo de sistema',
+        title: 'Como gerar identificadores em lote',
         paragraphs: [
-          'A ferramenta agora cobre UUID v1, v3, v4, v5, v6 e v7, alem de NanoID, ULID, KSUID, CUID2 e ObjectId. Isso permite escolher o formato ideal para APIs, bancos, filas, eventos e logs.',
-          'Voce pode gerar em lote e exportar sem depender de backend, mantendo fluxo rapido para testes, seeds e mocks.',
+          'Escolha o tipo de ID, informe a quantidade (de 1 a 500) e clique em "Gerar IDs". A lista pode ser copiada inteira, com os IDs separados por quebra de linha ou por vírgula, ou baixada em TXT ou CSV. Por padrão, a ferramenta gera 10 UUID v4.',
+          'No UUID, você escolhe a versão (v1, v3, v4, v5, v6 ou v7). No NanoID, define o tamanho (de 4 a 128 caracteres, 21 por padrão) e, se quiser, o alfabeto: basta digitar os caracteres permitidos, e repetições são ignoradas.',
         ],
       },
       {
         title: 'Quando usar cada formato',
         paragraphs: [
-          'Use UUID v7 quando quer ordenacao temporal moderna. UUID v1/v6 tambem carregam tempo; v3/v5 sao deterministicas por namespace+nome. ULID e KSUID sao bons para ordenacao e leitura.',
-          'Para testes e mocks, gerar lotes de IDs acelera criacao de payloads e fixtures sem depender de backend.',
+          'UUID v4 é totalmente aleatório e serve para a maioria dos casos. UUID v7, ULID e KSUID começam com a hora de criação, então IDs gerados em sequência tendem a ficar em ordem, o que ajuda em índices de banco e em logs. UUID v1 e v6 também carregam tempo. CUID2 é curto e aleatório. NanoID é compacto e personalizável, e ObjectId segue o formato de 24 caracteres hexadecimais do MongoDB, com a hora de criação no início.',
+          'UUID v3 e v5 não são aleatórios: o resultado vem de um namespace e de um nome. Com os mesmos dados, o ID é sempre o mesmo, o que serve para ter um identificador estável a partir de um texto. Em lotes, a ferramenta acrescenta o número da posição ao nome para que cada ID da lista seja diferente.',
+        ],
+        list: [
+          'UUID v4: identificador aleatório de uso geral.',
+          'UUID v7, ULID e KSUID: IDs que seguem a ordem de criação.',
+          'UUID v3 e v5: IDs fixos gerados a partir de namespace e nome.',
+          'NanoID: IDs curtos para URLs e códigos, com alfabeto e tamanho à escolha.',
         ],
       },
       {
-        title: 'Privacidade e limitacoes',
+        title: 'Privacidade e limites',
         paragraphs: [
-          'A geracao acontece no navegador usando API de criptografia do proprio ambiente. Nao existe cadastro ou envio obrigatorio para servidor.',
-          'IDs curtos podem aumentar chance de colisao em cenarios de alto volume, especialmente com alfabetos pequenos.',
+          'Os IDs são gerados no seu navegador, com a API de números aleatórios do próprio navegador, e não são enviados ao servidor. Os valores baseados em hora (v1, v6, v7, ULID, KSUID e ObjectId) revelam quando foram criados, então evite usá-los onde essa informação não deva ficar pública.',
+          'IDs curtos aumentam a chance de repetição, principalmente com alfabetos pequenos: um NanoID de 4 caracteres tem muito menos combinações que um de 21. A ferramenta avisa quando o tamanho informado é menor que 8. Ela não consulta um banco de dados, então não verifica se um ID já existe no seu sistema.',
         ],
       },
     ],
     faq: [
-      { question: 'Quais tipos de ID esta ferramenta gera?', answer: 'UUID v1-v7, NanoID, ULID, KSUID, CUID2 e ObjectId.' },
-      { question: 'Posso gerar varios IDs de uma vez?', answer: 'Sim. Defina quantidade e gere em lote com copia e download.' },
-      { question: 'Posso usar alfabeto personalizado no NanoID?', answer: 'Sim. Basta informar os caracteres desejados para montar os IDs.' },
-      { question: 'A geracao e local?', answer: 'Sim. Tudo roda no navegador por padrao.' },
+      { question: 'Quais tipos de ID esta ferramenta gera?', answer: 'UUID nas versões v1, v3, v4, v5, v6 e v7, NanoID, ULID, KSUID, CUID2 e ObjectId.' },
+      { question: 'Quantos IDs posso gerar de uma vez?', answer: 'De 1 a 500 por lote. A lista pode ser copiada com quebra de linha ou vírgula, ou exportada em TXT e CSV.' },
+      { question: 'Posso usar um alfabeto personalizado no NanoID?', answer: 'Sim. Digite os caracteres permitidos no campo de alfabeto. Repetições são ignoradas, e com menos de 2 caracteres distintos a ferramenta volta ao alfabeto padrão.' },
+      { question: 'Por que o UUID v3 ou v5 repete o mesmo resultado?', answer: 'Porque ele é calculado a partir de um namespace e de um nome, sem aleatoriedade. Mudando o nome, o ID muda. Para IDs aleatórios, use o v4 ou o v7.' },
+      { question: 'Os IDs são gerados no servidor?', answer: 'Não. A geração acontece no navegador e os IDs não são enviados nem guardados pelo servidor do site.' },
     ],
   },
   en: {

@@ -161,7 +161,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       tools: {
         title: 'Ferramentas Online',
         description:
-          'Lista de ferramentas online grátis, sem cadastro e sem login, com conteúdo útil e foco em performance para desktop e mobile.',
+          'Catálogo de ferramentas online grátis, sem cadastro e sem login, para arquivos, desenvolvimento, cripto, jogos e tarefas do dia a dia.',
         keywords: [
           'ferramentas online',
           'ferramentas online grátis',
@@ -186,7 +186,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
       privacy: {
         title: 'Política de Privacidade',
         description:
-          'Política de privacidade do Tools Lucasqc: dados coletados, finalidade, cookies, uso de anúncios e direitos do usuário.',
+          'Política de privacidade do Tools Lucasqc: dados tratados nas ferramentas, métricas de uso, cookies, publicidade e como falar com a gente.',
         keywords: ['política de privacidade', 'cookies', 'dados pessoais', 'adsense'],
       },
       terms: {
@@ -293,25 +293,30 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         {
           title: '1. Dados processados nas ferramentas',
           body:
-            'O tratamento depende da ferramenta. Pix e boleto são processados no navegador. A conversão de HEIC/HEIF e a compressão de vídeos menores podem enviar o arquivo ao servidor do site; vídeos acima de 512 MB são processados no navegador. A prévia Open Graph envia a URL informada ao servidor para buscar metadados. Consultas de IP, DNS e cripto podem usar serviços externos. A caixa de e-mail temporário mantém endereço e mensagens no servidor até a expiração configurada ou a exclusão. Leia o aviso da ferramenta e evite inserir dados sensíveis quando não forem necessários.',
+            'O tratamento depende da ferramenta. Pix e boleto são processados no navegador. A conversão de HEIC/HEIF e a compressão de vídeos menores podem enviar o arquivo ao servidor do site; vídeos acima de 512 MB são processados no navegador. A prévia Open Graph envia a URL informada ao servidor para buscar metadados. O baixador de vídeos envia o link informado ao servidor para localizar a mídia, e o arquivo é baixado pelo navegador. O editor de etiquetas ZPL envia o código ZPL, pelo servidor do site, ao serviço externo Labelary para gerar a imagem ou o PDF. Consultas de IP, DNS, endereços (CEP) e cripto podem usar serviços externos. A caixa de e-mail temporário mantém endereço e mensagens no servidor até a expiração configurada ou a exclusão. Leia o aviso da ferramenta e evite inserir dados sensíveis quando não forem necessários.',
         },
         {
-            title: '2. Métricas e preferências',
+          title: '2. Salas em tempo real e dados locais',
           body:
-            'O site usa Vercel Analytics para métricas de visita. Quando NEXT_PUBLIC_GTM_ID está configurado, também carrega o Google Tag Manager, cujas tags podem tratar dados conforme sua configuração. Os eventos das ferramentas registram identificadores e metadados de uso, sem incluir o conteúdo digitado ou os arquivos. O seletor de idioma guarda sua preferência no cookie NEXT_LOCALE e no armazenamento local do navegador. Consulte as políticas dos serviços envolvidos para saber como eles tratam dados de navegação.',
+            'Chamadas com compartilhamento de tela, transferência entre dispositivos por link e celular como webcam usam o servidor do site para criar a sala e trocar os sinais de conexão: nome exibido, descrições WebRTC e candidatos de rede, que podem incluir endereços IP. Esses dados ficam temporariamente em um banco Upstash Redis e são removidos quando a sala expira ou é encerrada. Arquivos, mensagens, áudio e vídeo seguem direto entre os dispositivos. Por padrão, a conexão consulta um servidor STUN do Google, e um identificador derivado do IP (hash) é usado temporariamente para limitar abusos. Algumas ferramentas guardam rascunhos, preferências ou histórico apenas no armazenamento local do seu navegador, como o editor de Markdown, o editor de etiquetas ZPL, o gerador de pessoa fake e o autenticador, que só salva a chave se você pedir. Você pode apagar esses dados limpando os dados do site no navegador.',
         },
         {
-          title: '3. Publicidade',
+          title: '3. Métricas e preferências',
+          body:
+            'O site usa Vercel Analytics para métricas de visita. Se um contêiner estiver configurado, o site também carrega o Google Tag Manager, cujas tags podem tratar dados conforme sua configuração. Os eventos das ferramentas registram identificadores e metadados de uso, sem incluir o conteúdo digitado ou os arquivos. O idioma escolhido fica guardado nos cookies NEXT_LOCALE e LOCALE_REDIRECTED e no armazenamento local do navegador. Consulte as políticas dos serviços envolvidos para saber como eles tratam dados de navegação.',
+        },
+        {
+          title: '4. Publicidade',
           body:
             'O script e os espaços de anúncio do Google AdSense estão desativados no código atual. Se a publicidade for ativada no futuro, esta política será atualizada antes da ativação.',
         },
         {
-          title: '4. Direitos do usuário',
+          title: '5. Direitos do usuário',
           body:
             'Você pode solicitar esclarecimentos sobre dados e práticas de privacidade por meio da página de contato. Revisamos periodicamente esta política para manter clareza e conformidade.',
         },
         {
-          title: '5. Atualizações desta política',
+          title: '6. Atualizações desta política',
           body:
             'Alterações podem ocorrer para refletir melhorias no produto, mudanças legais ou novas integrações. Recomenda-se revisar esta página periodicamente.',
         },
@@ -351,8 +356,8 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
     notFound: {
       title: 'Página não encontrada',
       description:
-        'A URL acessada não existe ou foi movida. Use o link abaixo para voltar ao hub principal.',
-      cta: 'Voltar para a home',
+        'O endereço acessado não existe ou foi movido. Volte para a página inicial para encontrar a ferramenta que você procura.',
+      cta: 'Voltar para a página inicial',
     },
     toolCard: {
       openTool: 'Abrir ferramenta',
@@ -372,7 +377,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         'O tratamento de dados varia conforme a ferramenta: algumas operam no navegador; outras enviam arquivos, links ou solicitações ao servidor do site ou a um serviço externo. Consulte as instruções desta página antes de enviar dados, especialmente se forem sensíveis.',
       cryptoRelatedTitle: 'Outras conversões relacionadas',
       cryptoRelatedDescription:
-        'Links internos leves para combinações próximas e úteis do mesmo contexto técnico.',
+        'Combinações próximas dentro do mesmo contexto técnico.',
       cryptoPopularTitle: 'Conversões populares',
       cryptoPopularDescription:
         'Conversões frequentes como gwei para ETH, sat para BTC e lamport para SOL.',

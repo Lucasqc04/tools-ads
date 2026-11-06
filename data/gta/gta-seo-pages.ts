@@ -1,5 +1,6 @@
 import { localizePath, locales, type AppLocale } from '@/lib/i18n/config';
-import { gtaGameNames, type GtaCheatCategory, type GtaGameId } from '@/data/gta/gta-cheats';
+import { gtaCheats, gtaGameNames, type GtaCheatCategory, type GtaGameId } from '@/data/gta/gta-cheats';
+import { filterGtaCheats, getCheatPrimaryCode } from '@/lib/gta/cheats';
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export type GtaToolPageType = 'game' | 'intent';
@@ -215,9 +216,9 @@ const categoryLabelByLocale: Record<AppLocale, Record<GtaCheatCategory, string>>
   'pt-br': {
     armas: 'armas',
     'vida-armadura': 'vida e armadura',
-    policia: 'policia',
-    veiculos: 'veiculos',
-    'spawn-veiculos': 'spawn de veiculos',
+    policia: 'polícia',
+    veiculos: 'veículos',
+    'spawn-veiculos': 'spawn de veículos',
     clima: 'clima',
     mundo: 'mundo',
     npc: 'NPCs e pedestres',
@@ -229,7 +230,7 @@ const categoryLabelByLocale: Record<AppLocale, Record<GtaCheatCategory, string>>
     habilidade: 'habilidade',
     equipamento: 'equipamento',
     player: 'player',
-    musica: 'musica',
+    musica: 'música',
     episodes: 'episodes',
   },
   en: {
@@ -307,16 +308,108 @@ export type GtaSeoLocalizedContent = {
 
 const getIntentKeyword = (locale: AppLocale, page: GtaSeoPage): string => {
   if (page.type === 'game' && page.game) {
-    if (locale === 'pt-br') return `codigos ${gtaGameNames[page.game]['pt-br']}`;
+    if (locale === 'pt-br') return `códigos ${gtaGameNames[page.game]['pt-br']}`;
     if (locale === 'en') return `${gtaGameNames[page.game].en} cheat codes`;
     return `codigos ${gtaGameNames[page.game].es}`;
   }
 
   const category = page.category ? categoryLabelByLocale[locale][page.category] : 'cheats';
 
-  if (locale === 'pt-br') return `codigos GTA de ${category}`;
+  if (locale === 'pt-br') return `códigos GTA de ${category}`;
   if (locale === 'en') return `GTA ${category} cheats`;
   return `codigos GTA de ${category}`;
+};
+
+const ptIntentLabelById: Record<string, string> = {
+  cars: 'carros',
+  tank: 'tanque',
+  helicopter: 'helicóptero',
+};
+
+const plural = (total: number, singular: string, pluralForm: string): string =>
+  `${total} ${total === 1 ? singular : pluralForm}`;
+
+const ptQueryHintByPageId: Record<string, string> = {
+  tank: 'tanque',
+  helicopter: 'helicoptero',
+};
+
+const countBy = <T,>(items: T[], key: (item: T) => string): Array<[string, number]> => {
+  const map = new Map<string, number>();
+  items.forEach((item) => map.set(key(item), (map.get(key(item)) ?? 0) + 1));
+  return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+};
+
+const describeGtaCoveragePtBr = (
+  page: GtaSeoPage,
+  gameLabel: string | null,
+  categoryLabel: string | null,
+) => {
+  const scoped = gtaCheats.filter(
+    (cheat) =>
+      (!page.game || cheat.game === page.game) &&
+      (!page.category || cheat.category === page.category),
+  );
+  const hasPc = scoped.some((cheat) => cheat.codes.pc || cheat.codes.pcCode || cheat.codes.pcPhrase);
+  const hasPhone = scoped.some((cheat) => cheat.codes.phone);
+  const formatSentence =
+    hasPc && hasPhone
+      ? 'Há códigos para digitar no PC e números de telefone para discar no celular do jogo.'
+      : hasPhone
+        ? 'Todos os códigos são números de telefone, discados no celular do personagem.'
+        : scoped.length === 1
+          ? 'O código é digitado no teclado do PC durante o jogo.'
+          : 'Os códigos são digitados no teclado do PC durante o jogo.';
+  const formatShort = hasPc && hasPhone
+    ? 'Códigos de PC e números de telefone.'
+    : hasPhone
+      ? 'Números de telefone do jogo.'
+      : 'Códigos digitados no PC.';
+  const byGame = countBy(scoped, (cheat) => gtaGameNames[cheat.game]['pt-br']);
+  const byCategory = countBy(scoped, (cheat) => categoryLabelByLocale['pt-br'][cheat.category]);
+  const count = scoped.length;
+  const gameCount = byGame.length;
+  const topCategories = byCategory
+    .slice(0, 4)
+    .map(([label, total]) => `${label} (${total})`)
+    .join(', ');
+  const perGame = byGame.map(([label, total]) => `${label} (${total})`).join(', ');
+
+  const paragraphs: string[] = [];
+  let faqAnswer: string;
+  const intentLabel = ptIntentLabelById[page.id];
+
+  if (gameLabel) {
+    paragraphs.push(
+      `A lista do ${gameLabel} tem ${count} códigos em ${byCategory.length} categorias. ${formatSentence} As categorias com mais itens são: ${topCategories}.`,
+    );
+    faqAnswer = `A lista tem ${count} códigos do ${gameLabel}, em ${byCategory.length} categorias. ${formatSentence}`;
+  } else if (intentLabel) {
+    paragraphs.push(
+      `Os códigos de ${intentLabel} ficam na categoria ${categoryLabel}, que a página já abre filtrada. Essa categoria reúne ${plural(count, 'código', 'códigos')}: ${perGame}. ${formatSentence}`,
+    );
+    faqAnswer = `Os códigos de ${intentLabel} estão na categoria ${categoryLabel}, que tem ${plural(count, 'código', 'códigos')}: ${perGame}. Use a busca para ver só os itens de ${intentLabel}.`;
+  } else {
+    paragraphs.push(
+      `Esta página abre a lista já filtrada em ${categoryLabel}, com ${plural(count, 'código', 'códigos')}: ${perGame}. ${formatSentence}`,
+    );
+    faqAnswer = `Há ${plural(count, 'código', 'códigos')} de ${categoryLabel}${count === 1 ? '' : ', distribuídos assim'}: ${perGame}.`;
+  }
+
+  const hint = ptQueryHintByPageId[page.id];
+  if (hint) {
+    const matches = filterGtaCheats(scoped, { game: 'all', category: 'all', platform: 'all', query: hint })
+      .map((cheat) => ({ game: gtaGameNames[cheat.game]['pt-br'], code: getCheatPrimaryCode(cheat) }))
+      .filter((item) => item.code);
+    if (matches.length) {
+      const examples = matches.map((item) => `${item.game}: ${item.code}`).join('; ');
+      paragraphs.push(
+        `Dica: digite "${hint === 'helicoptero' ? 'helicóptero' : hint}" na busca para ver só esses itens. Códigos encontrados com essa busca: ${examples}.`,
+      );
+    }
+  }
+
+  return { count, gameCount, formatSentence, formatShort, paragraphs, faqAnswer, intentLabel };
 };
 
 export const getLocalizedGtaSeoContent = (
@@ -328,19 +421,26 @@ export const getLocalizedGtaSeoContent = (
   const categoryLabel = page.category ? categoryLabelByLocale[locale][page.category] : null;
 
   if (locale === 'pt-br') {
+    const coverage = describeGtaCoveragePtBr(page, gameLabel, categoryLabel);
+    const intentLabel = coverage.intentLabel ?? categoryLabel;
     const title = gameLabel
-      ? `Codigos de ${gameLabel}`
-      : `Codigos GTA: ${categoryLabel ?? 'filtros especificos'}`;
+      ? `Códigos de ${gameLabel}`
+      : `Códigos GTA: ${intentLabel ?? 'filtros específicos'}`;
 
     return {
       title,
       intro: gameLabel
-        ? `Copie codigos do ${gameLabel} com foco em PC e telefone quando disponivel. Filtre por categoria e busque termos como tanque, helicoptero, policia, vida e armas.`
-        : `Encontre codigos GTA da categoria ${categoryLabel}. Use filtros por jogo e plataforma para copiar rapidamente os cheats certos para o modo historia.`,
-      seoTitle: `${title} | PC e Phone Cheats`,
-      seoDescription:
-        'Lista organizada de cheats GTA para modo historia/single-player com busca inteligente, filtros por jogo/plataforma e avisos de compatibilidade.',
-      primaryKeyword: keyword,
+        ? `Copie os ${plural(coverage.count, 'código', 'códigos')} do ${gameLabel}. ${coverage.formatSentence} Filtre por categoria e busque termos como tanque, helicóptero, polícia, vida e armas.`
+        : coverage.intentLabel
+          ? `Encontre os códigos GTA de ${coverage.intentLabel}. A lista abre na categoria ${categoryLabel}; filtre por jogo e plataforma para copiar o cheat certo para o modo história.`
+          : `Encontre ${plural(coverage.count, 'código', 'códigos')} GTA de ${categoryLabel}, ${coverage.gameCount === 1 ? 'de um jogo da série' : `reunidos de ${coverage.gameCount} jogos da série`}. Use os filtros por jogo e plataforma para copiar rapidamente o cheat certo para o modo história.`,
+      seoTitle: `${title} | PC e telefone`,
+      seoDescription: gameLabel
+        ? `${plural(coverage.count, 'código', 'códigos')} do ${gameLabel} para copiar. ${coverage.formatShort} Filtre por categoria e veja os avisos para o modo single-player.`
+        : coverage.intentLabel
+          ? `Códigos GTA de ${coverage.intentLabel}: veja o cheat de cada jogo, filtre por jogo e plataforma e copie. Válido só para single-player.`
+          : `${plural(coverage.count, 'código', 'códigos')} GTA de ${categoryLabel}${coverage.gameCount === 1 ? '' : ` em ${coverage.gameCount} jogos`}. Filtre por jogo, busque por nome e copie. Válido só para single-player.`,
+      primaryKeyword: coverage.intentLabel ? `códigos GTA de ${coverage.intentLabel}` : keyword,
       secondaryKeywords: [
         'codigos gta pc',
         'cheats gta story mode',
@@ -349,51 +449,65 @@ export const getLocalizedGtaSeoContent = (
       ],
       contentBlocks: [
         {
-          title: 'Como usar os codigos GTA com seguranca',
+          title: gameLabel
+            ? `O que há na lista do ${gameLabel}`
+            : `Códigos GTA de ${intentLabel}: o que a lista cobre`,
+          paragraphs: coverage.paragraphs,
+        },
+        {
+          title: 'Como usar os códigos GTA com segurança',
           paragraphs: [
-            'Esta pagina organiza cheats para GTA San Andreas, GTA V, GTA IV, GTA III e GTA Vice City com foco em uso rapido no modo historia. Cada item mostra codigo principal, plataforma e observacoes de versao.',
-            'Use os filtros para reduzir erros: escolha jogo, categoria e plataforma antes de copiar. Em GTA V, quando houver codigo de telefone, voce pode acionar pelo celular in-game alem do codigo textual de PC.',
+            'Esta página organiza cheats para GTA San Andreas, GTA V, GTA IV, GTA III e GTA Vice City com foco em uso rápido no modo história. Cada item mostra o código, a plataforma e, quando existe, uma observação de versão.',
+            'Use os filtros para reduzir erros: escolha jogo, categoria e plataforma antes de copiar. No GTA V, quando houver número de telefone, você pode discar pelo celular do jogo em vez de digitar o código de PC.',
           ],
         },
         {
           title: 'Single-player only: aviso importante',
           paragraphs: [
-            'Os codigos aqui sao para single-player/story mode. Em geral, cheats podem desativar conquistas/trofeus na sessao atual e nao funcionam no GTA Online.',
-            'Se estiver em campanha e quiser preservar progresso sem impacto, faca save manual antes de testar combinacoes de cheats mais agressivas.',
+            'Os códigos aqui são para single-player/story mode. Em geral, cheats podem desativar conquistas/troféus na sessão atual e não funcionam no GTA Online.',
+            'Se estiver em campanha e quiser preservar o progresso, faça um save manual antes de testar combinações de cheats mais agressivas.',
           ],
           list: [
-            'Nao funciona no GTA Online.',
-            'Pode bloquear achievements/trofeus na sessao.',
-            'Alguns cheats exigem estado especifico do jogo (ex.: veiculo desbloqueado).',
+            'Não funciona no GTA Online.',
+            'Pode bloquear achievements/troféus na sessão.',
+            'Alguns cheats exigem estado específico do jogo (ex.: veículo desbloqueado).',
           ],
         },
         {
-          title: 'Busca inteligente e filtros praticos',
+          title: 'Busca e filtros',
           paragraphs: [
-            'A busca aceita termos em portugues, ingles e espanhol e aplica sinonimos como carro/car/coche, policia/police, vida/health, tanque/tank/rhino e moto/bike.',
-            'Isso ajuda a encontrar codigos mesmo quando a consulta nao bate exatamente com o nome do cheat no jogo.',
+            'A busca ignora acentos, aceita termos em português, inglês e espanhol e aplica sinônimos como carro/car/coche, polícia/police, vida/health, tanque/tank/rhino e moto/bike.',
+            'Isso ajuda a encontrar códigos mesmo quando a consulta não bate exatamente com o nome do cheat no jogo.',
           ],
         },
       ],
       faq: [
         {
-          question: 'Esses codigos funcionam no GTA Online?',
-          answer: 'Nao. Eles sao voltados para single-player/story mode e nao devem ser usados no GTA Online.',
+          question: gameLabel
+            ? `Quantos códigos do ${gameLabel} existem na lista?`
+            : coverage.intentLabel
+              ? `Onde ficam os códigos de ${coverage.intentLabel} no GTA?`
+              : `Quantos códigos de ${categoryLabel} existem na lista?`,
+          answer: coverage.faqAnswer,
+        },
+        {
+          question: 'Esses códigos funcionam no GTA Online?',
+          answer: 'Não. Eles são voltados para single-player/story mode e não devem ser usados no GTA Online.',
         },
         {
           question: 'Cheats podem desativar conquistas?',
           answer:
-            'Sim, em muitos casos os cheats desativam achievements/trofeus para a sessao atual. Salve manualmente antes de testar.',
+            'Sim, em muitos casos os cheats desativam achievements/troféus para a sessão atual. Salve manualmente antes de testar.',
         },
         {
-          question: 'Posso buscar por termos como tanque e helicoptero?',
+          question: 'Posso buscar por termos como tanque e helicóptero?',
           answer:
-            'Sim. A busca entende sinonimos e localiza cheats por jogo, categoria e plataforma.',
+            'Sim. A busca entende sinônimos e localiza cheats por jogo, categoria e plataforma.',
         },
         {
-          question: 'Quais plataformas estao cobertas?',
+          question: 'Quais plataformas estão cobertas?',
           answer:
-            'A base prioriza codigos PC e numeros de telefone quando existirem. Campos para PlayStation/Xbox/Switch podem ser preenchidos em expansoes futuras.',
+            'A lista tem códigos de PC e números de telefone. Combinações de botões para PlayStation, Xbox e Switch ainda não foram cadastradas, então esses filtros não retornam resultados.',
         },
       ],
     };
@@ -559,9 +673,10 @@ export const getLocalizedGtaSeoLabel = (page: GtaSeoPage, locale: AppLocale): st
   const categoryLabel = page.category ? categoryLabelByLocale[locale][page.category] : undefined;
 
   if (locale === 'pt-br') {
+    const intentLabel = ptIntentLabelById[page.id] ?? categoryLabel;
     return gameLabel
-      ? `Codigos de ${gameLabel}`
-      : `Codigos GTA ${categoryLabel ? `de ${categoryLabel}` : 'por intencao'}`;
+      ? `Códigos de ${gameLabel}`
+      : `Códigos GTA ${intentLabel ? `de ${intentLabel}` : 'por intenção'}`;
   }
 
   if (locale === 'en') {

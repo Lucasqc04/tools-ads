@@ -77,16 +77,16 @@ function NoticeBox({ notice }: Readonly<{ notice: Notice }>) {
 const scannerUi = {
   'pt-br': {
     title: 'QR Code scanner e decoder',
-    intro: 'Leia QR Code pela camera ou por imagem, copie o conteudo e exporte o resultado.',
+    intro: 'Leia QR Code pela câmera ou por imagem, copie o conteúdo e exporte o resultado.',
     image: 'Imagem com QR Code',
-    startCamera: 'Abrir camera',
-    stopCamera: 'Parar camera',
+    startCamera: 'Abrir câmera',
+    stopCamera: 'Parar câmera',
     scanImage: 'Ler imagem',
     copy: 'Copiar resultado',
     exportTxt: 'TXT',
     exportJson: 'JSON',
     result: 'Resultado',
-    empty: 'O conteudo decodificado aparece aqui.',
+    empty: 'O conteúdo decodificado aparece aqui.',
     copied: 'Copiado.',
   },
   en: {
@@ -170,7 +170,7 @@ export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale
       setNotice({ tone: 'success', text: ui.result });
       reportCompletedOnce(decoded.getText());
     } catch (error) {
-      setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'QR nao encontrado.' });
+      setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'QR não encontrado.' });
       trackEvent('tool_error', { tool: TOOL_ID.qrCodeScanner, locale, error_type: 'not_found' });
     } finally {
       URL.revokeObjectURL(url);
@@ -191,7 +191,7 @@ export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale
       });
       setIsCameraActive(true);
     } catch (error) {
-      setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Falha ao abrir camera.' });
+      setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Falha ao abrir câmera.' });
       trackEvent('tool_error', { tool: TOOL_ID.qrCodeScanner, locale, error_type: 'processing_failed' });
     }
   };
@@ -275,7 +275,7 @@ export function QrCodeScannerDecoderTool({ locale = 'pt-br' }: Readonly<{ locale
 const payloadUi = {
   'pt-br': {
     title: 'Gerador de QR Wi-Fi, vCard e Evento',
-    intro: 'Monte payloads padronizados para QR Code de Wi-Fi, contato vCard e calendario ICS.',
+    intro: 'Monte payloads padronizados para QR Code de Wi-Fi, contato vCard e calendário ICS.',
     mode: 'Tipo',
     wifi: 'Wi-Fi',
     vcard: 'vCard',
@@ -287,9 +287,9 @@ const payloadUi = {
     name: 'Nome',
     company: 'Empresa',
     phone: 'Telefone',
-    email: 'Email',
+    email: 'E-mail',
     url: 'URL',
-    summary: 'Titulo',
+    summary: 'Título',
     location: 'Local',
     generate: 'Gerar QR',
     copyPayload: 'Copiar payload',
@@ -539,13 +539,13 @@ export function QrPayloadGeneratorTool({ locale = 'pt-br' }: Readonly<{ locale?:
 const jsonUi = {
   'pt-br': {
     title: 'JSON para TypeScript, Zod e JSON Schema',
-    intro: 'Cole um JSON real e gere tipos TypeScript, schema Zod e JSON Schema exportaveis.',
+    intro: 'Cole um JSON real e gere tipos TypeScript, schema Zod e JSON Schema exportáveis.',
     root: 'Nome raiz',
-    generate: 'Gerar codigo',
+    generate: 'Gerar código',
     copy: 'Copiar aba',
     exportAll: 'Exportar ZIP',
     copied: 'Copiado.',
-    invalid: 'JSON invalido.',
+    invalid: 'JSON inválido.',
   },
   en: {
     title: 'JSON to TypeScript, Zod, and JSON Schema',
@@ -663,13 +663,13 @@ export function JsonTypeSchemaGeneratorTool({ locale = 'pt-br' }: Readonly<{ loc
 const cronUi = {
   'pt-br': {
     title: 'Gerador e explicador de Cron',
-    intro: 'Monte expressoes cron, leia a descricao humana e veja proximas execucoes com timezone.',
-    expression: 'Expressao',
-    timezone: 'Timezone',
+    intro: 'Monte expressões cron, leia a descrição em linguagem natural e veja as próximas execuções para um fuso horário.',
+    expression: 'Expressão',
+    timezone: 'Fuso horário',
     explain: 'Explicar',
     copy: 'Copiar',
-    next: 'Proximas execucoes',
-    localized: 'Traducao em portugues',
+    next: 'Próximas execuções',
+    localized: 'Tradução em português',
     copied: 'Copiado.',
   },
   en: {
@@ -745,7 +745,7 @@ export function CronGeneratorExplainerTool({ locale = 'pt-br' }: Readonly<{ loca
       setNotice(null);
       if (!isAutoRun) trackEvent('tool_completed', { tool: TOOL_ID.cronGenerator, locale });
     } catch (error) {
-      setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Cron invalido.' });
+      setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Cron inválido.' });
       if (!isAutoRun) trackEvent('tool_error', { tool: TOOL_ID.cronGenerator, locale, error_type: 'invalid_cron' });
     }
   };
@@ -796,7 +796,7 @@ export function CronGeneratorExplainerTool({ locale = 'pt-br' }: Readonly<{ loca
 const archiveUi = {
   'pt-br': {
     title: 'Gzip, Deflate e ZIP com senha',
-    intro: 'Comprima/descomprima arquivo com gzip/deflate e empacote varios arquivos ou pastas em ZIP opcionalmente criptografado.',
+    intro: 'Comprima e descomprima um arquivo com gzip ou deflate e empacote vários arquivos ou pastas em um ZIP, com senha opcional.',
     files: 'Arquivos',
     password: 'Senha ZIP (opcional)',
     gzip: 'Gzip',
@@ -807,7 +807,7 @@ const archiveUi = {
     unzip: 'Extrair ZIP',
     directory: 'Selecionar pasta',
     selectedFiles: 'arquivos selecionados',
-    ready: 'Operacao concluida.',
+    ready: 'Operação concluída.',
   },
   en: {
     title: 'Gzip, Deflate, and password ZIP',
@@ -1008,13 +1008,13 @@ export function GzipDeflateZipTool({ locale = 'pt-br' }: Readonly<{ locale?: App
 const sqlUi = {
   'pt-br': {
     title: 'SQL Formatter e Minifier',
-    intro: 'Formate SQL por dialeto, padronize keywords, minifique e exporte consultas.',
+    intro: 'Formate SQL por dialeto, padronize as palavras-chave, minifique e exporte consultas.',
     format: 'Formatar SQL',
     minify: 'Minificar',
     copy: 'Copiar resultado',
     exportSql: 'Exportar .sql',
     dialect: 'Dialeto',
-    keywordCase: 'Keywords',
+    keywordCase: 'Palavras-chave',
     copied: 'Copiado.',
   },
   en: {

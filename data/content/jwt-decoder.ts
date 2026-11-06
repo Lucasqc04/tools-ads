@@ -18,42 +18,42 @@ export type JwtDecoderLocaleContent = {
 const contentByLocale: Record<AppLocale, JwtDecoderLocaleContent> = {
   'pt-br': {
     name: 'JWT Decoder Online',
-    shortDescription: 'Decodifique JWT e visualize header, payload e assinatura com JSON legivel, alertas de claims e datas.',
+    shortDescription: 'Cole um JWT e veja header, payload e assinatura em JSON legível, com as datas de exp, iat e nbf convertidas. Não valida a assinatura.',
     primaryKeyword: 'jwt decoder online',
     secondaryKeywords: ['decodificar jwt', 'ler token jwt', 'jwt payload decoder', 'jwt header payload', 'jwt exp iat nbf'],
-    searchIntent: 'Devs que precisam inspecionar rapidamente tokens JWT para debug de auth, API e sessoes.',
+    searchIntent: 'Devs que precisam inspecionar rapidamente tokens JWT para debug de autenticação, APIs e sessões.',
     seoTitle: 'JWT Decoder Online | Header, Payload e Claims JWT',
-    seoDescription: 'Cole seu JWT e veja header, payload e signature com JSON formatado, exp/iat/nbf legiveis e alertas claros de token malformado.',
+    seoDescription: 'Cole um JWT e veja header, payload e assinatura em JSON formatado, com exp, iat e nbf legíveis. Só decodifica: não valida a assinatura.',
     h1: 'JWT Decoder Online com Header, Payload e Claims',
-    intro: 'Decodifique tokens JWT no navegador, visualize claims comuns e entenda expiracao sem precisar instalar extensoes.',
+    intro: 'Decodifique um token JWT no navegador, leia as claims e confira a data de expiração. A ferramenta só decodifica e não valida a assinatura.',
     contentBlocks: [
       {
-        title: 'Como funciona o JWT Decoder',
+        title: 'O que o JWT Decoder mostra',
         paragraphs: [
-          'Um token JWT possui tres partes: header, payload e assinatura. Esta ferramenta separa essas partes e mostra o header e o payload em JSON legivel para facilitar depuracao.',
-          'O objetivo e acelerar analise de integracoes, autenticacao e testes de API quando voce recebe um token e precisa saber exatamente quais claims estao presentes.',
+          'Um JWT tem três partes separadas por ponto: header, payload e assinatura. Cole o token no campo e o resultado aparece sozinho, sem clicar em nada: o header e o payload são decodificados de Base64URL e exibidos em JSON formatado, e a assinatura aparece como texto, do jeito que veio. O botão "Carregar exemplo" preenche um token de demonstração com assinatura fictícia, e há botões para copiar o header, o payload (formatado ou compacto) e o token.',
+          'No quadro "Claims comuns", a ferramenta destaca exp, iat, nbf, iss, aud, sub e role quando existem no payload. Os campos exp, iat e nbf são timestamps em segundos e aparecem também como data no fuso do seu navegador e em UTC. Por exemplo, o exp 1893456000 corresponde a 1º de janeiro de 2030, 00:00 UTC.',
         ],
       },
       {
-        title: 'Claims comuns e datas legiveis',
+        title: 'Como ler o aviso de prazo (exp)',
         paragraphs: [
-          'Campos como exp, iat e nbf costumam vir em timestamp Unix. O decoder converte esses valores para datas legiveis para voce identificar rapidamente validade e janela de uso.',
-          'Tambem destacamos iss, aud, sub e role para facilitar validacao manual de contexto antes de testar seu fluxo de autorizacao.',
+          'Quando o payload tem exp, a ferramenta compara essa data com o relógio do seu aparelho e mostra se o prazo de validade já venceu ou ainda não. Isso é só uma leitura do campo: não significa que o token seja autêntico ou aceito pelo servidor. A data nbf ("não antes de") é exibida, mas não é comparada com a hora atual.',
+          'A ferramenta aceita tokens JWT assinados no formato de três partes (JWS). Tokens criptografados (JWE), que têm cinco partes, e textos que não sejam Base64URL com JSON no header e no payload mostram uma mensagem de erro. Uma assinatura vazia gera um aviso de token possivelmente incompleto.',
         ],
       },
       {
-        title: 'Limites e seguranca',
+        title: 'A assinatura não é verificada',
         paragraphs: [
-          'Decodificar JWT nao significa validar assinatura. Um token pode ser decodificado mesmo sem autenticidade. Por isso, use esta pagina para inspeção e debug, nao para confiar no token automaticamente.',
-          'O processamento ocorre localmente no navegador. Nao ha envio obrigatorio do token para backend da ferramenta.',
+          'Esta ferramenta não verifica a assinatura, o emissor nem a autenticidade do token. Qualquer pessoa consegue criar um token com o conteúdo que quiser e ele será decodificado normalmente. Quem deve validar a assinatura, a expiração e as claims é o seu servidor, com a chave correta. Use esta página só para inspecionar e depurar, nunca para decidir se um token é confiável.',
+          'A decodificação acontece no navegador e o token não é enviado ao nosso servidor. Mesmo assim, um token válido funciona como uma credencial: evite colar tokens de produção em computadores compartilhados e não os publique em chats ou issues.',
         ],
       },
     ],
     faq: [
-      { question: 'Essa ferramenta valida a assinatura do JWT?', answer: 'Nao. Ela apenas decodifica e exibe as partes do token. A validacao criptografica deve ser feita no servidor ou ambiente confiavel.' },
-      { question: 'Consigo ver se o token expirou?', answer: 'Sim. Quando o campo exp existe, mostramos a data e um indicativo de expirado ou ainda valido.' },
-      { question: 'Meus dados sao enviados para servidor?', answer: 'Nao por padrao. O processamento acontece localmente no navegador.' },
-      { question: 'Funciona em celular?', answer: 'Sim. A interface foi pensada para funcionar em desktop e mobile.' },
+      { question: 'Essa ferramenta valida a assinatura do JWT?', answer: 'Não. Ela só decodifica e exibe as partes do token. A validação da assinatura, do emissor e do prazo deve ser feita no seu servidor ou em outro ambiente confiável.' },
+      { question: 'Consigo ver se o token expirou?', answer: 'Sim, quando o payload tem a claim exp. Mostramos a data e se o prazo já venceu, comparando com o relógio do seu aparelho. Isso não prova que o token seja válido.' },
+      { question: 'O meu token é enviado para algum servidor?', answer: 'Não. A decodificação é feita no navegador e o token não sai do seu aparelho.' },
+      { question: 'Ela lê tokens criptografados (JWE)?', answer: 'Não. Só tokens de três partes, em que header e payload são JSON em Base64URL. Um JWE tem cinco partes e aparece como token malformado.' },
     ],
   },
   en: {

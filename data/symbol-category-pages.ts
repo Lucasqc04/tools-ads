@@ -117,6 +117,36 @@ export const getSymbolCategoryLocalePathMap = (
   zh: getSymbolCategoryPathByLocale(page, 'zh'),
 });
 
+const ptCategoryNotes: Record<string, string> = {
+  arrows:
+    'A categoria reúne setas simples (← → ↑ ↓), diagonais (↖ ↗ ↘ ↙), duplas (⇐ ⇒ ⇔) e decorativas (➔ ➜ ➤), úteis para indicar direção, fluxo ou "veja abaixo" em bios, listas e documentos.',
+  hearts:
+    'Há corações em estilo texto (♥ ♡ ❣) e corações emoji coloridos (💛 💚 💙 💜). Os emojis mudam de aparência conforme o sistema e o aplicativo; os de texto seguem a fonte ao redor.',
+  stars:
+    'Você encontra estrelas cheias e vazias (★ ☆), estrelas decorativas de várias pontas (✦ ✧ ✯ ✶) e emojis (⭐ 🌟). Servem para avaliações, destaques e separadores.',
+  math:
+    'A lista tem operadores (± × ÷), comparações (≠ ≈ ≤ ≥), raiz e infinito (√ ∞), somatório e integral (∑ ∫), símbolos de conjuntos (∈ ∪ ∩ ∅) e frações como ½ e ¾.',
+  currency:
+    'Há símbolos do dólar, euro, libra, iene, rupia, won, rublo, lira e outros. O real não tem um símbolo único nesta lista: ele é escrito com as letras R e o cifrão ($).',
+  'check-cross':
+    'A categoria traz marcas de certo (✓ ✔ ☑ ✅) e de errado (✗ ✘ ☒ ❌), além de cruzes e sinais de adaga (✝ † ‡). São práticas para listas de tarefas, comparativos e checklists.',
+  'lines-borders':
+    'Aqui estão traços de caixa (─ │ ┌ ┐ ╔ ╗), blocos de preenchimento (░ ▒ ▓ █) e pontos (• ·). Para tabelas e molduras em texto, o alinhamento fica melhor em fontes monoespaçadas.',
+  music:
+    'Há notas (♩ ♪ ♫ ♬), acidentes musicais (♭ ♮ ♯) e emojis como 🎵 🎶 🎼 🎸 🎧. Os emojis variam de aparência entre sistemas.',
+  zodiac:
+    'A lista inclui os 12 signos (♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓) e o símbolo de Ofiúco (⛎), úteis para bios, horóscopos e textos sobre astrologia.',
+  greek:
+    'São 24 letras minúsculas (α β γ δ ... ω) e 24 maiúsculas (Α Β Γ Δ ... Ω), usadas em fórmulas, ângulos e constantes.',
+  bullets:
+    'A categoria reúne marcadores simples (• ◦ ‣), formas geométricas (○ ● ◆ ■ □) e setas de lista (► ➤), úteis para montar listas em lugares que não aceitam formatação.',
+  'chess-game':
+    'Há peças de xadrez brancas (♔ ♕ ♖ ♗ ♘ ♙) e pretas (♚ ♛ ♜ ♝ ♞ ♟), faces de dado (⚀ a ⚅), naipes (♠ ♣ ♦) e a peça de mahjong 🀄.',
+};
+
+const getPtLabel = (category: SymbolCategory): string =>
+  category.id === 'math' ? 'Matemática' : category.labelByLocale['pt-br'];
+
 const toEnglishPhrase = (word: string): string =>
   word
     .split('-')
@@ -166,7 +196,7 @@ const buildKeywords = (locale: AppLocale, category: SymbolCategory): string[] =>
 };
 
 const buildContentBlocks = (locale: AppLocale, category: SymbolCategory): ContentBlock[] => {
-  const label = category.labelByLocale[locale];
+  const label = locale === 'pt-br' ? getPtLabel(category) : category.labelByLocale[locale];
   const sampleSymbols = category.symbols.slice(0, 8).join(' ');
 
   if (locale === 'en') {
@@ -283,7 +313,8 @@ const buildContentBlocks = (locale: AppLocale, category: SymbolCategory): Conten
     {
       title: `Símbolos de ${label.toLowerCase()} prontos para copiar`,
       paragraphs: [
-        `Esta página abre o catálogo de símbolos com a categoria ${label} já selecionada, incluindo caracteres como ${sampleSymbols}. Clique em qualquer símbolo para copiar instantaneamente, ou busque outra categoria usando o campo no topo.`,
+        `Esta página abre o catálogo de símbolos com a categoria ${label} já selecionada, com ${category.symbols.length} símbolos, como ${sampleSymbols}. Clique em qualquer símbolo para copiar instantaneamente, ou busque outra categoria usando o campo no topo.`,
+        ...(ptCategoryNotes[category.id] ? [ptCategoryNotes[category.id]] : []),
         'Alterne o formato para copiar o caractere puro, a entidade HTML ou o codepoint Unicode, e use o montador de sequência para combinar vários símbolos em uma única string antes de copiar tudo de uma vez.',
       ],
     },
@@ -315,7 +346,7 @@ const buildContentBlocks = (locale: AppLocale, category: SymbolCategory): Conten
 };
 
 const buildFaq = (locale: AppLocale, category: SymbolCategory): FaqItem[] => {
-  const label = category.labelByLocale[locale];
+  const label = locale === 'pt-br' ? getPtLabel(category) : category.labelByLocale[locale];
 
   if (locale === 'en') {
     const enPhrase = toEnglishPhrase(category.slugWordByLocale.en);
@@ -384,6 +415,10 @@ const buildFaq = (locale: AppLocale, category: SymbolCategory): FaqItem[] => {
 
   return [
     {
+      question: `Quais símbolos existem em ${label.toLowerCase()}?`,
+      answer: `${category.symbols.length} símbolos. ${ptCategoryNotes[category.id] ?? ''}`.trim(),
+    },
+    {
       question: `Como copio um símbolo de ${label.toLowerCase()}?`,
       answer: `Clique no símbolo desejado dentro da categoria ${label}. Ele é copiado automaticamente para a área de transferência.`,
     },
@@ -442,7 +477,7 @@ export const getLocalizedSymbolCategoryContent = (
     return buildFallbackContent(locale);
   }
 
-  const label = category.labelByLocale[locale];
+  const label = locale === 'pt-br' ? getPtLabel(category) : category.labelByLocale[locale];
   const keywords = buildKeywords(locale, category);
 
   if (locale === 'en') {
@@ -499,7 +534,10 @@ export const toLocalizedSymbolCategoryLink = (
   locale: AppLocale,
 ): SymbolCategoryLinkItem => {
   const category = getSymbolCategoryById(page.categoryId);
-  const label = category?.labelByLocale[locale] ?? page.categoryLabel;
+  const label =
+    locale === 'pt-br' && category
+      ? getPtLabel(category)
+      : (category?.labelByLocale[locale] ?? page.categoryLabel);
 
   return {
     slug: getSymbolCategorySlugByLocale(page, locale),

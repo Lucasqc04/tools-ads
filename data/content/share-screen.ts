@@ -37,14 +37,14 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
         title: 'Como funciona o compartilhamento por link',
         paragraphs: [
           'Ao iniciar uma chamada, a ferramenta cria uma sala temporária e gera um link para os participantes. Dentro da sala, cada pessoa pode ligar a câmera e o microfone; quem quiser compartilhar a tela escolhe uma tela, janela ou aba no seletor do navegador. Cada participante abre o link no próprio navegador e negocia conexões WebRTC independentes.',
-          'O Redis é usado somente para guardar a sala temporária e trocar ofertas, respostas e candidatos de conexão durante a negociação. O vídeo e o áudio compatível seguem entre os navegadores por WebRTC P2P; eles não são enviados ao Redis, à aplicação Next.js nem a um servidor de mídia.',
+          'O servidor guarda apenas a sala temporária e repassa as mensagens de conexão (ofertas, respostas e candidatos) durante a negociação. O vídeo e o áudio compatível seguem entre os navegadores por WebRTC P2P; eles não passam pelo servidor do site nem por um servidor de mídia.',
         ],
       },
       {
         title: 'Uma chamada simples para conversar e mostrar a tela',
         paragraphs: [
           'Cada pessoa entra com um nome temporário e pode ligar ou desligar o microfone e a câmera durante a conversa. O anfitrião escolhe se qualquer pessoa com o link pode entrar ou se precisa aprovar cada pedido. O link não aparece em uma lista pública; quem o recebe pode encaminhá-lo, então use a sala privada quando quiser controlar a entrada.',
-          'Uma pessoa por vez pode compartilhar a tela. O apresentador pode parar ou trocar a fonte pelo controle de tela, enquanto qualquer participante pode sair da chamada. O chat envia mensagens diretamente entre as conexões e não guarda o histórico. Se quem criou a sala sair, o controle passa automaticamente para outra pessoa ativa, priorizando a conexão disponível mais forte e Wi-Fi quando o navegador informa esse dado. No celular, assistir costuma funcionar bem; apresentar depende do suporte de captura de tela na versão do navegador e do sistema operacional.',
+          'Uma pessoa por vez pode compartilhar a tela. O apresentador pode parar ou trocar a fonte pelo controle de tela, enquanto qualquer participante pode sair da chamada. O chat envia mensagens e arquivos de até 200 MB diretamente entre as conexões, e a chamada tem um quadro para desenhar em conjunto; nada disso fica guardado no servidor, e só chega a quem está conectado no momento. Se quem criou a sala sair, o controle passa automaticamente para outra pessoa ativa, priorizando a conexão disponível mais forte e Wi-Fi quando o navegador informa esse dado. No celular, assistir e conversar por voz e câmera funcionam bem; compartilhar a tela costuma exigir um computador, porque depende do suporte de captura de tela do navegador e do sistema.',
         ],
         list: [
           'Converse com uma equipe enquanto revisam uma apresentação ou página.',
@@ -69,8 +69,8 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
       {
         title: 'Privacidade e limitações da conexão direta',
         paragraphs: [
-          'A transmissão não é gravada pelo site. Os nomes temporários, participantes e mensagens de sinalização ficam no Redis apenas enquanto a sala está ativa e expiram automaticamente. Em salas públicas, qualquer pessoa com o link pode entrar; em salas privadas, o anfitrião aprova cada pedido. O navegador pode disponibilizar o áudio da aba ou do sistema; isso varia conforme o navegador, o sistema operacional e a fonte selecionada.',
-          'WebRTC usa ICE e STUN para procurar uma rota entre os participantes. Em uma conexão direta, os participantes podem descobrir informações de conectividade, inclusive endereços IP; P2P não significa anonimato de IP. Esta versão não inclui relay TURN. Firewalls e NATs restritivos podem impedir a conexão, e a ferramenta informa quando não consegue estabelecê-la. As salas e mensagens de sinalização expiram automaticamente.',
+          'A transmissão não é gravada pelo site. Os nomes temporários, a lista de participantes e as mensagens de conexão ficam guardados no servidor apenas enquanto a sala está ativa e expiram automaticamente. Em salas públicas, qualquer pessoa com o link pode entrar; em salas privadas, o anfitrião aprova cada pedido. O navegador pode disponibilizar o áudio da aba ou do sistema; isso varia conforme o navegador, o sistema operacional e a fonte selecionada.',
+          'WebRTC usa ICE e STUN para procurar uma rota entre os participantes. Em uma conexão direta, os participantes podem descobrir informações de conectividade, inclusive endereços IP; P2P não significa anonimato de IP. Esta versão não inclui relay TURN. Firewalls e NATs restritivos podem impedir a conexão, e a ferramenta informa quando não consegue estabelecê-la.',
         ],
       },
       {
@@ -85,8 +85,8 @@ const contentByLocale: Record<AppLocale, ShareScreenContent> = {
       { question: 'As pessoas precisam instalar algo ou criar uma conta?', answer: 'Não. Cada participante abre o link no navegador e escolhe um nome temporário. O navegador pede acesso à câmera, ao microfone ou à tela somente quando a pessoa ativa o recurso correspondente.' },
       { question: 'Posso controlar quem entra na chamada?', answer: 'Sim. Escolha uma sala pública por link ou uma sala privada, em que o anfitrião aprova cada solicitação antes da entrada.' },
       { question: 'Quantas pessoas podem compartilhar a tela?', answer: 'Somente uma pessoa por vez. Quando a tela está livre, qualquer participante pode iniciar o seletor do navegador. Quem está compartilhando pode parar a própria transmissão; o anfitrião pode encerrar a chamada.' },
-      { question: 'O vídeo ou a captura são enviados ao servidor?', answer: 'Não. Redis guarda apenas dados temporários de sala e sinalização. O vídeo e o áudio seguem diretamente entre os navegadores quando a rede permite.' },
-      { question: 'As mensagens do chat ficam salvas?', answer: 'Não. As mensagens seguem diretamente pelas conexões entre participantes e ficam somente na tela durante a chamada. O servidor não armazena o histórico do chat.' },
+      { question: 'O vídeo ou a captura são enviados ao servidor?', answer: 'Não. O servidor guarda apenas dados temporários de sala e de conexão. O vídeo e o áudio seguem diretamente entre os navegadores quando a rede permite.' },
+      { question: 'As mensagens do chat ficam salvas?', answer: 'Não. As mensagens e os arquivos seguem diretamente pelas conexões entre participantes e ficam somente na tela durante a chamada. O servidor não armazena o histórico do chat.' },
     ],
   },
   en: {

@@ -68,7 +68,7 @@ const uiByLocale: Record<AppLocale, ToolUi> = {
     qualityFast: 'Rápido',
     qualityBalanced: 'Equilibrado (recomendado)',
     qualityHigh: 'Alta qualidade',
-    languageLabel: 'Idioma do audio',
+    languageLabel: 'Idioma do áudio',
     taskLabel: 'Modo',
     taskTranscribe: 'Transcrever',
     taskTranslate: 'Traduzir para inglês',

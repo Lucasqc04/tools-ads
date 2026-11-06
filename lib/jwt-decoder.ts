@@ -180,8 +180,8 @@ export const decodeJwtToken = (tokenRaw: string): JwtDecodedResult => {
   if (errors.length === 0) {
     const headerResult = decodeJsonPart(
       headerPart,
-      'Header decodificado, mas nao e um objeto JSON valido.',
-      'Nao foi possivel decodificar o header do JWT.',
+      'Header decodificado, mas não é um objeto JSON válido.',
+      'Não foi possível decodificar o header do JWT.',
     );
     headerJsonText = headerResult.jsonText;
     headerObject = headerResult.object;
@@ -191,8 +191,8 @@ export const decodeJwtToken = (tokenRaw: string): JwtDecodedResult => {
 
     const payloadResult = decodeJsonPart(
       payloadPart,
-      'Payload decodificado, mas nao e um objeto JSON valido.',
-      'Nao foi possivel decodificar o payload do JWT.',
+      'Payload decodificado, mas não é um objeto JSON válido.',
+      'Não foi possível decodificar o payload do JWT.',
     );
     payloadJsonText = payloadResult.jsonText;
     payloadObject = payloadResult.object;
@@ -202,14 +202,14 @@ export const decodeJwtToken = (tokenRaw: string): JwtDecodedResult => {
   }
 
   if (signaturePart.length === 0) {
-    warnings.push('A parte de assinatura esta vazia. Isso pode indicar token incompleto.');
+    warnings.push('A parte de assinatura está vazia. Isso pode indicar token incompleto.');
   }
 
   const commonClaims = buildCommonClaims(payloadObject);
   const expiration = buildExpiration(payloadObject);
 
   if (errors.length === 0) {
-    warnings.push('Este resultado apenas decodifica o JWT e NAO valida assinatura, emissor ou confiabilidade.');
+    warnings.push('Este resultado apenas decodifica o JWT e NÃO valida assinatura, emissor ou confiabilidade.');
   }
 
   return {

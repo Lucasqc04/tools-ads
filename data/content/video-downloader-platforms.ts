@@ -50,7 +50,7 @@ const twitterPt: VideoDownloaderPlatformContent = {
     {
       title: 'O que não funciona e por quê',
       paragraphs: [
-        'Posts de contas protegidas, tweets apagados e conteúdo que o X exige login para mostrar não podem ser acessados. Quando o post tem mais de um vídeo, a ferramenta usa o primeiro. Transmissões ao vivo em andamento e vídeos que só existem em lista de reprodução HLS não são oferecidos para download.',
+        'Posts de contas protegidas, tweets apagados e conteúdo que o X exige login para mostrar não podem ser acessados. Quando o post tem mais de um vídeo, a ferramenta usa o primeiro, e arquivos acima de 1 GB não são baixados pelo navegador. Vídeos que só existem em lista de reprodução HLS, sem versão MP4, não são oferecidos para download.',
         'Baixe somente vídeos que você tem direito de salvar. A ferramenta usa apenas as informações públicas do post e não contorna nenhuma proteção.',
       ],
     },

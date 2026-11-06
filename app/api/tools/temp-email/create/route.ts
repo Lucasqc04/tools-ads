@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {
-          error: 'Muitas requisicoes. Aguarde alguns segundos e tente novamente.',
+          error: 'Muitas requisições. Aguarde alguns segundos e tente novamente.',
         },
         {
           status: 429,
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     if (error instanceof TempEmailStoreUnavailableError) {
       return NextResponse.json(
         {
-          error: 'Servico de inbox temporaria indisponivel no momento. Tente novamente.',
+          error: 'Serviço de inbox temporária indisponível no momento. Tente novamente.',
         },
         {
           status: 503,
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
     if (error instanceof Error && error.message.includes('TEMP_EMAIL_DOMAIN')) {
       return NextResponse.json(
         {
-          error: 'Ferramenta indisponivel: dominio temporario nao configurado.',
+          error: 'Ferramenta indisponível: domínio temporário não configurado.',
         },
         {
           status: 503,
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        error: 'Nao foi possivel gerar um e-mail temporario agora.',
+        error: 'Não foi possível gerar um e-mail temporário agora.',
       },
       {
         status: 500,

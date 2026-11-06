@@ -78,7 +78,7 @@ export const createTransferId = (): string => {
 
 export const createTransferSecret = (byteLength: number): string => {
   if (!Number.isInteger(byteLength) || byteLength < 1 || byteLength > 64) {
-    throw new Error('Tamanho invalido para o segredo da transferencia.');
+    throw new Error('Tamanho inválido para o segredo da transferência.');
   }
 
   const bytes = new Uint8Array(byteLength);
@@ -94,7 +94,7 @@ export const decompressTransferPayload = (compressed: string): string => {
   const output = decompressFromEncodedURIComponent(compressed);
 
   if (typeof output !== 'string') {
-    throw new Error('Nao foi possivel descompactar o payload da transferencia.');
+    throw new Error('Não foi possível descompactar o conteúdo da transferência.');
   }
 
   return output;
@@ -304,7 +304,7 @@ export const parseSignalDescription = (raw: string): TransferSignalDescription =
   try {
     parsed = JSON.parse(raw);
   } catch {
-    throw new Error('Nao foi possivel interpretar a descricao WebRTC.');
+    throw new Error('Não foi possível interpretar a descrição WebRTC.');
   }
 
   if (
@@ -315,7 +315,7 @@ export const parseSignalDescription = (raw: string): TransferSignalDescription =
     typeof parsed.type !== 'string' ||
     typeof parsed.sdp !== 'string'
   ) {
-    throw new Error('Descricao WebRTC invalida.');
+    throw new Error('Descrição WebRTC inválida.');
   }
 
   if (
@@ -324,7 +324,7 @@ export const parseSignalDescription = (raw: string): TransferSignalDescription =
     parsed.type !== 'pranswer' &&
     parsed.type !== 'rollback'
   ) {
-    throw new Error('Tipo de descricao WebRTC invalido.');
+    throw new Error('Tipo de descrição WebRTC inválido.');
   }
 
   return {

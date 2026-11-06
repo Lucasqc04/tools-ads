@@ -13,7 +13,7 @@ export function SiteFooter({ locale = 'pt-br' }: Readonly<SiteFooterProps>) {
   const year = new Date().getFullYear();
   const dictionary = getDictionary(locale);
   const telegramSuggestionCopy = {
-    'pt-br': 'Sugestoes e melhorias',
+    'pt-br': 'Sugestões e melhorias',
     en: 'Suggestions and improvements',
     es: 'Sugerencias y mejoras',
     zh: '建议与反馈',

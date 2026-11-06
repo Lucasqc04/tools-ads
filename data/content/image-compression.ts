@@ -1,62 +1,62 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const imageCompressionIntro =
-  'Comprima imagens online em lote com controle de nivel, estimativa de tamanho final e preview antes do download, gratis e sem cadastro.';
+  'Comprima várias imagens de uma vez, escolha o nível de compressão e compare o antes e o depois antes de baixar. A compressão acontece no navegador e não exige cadastro.';
 
 export const imageCompressionContentBlocks: ContentBlock[] = [
   {
-    title: 'Como funciona a compressao de imagem em lote',
+    title: 'Como comprimir imagens em lote',
     paragraphs: [
-      'A ferramenta permite enviar varias imagens de uma vez, definir o nivel de compressao e processar tudo no navegador. Isso reduz etapas manuais para quem precisa otimizar arquivos para site, ecommerce, anuncios e redes sociais.',
-      'Antes de comprimir, o sistema mostra uma estimativa de tamanho final por arquivo. A previsao nao e absoluta, mas ajuda a decidir se vale usar uma compressao leve, media ou agressiva.',
+      'Adicione uma ou várias imagens (PNG, JPEG, WEBP, AVIF, GIF, BMP, TIFF ou ICO, até 100 MB cada), ajuste o nível de compressão e clique em comprimir. O nível vai de 1% a 100% e começa em 56%. Quanto mais alto, menor o arquivo e maior a perda de qualidade.',
+      'Antes de processar, a ferramenta mostra uma estimativa do tamanho final por arquivo e o total do lote. É só uma previsão calculada a partir do nível escolhido: o tamanho real depende da resolução e do conteúdo da imagem. Depois de comprimir, cada item mostra a prévia original e a comprimida, o tamanho final e a porcentagem de redução.',
     ],
   },
   {
-    title: 'Controle de qualidade e tamanho para cada necessidade',
+    title: 'O que o nível de compressão muda',
     paragraphs: [
-      'Voce escolhe o nivel de compressao em slider e pode manter o formato original ou converter para JPEG/WEBP para reduzir ainda mais o peso.',
-      'A pagina exibe preview da imagem original e da versao comprimida, com comparacao de tamanho e percentual de reducao, facilitando a revisao antes de baixar.',
+      'O nível controla dois ajustes ao mesmo tempo. O primeiro é a qualidade de codificação, que cai de cerca de 94% para cerca de 24% conforme você sobe o nível. O segundo é a resolução: em níveis acima de poucos pontos, o lado maior da imagem é reduzido de forma proporcional, chegando a cerca de 58% do tamanho original no nível máximo e nunca abaixo de 640 px.',
+      'Por isso uma foto grande pode ficar visivelmente menor em largura e altura quando a compressão é forte. Se precisar manter as dimensões exatas, use um nível baixo ou redimensione a imagem em outra ferramenta antes.',
     ],
     list: [
-      'Compressao leve para preservar qualidade visual.',
-      'Compressao media para equilibrio entre peso e nitidez.',
-      'Compressao alta para reduzir mais tamanho em uploads e compartilhamento.',
-      'Fluxo em lote para dezenas de imagens sem repetir processo arquivo por arquivo.',
+      'Manter formato original: a imagem continua no mesmo tipo, quando o navegador permite.',
+      'Converter para JPEG: reduz bastante fotos, mas remove transparência.',
+      'Converter para WEBP: costuma gerar arquivos menores que JPEG e PNG para uso em sites.',
+      'PNG sem perdas ganha pouco só com a qualidade; o ganho vem sobretudo da redução de resolução ou da troca para WEBP ou JPEG.',
     ],
   },
   {
-    title: 'Privacidade e limites praticos',
+    title: 'Quando usar e quais são os limites',
     paragraphs: [
-      'O processamento ocorre localmente no navegador por padrao, sem upload automatico para servidor. Isso e util para imagens sensiveis, materiais internos e conteudo de clientes.',
-      'Em arquivos muito grandes, o tempo de compressao pode variar conforme memoria e desempenho do dispositivo. Em celular, trabalhar em lotes menores tende a melhorar estabilidade.',
+      'Serve para reduzir fotos antes de anexar em e-mail, enviar em formulários com limite de tamanho, publicar em um site ou loja virtual e guardar capturas de tela. Teste primeiro com o nível padrão e use o botão de ver a imagem para conferir texto pequeno, bordas e áreas de céu ou degradê, onde a perda aparece primeiro.',
+      'As imagens não são enviadas ao servidor: a compressão usa o processador do seu aparelho. Lotes grandes ou imagens muito pesadas podem demorar e consumir memória, principalmente no celular, então vale processar em grupos menores. O botão de baixar todas salva os arquivos um por um, sem criar um ZIP.',
     ],
   },
 ];
 
 export const imageCompressionFaq: FaqItem[] = [
   {
-    question: 'Posso comprimir varias imagens de uma vez?',
+    question: 'Posso comprimir várias imagens de uma vez?',
     answer:
-      'Sim. A ferramenta suporta envio multiplo e processamento em lote com preview por arquivo.',
+      'Sim. Adicione quantas imagens quiser (até 100 MB cada), comprima todas com o mesmo nível e baixe uma a uma. Cada arquivo tem status, prévia e porcentagem de redução próprios.',
   },
   {
-    question: 'Consigo escolher o nivel de compressao?',
+    question: 'O que o nível de compressão altera?',
     answer:
-      'Sim. Voce controla o nivel por slider e pode ajustar entre compressao leve e mais agressiva.',
+      'A qualidade de codificação e, em níveis mais altos, também a resolução: o lado maior chega a cerca de 58% do original no máximo, sem ficar abaixo de 640 px. Níveis baixos preservam mais detalhe.',
   },
   {
-    question: 'A estimativa de tamanho final e precisa?',
+    question: 'A estimativa de tamanho final é exata?',
     answer:
-      'A estimativa e uma previsao baseada no nivel escolhido. O tamanho real pode variar conforme resolucao, formato e conteudo da imagem.',
+      'Não. É uma previsão baseada no nível e no formato de saída. O tamanho real aparece depois da compressão e pode variar conforme a resolução e o tipo de imagem.',
   },
   {
-    question: 'Meus arquivos sao enviados para servidor?',
+    question: 'Minhas imagens são enviadas para um servidor?',
     answer:
-      'Nao por padrao. A compressao e feita localmente no navegador, sem upload automatico.',
+      'Não. A compressão acontece no navegador, com o processador do seu aparelho. Nada é enviado pela ferramenta.',
   },
   {
-    question: 'Funciona no celular?',
+    question: 'Por que meu PNG quase não diminuiu?',
     answer:
-      'Sim. A interface e responsiva e foi desenhada para funcionar em mobile sem scroll horizontal.',
+      'PNG é um formato sem perdas, então o ajuste de qualidade rende pouco. Para reduzir mais, aumente o nível, que também diminui a resolução, ou converta para WEBP ou JPEG (JPEG não mantém transparência).',
   },
 ];

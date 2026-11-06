@@ -56,9 +56,9 @@ const uiByLocale: Record<AppLocale, EncoderUi> = {
   'pt-br': {
     title: 'Gerador de Base64 por imagem',
     intro:
-      'Envie uma imagem e gere Base64 automaticamente. Escolha formato de saida e copie o resultado em um clique.',
+      'Envie uma imagem e gere Base64 automaticamente. Escolha formato de saída e copie o resultado em um clique.',
     fileLabel: 'Imagem de origem',
-    fileHint: 'PNG, JPG, WEBP, GIF, SVG e outros formatos de imagem sao aceitos.',
+    fileHint: 'PNG, JPG, WEBP, GIF, SVG e outros formatos de imagem são aceitos.',
     outputImageFormatLabel: 'Formato da imagem para codificar',
     outputTextModeLabel: 'Modo do texto Base64',
     modeDataUrl: 'Data URL completo',
@@ -72,10 +72,10 @@ const uiByLocale: Record<AppLocale, EncoderUi> = {
     downloadTxt: 'Baixar .txt',
     clear: 'Limpar',
     converting: 'Gerando Base64...',
-    genericError: 'Nao foi possivel gerar Base64 para essa imagem.',
+    genericError: 'Não foi possível gerar Base64 para essa imagem.',
     localNote:
-      'Conversao para Base64 acontece localmente no navegador. A imagem nao e enviada para servidor por padrao.',
-    unsupportedOutput: 'Formato de saida nao suportado neste navegador.',
+      'Conversão para Base64 acontece localmente no navegador. A imagem não é enviada para nenhum servidor.',
+    unsupportedOutput: 'Formato de saída não suportado neste navegador.',
     formatLabels: {
       png: 'PNG',
       jpeg: 'JPEG',

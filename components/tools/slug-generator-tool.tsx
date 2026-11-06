@@ -30,19 +30,19 @@ type SlugUi = {
 
 const uiByLocale: Record<AppLocale, SlugUi> = {
   'pt-br': {
-    localNote: 'Geracao local no navegador. Ideal para CMS, blog, e-commerce e rotas web.',
+    localNote: 'O slug é gerado no navegador. Útil para CMS, blog, e-commerce e rotas web.',
     originalTextLabel: 'Texto original',
     urlPrefixLabel: 'Prefixo de URL',
-    emptySlugWarning: 'Slug vazio: ajuste o texto ou as configuracoes.',
+    emptySlugWarning: 'Slug vazio: ajuste o texto ou as configurações.',
     longSlugWarning: 'Slug longo. Considere reduzir para facilitar leitura.',
     copied: 'Copiado',
     copySlug: 'Copiar slug',
     copyFullUrl: 'Copiar URL completa',
-    saveHistory: 'Salvar no historico',
+    saveHistory: 'Salvar no histórico',
     clear: 'Limpar',
-    suggestionsTitle: 'Sugestoes',
+    suggestionsTitle: 'Sugestões',
     examplesTitle: 'Exemplos prontos',
-    localHistoryTitle: 'Historico local',
+    localHistoryTitle: 'Histórico local',
   },
   en: {
     localNote: 'Local generation in browser. Useful for CMS, blogs, e-commerce, and web routes.',
@@ -203,13 +203,13 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-800">Separador</span>
           <Select value={separator} onChange={(event) => setSeparator(event.target.value as '-' | '_')}>
-            <option value="-">Hifen (-)</option>
+            <option value="-">Hífen (-)</option>
             <option value="_">Underscore (_)</option>
           </Select>
         </label>
 
         <label className="space-y-2">
-          <span className="text-sm font-semibold text-slate-800">Max length</span>
+          <span className="text-sm font-semibold text-slate-800">{locale === 'pt-br' ? 'Tamanho máximo' : 'Max length'}</span>
           <Input value={maxLength} onChange={(event) => setMaxLength(event.target.value)} inputMode="numeric" />
         </label>
 
@@ -220,11 +220,11 @@ export function SlugGeneratorTool({ locale = 'pt-br' }: SlugGeneratorToolProps) 
       </div>
 
       <div className="grid gap-2 md:grid-cols-2 text-sm text-slate-700">
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={lowercase} onChange={(event) => setLowercase(event.target.checked)} />lowercase</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removeStopWords} onChange={(event) => setRemoveStopWords(event.target.checked)} />remove stopwords</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removePunctuation} onChange={(event) => setRemovePunctuation(event.target.checked)} />remove punctuation</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removeEmojis} onChange={(event) => setRemoveEmojis(event.target.checked)} />remove emojis</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={keepWordBoundaries} onChange={(event) => setKeepWordBoundaries(event.target.checked)} />keep word boundaries</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={lowercase} onChange={(event) => setLowercase(event.target.checked)} />{locale === 'pt-br' ? 'minúsculas' : 'lowercase'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removeStopWords} onChange={(event) => setRemoveStopWords(event.target.checked)} />{locale === 'pt-br' ? 'remover palavras comuns (de, para, com...)' : 'remove stopwords'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removePunctuation} onChange={(event) => setRemovePunctuation(event.target.checked)} />{locale === 'pt-br' ? 'remover pontuação' : 'remove punctuation'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removeEmojis} onChange={(event) => setRemoveEmojis(event.target.checked)} />{locale === 'pt-br' ? 'remover emojis' : 'remove emojis'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={keepWordBoundaries} onChange={(event) => setKeepWordBoundaries(event.target.checked)} />{locale === 'pt-br' ? 'cortar só entre palavras (keep word boundaries)' : 'keep word boundaries'}</label>
       </div>
 
       <section className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-4">

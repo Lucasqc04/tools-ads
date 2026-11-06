@@ -78,7 +78,7 @@ const selectCoins = (
   const required = amountSats + currentFeeGuess;
 
   throw new Error(
-    `Saldo insuficiente para enviar este valor com a fee atual. Necessario pelo menos ${required} sats.`,
+    `Saldo insuficiente para enviar este valor com a fee atual. Necessário pelo menos ${required} sats.`,
   );
 };
 
@@ -88,18 +88,18 @@ export const createAndSignSendTransaction = (
   params: BuildSendTxParams,
 ): SignedTransactionResult => {
   if (!Number.isSafeInteger(params.amountSats) || params.amountSats <= 0) {
-    throw new Error('Valor de envio invalido.');
+    throw new Error('Valor de envio inválido.');
   }
 
   if (!Number.isFinite(params.feeRate) || params.feeRate < 1) {
-    throw new Error('Fee rate invalida. Use valor maior ou igual a 1 sat/vB.');
+    throw new Error('Fee inválida. Use um valor maior ou igual a 1 sat/vB.');
   }
 
   const networkConfig = getBitcoinNetworkConfig(params.networkId);
   const keyPair = getSignerFromWif(params.wif, params.networkId);
 
   if (!keyPair.privateKey) {
-    throw new Error('Nao foi possivel acessar chave privada para assinatura.');
+    throw new Error('Não foi possível acessar chave privada para assinatura.');
   }
 
   address.toOutputScript(params.destinationAddress, networkConfig.bitcoinNetwork);
@@ -110,13 +110,13 @@ export const createAndSignSendTransaction = (
   });
 
   if (!senderPayment.address || !senderPayment.output) {
-    throw new Error('Nao foi possivel derivar endereco SegWit para assinatura.');
+    throw new Error('Não foi possível derivar endereço SegWit para assinatura.');
   }
 
   const senderScript = senderPayment.output;
 
   if (senderPayment.address !== params.fromAddress) {
-    throw new Error('A chave informada nao corresponde ao endereco da carteira atual.');
+    throw new Error('A chave informada não corresponde ao endereço da carteira atual.');
   }
 
   const spendableUtxos = params.utxos.filter((utxo) =>
@@ -124,7 +124,7 @@ export const createAndSignSendTransaction = (
   );
 
   if (!spendableUtxos.length) {
-    throw new Error('Nenhum UTXO disponivel para envio na rede selecionada.');
+    throw new Error('Nenhum UTXO disponível para envio na rede selecionada.');
   }
 
   const selection = selectCoins(spendableUtxos, params.amountSats, params.feeRate);

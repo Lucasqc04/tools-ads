@@ -113,7 +113,7 @@ export const nicknameSymbolCategories: NicknameSymbolCategory[] = [
   },
   {
     id: 'hearts',
-    labelByLocale: { 'pt-br': 'Coracoes', en: 'Hearts', es: 'Corazones' , zh: '爱心' },
+    labelByLocale: { 'pt-br': 'Corações', en: 'Hearts', es: 'Corazones' , zh: '爱心' },
     symbols: ['♡', '♥', 'ღ', '❥', '❣', 'დ', 'ෆ', '୨୧', 'ᰔ', 'ꨄ', '❦', 'ლ', '♥︎', '❤︎', '❧', '۵'],
   },
   {
@@ -123,7 +123,7 @@ export const nicknameSymbolCategories: NicknameSymbolCategory[] = [
   },
   {
     id: 'music',
-    labelByLocale: { 'pt-br': 'Musica', en: 'Music', es: 'Musica' , zh: '音乐' },
+    labelByLocale: { 'pt-br': 'Música', en: 'Music', es: 'Musica' , zh: '音乐' },
     symbols: ['♪', '♫', '♬', '♩', '♭', '♮', '♯', '𝄞', '𝄢', '𝄡', '𝄐', '𝄪', '𝄫', '♭︎', '♯︎', '◖♪◗'],
   },
   {
@@ -138,7 +138,7 @@ export const nicknameSymbolCategories: NicknameSymbolCategory[] = [
   },
   {
     id: 'zodiac',
-    labelByLocale: { 'pt-br': 'Zodiaco', en: 'Zodiac', es: 'Zodiaco' , zh: '星座' },
+    labelByLocale: { 'pt-br': 'Zodíaco', en: 'Zodiac', es: 'Zodiaco' , zh: '星座' },
     symbols: ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '☉', '☽', '☾', '⊙'],
   },
   {
@@ -250,7 +250,7 @@ export const nicknameFrameDefinitions: NicknameFrame[] = [
   },
   {
     id: 'blade',
-    labelByLocale: { 'pt-br': 'Laminas', en: 'Blades', es: 'Cuchillas' , zh: '刀刃' },
+    labelByLocale: { 'pt-br': 'Lâminas', en: 'Blades', es: 'Cuchillas' , zh: '刀刃' },
     left: '乂',
     right: '乂',
   },
@@ -298,7 +298,7 @@ export const nicknameFrameDefinitions: NicknameFrame[] = [
   },
   {
     id: 'heart',
-    labelByLocale: { 'pt-br': 'Coracao', en: 'Heart', es: 'Corazon' , zh: '爱心' },
+    labelByLocale: { 'pt-br': 'Coração', en: 'Heart', es: 'Corazon' , zh: '爱心' },
     left: '♡',
     right: '♡',
   },
@@ -358,7 +358,7 @@ export const nicknameFrameDefinitions: NicknameFrame[] = [
   },
   {
     id: 'angle',
-    labelByLocale: { 'pt-br': 'Angulos', en: 'Angles', es: 'Angulos' , zh: '尖角' },
+    labelByLocale: { 'pt-br': 'Ângulos', en: 'Angles', es: 'Angulos' , zh: '尖角' },
     left: '《',
     right: '》',
   },
@@ -427,11 +427,11 @@ export const nicknameTextStyles: NicknameTextStyle[] = [
   },
   {
     id: 'italic',
-    labelByLocale: { 'pt-br': 'Italico Unicode', en: 'Unicode italic', es: 'Cursiva Unicode' , zh: 'Unicode 斜体' },
+    labelByLocale: { 'pt-br': 'Itálico Unicode', en: 'Unicode italic', es: 'Cursiva Unicode' , zh: 'Unicode 斜体' },
   },
   {
     id: 'bold-italic',
-    labelByLocale: { 'pt-br': 'Negrito italico', en: 'Bold italic', es: 'Negrita cursiva' , zh: '粗斜体' },
+    labelByLocale: { 'pt-br': 'Negrito itálico', en: 'Bold italic', es: 'Negrita cursiva' , zh: '粗斜体' },
   },
   {
     id: 'circled',
@@ -443,7 +443,7 @@ export const nicknameTextStyles: NicknameTextStyle[] = [
   },
   {
     id: 'spaced',
-    labelByLocale: { 'pt-br': 'Espacado', en: 'Spaced', es: 'Espaciado' , zh: '间隔' },
+    labelByLocale: { 'pt-br': 'Espaçado', en: 'Spaced', es: 'Espaciado' , zh: '间隔' },
   },
   {
     id: 'underlined',
@@ -461,7 +461,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['lightning', 'katakana', 'blade', 'spark', 'minimal'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Comece com simbolos curtos em texto. O filtro da Epic pode rejeitar glifos complexos ou nomes longos.',
+      'pt-br': 'Comece com símbolos curtos em texto. O filtro da Epic pode rejeitar glifos complexos ou nomes longos.',
       en: 'Start with short text symbols. Epic filters may reject complex glyphs or long display names.',
       es: 'Empieza con simbolos de texto cortos. Los filtros de Epic pueden rechazar glifos complejos o nombres largos.',
       zh: '先尝试简短的文字符号。Epic 的过滤规则可能会拒绝过于复杂的字形或过长的显示名称。',
@@ -482,7 +482,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['ornate', 'pro', 'royal', 'warrior', 'wing'],
     recommendedStyleId: 'small-caps',
     guidanceByLocale: {
-      'pt-br': 'Simbolos Unicode em texto tendem a renderizar melhor que emoji, mas a fonte pode variar por aparelho.',
+      'pt-br': 'Símbolos Unicode em texto tendem a renderizar melhor que emoji, mas a fonte pode variar por aparelho.',
       en: 'Text Unicode symbols tend to render better than emoji, but the game font can vary by device.',
       es: 'Los simbolos Unicode de texto suelen renderizar mejor que los emoji, pero la fuente puede variar por dispositivo.',
       zh: '文字类 Unicode 符号通常比表情符号渲染效果更好,但字体可能因设备而异。',
@@ -503,13 +503,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['spark', 'heart', 'minimal', 'japanese-corners'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Nome de usuario e nome de exibicao seguem regras diferentes; alguns simbolos podem ser filtrados.',
+      'pt-br': 'Nome de usuário e nome de exibição seguem regras diferentes; alguns símbolos podem ser filtrados.',
       en: 'Usernames and display names follow different rules, and some symbols can be filtered.',
       es: 'El nombre de usuario y el nombre visible siguen reglas distintas, y algunos simbolos pueden filtrarse.',
       zh: '用户名和显示名称遵循不同规则,部分符号可能会被过滤。',
     },
     contextByLocale: {
-      'pt-br': 'Prefira combinacoes simples que continuem legiveis no chat e dentro das experiencias.',
+      'pt-br': 'Prefira combinações simples que continuem legíveis no chat e dentro das experiências.',
       en: 'Prefer simple combinations that stay readable in chat and inside experiences.',
       es: 'Prefiere combinaciones simples que sigan legibles en el chat y dentro de las experiencias.',
       zh: '优先选择在聊天和各类体验中依然清晰可读的简单组合。',
@@ -524,7 +524,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['minimal', 'lightning', 'spark', 'clan'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'O Riot ID separa nome do jogo e tagline. Use decoracao curta e mantenha a identificacao clara.',
+      'pt-br': 'O Riot ID separa nome do jogo e tagline. Use decoração curta e mantenha a identificação clara.',
       en: 'Riot ID separates the game name and tagline. Keep decorations short and the identity clear.',
       es: 'Riot ID separa el nombre del juego y el tagline. Usa decoracion corta y una identidad clara.',
       zh: 'Riot ID 会将游戏名称和标签分开显示。使用简短的装饰,保持身份清晰可辨。',
@@ -545,13 +545,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['blade', 'warrior', 'pro', 'lightning', 'clan'],
     recommendedStyleId: 'small-caps',
     guidanceByLocale: {
-      'pt-br': 'Decoracoes compactas funcionam melhor em telas mobile. Evite empilhar muitos glifos.',
+      'pt-br': 'Decorações compactas funcionam melhor em telas mobile. Evite empilhar muitos glifos.',
       en: 'Compact decorations work better on mobile screens. Avoid stacking too many glyphs.',
       es: 'Las decoraciones compactas funcionan mejor en pantallas moviles. Evita acumular demasiados glifos.',
       zh: '紧凑的装饰在移动端屏幕上效果更好。避免堆叠过多字形。',
     },
     contextByLocale: {
-      'pt-br': 'Teste o nome na lista do clan, lobby e placar, onde o espaco visual e menor.',
+      'pt-br': 'Teste o nome na lista do clan, lobby e placar, onde o espaço visual é menor.',
       en: 'Test the name in clan lists, lobbies, and scoreboards where visual space is tighter.',
       es: 'Prueba el nombre en listas de clan, lobbies y marcadores donde hay menos espacio visual.',
       zh: '在战队列表、大厅和记分板等视觉空间较小的地方测试名称效果。',
@@ -566,13 +566,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['wing', 'warrior', 'royal', 'blade', 'minimal'],
     recommendedStyleId: 'small-caps',
     guidanceByLocale: {
-      'pt-br': 'Use simbolos de texto compactos e teste a fonte no mesmo aparelho em que voce joga.',
+      'pt-br': 'Use símbolos de texto compactos e teste a fonte no mesmo aparelho em que você joga.',
       en: 'Use compact text symbols and test the font on the same device you play on.',
       es: 'Usa simbolos de texto compactos y prueba la fuente en el mismo dispositivo donde juegas.',
       zh: '使用紧凑的文字符号,并在你实际游戏的设备上测试字体效果。',
     },
     contextByLocale: {
-      'pt-br': 'Observe o resultado em listas de squad, clan e feed de eliminacoes.',
+      'pt-br': 'Observe o resultado em listas de squad, clan e feed de eliminações.',
       en: 'Review the result in squad lists, clans, and the elimination feed.',
       es: 'Revisa el resultado en listas de squad, clan y feed de eliminaciones.',
       zh: '留意名称在小队列表、战队和淘汰动态中的显示效果。',
@@ -587,13 +587,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['clan', 'minimal', 'lightning', 'blade'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'O nome exibido normalmente vem do perfil Steam; servidores e placares podem renderizar simbolos de formas diferentes.',
+      'pt-br': 'O nome exibido normalmente vem do perfil Steam; servidores e placares podem renderizar símbolos de formas diferentes.',
       en: 'The displayed name normally comes from Steam, while servers and scoreboards may render symbols differently.',
       es: 'El nombre visible normalmente viene de Steam, y servidores y marcadores pueden renderizar simbolos de forma distinta.',
       zh: '显示名称通常来自 Steam 个人资料,服务器和记分板对符号的渲染方式可能不同。',
     },
     contextByLocale: {
-      'pt-br': 'Mantenha o nome curto para leitura rapida no placar, kill feed e demos.',
+      'pt-br': 'Mantenha o nome curto para leitura rápida no placar, kill feed e demos.',
       en: 'Keep it short for fast reading in the scoreboard, kill feed, and demos.',
       es: 'Mantenlo corto para leer rapido en el marcador, kill feed y demos.',
       zh: '保持名称简短,便于在记分板、击杀信息和录像中快速阅读。',
@@ -614,7 +614,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
       zh: 'Java 版、基岩版和私服可能对账号名称和昵称采用不同的规则。',
     },
     contextByLocale: {
-      'pt-br': 'Confirme se o simbolo e aceito pelo servidor e se aparece bem no chat e na lista de jogadores.',
+      'pt-br': 'Confirme se o símbolo é aceito pelo servidor e se aparece bem no chat e na lista de jogadores.',
       en: 'Confirm the symbol is accepted by the server and renders well in chat and player lists.',
       es: 'Confirma que el servidor acepta el simbolo y que aparece bien en chat y listas de jugadores.',
       zh: '确认服务器是否接受该符号,并检查它在聊天和玩家列表中的显示效果。',
@@ -635,7 +635,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
       zh: '选择较短的边框,以便在游戏紧凑的屏幕上保持可读性。',
     },
     contextByLocale: {
-      'pt-br': 'Teste no perfil, clube e apresentacao da batalha antes de manter a alteracao.',
+      'pt-br': 'Teste no perfil, clube e apresentação da batalha antes de manter a alteração.',
       en: 'Test it in profile, club, and battle intro views before keeping the change.',
       es: 'Pruebalo en perfil, club y presentacion de batalla antes de mantener el cambio.',
       zh: '在保留修改前,先在个人资料、俱乐部和对局开场画面中测试效果。',
@@ -650,7 +650,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['lightning', 'spark', 'minimal', 'clan'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'O nome pode depender da conta vinculada e da plataforma; nem todo glifo e compartilhado entre fontes.',
+      'pt-br': 'O nome pode depender da conta vinculada e da plataforma; nem todo glifo é compartilhado entre fontes.',
       en: 'The name can depend on the linked account and platform, and not every glyph is shared across fonts.',
       es: 'El nombre puede depender de la cuenta vinculada y la plataforma, y no todas las fuentes comparten los mismos glifos.',
       zh: '名称可能取决于关联的账号和平台,并非所有字体都支持相同的字形。',
@@ -671,13 +671,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['pro', 'warrior', 'lightning', 'clan'],
     recommendedStyleId: 'small-caps',
     guidanceByLocale: {
-      'pt-br': 'Use uma moldura curta para manter o nome legivel durante as partidas e no perfil.',
+      'pt-br': 'Use uma moldura curta para manter o nome legível durante as partidas e no perfil.',
       en: 'Use a short frame to keep your name readable during matches and on your profile.',
       es: 'Usa un marco corto para mantener el nombre legible durante las partidas y en el perfil.',
       zh: '使用简短的边框,让昵称在对局和个人资料中保持清晰。',
     },
     contextByLocale: {
-      'pt-br': 'Confira o resultado no perfil, na lista de amigos e na tela de selecao de herois.',
+      'pt-br': 'Confira o resultado no perfil, na lista de amigos e na tela de seleção de heróis.',
       en: 'Check the result on your profile, friends list, and hero selection screen.',
       es: 'Revisa el resultado en tu perfil, la lista de amigos y la seleccion de heroes.',
       zh: '请在个人资料、好友列表和英雄选择界面检查效果。',
@@ -692,7 +692,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['minimal', 'pro', 'spark', 'clan'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Prefira simbolos Unicode simples e confirme se o cliente aceita o nome completo.',
+      'pt-br': 'Prefira símbolos Unicode simples e confirme se o cliente aceita o nome completo.',
       en: 'Prefer simple Unicode symbols and confirm that the game accepts the complete name.',
       es: 'Prefiere simbolos Unicode sencillos y confirma que el juego acepta el nombre completo.',
       zh: '优先使用简单的 Unicode 符号,并确认游戏接受完整昵称。',
@@ -713,7 +713,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['clan', 'minimal', 'lightning', 'spark'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'O Riot ID tem nome e tagline separados. Mantenha a decoracao curta e facil de ler.',
+      'pt-br': 'O Riot ID tem nome e tagline separados. Mantenha a decoração curta e fácil de ler.',
       en: 'Riot ID separates the game name and tagline. Keep decoration short and easy to read.',
       es: 'Riot ID separa el nombre del juego y la etiqueta. Usa una decoracion corta y legible.',
       zh: 'Riot ID 将游戏名称和标签分开。装饰尽量简短,方便阅读。',
@@ -740,7 +740,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
       zh: '关联账号和平台可能会影响昵称显示方式。请先测试简短边框。',
     },
     contextByLocale: {
-      'pt-br': 'Confira no lobby, no placar e na lista do esquadrao antes de salvar.',
+      'pt-br': 'Confira no lobby, no placar e na lista do esquadrão antes de salvar.',
       en: 'Check the lobby, scoreboard, and squad list before saving.',
       es: 'Revisa la sala, el marcador y la lista del escuadron antes de guardar.',
       zh: '保存前请检查大厅、记分板和小队列表。',
@@ -755,7 +755,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['warrior', 'blade', 'minimal', 'clan'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'A versao para PC e a versao mobile podem tratar fontes e limites de nome de formas diferentes.',
+      'pt-br': 'A versão para PC e a versão mobile podem tratar fontes e limites de nome de formas diferentes.',
       en: 'PC and mobile versions may handle fonts and name limits differently.',
       es: 'Las versiones para PC y movil pueden gestionar las fuentes y los limites de nombre de forma distinta.',
       zh: 'PC 版和手机版对字体及昵称长度的处理可能不同。',
@@ -776,7 +776,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['spark', 'minimal', 'lightning', 'clan'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Use poucos simbolos para o nome continuar legivel na partida e no placar.',
+      'pt-br': 'Use poucos símbolos para o nome continuar legível na partida e no placar.',
       en: 'Use only a few symbols so the name stays readable in matches and on the scoreboard.',
       es: 'Usa pocos simbolos para que el nombre siga legible en partidas y en el marcador.',
       zh: '少用装饰符号,让昵称在对局和记分板上保持清晰。',
@@ -797,13 +797,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['blade', 'lightning', 'minimal', 'warrior'],
     recommendedStyleId: 'small-caps',
     guidanceByLocale: {
-      'pt-br': 'Prefira poucos caracteres decorativos e confirme se o nome continua legivel na fonte do jogo.',
+      'pt-br': 'Prefira poucos caracteres decorativos e confirme se o nome continua legível na fonte do jogo.',
       en: 'Use only a few decorative characters and confirm the name stays readable in the game font.',
       es: 'Usa pocos caracteres decorativos y confirma que el nombre siga legible con la fuente del juego.',
       zh: '少用装饰字符,并确认游戏字体仍能清晰显示昵称。',
     },
     contextByLocale: {
-      'pt-br': 'Confira o resultado no lobby, no esquadrao e no feed de combate antes de trocar o nome.',
+      'pt-br': 'Confira o resultado no lobby, no esquadrão e no feed de combate antes de trocar o nome.',
       en: 'Check the lobby, squad, and combat feed before changing your name.',
       es: 'Revisa la sala, el escuadron y el feed de combate antes de cambiar el nombre.',
       zh: '更改名称前,请在大厅、小队和战斗动态中检查显示效果。',
@@ -818,13 +818,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['minimal', 'warrior', 'blade', 'clan'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Em um shooter tatico, um nick curto e claro facilita identificar aliados durante a partida.',
+      'pt-br': 'Em um shooter tático, um nick curto e claro facilita identificar aliados durante a partida.',
       en: 'In a tactical shooter, a short, clear nickname makes teammates easier to identify in a match.',
       es: 'En un shooter tactico, un nickname corto y claro facilita identificar a tus companeros durante la partida.',
       zh: '战术射击游戏中,简短清晰的昵称有助于在对局中辨认队友。',
     },
     contextByLocale: {
-      'pt-br': 'Teste na equipe e no perfil; fontes e limites podem variar entre modos e atualizacoes.',
+      'pt-br': 'Teste na equipe e no perfil; fontes e limites podem variar entre modos e atualizações.',
       en: 'Test it in your squad and profile; fonts and limits can vary by mode and update.',
       es: 'Pruebalo en el equipo y el perfil; las fuentes y los limites pueden variar segun el modo y la actualizacion.',
       zh: '请在小队和个人资料中测试;字体和长度限制可能随模式及版本更新而变化。',
@@ -839,13 +839,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['minimal', 'lightning', 'blade', 'clan'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Use uma moldura simples para manter o nick legivel em placares e partidas competitivas.',
+      'pt-br': 'Use uma moldura simples para manter o nick legível em placares e partidas competitivas.',
       en: 'Use a simple frame to keep your nickname readable on scoreboards and in competitive matches.',
       es: 'Usa un marco sencillo para mantener el nickname legible en marcadores y partidas competitivas.',
       zh: '使用简洁的边框,让昵称在记分板和竞技对局中清晰可读。',
     },
     contextByLocale: {
-      'pt-br': 'Confira o nome no lobby, na lista do time e no placar antes de salvar a alteracao.',
+      'pt-br': 'Confira o nome no lobby, na lista do time e no placar antes de salvar a alteração.',
       en: 'Check the lobby, team list, and scoreboard before saving the change.',
       es: 'Revisa la sala, la lista del equipo y el marcador antes de guardar el cambio.',
       zh: '保存更改前,请在大厅、队伍列表和记分板中检查昵称。',
@@ -860,13 +860,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['minimal', 'pro', 'lightning', 'clan'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Mantenha o nick curto para leitura rapida em um FPS competitivo de tela pequena.',
+      'pt-br': 'Mantenha o nick curto para leitura rápida em um FPS competitivo de tela pequena.',
       en: 'Keep the nickname short for quick reading in a competitive FPS on a small screen.',
       es: 'Mantén el nickname corto para leerlo rapido en un FPS competitivo y en pantalla pequeña.',
       zh: '昵称尽量简短,方便在小屏幕的竞技 FPS 中快速辨认。',
     },
     contextByLocale: {
-      'pt-br': 'Veja como os simbolos aparecem no placar, na lista de equipe e no perfil do jogador.',
+      'pt-br': 'Veja como os símbolos aparecem no placar, na lista de equipe e no perfil do jogador.',
       en: 'Check how symbols appear on the scoreboard, team list, and player profile.',
       es: 'Comprueba como aparecen los simbolos en el marcador, la lista del equipo y el perfil.',
       zh: '检查符号在记分板、队伍列表和玩家资料中的显示效果。',
@@ -881,7 +881,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['warrior', 'minimal', 'lightning', 'clan'],
     recommendedStyleId: 'small-caps',
     guidanceByLocale: {
-      'pt-br': 'Combine um nome facil de reconhecer com poucos simbolos para as batalhas de equipe.',
+      'pt-br': 'Combine um nome fácil de reconhecer com poucos símbolos para as batalhas de equipe.',
       en: 'Pair an easy-to-recognize name with a few symbols for team battles.',
       es: 'Combina un nombre facil de reconocer con pocos simbolos para las batallas por equipos.',
       zh: '使用易于辨认的名称,并少量搭配符号以适应团队战斗。',
@@ -902,7 +902,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['minimal', 'spark', 'moon', 'japanese-corners'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Em partidas assimetricas, prefira simbolos que nao atrapalhem a leitura do nome no lobby.',
+      'pt-br': 'Em partidas assimétricas, prefira símbolos que não atrapalhem a leitura do nome no lobby.',
       en: 'For asymmetric matches, choose symbols that do not make your lobby name harder to read.',
       es: 'En partidas asimetricas, elige simbolos que no dificulten leer tu nombre en la sala.',
       zh: '非对称对局中,选择不会妨碍大厅昵称辨认的符号。',
@@ -923,13 +923,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['cute', 'minimal', 'stars', 'japanese-corners'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'O nick aparece sobre o personagem e em salas cheias; use uma combinacao curta e facil de ler.',
+      'pt-br': 'O nick aparece sobre o personagem e em salas cheias; use uma combinação curta e fácil de ler.',
       en: 'Your name appears above your character and in busy lobbies, so keep it short and readable.',
       es: 'Tu nombre aparece sobre el personaje y en salas concurridas; usa una combinacion corta y legible.',
       zh: '昵称会显示在角色上方和拥挤的大厅中,请保持简短易读。',
     },
     contextByLocale: {
-      'pt-br': 'Teste no lobby antes de entrar na partida; regras de nome podem mudar entre versoes.',
+      'pt-br': 'Teste no lobby antes de entrar na partida; regras de nome podem mudar entre versões.',
       en: 'Test it in the lobby before joining a match; name rules may change between versions.',
       es: 'Pruebalo en la sala antes de entrar a una partida; las reglas pueden cambiar entre versiones.',
       zh: '进入对局前请先在大厅测试;不同版本的名称规则可能变化。',
@@ -944,7 +944,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['cute', 'spark', 'minimal', 'stars'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Use decoracoes compactas para o nome continuar visivel em corridas com muitos jogadores.',
+      'pt-br': 'Use decorações compactas para o nome continuar visível em corridas com muitos jogadores.',
       en: 'Use compact decorations so your name stays visible in races with many players.',
       es: 'Usa decoraciones compactas para que tu nombre siga visible en carreras con muchos jugadores.',
       zh: '使用紧凑装饰,让昵称在多人竞速中保持清晰可见。',
@@ -971,7 +971,7 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
       zh: '选择简短名称,方便在 PvP 对局、锦标赛和好友列表中辨认。',
     },
     contextByLocale: {
-      'pt-br': 'Confira qual nome o jogo exibe na sua conta Miniclip e teste os simbolos antes de trocar.',
+      'pt-br': 'Confira qual nome o jogo exibe na sua conta Miniclip e teste os símbolos antes de trocar.',
       en: 'Check which name your Miniclip account displays and test symbols before changing it.',
       es: 'Comprueba qué nombre muestra tu cuenta Miniclip y prueba los simbolos antes de cambiarlo.',
       zh: '更改前请确认 Miniclip 账号显示的名称,并测试符号效果。',
@@ -986,13 +986,13 @@ export const nicknameSymbolPlatforms: NicknameSymbolPlatform[] = [
     recommendedFrameIds: ['royal', 'minimal', 'clan', 'stars'],
     recommendedStyleId: 'original',
     guidanceByLocale: {
-      'pt-br': 'Em um jogo de estrategia com aliancas, priorize um nome que seus companheiros reconhecam.',
+      'pt-br': 'Em um jogo de estratégia com alianças, priorize um nome que seus companheiros reconheçam.',
       en: 'In an alliance strategy game, prioritize a name your teammates can recognize.',
       es: 'En un juego de estrategia con alianzas, prioriza un nombre que tus companeros reconozcan.',
       zh: '联盟策略游戏中,优先使用队友容易辨认的名称。',
     },
     contextByLocale: {
-      'pt-br': 'Teste no perfil, no chat da alianca e nos eventos; fontes e limites podem variar.',
+      'pt-br': 'Teste no perfil, no chat da aliança e nos eventos; fontes e limites podem variar.',
       en: 'Test it in your profile, alliance chat, and events; fonts and limits may vary.',
       es: 'Pruebalo en el perfil, el chat de alianza y los eventos; las fuentes y limites pueden variar.',
       zh: '请在个人资料、联盟聊天和活动界面中测试;字体和长度限制可能不同。',

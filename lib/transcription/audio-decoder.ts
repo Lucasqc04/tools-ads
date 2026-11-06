@@ -12,7 +12,7 @@ const getAudioContextCtor = (): typeof AudioContext => {
   const ctor = window.AudioContext || window.webkitAudioContext;
 
   if (!ctor) {
-    throw new TranscriptionError('decode_failed', 'Este navegador nao suporta Web Audio API.');
+    throw new TranscriptionError('decode_failed', 'Este navegador não suporta a Web Audio API.');
   }
 
   return ctor;
@@ -32,7 +32,7 @@ export const readMediaDuration = async (file: File): Promise<number> => {
         resolve(Number.isFinite(element.duration) ? element.duration : 0);
       };
 
-      element.onerror = () => reject(new TranscriptionError('corrupted_file', 'Nao foi possivel ler o arquivo.'));
+      element.onerror = () => reject(new TranscriptionError('corrupted_file', 'Não foi possível ler o arquivo.'));
       element.src = objectUrl;
     });
   } finally {
@@ -84,7 +84,7 @@ export const decodeMediaFileToPcm = async (
   onProgress?: DecodeProgressCallback,
 ): Promise<DecodedAudio> => {
   if (file.size === 0) {
-    throw new TranscriptionError('empty_file', 'O arquivo esta vazio.');
+    throw new TranscriptionError('empty_file', 'O arquivo está vazio.');
   }
 
   const quickDuration = await readMediaDuration(file).catch(() => 0);
@@ -92,7 +92,7 @@ export const decodeMediaFileToPcm = async (
   if (quickDuration > MAX_TRANSCRIBABLE_DURATION_SECONDS) {
     throw new TranscriptionError(
       'file_too_long',
-      'Este arquivo e muito longo para processar localmente no navegador.',
+      'Este arquivo é longo demais para processar localmente no navegador.',
     );
   }
 
@@ -103,7 +103,7 @@ export const decodeMediaFileToPcm = async (
     const audioBuffer = await decodeArrayBufferNatively(arrayBuffer);
 
     if (audioBuffer.duration <= 0) {
-      throw new TranscriptionError('zero_duration', 'O arquivo nao possui audio com duracao valida.');
+      throw new TranscriptionError('zero_duration', 'O arquivo não possui áudio com duração válida.');
     }
 
     return await resampleToWhisperFormat(audioBuffer);
@@ -116,7 +116,7 @@ export const decodeMediaFileToPcm = async (
     const wavFile = await extractAudioAsWav(file).catch(() => {
       throw new TranscriptionError(
         'no_audio_track',
-        'Nao foi possivel encontrar ou decodificar uma faixa de audio neste arquivo.',
+        'Não foi possível encontrar ou decodificar uma faixa de áudio neste arquivo.',
       );
     });
 
@@ -124,7 +124,7 @@ export const decodeMediaFileToPcm = async (
     const audioBuffer = await decodeArrayBufferNatively(wavArrayBuffer);
 
     if (audioBuffer.duration <= 0) {
-      throw new TranscriptionError('zero_duration', 'O arquivo nao possui audio com duracao valida.');
+      throw new TranscriptionError('zero_duration', 'O arquivo não possui áudio com duração válida.');
     }
 
     return await resampleToWhisperFormat(audioBuffer);

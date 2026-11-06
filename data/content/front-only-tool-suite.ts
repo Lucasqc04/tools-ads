@@ -74,38 +74,40 @@ const frontOnlyToolSeeds = [
           'Devs, QAs e analistas que precisam validar CNPJ ou gerar massa de teste brasileira sem cadastro.',
         seoTitle: 'Gerador e Validador de CNPJ Online | Com ou Sem Pontuação',
         seoDescription:
-          'Valide CNPJ e gere listas de números válidos para testes, com cópia rápida e exportação TXT, CSV e JSON.',
+          'Confira os dígitos verificadores de um CNPJ ou gere números válidos para testes, com ou sem pontuação, e exporte em TXT, CSV ou JSON.',
         h1: 'Validador e Gerador de CNPJ para Testes',
         intro:
-          'Cole um CNPJ para validar os dígitos verificadores ou gere números válidos em lote com matriz, filial e exportação.',
+          'Cole um CNPJ para conferir os dígitos verificadores ou gere até 200 números válidos por vez, com escolha de filial e exportação, para usar em testes.',
         contentBlocks: [
           {
-            title: 'Validação dos dígitos do CNPJ',
+            title: 'Como funciona a validação do CNPJ',
             paragraphs: [
-              'A ferramenta remove a máscara, calcula os dois dígitos verificadores e mostra o CNPJ formatado e também só com números. Assim, você consegue diferenciar um erro de formato de um erro no algoritmo.',
-              'O gerador cria números válidos para formulários, homologação, QA e testes automatizados. Eles não representam empresas reais e não devem ser usados para fraude, cadastro indevido ou tentativa de identificação.',
+              'O CNPJ tem 14 dígitos: 8 da raiz da empresa, 4 da ordem (0001 costuma indicar a matriz e as demais numeram as filiais) e 2 dígitos verificadores, calculados a partir dos 12 primeiros. A ferramenta ignora pontos, barra e hífen, recalcula os dois dígitos e informa se o número confere. O CNPJ aparece formatado (00.000.000/0000-00) e só com números, o que ajuda a separar um erro de máscara de um erro de cálculo.',
+              'Números com todos os dígitos iguais, como 11111111111111, são recusados. Exemplo: 11.222.333/0001-81 é válido; se você trocar o último dígito para 2, o resultado passa a ser inválido.',
             ],
           },
           {
-            title: 'Exportação para testes',
+            title: 'Gerar CNPJs para testes',
             paragraphs: [
-              'Gere de 1 a 200 CNPJs por vez, escolha a filial e alterne entre a saída com ou sem pontuação. Você pode copiar a lista ou baixá-la para planilhas, fixtures e scripts.',
-              localPrivacy['pt-br'],
+              'O gerador sorteia os 8 dígitos da raiz, aplica a filial escolhida (o padrão é 0001) e calcula os dois dígitos verificadores. Você define de 1 a 200 números por lote, com ou sem pontuação, e pode copiar um por um, copiar a lista toda ou baixar o resultado.',
+              'Os números servem para preencher formulários, homologação, QA e testes automatizados. Eles são sorteados e não foram criados a partir de nenhuma empresa. Como só obedecem à conta dos dígitos, um deles pode coincidir por acaso com o CNPJ de uma empresa real. Por isso, use somente em ambientes de teste, nunca para cadastro, abertura de conta, emissão de nota ou para se passar por alguém.',
+              'A validação e a geração acontecem no navegador. Os números digitados ou gerados não são enviados ao servidor do site.',
             ],
-            list: ['TXT, um número por linha', 'CSV com cabeçalho', 'JSON para testes de API'],
+            list: ['TXT, um número por linha', 'CSV com a coluna "cnpj"', 'JSON com a lista de números, para testes de API'],
           },
           {
-            title: 'Limites importantes',
+            title: 'O que a validação não confirma',
             paragraphs: [
-              'Um CNPJ matematicamente válido não confirma a existência da empresa, sua situação cadastral nem dados da Receita Federal. A ferramenta confere apenas a estrutura numérica e os dígitos verificadores.',
+              'Um CNPJ com dígitos corretos não prova que a empresa existe, está ativa ou tem determinado nome: a ferramenta não consulta a Receita Federal. Para conferir uma empresa de verdade, use a consulta pública oficial.',
+              'O novo CNPJ alfanumérico, com letras, não é suportado: a ferramenta considera apenas os números, então o resultado não vale para esse formato.',
             ],
           },
         ],
         faq: [
-          { question: 'O CNPJ gerado existe na Receita Federal?', answer: 'Não. A ferramenta gera números válidos pelo algoritmo, mas não consulta cadastros oficiais.' },
-          { question: 'Posso gerar CNPJ sem pontuação?', answer: 'Sim. Escolha essa opção para usar somente os 14 dígitos.' },
-          { question: 'Serve para testar formulários?', answer: 'Sim. O uso recomendado é em QA, homologação, fixtures e validação de entradas.' },
-          { question: 'Os CNPJs são enviados para o servidor?', answer: 'Não. A validação e a geração acontecem localmente no navegador.' },
+          { question: 'O CNPJ gerado existe na Receita Federal?', answer: 'Não foi criado a partir de nenhuma empresa. Ele só respeita a conta dos dígitos verificadores, e a ferramenta não consulta cadastros oficiais. Por acaso, um número sorteado pode coincidir com o de uma empresa real.' },
+          { question: 'Posso gerar CNPJ sem pontuação?', answer: 'Sim. Escolha "Sem pontuação" para receber só os 14 dígitos, útil em campos que aceitam apenas números. A opção vale para a lista inteira.' },
+          { question: 'Serve para testar formulários?', answer: 'Sim, esse é o uso indicado: QA, homologação, fixtures e validação de campos. Não use os números em cadastros reais, na abertura de contas ou para se passar por uma empresa.' },
+          { question: 'Os CNPJs são enviados para o servidor?', answer: 'Não. A validação e a geração acontecem no navegador, e os números digitados ou gerados não são enviados ao site.' },
         ],
       },
       en: {
@@ -283,41 +285,49 @@ const frontOnlyToolSeeds = [
           'boleto arrecadacao validar',
         ],
         searchIntent:
-          'Usuarios e devs que precisam conferir boleto, linha digitavel ou codigo de barras antes de integrar pagamentos.',
+          'Usuários e devs que precisam conferir boleto, linha digitável ou código de barras antes de integrar pagamentos.',
         seoTitle: 'Validador de Boleto e Linha Digitável | Converter e Decodificar',
         seoDescription:
-          'Cole a linha digitável ou o código de barras de um boleto para validar dígitos, converter formatos e conferir valor e vencimento.',
+          'Cole a linha digitável ou o código de barras de um boleto para conferir os dígitos, converter formatos e ver valor, banco e vencimento.',
         h1: 'Validador de Boleto e Linha Digitável Online',
         intro:
-          'Cole uma linha digitável de 47 ou 48 dígitos, ou um código de barras de 44 dígitos, para validar, converter e conferir os campos.',
+          'Cole uma linha digitável de 47 ou 48 dígitos, ou um código de barras de 44 dígitos, para conferir os dígitos verificadores, converter o formato e ler os campos.',
         contentBlocks: [
           {
-            title: 'Validação de boletos bancários e de arrecadação',
+            title: 'O que a ferramenta confere',
             paragraphs: [
-              'A ferramenta reconhece boletos bancários e de arrecadação ou concessionárias. Ela recalcula os dígitos verificadores dos campos e o DAC geral, quando aplicável.',
-              'O resultado mostra o código de barras, a linha digitável formatada, o banco, o valor, o fator de vencimento e o campo livre para ajudar a verificar integrações.',
+              'A ferramenta reconhece dois tipos de boleto. No boleto bancário (linha de 47 dígitos), ela recalcula o dígito verificador de cada um dos três primeiros campos (módulo 10) e o DAC geral do código de barras (módulo 11), e confere se o código da moeda é 9 (real). No boleto de arrecadação, usado em contas de consumo e tributos (linha de 48 dígitos ou código de barras de 44 dígitos que começa com 8), ela confere os quatro blocos e o DAC geral, com módulo 10 ou 11 conforme o terceiro dígito.',
+              'O resultado informa o tipo, o valor, o banco, o vencimento, o código de barras, o campo livre e a lista de inconsistências, com os dígitos esperados. Na seção "Partes explicadas" cada trecho da linha aparece com o seu significado.',
             ],
           },
           {
-            title: 'Conversão entre linha digitável e código de barras',
+            title: 'Como ler valor, banco e vencimento',
             paragraphs: [
-              'Ao informar uma linha digitável, a ferramenta monta o código de barras equivalente. Ao informar o código de barras, ela gera a linha digitável correspondente.',
-              localPrivacy['pt-br'],
+              'O valor vem em centavos no código de barras. Num boleto bancário, R$ 0,00 costuma indicar que o valor não está definido no código. No boleto de arrecadação, o valor só aparece quando o terceiro dígito é 6 ou 8; nos tipos 7 e 9 ele é apenas uma referência e fica em branco.',
+              'O banco é identificado pelos três primeiros dígitos, mas a ferramenta tem uma lista curta de nomes (como Banco do Brasil, Itaú, Bradesco, Santander e Caixa); os demais aparecem como "Banco não identificado", sem que isso indique erro. O vencimento vem de um fator de 4 dígitos que conta dias a partir de 07/10/1997 e recomeça em 1000 no dia 22/02/2025. Por isso, quando o fator permite as duas leituras, a ferramenta mostra duas datas: escolha a que faz sentido para a emissão do seu boleto. Se o fator for 0000, nenhuma data é exibida. Boletos de arrecadação não mostram vencimento, pois ele depende do convênio.',
             ],
-            list: ['Validar campos pelo módulo 10', 'Validar o DAC pelo módulo 11', 'Exportar o diagnóstico em JSON'],
           },
           {
-            title: 'Limites e cuidado operacional',
+            title: 'Exemplo e conversão entre formatos',
             paragraphs: [
-              'A validação matemática não confirma pagamento, beneficiário, fraude ou registro no banco. Use o resultado como apoio técnico e confirme dados sensíveis nos canais oficiais.',
+              'A linha 34191.09008 72564.898723 32408.290008 1 10010000082831 resulta em um boleto do Itaú de R$ 828,31, com fator 1001, que pode ser lido como 04/07/2000 ou 23/02/2025. Ao colar uma linha digitável, a ferramenta monta o código de barras equivalente; ao colar o código de barras, monta a linha. Também é possível ler o código pela câmera do aparelho, copiar o código de barras ou a linha e baixar o diagnóstico em JSON.',
+              'A análise acontece no navegador. A linha, o código de barras e a imagem da câmera não são enviados ao servidor do site.',
+            ],
+            list: ['Dígitos de cada campo (módulo 10)', 'DAC geral (módulo 11 ou 10, conforme o tipo)', 'Diagnóstico em JSON'],
+          },
+          {
+            title: 'Limites e cuidados',
+            paragraphs: [
+              'A ferramenta só verifica a estrutura e os dígitos. Ela não consulta o banco e não confirma se o boleto foi pago, está registrado ou cancelado, quem é o beneficiário ou se há fraude, e não interpreta o campo livre, cujo conteúdo muda de banco para banco. Antes de pagar, confira o beneficiário e o valor no aplicativo do seu banco.',
             ],
           },
         ],
         faq: [
-          { question: 'A ferramenta consulta o banco?', answer: 'Não. Ela valida a estrutura, os dígitos e os campos localmente, sem consultar o banco.' },
-          { question: 'Aceita boleto de concessionária?', answer: 'Sim. Linhas de arrecadação com 48 dígitos e códigos iniciados por 8 são tratadas separadamente.' },
-          { question: 'Mostra o vencimento?', answer: 'Sim, para boletos bancários com fator de vencimento. Em ciclos novos, a ferramenta pode exibir mais de uma data candidata.' },
-          { question: 'Posso exportar o resultado?', answer: 'Sim. Você pode copiar o diagnóstico ou baixá-lo em JSON.' },
+          { question: 'A ferramenta consulta o banco?', answer: 'Não. Ela confere a estrutura, os dígitos e os campos no navegador, sem consultar o banco. Por isso não sabe se o boleto foi pago ou cancelado.' },
+          { question: 'Aceita boleto de concessionária e tributos?', answer: 'Sim. Linhas de 48 dígitos e códigos de barras de 44 dígitos que começam com 8 são tratados como arrecadação, com regras próprias de verificação. Nesses boletos não há vencimento.' },
+          { question: 'Por que aparecem duas datas de vencimento?', answer: 'O fator de vencimento reinicia em 1000 em 22/02/2025, então um mesmo fator pode apontar para duas datas. A ferramenta mostra as duas, e você escolhe a que combina com a data de emissão.' },
+          { question: 'Posso ler o boleto pela câmera?', answer: 'Sim. O botão "Abrir câmera" lê o código de barras do boleto, desde que o navegador autorize o acesso. A imagem fica no seu aparelho. Se não funcionar, cole a linha digitável.' },
+          { question: 'Posso exportar o resultado?', answer: 'Sim. Você pode copiar o código de barras, copiar a linha digitável ou baixar o diagnóstico completo em JSON.' },
         ],
       },
       en: {
@@ -696,7 +706,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Leitor e Removedor de EXIF',
         shortDescription:
-          'Leia metadados EXIF, GPS, camera e datas de imagens, copie JSON e baixe uma versao limpa.',
+          'Veja os metadados EXIF de uma foto (câmera, data, GPS), copie o JSON e baixe uma cópia limpa em JPEG, PNG ou WEBP.',
         primaryKeyword: 'leitor removedor exif online',
         secondaryKeywords: [
           'ver exif foto',
@@ -707,41 +717,42 @@ const frontOnlyToolSeeds = [
           'limpar exif jpg',
         ],
         searchIntent:
-          'Usuarios que querem auditar ou remover metadados de fotos antes de publicar, enviar ou arquivar.',
+          'Usuários que querem conferir ou remover metadados de fotos antes de publicar, enviar ou arquivar.',
         seoTitle: 'Leitor e Removedor de EXIF Online | Metadados e GPS',
         seoDescription:
-          'Veja EXIF de imagens localmente, identifique camera/GPS/data e baixe uma copia limpa sem metadados.',
+          'Veja o EXIF de fotos no navegador, confira câmera, data e GPS e baixe uma cópia limpa, sem metadados. Aceita várias imagens e não envia arquivos.',
         h1: 'Leitor e Removedor de EXIF de Imagem',
         intro:
-          'Envie uma imagem, leia metadados EXIF/IPTC/XMP quando disponiveis e gere uma copia limpa via canvas.',
+          'Envie uma ou várias fotos, leia os metadados EXIF, IPTC e XMP quando existirem e baixe uma cópia limpa, sem localização e sem dados da câmera.',
         contentBlocks: [
           {
             title: 'O que metadados de imagem podem revelar',
             paragraphs: [
-              'Fotos podem carregar camera, lente, horario, orientacao, software de edicao e ate coordenadas GPS. Ver esses campos antes de publicar ajuda em privacidade e auditoria.',
-              'A leitura depende do formato e dos metadados realmente embutidos. Algumas redes sociais e apps ja removem parte desses dados automaticamente.',
+              'Uma foto pode guardar o modelo da câmera ou do celular, a lente, o dia e a hora da captura, a orientação, o programa de edição e, às vezes, as coordenadas GPS de onde ela foi tirada. Conferir esses campos antes de publicar ou enviar um arquivo ajuda a evitar a divulgação de uma localização sem querer.',
+              'Depois de enviar as imagens, clique em ler metadados. A leitura simples mostra cartões com arquivo, dimensões, data de criação, software, câmera, lente, localização GPS, cores e orientação, e o JSON bruto traz todos os campos encontrados. Campos que não existem no arquivo aparecem como “Não informado”. Muitas fotos já passaram por redes sociais ou aplicativos que apagam parte desses dados, então é normal encontrar pouco ou nada.',
             ],
           },
           {
-            title: 'Remocao por renderizacao local',
+            title: 'Como a cópia limpa é gerada',
             paragraphs: [
-              'A copia limpa e gerada desenhando a imagem em canvas e exportando em PNG, JPEG ou WEBP. Esse fluxo remove metadados comuns porque cria um novo arquivo visual.',
-              localPrivacy['pt-br'],
+              'A cópia limpa é criada desenhando a imagem em um canvas e salvando de novo como JPEG, PNG ou WEBP. Como o arquivo é recriado do zero, os metadados embutidos, como EXIF e GPS, não são copiados. A qualidade de JPEG e WEBP pode ser ajustada de 10% a 100% (padrão 92%). Como a imagem é recodificada, JPEG e WEBP perdem um pouco de qualidade a cada gravação; se a foto tiver transparência, prefira PNG ou WEBP.',
+              'É possível limpar só a imagem selecionada ou todas de uma vez: com várias imagens, o resultado vem em um ZIP. Também dá para copiar o JSON dos metadados ou baixá-lo como arquivo. A leitura e a limpeza acontecem no navegador, sem envio das imagens ao servidor.',
             ],
-            list: ['Copiar JSON dos metadados', 'Exportar relatorio JSON', 'Baixar imagem limpa'],
+            list: ['Copiar ou baixar o JSON dos metadados', 'Limpar uma imagem ou várias em ZIP', 'Escolher JPEG, PNG ou WEBP e a qualidade'],
           },
           {
-            title: 'Limites de limpeza',
+            title: 'O que a limpeza não resolve',
             paragraphs: [
-              'A ferramenta nao remove marcas visuais, watermark, texto dentro da imagem ou informacoes que estejam nos pixels. Ela atua nos metadados embutidos e no arquivo exportado.',
+              'A ferramenta não remove marcas visíveis, marca d’água, texto escrito na imagem nem rostos, placas ou qualquer informação que apareça nos pixels. Ela também só enxerga os metadados que o formato permite ler: a leitura varia entre JPEG, PNG, WEBP e outros formatos.',
             ],
           },
         ],
         faq: [
-          { question: 'Consigo remover GPS da foto?', answer: 'Sim, ao exportar uma copia limpa via canvas, metadados GPS comuns deixam de ir no novo arquivo.' },
-          { question: 'Funciona com PNG e WEBP?', answer: 'A leitura varia por formato, mas a exportacao limpa pode ser feita em PNG, JPEG ou WEBP.' },
-          { question: 'A imagem e enviada para servidor?', answer: 'Nao por padrao. A leitura e a limpeza acontecem no navegador.' },
-          { question: 'Remove texto que aparece na imagem?', answer: 'Nao. Texto visivel faz parte dos pixels e precisa ser editado visualmente.' },
+          { question: 'Consigo remover o GPS da foto?', answer: 'Sim. A cópia limpa é recriada em um canvas e não leva os metadados embutidos, incluindo as coordenadas GPS. Você pode conferir antes, na leitura dos metadados.' },
+          { question: 'Funciona com PNG e WEBP?', answer: 'A leitura varia conforme o formato e os dados que o arquivo realmente tem. A cópia limpa pode ser salva em JPEG, PNG ou WEBP, independentemente do formato de origem.' },
+          { question: 'A imagem é enviada para um servidor?', answer: 'Não. A leitura dos metadados e a geração da cópia limpa acontecem no navegador.' },
+          { question: 'Posso limpar várias fotos de uma vez?', answer: 'Sim. Selecione várias imagens e use “Remover EXIF de todas”: o resultado é baixado em um arquivo ZIP.' },
+          { question: 'Remove o texto que aparece na imagem?', answer: 'Não. Texto visível faz parte dos pixels e precisa ser editado em um editor de imagens.' },
         ],
       },
       en: {
@@ -908,7 +919,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Redimensionar e Cortar Imagem',
         shortDescription:
-          'Redimensione imagem, recorte em proporcao fixa, gere quadrado central e exporte PNG, JPEG ou WEBP.',
+          'Defina largura e altura, recorte a imagem na proporção escolhida ou gere um quadrado central e exporte em PNG, JPEG ou WEBP.',
         primaryKeyword: 'redimensionar imagem online',
         secondaryKeywords: [
           'cortar imagem online',
@@ -919,41 +930,46 @@ const frontOnlyToolSeeds = [
           'exportar webp imagem',
         ],
         searchIntent:
-          'Usuarios que precisam adaptar imagens para redes sociais, sites, lojas e documentos sem instalar editor.',
+          'Usuários que precisam adaptar imagens para redes sociais, sites, lojas e documentos sem instalar um editor.',
         seoTitle: 'Redimensionar e Cortar Imagem Online | PNG, JPEG e WEBP',
         seoDescription:
-          'Envie uma imagem, ajuste largura/altura, escolha fit, cover ou quadrado central e baixe em PNG, JPEG ou WEBP.',
+          'Envie uma imagem, defina largura e altura, escolha ajustar, cortar ou quadrado central e baixe em PNG, JPEG ou WEBP. Tudo no navegador.',
         h1: 'Redimensionar e Cortar Imagem Online',
         intro:
-          'Ajuste dimensoes, mantenha proporcao quando quiser, recorte para preencher ou gere um quadrado central pronto para exportar.',
+          'Defina o tamanho final em pixels, escolha como a imagem deve caber (inteira, cortada ou em quadrado central) e baixe o resultado em PNG, JPEG ou WEBP.',
         contentBlocks: [
           {
-            title: 'Resize para posts, sites e uploads',
+            title: 'Redimensionar para posts, sites e envios',
             paragraphs: [
-              'Muitos sistemas exigem imagem em tamanho especifico, como 1080x1080, 1200x630 ou banners horizontais. A ferramenta renderiza a nova dimensao em canvas com qualidade alta.',
-              'Use ajustar sem cortar para preservar tudo, cortar para preencher para evitar bordas e quadrado central para avatar, catalogo e redes sociais.',
+              'Muitos sistemas pedem imagens em um tamanho exato, como 1080 × 1080 para um post quadrado ou 1200 × 630 para uma imagem de compartilhamento. Envie uma imagem, digite a largura e a altura finais e veja o resultado ao vivo ao lado do original. O tamanho padrão é 1080 × 1080. Marque “Manter proporção” para que a altura acompanhe a largura (e vice-versa) conforme a proporção dos dois campos.',
+              'Há três modos. “Ajustar sem cortar” mantém a imagem inteira dentro do tamanho pedido e preenche as sobras com branco. “Cortar para preencher” ocupa toda a área e corta o excesso: arraste a moldura ou os quadrados nos cantos para escolher qual parte fica. “Quadrado central” usa a largura nos dois lados e corta a imagem em 1:1, bom para avatares e catálogos.',
+            ],
+            list: [
+              'Ajustar sem cortar: imagem inteira, com faixas brancas se a proporção for diferente.',
+              'Cortar para preencher: sem bordas, com o corte que você posicionar.',
+              'Quadrado central: largura e altura iguais, com corte 1:1.',
             ],
           },
           {
-            title: 'Formatos e qualidade',
+            title: 'Formatos, qualidade e privacidade',
             paragraphs: [
-              'Voce pode exportar em WEBP para tamanho menor, JPEG para compatibilidade ampla ou PNG quando precisa preservar transparencia e nitidez.',
-              localPrivacy['pt-br'],
+              'Exporte em WEBP (o padrão) para arquivos menores, em JPEG para compatibilidade ampla ou em PNG para manter a nitidez de gráficos e capturas de tela. A qualidade vai de 10% a 100% (padrão 90%) e afeta JPEG e WEBP. A ferramenta trabalha com uma imagem por vez e aceita PNG, JPEG, WEBP, AVIF, GIF, BMP e TIFF. O processamento acontece no navegador e a imagem não é enviada ao servidor.',
+              'Atenção à transparência: a imagem é desenhada sobre um fundo branco, então áreas transparentes saem brancas em qualquer formato, inclusive PNG. Para manter o fundo transparente, use outra ferramenta, como o removedor de fundo ou o conversor.',
             ],
-            list: ['Controle de largura e altura', 'Modo fit, cover e quadrado', 'Preview antes de baixar'],
           },
           {
-            title: 'Cuidados com proporcao',
+            title: 'Cuidados com o tamanho e a proporção',
             paragraphs: [
-              'Aumentar uma imagem muito pequena pode gerar perda visual. Para melhor resultado, parta de arquivo maior que o tamanho final e use WEBP/JPEG com qualidade equilibrada.',
+              'Se o tamanho pedido for maior que o da imagem, ela é ampliada e pode ficar borrada. Sempre que possível, parta de um arquivo maior do que o tamanho final. Como a imagem é recriada, os metadados comuns, como localização, não vão para o novo arquivo.',
             ],
           },
         ],
         faq: [
-          { question: 'Posso gerar imagem quadrada?', answer: 'Sim. Use o modo quadrado central e defina largura e altura iguais.' },
-          { question: 'Remove metadados?', answer: 'Como a exportacao cria uma nova imagem em canvas, metadados comuns tendem a ficar fora do arquivo final.' },
-          { question: 'A imagem e enviada?', answer: 'Nao por padrao. O processamento usa recursos locais do navegador.' },
-          { question: 'Qual formato devo baixar?', answer: 'WEBP para web leve, JPEG para compatibilidade e PNG para transparencia ou arte com bordas nítidas.' },
+          { question: 'Como gerar uma imagem quadrada?', answer: 'Escolha o modo “Quadrado central”, defina a largura e ajuste a moldura de corte. A altura passa a ser igual à largura.' },
+          { question: 'A imagem transparente continua transparente?', answer: 'Não. A imagem é desenhada sobre um fundo branco, então as áreas transparentes saem brancas, mesmo em PNG.' },
+          { question: 'Remove metadados da foto?', answer: 'Como o arquivo exportado é uma imagem nova gerada no navegador, os metadados comuns, como EXIF e GPS, não são copiados.' },
+          { question: 'A imagem é enviada para um servidor?', answer: 'Não. O corte e o redimensionamento acontecem no navegador.' },
+          { question: 'Qual formato devo baixar?', answer: 'WEBP para páginas leves, JPEG para compatibilidade com qualquer sistema e PNG para gráficos e capturas com bordas nítidas, lembrando que a transparência não é mantida.' },
         ],
       },
       en: {
@@ -1120,7 +1136,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Juntar, Dividir e Reordenar PDF',
         shortDescription:
-          'Combine PDFs, reordene arquivos, remova itens e divida paginas em ZIP opcionalmente protegido por senha.',
+          'Una vários PDFs na ordem que quiser, divida um PDF em uma página por arquivo (em ZIP) e abra ou proteja PDFs com senha.',
         primaryKeyword: 'juntar dividir reordenar pdf online',
         secondaryKeywords: [
           'juntar pdf online',
@@ -1131,41 +1147,43 @@ const frontOnlyToolSeeds = [
           'pdf para zip paginas',
         ],
         searchIntent:
-          'Usuarios que precisam montar ou separar documentos PDF localmente antes de enviar, arquivar ou imprimir.',
-        seoTitle: 'Juntar, Dividir e Reordenar PDF Online | ZIP de Paginas',
+          'Usuários que precisam montar ou separar documentos PDF antes de enviar, arquivar ou imprimir, sem mandar o arquivo para um servidor.',
+        seoTitle: 'Juntar, Dividir e Reordenar PDF Online | ZIP de Páginas',
         seoDescription:
-          'Selecione PDFs, reordene a fila, junte em um arquivo ou divida o primeiro PDF em paginas separadas dentro de ZIP.',
+          'Junte vários PDFs na ordem que escolher, divida um PDF em páginas dentro de um ZIP e abra ou proteja PDFs com senha, tudo no navegador.',
         h1: 'Juntar, Dividir e Reordenar PDF Online',
         intro:
-          'Envie PDFs, organize a ordem, remova arquivos da fila e exporte um PDF combinado ou paginas separadas em ZIP.',
+          'Envie PDFs, defina a ordem dos arquivos e baixe um único PDF combinado, ou divida um PDF em uma página por arquivo dentro de um ZIP.',
         contentBlocks: [
           {
-            title: 'Organizacao pratica de documentos',
+            title: 'Juntar e reordenar PDFs',
             paragraphs: [
-              'A interface trabalha com uma fila de arquivos. Voce pode mover PDFs para cima ou para baixo, remover itens e criar um documento final na ordem correta.',
-              'O modo dividir pega o primeiro PDF da fila e exporta cada pagina como arquivo separado dentro de um ZIP, util para anexos, contratos e documentos escaneados.',
+              'Adicione os PDFs à fila e use os botões “Subir” e “Descer” para definir a ordem. “Juntar PDFs” cria um único arquivo com todas as páginas de cada PDF, na ordem da fila. A reordenação é por arquivo: a ferramenta não muda a ordem das páginas dentro de um mesmo PDF nem apaga páginas avulsas.',
+              'Para reorganizar páginas, divida o PDF em páginas separadas e junte novamente os arquivos na ordem desejada, descartando os que não quiser. Isso serve, por exemplo, para montar um único anexo com contrato, comprovante e documento de identidade.',
             ],
           },
           {
-            title: 'ZIP opcional com senha',
+            title: 'Dividir em páginas e proteger com senha',
             paragraphs: [
-              'Ao dividir paginas, voce pode definir senha no ZIP quando o navegador e a biblioteca suportarem criptografia. O merge de PDF gera um arquivo PDF simples.',
-              localPrivacy['pt-br'],
+              '“Dividir primeiro PDF em ZIP” pega o primeiro PDF da fila e salva cada página como um PDF separado (pagina-1.pdf, pagina-2.pdf e assim por diante) dentro de um ZIP. Se quiser, preencha a senha do ZIP: o pacote sai criptografado (AES-256) e as páginas só abrem com ela.',
+              'Também é possível proteger o PDF final com senha de abertura, no PDF juntado ou no primeiro PDF da fila, e informar uma senha de proprietário opcional. A proteção de PDF usa criptografia RC4 de 128 bits, adequada para impedir que alguém abra o arquivo por acaso, mas considerada fraca para segredos importantes; nesses casos, prefira o ZIP com senha.',
             ],
-            list: ['Juntar varios PDFs', 'Reordenar fila', 'Dividir paginas em ZIP'],
+            list: ['Juntar vários PDFs na ordem da fila', 'Dividir o primeiro PDF em páginas (ZIP, com senha opcional)', 'Verificar se um PDF tem senha', 'Remover ou colocar senha em um PDF'],
           },
           {
-            title: 'Limites para PDF protegido',
+            title: 'PDFs protegidos, limites e privacidade',
             paragraphs: [
-              'PDFs criptografados, corrompidos ou com protecoes especificas podem falhar na leitura. Em documentos sensiveis, revise o arquivo gerado antes de compartilhar.',
+              '“Verificar segurança” indica se cada PDF da fila tem senha e o algoritmo usado. Para abrir um PDF protegido, informe a senha de entrada; a mesma senha é usada para todos os arquivos protegidos da fila. “Remover senha do primeiro PDF” só funciona quando você sabe a senha: a ferramenta não quebra senhas. Senha incorreta ou criptografia não suportada geram uma mensagem de erro.',
+              'Os PDFs são lidos e gerados no navegador e não são enviados ao servidor. Arquivos muito grandes ou com muitas páginas dependem da memória do aparelho. PDFs corrompidos podem falhar; revise o arquivo gerado antes de compartilhar.',
             ],
           },
         ],
         faq: [
-          { question: 'Consigo reordenar os PDFs?', answer: 'Sim. Use os botoes subir e descer na fila antes de juntar.' },
-          { question: 'Divide todas as paginas?', answer: 'Sim. O modo dividir gera um PDF por pagina do primeiro arquivo da fila.' },
-          { question: 'Os PDFs sao enviados?', answer: 'Nao por padrao. A montagem usa processamento local no navegador.' },
-          { question: 'Aceita ZIP com senha?', answer: 'Sim para o pacote ZIP, quando suportado pelo navegador e pela biblioteca usada.' },
+          { question: 'Consigo reordenar as páginas de um PDF?', answer: 'Não diretamente. A ferramenta reordena os arquivos da fila antes de juntar. Para mudar páginas de um mesmo PDF, divida-o em páginas e junte os arquivos na ordem que quiser.' },
+          { question: 'Dividir gera todas as páginas?', answer: 'Sim. O modo dividir gera um PDF por página do primeiro arquivo da fila, todos dentro de um ZIP.' },
+          { question: 'Os PDFs são enviados para um servidor?', answer: 'Não. A montagem, a divisão e a proteção por senha acontecem no navegador.' },
+          { question: 'Consigo abrir um PDF com senha?', answer: 'Sim, se você souber a senha. Informe a senha de entrada para juntar, dividir ou remover a proteção do arquivo. A ferramenta não recupera senhas esquecidas.' },
+          { question: 'A senha do ZIP e a do PDF são iguais?', answer: 'Não. A senha do ZIP protege o pacote com as páginas divididas (AES-256). A senha do PDF final usa criptografia RC4 de 128 bits e é um nível mais fraco de proteção.' },
         ],
       },
       en: {
@@ -1332,7 +1350,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Gerador de Favicon e Manifest',
         shortDescription:
-          'Gere favicon.ico, PNGs, Apple Touch Icon, maskable icons, manifest PWA e snippet HTML em um ZIP.',
+          'Envie uma imagem e baixe em um ZIP o favicon.ico, os PNGs, o Apple Touch Icon, os ícones maskable, o site.webmanifest e as tags HTML.',
         primaryKeyword: 'gerador de favicon e manifest',
         secondaryKeywords: [
           'gerador favicon online',
@@ -1343,41 +1361,49 @@ const frontOnlyToolSeeds = [
           'maskable icon pwa',
         ],
         searchIntent:
-          'Devs e criadores de site que precisam transformar uma imagem base em pacote completo de icones web/PWA.',
+          'Desenvolvedores e donos de site que precisam transformar uma imagem base em um pacote completo de ícones para site e PWA.',
         seoTitle: 'Gerador de Favicon e Manifest PWA | ICO, PNG e HTML',
         seoDescription:
-          'Envie uma imagem e gere pacote com favicon.ico, icons PNG, Apple Touch Icon, manifest.webmanifest e snippet HTML.',
-        h1: 'Gerador de Favicon, Manifest e Icones PWA',
+          'Envie uma imagem e baixe um ZIP com favicon.ico, ícones PNG, Apple Touch Icon, ícones maskable, site.webmanifest e as tags HTML prontas.',
+        h1: 'Gerador de Favicon, Manifest e Ícones PWA',
         intro:
-          'Crie um pacote de favicon inspirado em fluxos completos: ICO, PNGs, maskable icons, manifest e tags HTML prontas.',
+          'Envie o logo do seu site e gere o pacote de favicon: favicon.ico, ícones PNG, Apple Touch Icon, ícones maskable, site.webmanifest e as tags HTML para colar no site.',
         contentBlocks: [
           {
-            title: 'Pacote completo para navegador e PWA',
+            title: 'O que o pacote contém',
             paragraphs: [
-              'Um favicon moderno nao e apenas um arquivo .ico. Sites e PWAs usam tamanhos diferentes para abas, atalhos, iOS, Android e telas iniciais.',
-              'A ferramenta gera favicon.ico com multiplos tamanhos, PNGs padrao, Apple Touch Icon, maskable icons e site.webmanifest com nome, cor e modo de exibicao.',
+              'Um favicon moderno não é só um arquivo .ico: abas do navegador, atalhos no iPhone e no Android e telas iniciais de PWA usam tamanhos diferentes. A partir de uma única imagem, a ferramenta gera um ZIP com 13 arquivos.',
+            ],
+            list: [
+              'favicon.ico, com as versões de 16, 32 e 48 px.',
+              'PNGs de 16, 32, 48, 96 e 256 px (favicon-16x16.png, favicon-32x32.png e assim por diante).',
+              'apple-touch-icon.png, com 180 × 180 px, para a tela inicial do iOS.',
+              'web-app-manifest-192x192.png e web-app-manifest-512x512.png, para Android e PWA.',
+              'maskable-icon-192x192.png e maskable-icon-512x512.png, com fundo e margem de segurança para ícones adaptáveis.',
+              'site.webmanifest, com nome, cores, modo de exibição e os ícones de 192 e 512 px (comuns e maskable).',
+              'favicon-html-snippet.txt, com as tags link e meta para o head da página.',
             ],
           },
           {
-            title: 'Snippet HTML e ZIP pronto',
+            title: 'Como ajustar e usar os arquivos',
             paragraphs: [
-              'Depois de gerar, voce pode copiar o HTML para o head da pagina, copiar o manifest ou baixar todos os arquivos em ZIP para colocar na pasta public.',
-              localPrivacy['pt-br'],
+              'Informe o nome do site, o nome curto, a cor de fundo, a cor do tema, a URL inicial e o modo de exibição (standalone, minimal-ui, browser ou fullscreen). Ajuste a margem de segurança de 0% a 24% (padrão 8%), escolha se os favicons comuns têm fundo transparente, na cor de fundo ou na cor do tema, e use as opções de fundo arredondado nos ícones maskable e de inverter as cores da imagem. Com a atualização automática ligada, a prévia muda a cada ajuste.',
+              'Na aba de códigos você copia o HTML, o manifest e os trechos para React e Next.js. Os caminhos do manifest e do HTML começam com “/”, então coloque todos os arquivos na raiz do site (na pasta public, em projetos Next.js). A imagem é processada no navegador e não é enviada ao servidor.',
             ],
-            list: ['favicon.ico multi-size', 'web-app-manifest 192/512', 'maskable icons para PWA'],
           },
           {
-            title: 'Qualidade da imagem base',
+            title: 'Escolha uma boa imagem base',
             paragraphs: [
-              'Use imagem quadrada, simples e com boa margem visual. Logos complexos podem perder leitura em 16x16, entao teste o preview em tamanhos pequenos.',
+              'Envie uma imagem quadrada, simples e com boa margem: ela é ajustada dentro de cada tamanho sem deformar, então imagens retangulares ficam com espaço vazio nas laterais. Aceita PNG, JPEG, WEBP, AVIF, GIF, BMP e TIFF; SVG não é aceito. Logos com muitos detalhes ou texto pequeno perdem leitura em 16 × 16 px, então confira a prévia no tamanho de aba antes de baixar.',
             ],
           },
         ],
         faq: [
-          { question: 'Gera favicon.ico de verdade?', answer: 'Sim. O pacote inclui um ICO com entradas PNG em tamanhos comuns.' },
-          { question: 'Inclui manifest PWA?', answer: 'Sim. A ferramenta cria site.webmanifest com nome, cores, display e icons.' },
-          { question: 'Posso copiar as tags HTML?', answer: 'Sim. O snippet HTML fica disponivel para copiar depois da geracao.' },
-          { question: 'A imagem e enviada?', answer: 'Nao por padrao. Os icones sao renderizados localmente no navegador.' },
+          { question: 'Gera um favicon.ico de verdade?', answer: 'Sim. O favicon.ico contém as versões de 16, 32 e 48 px, e o ZIP traz também os PNGs separados.' },
+          { question: 'Quais arquivos vêm no ZIP?', answer: 'Treze arquivos: favicon.ico, PNGs de 16, 32, 48, 96 e 256 px, apple-touch-icon.png (180 px), ícones de 192 e 512 px para PWA, ícones maskable de 192 e 512 px, site.webmanifest e um arquivo com as tags HTML.' },
+          { question: 'Onde coloco os arquivos no site?', answer: 'Na raiz do site, porque os caminhos do manifest e das tags começam com “/”. Em um projeto Next.js, use a pasta public e cole as tags no head.' },
+          { question: 'Posso enviar um SVG?', answer: 'Não. O seletor aceita PNG, JPEG, WEBP, AVIF, GIF, BMP e TIFF. Exporte o SVG como PNG com boa resolução antes de enviar.' },
+          { question: 'A imagem é enviada para um servidor?', answer: 'Não. Os ícones são gerados no navegador.' },
         ],
       },
       en: {
@@ -1968,7 +1994,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'JSON para TypeScript, Zod e Schema',
         shortDescription:
-          'Cole JSON real e gere interface TypeScript, schema Zod e JSON Schema com exportacao em ZIP.',
+          'Cole um JSON de exemplo e gere interface TypeScript, schema Zod e JSON Schema, com cópia por aba e exportação em ZIP.',
         primaryKeyword: 'json para typescript zod schema',
         secondaryKeywords: [
           'json to typescript',
@@ -1979,41 +2005,46 @@ const frontOnlyToolSeeds = [
           'converter json em tipo',
         ],
         searchIntent:
-          'Devs que precisam transformar payloads reais em tipos, validadores e schemas para acelerar integracoes.',
+          'Devs que precisam transformar payloads reais em tipos, validadores e schemas para acelerar integrações.',
         seoTitle: 'JSON para TypeScript, Zod e JSON Schema | Gerador Online',
         seoDescription:
-          'Cole JSON e gere interface TypeScript, schema Zod e JSON Schema com copia por aba e exportacao ZIP.',
+          'Cole um JSON e gere interface TypeScript, schema Zod e JSON Schema no navegador, com cópia por aba e exportação em ZIP. Grátis.',
         h1: 'JSON para TypeScript, Zod e JSON Schema',
         intro:
-          'Transforme um exemplo JSON em codigo reutilizavel para tipagem, validacao runtime e documentacao de APIs.',
+          'Cole um JSON de exemplo e gere uma interface TypeScript, um schema Zod e um JSON Schema para tipar e validar a resposta de uma API.',
         contentBlocks: [
           {
-            title: 'Inferencia a partir de exemplo real',
+            title: 'Como o código é gerado a partir do JSON',
             paragraphs: [
-              'A ferramenta analisa objetos, arrays, strings, numeros, booleanos e null para criar um modelo inicial. Ela tambem identifica formatos comuns como email, URL, UUID e datas.',
-              'Arrays com objetos diferentes viram tipos combinados quando possivel. O resultado e um ponto de partida que deve ser revisado antes de ir para producao.',
+              'Cole um JSON na caixa da esquerda, informe o nome raiz (por exemplo, UserPayload) e clique em "Gerar código". A ferramenta lê o exemplo e infere o tipo de cada campo: texto, número, inteiro, booleano, null, lista ou objeto. Objetos aninhados ficam dentro da mesma interface, e o resultado aparece em três abas: typeScript, zod e jsonSchema.',
+              'Com o JSON {"id":1,"name":"Lucas","active":true,"tags":["dev"]} e o nome UserPayload, a aba TypeScript traz uma interface UserPayload com id: number, name: string, active: boolean e tags: string[], mais um alias UserPayloadList para uma lista desses objetos. A aba Zod traz um z.object com os mesmos campos (o id sai como z.number().int()) e o tipo inferido pelo próprio schema.',
             ],
           },
           {
-            title: 'Tres saidas para o mesmo payload',
+            title: 'Listas, campos opcionais e formatos reconhecidos',
             paragraphs: [
-              'TypeScript ajuda em autocomplete e contratos de codigo. Zod adiciona validacao runtime, e JSON Schema serve para documentacao, validacao e ferramentas externas.',
-              localPrivacy['pt-br'],
+              'Quando a raiz é uma lista, a ferramenta junta todos os itens em um só tipo: um campo que existe em alguns itens e em outros não vira opcional (com ?), e um campo com tipos diferentes vira uma união. Textos que parecem e-mail, URL (http ou https), UUID, data (AAAA-MM-DD) ou data e hora ISO recebem a validação correspondente no Zod e o format no JSON Schema. O JSON Schema gerado segue o draft 2020-12 e marca todos os objetos com additionalProperties: false.',
             ],
-            list: ['Interface TypeScript', 'Schema Zod', 'JSON Schema draft 2020-12'],
+            list: [
+              'Aba TypeScript: interface e alias de lista.',
+              'Aba Zod: schema com import { z } from \'zod\' e o tipo inferido.',
+              'Aba JSON Schema: schema para documentação ou para validadores em qualquer linguagem.',
+              '"Exportar ZIP": três arquivos, com o nome raiz mais .ts, .zod.ts e .schema.json.',
+            ],
           },
           {
-            title: 'Quando revisar manualmente',
+            title: 'Limites e privacidade',
             paragraphs: [
-              'JSON de exemplo nao revela campos opcionais ausentes, regras de negocio, enums fechados ou limites numericos. Ajuste o codigo gerado conforme a API real.',
+              'Um único JSON de exemplo não mostra tudo: campos que podem faltar, valores nulos que só aparecem às vezes, listas vazias (que viram unknown), enums, tamanhos e faixas de valores. Revise o código antes de usá-lo e, se possível, cole um exemplo com vários itens para a inferência enxergar mais variações. A ferramenta não separa objetos aninhados em interfaces com nomes próprios e não aceita JSON com comentários.',
+              'A análise é feita no navegador e o JSON colado, assim como os arquivos gerados, não são enviados ao nosso servidor.',
             ],
           },
         ],
         faq: [
-          { question: 'Gera Zod?', answer: 'Sim. A ferramenta cria schema Zod e tipo inferido.' },
-          { question: 'Suporta array na raiz?', answer: 'Sim. Ela gera tipo de item e alias de lista quando a raiz e array.' },
-          { question: 'Posso exportar tudo?', answer: 'Sim. Baixe ZIP com arquivos TypeScript, Zod e JSON Schema.' },
-          { question: 'O JSON e enviado?', answer: 'Nao por padrao. A inferencia roda no navegador.' },
+          { question: 'A ferramenta gera schema Zod?', answer: 'Sim. A aba zod traz um schema com z.object e o tipo inferido por z.infer, que você pode colar direto em um projeto que já use Zod.' },
+          { question: 'E se o JSON for uma lista?', answer: 'Funciona. O tipo principal descreve cada item da lista e um alias com o sufixo List representa o array. Campos ausentes em alguns itens ficam opcionais.' },
+          { question: 'Posso baixar tudo de uma vez?', answer: 'Sim. "Exportar ZIP" baixa três arquivos: o TypeScript, o schema Zod e o JSON Schema, todos com o nome raiz que você informou.' },
+          { question: 'O meu JSON é enviado para algum servidor?', answer: 'Não. A inferência e a geração dos arquivos acontecem no navegador e o JSON não sai do seu aparelho.' },
         ],
       },
       en: {
@@ -2180,7 +2211,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Gerador e Explicador de Cron',
         shortDescription:
-          'Monte expressoes cron, leia descricao humana e veja proximas execucoes por timezone.',
+          'Digite uma expressão cron, leia o que ela significa em português e veja as próximas 8 execuções para um fuso horário.',
         primaryKeyword: 'gerador explicador cron online',
         secondaryKeywords: [
           'cron expression generator',
@@ -2191,41 +2222,42 @@ const frontOnlyToolSeeds = [
           'crontab generator',
         ],
         searchIntent:
-          'Devs e operadores que precisam criar ou revisar agendamentos cron sem errar horario.',
-        seoTitle: 'Gerador e Explicador de Cron Online | Proximas Execucoes',
+          'Devs e operadores que precisam criar ou revisar agendamentos cron sem errar horário.',
+        seoTitle: 'Gerador e Explicador de Cron Online | Próximas Execuções',
         seoDescription:
-          'Crie expressoes cron, veja descricao humana, escolha timezone e liste as proximas execucoes.',
+          'Digite uma expressão cron, veja a explicação em português e as próximas 8 execuções em um fuso horário. Grátis e no navegador.',
         h1: 'Gerador e Explicador de Cron Online',
         intro:
-          'Digite ou escolha um preset cron, gere a explicacao em linguagem humana e confira as proximas execucoes.',
+          'Digite ou escolha um modelo de expressão cron, leia a explicação em português e confira as próximas execuções antes de agendar a tarefa.',
         contentBlocks: [
           {
-            title: 'Menos erro em agendamentos',
+            title: 'Como usar o explicador de cron',
             paragraphs: [
-              'Cron e compacto, mas facil de interpretar errado. A ferramenta traduz a expressao e mostra datas futuras para validar se o horario faz sentido.',
-              'Use presets para padroes comuns como a cada 5 minutos, dias uteis, primeiro dia do mes ou domingo de madrugada.',
+              'Digite a expressão no campo (por exemplo, 0 9 * * 1-5) ou clique em um dos cinco modelos prontos: a cada 5 minutos, dias úteis às 9h, primeiro dia do mês, domingo às 3h e dia 15 às 8h30. A ferramenta mostra a descrição em inglês e a tradução em português, e lista as próximas 8 execuções. Para 0 9 * * 1-5, a leitura em português é "Às 09:00, de segunda-feira a sexta-feira".',
+              'Uma expressão cron tem cinco campos separados por espaço: minuto, hora, dia do mês, mês e dia da semana. O asterisco significa "todos", a barra (*/5) define um intervalo, a vírgula lista valores e o hífen indica uma faixa. A leitura também aceita seis campos, com os segundos na frente, e atalhos como @daily.',
             ],
           },
           {
-            title: 'Timezone explicito',
+            title: 'Fuso horário e horários exibidos',
             paragraphs: [
-              'O campo de timezone ajuda a simular execucoes no fuso correto, importante para servidores UTC, rotinas em nuvem e times distribuidos.',
-              localPrivacy['pt-br'],
+              'O campo de fuso horário recebe um nome da lista IANA, como America/Sao_Paulo ou UTC, e é usado para calcular quando a expressão dispara. Atenção: as datas da lista são exibidas no fuso do seu navegador, não no fuso digitado. Por exemplo, 0 9 * * 1-5 em America/Sao_Paulo aparece como 12:00 se o seu navegador estiver em UTC. Compare sempre o instante, não só o número da hora.',
+              'Se a expressão ou o fuso forem inválidos, a ferramenta mostra a mensagem do analisador (geralmente em inglês) e não lista as execuções. O botão "Copiar" copia apenas a expressão.',
             ],
-            list: ['Descricao humana', 'Lista de proximas execucoes', 'Copia da expressao cron'],
+            list: ['Descrição em inglês e em português', 'Próximas 8 execuções a partir de agora', 'Cinco modelos prontos', 'Cópia da expressão'],
           },
           {
-            title: 'Compatibilidade',
+            title: 'Limites e privacidade',
             paragraphs: [
-              'Ambientes diferentes podem aceitar variacoes de cron com segundos, ano ou aliases especiais. Confirme a sintaxe suportada pelo seu scheduler antes de publicar.',
+              'Cada agendador tem as suas regras: alguns aceitam segundos, nomes de dias e meses, o caractere L (último dia) ou atalhos como @daily, e outros não. A ferramenta mostra como esta biblioteca lê a expressão e não garante que o seu sistema (crontab, Kubernetes, GitHub Actions, serviços de nuvem) vá interpretá-la do mesmo jeito. Confirme a sintaxe na documentação dele.',
+              'A análise é feita no navegador e a expressão digitada não é enviada ao nosso servidor.',
             ],
           },
         ],
         faq: [
-          { question: 'Mostra proximas execucoes?', answer: 'Sim. A ferramenta lista proximas datas a partir do horario atual.' },
-          { question: 'Posso trocar timezone?', answer: 'Sim. Edite o campo de timezone para simular outro fuso.' },
-          { question: 'Serve para crontab Linux?', answer: 'Serve como apoio para expressoes de 5 campos, mas confirme particularidades do seu ambiente.' },
-          { question: 'A expressao e enviada?', answer: 'Nao por padrao. A analise acontece no navegador.' },
+          { question: 'A ferramenta mostra as próximas execuções?', answer: 'Sim. Ela lista as próximas 8 datas a partir do momento atual, calculadas para o fuso horário informado e exibidas no horário do seu navegador.' },
+          { question: 'Posso escolher o fuso horário?', answer: 'Sim. Digite um nome IANA, como America/Sao_Paulo ou UTC. O campo vem preenchido com o fuso do seu navegador. As datas listadas são mostradas no horário do navegador.' },
+          { question: 'Serve para o crontab do Linux?', answer: 'Serve como apoio para as expressões de cinco campos. Alguns recursos, como segundos ou atalhos, variam entre sistemas, então confirme na documentação do seu agendador.' },
+          { question: 'A expressão é enviada para algum servidor?', answer: 'Não. A leitura da expressão e o cálculo das datas acontecem no navegador.' },
         ],
       },
       en: {
@@ -2392,7 +2424,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Gzip, Deflate e ZIP com Senha',
         shortDescription:
-          'Comprima e descomprima gzip/deflate, compacte arquivos ou pastas em ZIP e extraia ZIP localmente.',
+          'Comprima ou descomprima um arquivo em gzip ou deflate e empacote vários arquivos ou uma pasta em ZIP, com senha opcional.',
         primaryKeyword: 'gzip deflate zip online',
         secondaryKeywords: [
           'compactar gzip online',
@@ -2403,41 +2435,45 @@ const frontOnlyToolSeeds = [
           'extrair zip no navegador',
         ],
         searchIntent:
-          'Devs e usuarios tecnicos que precisam transformar arquivos compactados sem instalar utilitario desktop.',
-        seoTitle: 'Gzip, Deflate e ZIP Online | Compactar, Extrair e Senha',
+          'Devs e usuários técnicos que precisam transformar arquivos compactados sem instalar utilitário desktop.',
+        seoTitle: 'Gzip, Deflate e ZIP Online | Compactar e ZIP com Senha',
         seoDescription:
-          'Comprima ou descomprima gzip/deflate, crie ZIP com arquivos/pastas e extraia ZIP no navegador.',
+          'Comprima ou descomprima gzip e deflate, crie ZIP com senha (AES-256) a partir de arquivos ou de uma pasta, tudo no navegador.',
         h1: 'Gzip, Deflate e ZIP com Senha Online',
         intro:
-          'Selecione arquivos ou pasta, aplique gzip/deflate, crie ZIP opcionalmente criptografado ou extraia um ZIP.',
+          'Selecione arquivos ou uma pasta para comprimir em gzip ou deflate, criar um ZIP com senha opcional ou recriar um ZIP sem senha.',
         contentBlocks: [
           {
-            title: 'Fluxos de compactacao em um lugar',
+            title: 'O que cada botão faz',
             paragraphs: [
-              'Gzip e deflate sao comuns em payloads HTTP, logs e artefatos tecnicos. ZIP e melhor para agrupar varios arquivos ou uma pasta inteira.',
-              'A ferramenta usa streams do navegador quando disponiveis e biblioteca ZIP para empacotar, extrair e aplicar senha no pacote.',
+              'Adicione arquivos arrastando-os ou escolhendo no seletor. Os botões Gzip, Descompactar gzip, Deflate e Inflate trabalham só com o primeiro arquivo da lista e baixam o resultado: o gzip gera nome.gz e o deflate gera nome.deflate. Para descomprimir, a extensão .gz, .gzip ou .deflate é removida do nome. "Deflate" aqui é o formato zlib (o mesmo usado em respostas HTTP "deflate"), e não o deflate bruto sem cabeçalho.',
+              '"Criar ZIP" empacota todos os arquivos da lista em um único arquivos.zip. "Selecionar pasta" troca a lista pelos arquivos da pasta e mantém os caminhos relativos dentro do ZIP. Se você informar uma senha, o ZIP é criptografado com AES-256. Windows e macOS nem sempre abrem esse tipo de ZIP pelo gerenciador nativo, e programas como o 7-Zip funcionam. Teste antes de enviar para outra pessoa.',
             ],
           },
           {
-            title: 'Pastas e senha',
+            title: 'Sobre "Extrair ZIP"',
             paragraphs: [
-              'Use selecionar pasta para manter caminhos relativos em um ZIP. A senha e opcional e serve para reduzir acesso casual ao pacote exportado.',
-              localPrivacy['pt-br'],
+              'O botão "Extrair ZIP" lê o primeiro arquivo da lista (usando a senha, se houver) e baixa um novo arquivo zip-extraido.zip com o conteúdo, sem senha e sem as pastas vazias. Ele não salva os arquivos soltos. Use-o para remover a senha de um ZIP seu ou conferir se a senha está correta, e abra o novo ZIP em seguida.',
             ],
-            list: ['Gzip/gunzip de arquivo', 'Deflate/inflate', 'ZIP com arquivos ou pasta'],
+            list: [
+              'Gzip e Deflate: um arquivo por vez, saída com extensão .gz ou .deflate.',
+              'ZIP: vários arquivos ou pastas, com senha opcional (AES-256).',
+              'Extrair ZIP: gera zip-extraido.zip sem senha.',
+            ],
           },
           {
-            title: 'Limites de compatibilidade',
+            title: 'Limites e privacidade',
             paragraphs: [
-              'CompressionStream pode nao existir em navegadores antigos. ZIP com senha depende do suporte da biblioteca e deve ser testado no destino antes de uso critico.',
+              'Gzip e deflate usam a compressão nativa do navegador, que existe nos navegadores atuais mas pode faltar nos mais antigos. O arquivo resultante é montado na memória antes do download, então arquivos muito grandes podem travar o aparelho. A senha do ZIP protege o conteúdo dos arquivos, mas os nomes deles dentro do pacote continuam visíveis para quem abrir a lista, e ela não substitui um cofre de senhas.',
+              'Tudo acontece no navegador: os arquivos e a senha não são enviados ao nosso servidor.',
             ],
           },
         ],
         faq: [
-          { question: 'Compacta pasta inteira?', answer: 'Sim, usando o seletor de pasta quando o navegador suporta webkitdirectory.' },
-          { question: 'Cria ZIP com senha?', answer: 'Sim. Informe uma senha antes de criar o ZIP.' },
-          { question: 'Descompacta gzip?', answer: 'Sim. Selecione um arquivo .gz e use descompactar gzip.' },
-          { question: 'Os arquivos sao enviados?', answer: 'Nao por padrao. O processamento acontece localmente.' },
+          { question: 'Dá para compactar uma pasta inteira?', answer: 'Sim. Use "Selecionar pasta" (se o navegador permitir) e depois "Criar ZIP". Os caminhos das subpastas são mantidos dentro do ZIP.' },
+          { question: 'O ZIP com senha é seguro?', answer: 'Ele usa criptografia AES-256, mas a segurança também depende da força da senha. Alguns programas, como o gerenciador nativo do Windows, podem não abrir esse tipo de ZIP.' },
+          { question: 'Como descompactar um arquivo gzip?', answer: 'Selecione o arquivo .gz como primeiro da lista e clique em "Descompactar gzip". O arquivo é baixado sem a extensão .gz.' },
+          { question: 'Os meus arquivos são enviados para algum servidor?', answer: 'Não. A compressão, o ZIP e a senha são processados no navegador e os arquivos não saem do seu aparelho.' },
         ],
       },
       en: {
@@ -2816,7 +2852,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Calculadora de Fee Bitcoin com Mempool',
         shortDescription:
-          'Busque taxas recomendadas em sat/vB, estime custo por vsize e compare prioridades em sats e BTC.',
+          'Busque taxas recomendadas em sat/vB, estime o custo pelo tamanho da transação e compare prioridades em sats e BTC.',
         primaryKeyword: 'calculadora fee bitcoin mempool',
         secondaryKeywords: [
           'taxa bitcoin hoje',
@@ -2827,41 +2863,42 @@ const frontOnlyToolSeeds = [
           'sats para btc fee',
         ],
         searchIntent:
-          'Usuarios Bitcoin que precisam estimar custo de transacao por tamanho virtual antes de enviar ou consolidar UTXOs.',
+          'Usuários de Bitcoin que precisam estimar o custo de uma transação pelo tamanho virtual antes de enviar ou consolidar UTXOs.',
         seoTitle: 'Calculadora de Fee Bitcoin | Mempool sat/vB e BTC',
         seoDescription:
-          'Consulte fees recomendadas via mempool, informe vsize e estime custo de transacao em sats e BTC.',
+          'Consulte as taxas recomendadas da mempool, informe entradas e saídas e estime o custo da transação em sats e BTC, sem enviar seus dados.',
         h1: 'Calculadora de Fee Bitcoin com Dados da Mempool',
         intro:
-          'Atualize taxas recomendadas, informe tamanho virtual da transacao e compare prioridade, sats totais e valor em BTC.',
+          'Atualize as taxas recomendadas, informe o tipo e o tamanho da transação e compare o custo de cada prioridade em sats e BTC.',
         contentBlocks: [
           {
-            title: 'Estimativa por sat/vB',
+            title: 'Como a taxa é calculada',
             paragraphs: [
-              'Taxas Bitcoin sao normalmente estimadas em satoshis por virtual byte. Multiplicar sat/vB pelo vsize da transacao da uma estimativa de custo total em sats.',
-              'A ferramenta permite comparar rapido, meia hora, uma hora, economica, minima e um valor customizado para planejamento.',
+              'Em Bitcoin, a taxa depende do tamanho da transação, não do valor enviado. Esse tamanho é medido em vbytes (vB) e a taxa em satoshis por vbyte (sat/vB). O custo é vsize multiplicado pela taxa, arredondado para cima: uma transação de 141 vB a 8 sat/vB custa 1.128 sats, ou 0,00001128 BTC.',
+              'Para estimar o vsize, escolha o tipo de carteira e o número de entradas e saídas. A ferramenta usa 10,5 vB de base mais 68 vB por entrada e 31 vB por saída em carteiras modernas comuns (SegWit nativo), 58 e 43 vB em Taproot simples, e 10 vB mais 148 e 34 vB em carteiras antigas (legado). Uma transação típica, com 1 entrada e 2 saídas (destino e troco), dá cerca de 141 vB. Se você já conhece o tamanho real, escolha "Personalizado" e digite o vsize.',
             ],
           },
           {
-            title: 'Consulta publica de mempool',
+            title: 'Como ler a tabela de prioridades',
             paragraphs: [
-              'O botao atualizar consulta endpoints publicos de fee recomendada para a rede selecionada. Se a API falhar, a tabela ainda mostra valores de exemplo para calculo manual.',
-              'Nenhuma chave privada, seed ou assinatura e usada aqui. A pagina apenas calcula custos e mostra dados de fee.',
+              'A tabela traz as taxas recomendadas pela mempool.space: mais rápida, meia hora, uma hora, econômica e mínima, além de uma taxa personalizada. Cada linha mostra sat/vB, o custo em sats e em BTC. Ao escolher uma prioridade, a simulação mostra quanto o destinatário recebe, quanto vai para a taxa e o total que sai da carteira (valor enviado mais taxa).',
+              'Antes de clicar em "Atualizar mempool", a tabela exibe valores de exemplo (12, 8, 5, 3 e 1 sat/vB). Ao atualizar, o seu navegador consulta o mempool.space (ou o blockstream.info, se o primeiro falhar). Se nenhum responder, a tabela volta aos valores de exemplo. Nenhum endereço ou valor digitado é enviado nessa consulta; a rede pode ser mainnet ou testnet4.',
+              'Esta ferramenta não usa seed nem chave privada, não assina e não transmite nada. O endereço de destino é opcional, não é validado e só entra no resumo copiado ou exportado em JSON.',
             ],
-            list: ['Mainnet e testnet', 'sat/vB para sats', 'Exportacao JSON'],
+            list: ['Mainnet e testnet4', 'sat/vB convertido em sats e BTC', 'Resumo copiável e exportação em JSON'],
           },
           {
-            title: 'O que a estimativa nao garante',
+            title: 'O que a estimativa não garante',
             paragraphs: [
-              'Fee recomendada muda rapido conforme demanda. O valor nao garante confirmacao em bloco especifico e deve ser conferido no momento de transmitir a transacao.',
+              'As taxas mudam a cada bloco, conforme a demanda por espaço. A taxa "mais rápida" ou "meia hora" é uma estimativa, não uma garantia de confirmação em prazo exato. O vsize também é uma estimativa: transações com multisig, scripts diferentes ou entradas de tipos misturados têm tamanho diferente. Confira a taxa e o tamanho na sua carteira no momento de enviar. Esta página informa custos e não é recomendação financeira.',
             ],
           },
         ],
         faq: [
-          { question: 'O que e vsize?', answer: 'E o tamanho virtual da transacao em vB, usado para calcular fee em sat/vB.' },
-          { question: 'A ferramenta envia transacao?', answer: 'Nao. Ela apenas estima taxas e nao assina nem transmite nada.' },
-          { question: 'Busca dados da mempool?', answer: 'Sim. O botao atualizar consulta API publica de fees quando disponivel.' },
-          { question: 'Serve para mainnet?', answer: 'Sim. Voce pode escolher mainnet ou testnet.' },
+          { question: 'O que é vsize?', answer: 'É o tamanho virtual da transação em vbytes (vB). Ele considera o desconto dos dados de witness do SegWit e é a base para o cálculo da taxa em sat/vB.' },
+          { question: 'A ferramenta envia ou assina transações?', answer: 'Não. Ela só calcula custos. Não pede seed nem chave privada, não assina e não transmite nada para a rede.' },
+          { question: 'De onde vêm as taxas?', answer: 'Do mempool.space, consultado direto pelo seu navegador ao clicar em "Atualizar mempool", com o blockstream.info como alternativa. Se ambos falharem, a tabela mostra valores de exemplo, que não refletem a rede.' },
+          { question: 'A taxa depende do valor que estou enviando?', answer: 'Não. Ela depende do tamanho da transação. Enviar pouco com muitas entradas custa mais do que enviar muito com poucas entradas.' },
         ],
       },
       en: {
@@ -3028,7 +3065,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'Bitcoin Address e TX Decoder Read-only',
         shortDescription:
-          'Valide enderecos Bitcoin e decodifique transacoes raw hex sem seed, assinatura ou broadcast.',
+          'Valide endereços Bitcoin e decodifique transações em hex (raw) sem seed, assinatura ou envio à rede.',
         primaryKeyword: 'bitcoin address tx decoder',
         secondaryKeywords: [
           'validar endereco bitcoin',
@@ -3039,41 +3076,41 @@ const frontOnlyToolSeeds = [
           'read only bitcoin tool',
         ],
         searchIntent:
-          'Devs e usuarios Bitcoin que precisam inspecionar enderecos e raw transactions sem risco de assinar ou transmitir.',
-        seoTitle: 'Bitcoin Address e TX Decoder | Read-only e Sem Broadcast',
+          'Devs e usuários de Bitcoin que precisam inspecionar endereços e raw transactions sem risco de assinar ou transmitir.',
+        seoTitle: 'Bitcoin Address e TX Decoder | Somente Leitura e Sem Envio',
         seoDescription:
-          'Valide enderecos Bitcoin, veja scriptPubKey e decodifique raw transaction hex com inputs, outputs, txid e vsize.',
+          'Valide endereços Bitcoin, veja o scriptPubKey e decodifique uma transação em hex com inputs, outputs, txid e vsize, sem enviar nada.',
         h1: 'Bitcoin Address e TX Decoder Read-only',
         intro:
-          'Inspecione enderecos e transacoes raw hex em modo somente leitura, sem pedir seed, WIF ou chave privada.',
+          'Inspecione endereços e transações em hex em modo somente leitura, sem pedir seed, WIF ou chave privada.',
         contentBlocks: [
           {
-            title: 'Inspecao sem risco de envio',
+            title: 'O que cada função mostra',
             paragraphs: [
-              'A ferramenta valida enderecos por rede e mostra scriptPubKey quando possivel. Para raw transaction, decodifica txid, inputs, outputs, valores, scripts e tamanho virtual.',
-              'Ela nao assina, nao transmite e nao solicita seed. O foco e leitura tecnica e debug seguro de dados publicos ou transacoes preparadas.',
+              'Ao validar um endereço, a ferramenta confere o formato e o checksum para a rede escolhida e mostra o tipo (Legacy, Script Hash, Native SegWit ou Taproot) e o scriptPubKey em hexadecimal, que é o script que bloqueia os fundos enviados a esse endereço. O tipo é deduzido pelo prefixo: endereços bc1q aparecem como P2WPKH/P2WSH, sem distinguir os dois.',
+              'Ao decodificar uma transação em hex, ela mostra o txid, a versão, o locktime, o número de entradas e saídas, o total das saídas em satoshis, o vsize e o weight. Cada entrada mostra o txid e o índice da saída que ela gasta, o scriptSig e a quantidade de itens de witness. Cada saída mostra o valor em satoshis, o scriptPubKey, o endereço (quando o script permite) e o tipo, como P2PKH, P2SH, P2WPKH, P2WSH, P2TR ou OP_RETURN. O txid não inclui os dados de witness.',
             ],
           },
           {
             title: 'Mainnet e testnet',
             paragraphs: [
-              'Escolher a rede correta evita falsos negativos em enderecos. Enderecos mainnet e testnet usam prefixos e regras diferentes.',
-              localPrivacy['pt-br'],
+              'Escolha a rede antes de validar: um endereço de mainnet (que começa com bc1, 1 ou 3) é recusado quando a rede selecionada é testnet, e vice-versa, porque os prefixos são diferentes. Para a testnet, a ferramenta aceita endereços com prefixos tb1, m, n e 2.',
+              'Todo o processamento acontece no navegador, sem consultar a rede Bitcoin. O endereço e o hex colados não são enviados ao servidor do site. Mesmo assim, nunca cole seed, WIF ou chave privada: esta ferramenta não precisa deles.',
             ],
-            list: ['Validacao de endereco', 'Decode raw hex', 'Exportacao JSON'],
+            list: ['Validação de endereço por rede', 'Decodificação de transação em hex', 'Cópia e exportação em JSON'],
           },
           {
-            title: 'Limites de decode',
+            title: 'Limites da decodificação',
             paragraphs: [
-              'Uma raw transaction isolada pode nao conter detalhes completos dos UTXOs de entrada, como valor anterior. Para auditoria total, combine com dados de explorer ou node.',
+              'A transação em hex não traz o valor das entradas, então a ferramenta não calcula a taxa paga, não verifica assinaturas e não confirma se as entradas existem ou ainda estão disponíveis. Ela também não informa se o endereço já foi usado nem o saldo. Para isso, combine com um explorer ou com seu próprio node. A ferramenta não transmite transações.',
             ],
           },
         ],
         faq: [
-          { question: 'A ferramenta pede seed?', answer: 'Nao. Ela e read-only e nao precisa de seed, WIF ou chave privada.' },
-          { question: 'Transmite transacao?', answer: 'Nao. Ela apenas decodifica raw hex localmente.' },
-          { question: 'Mostra txid?', answer: 'Sim. Quando a transacao e valida, mostra txid, vsize, weight, inputs e outputs.' },
-          { question: 'Funciona em testnet?', answer: 'Sim. Escolha testnet no seletor de rede.' },
+          { question: 'A ferramenta pede seed ou chave privada?', answer: 'Não. Ela é somente leitura e não precisa de seed, WIF nem chave privada. Se algum site pedir isso para decodificar uma transação, desconfie.' },
+          { question: 'Ela transmite a transação para a rede?', answer: 'Não. Ela só decodifica o hex no seu navegador. Nada é assinado nem enviado à rede Bitcoin.' },
+          { question: 'Por que não aparece a taxa da transação?', answer: 'Porque a taxa é a soma das entradas menos a soma das saídas, e o hex não traz o valor das entradas. Aqui aparece apenas o total das saídas.' },
+          { question: 'Funciona na testnet?', answer: 'Sim. Escolha testnet no seletor de rede. Endereços de mainnet e de testnet não são intercambiáveis.' },
         ],
       },
       en: {
@@ -3240,7 +3277,7 @@ const frontOnlyToolSeeds = [
       'pt-br': {
         name: 'SQL Formatter e Minifier',
         shortDescription:
-          'Formate SQL por dialeto, ajuste caixa de keywords, minifique consultas e exporte arquivo .sql.',
+          'Formate SQL por dialeto, escolha a caixa das palavras-chave, minifique a consulta e baixe o resultado em .sql.',
         primaryKeyword: 'sql formatter online',
         secondaryKeywords: [
           'formatador sql',
@@ -3251,41 +3288,42 @@ const frontOnlyToolSeeds = [
           'sql beautifier',
         ],
         searchIntent:
-          'Devs e analistas que precisam limpar queries SQL para leitura, revisao, debug ou documentacao.',
+          'Devs e analistas que precisam limpar queries SQL para leitura, revisão, debug ou documentação.',
         seoTitle: 'SQL Formatter Online | PostgreSQL, MySQL, SQLite e T-SQL',
         seoDescription:
-          'Cole SQL, escolha dialeto, formate, minifique, copie resultado ou exporte .sql direto no navegador.',
+          'Cole uma consulta SQL, escolha o dialeto e formate, minifique, copie ou baixe em .sql. Roda no navegador, grátis e sem cadastro.',
         h1: 'SQL Formatter e Minifier Online',
         intro:
-          'Formate queries SQL com dialeto, keywords em upper/lower/preserve, minificacao e exportacao .sql.',
+          'Cole uma consulta SQL e formate com quebras de linha e indentação, com palavras-chave em maiúsculas, minúsculas ou como estão.',
         contentBlocks: [
           {
-            title: 'SQL legivel para revisao',
+            title: 'Como formatar uma consulta',
             paragraphs: [
-              'Queries longas ficam dificeis de revisar quando chegam em uma linha so. O formatador quebra clausulas, identa trechos e padroniza keywords conforme sua preferencia.',
-              'Escolha dialetos comuns como PostgreSQL, MySQL, MariaDB, SQLite, BigQuery, T-SQL e PL/SQL para melhorar compatibilidade de sintaxe.',
+              'Cole o SQL, escolha o dialeto (SQL padrão, PostgreSQL, MySQL, MariaDB, SQLite, BigQuery, T-SQL ou PL/SQL) e a caixa das palavras-chave (UPPER, lower ou preserve) e clique em "Formatar SQL". O resultado aparece ao lado, com cada cláusula em uma linha e indentação de 2 espaços. Também funciona com vários comandos separados por ponto e vírgula, que ficam separados por uma linha em branco.',
+              'Exemplo: select id,name,email from users where active=true order by created_at desc limit 20; vira SELECT, FROM, WHERE, ORDER BY e LIMIT, cada um em sua linha, com os campos id, name e email um por linha e active = TRUE na condição.',
             ],
           },
           {
-            title: 'Minificacao e exportacao',
+            title: 'Minificar e exportar',
             paragraphs: [
-              'O modo minificar remove comentarios simples e espacos repetidos para gerar uma versao compacta. Voce tambem pode copiar o resultado ou baixar como query.sql.',
-              localPrivacy['pt-br'],
+              '"Minificar" gera uma única linha: apaga comentários que começam com -- e reduz qualquer sequência de espaços e quebras de linha a um espaço. Esse modo é simples e não entende a sintaxe do SQL: um texto entre aspas que contenha -- tem o final cortado como se fosse comentário, e espaços repetidos dentro de textos entre aspas também são reduzidos, o que altera o valor. Comentários em bloco (/* */) são mantidos. Confira o resultado antes de usar.',
+              '"Copiar resultado" e "Exportar .sql" usam o texto formatado ou minificado, ou o texto original se você ainda não formatou. O arquivo baixado se chama query.sql.',
             ],
-            list: ['Formatar por dialeto', 'Minificar SQL', 'Exportar .sql'],
+            list: ['Formatar por dialeto', 'Caixa das palavras-chave: UPPER, lower ou preserve', 'Minificar em uma linha', 'Exportar query.sql'],
           },
           {
-            title: 'Limites do formatador',
+            title: 'Limites',
             paragraphs: [
-              'Formatar nao valida permissao, plano de execucao ou seguranca da query. Sempre revise queries destrutivas, filtros WHERE e variaveis antes de executar em banco real.',
+              'Formatar muda só o aspecto do texto. A ferramenta não executa a consulta, não verifica tabelas, colunas ou permissões e não avalia o desempenho. Se o SQL tiver um erro de sintaxe que o formatador não consegue ler (como um parêntese aberto), ele mostra a mensagem técnica do analisador, em inglês. Revise sempre comandos que alteram dados antes de rodá-los em um banco real.',
+              'A formatação acontece no navegador e o SQL colado não é enviado ao nosso servidor.',
             ],
           },
         ],
         faq: [
-          { question: 'Suporta PostgreSQL?', answer: 'Sim. Tambem ha MySQL, MariaDB, SQLite, BigQuery, T-SQL e PL/SQL.' },
-          { question: 'Minifica SQL?', answer: 'Sim. O modo minificar remove espacos repetidos e comentarios simples de linha.' },
-          { question: 'Posso exportar .sql?', answer: 'Sim. Use exportar .sql para baixar o resultado.' },
-          { question: 'O SQL e enviado?', answer: 'Nao por padrao. A formatacao roda no navegador.' },
+          { question: 'Quais dialetos de SQL a ferramenta aceita?', answer: 'SQL padrão, PostgreSQL, MySQL, MariaDB, SQLite, BigQuery, T-SQL e PL/SQL. O dialeto muda a forma como palavras reservadas e símbolos são lidos.' },
+          { question: 'O que a minificação faz com os comentários?', answer: 'Remove os comentários de linha que começam com --, mas mantém os de bloco /* */. Cuidado com textos entre aspas que contenham --, porque o final deles também é cortado.' },
+          { question: 'Posso baixar o resultado em .sql?', answer: 'Sim. "Exportar .sql" baixa o arquivo query.sql com o texto formatado ou minificado.' },
+          { question: 'O meu SQL é enviado para algum servidor?', answer: 'Não. A formatação roda no navegador e a consulta não sai do seu aparelho.' },
         ],
       },
       en: {

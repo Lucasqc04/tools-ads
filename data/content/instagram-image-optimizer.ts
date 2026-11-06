@@ -28,7 +28,7 @@ export const instagramImageOptimizerContentBlocks: ContentBlock[] = [
   {
     title: 'Privacidade e limites',
     paragraphs: [
-      'As imagens não são enviadas a um servidor: leitura, corte e exportação são feitos localmente no navegador. O original continua disponível para comparação e pode ser baixado sem alteração. O comportamento de orientação EXIF e suporte a HEIC dependem dos codecs do navegador e do dispositivo; se uma foto não abrir, salve uma cópia em JPEG e tente novamente.',
+      'As imagens não são enviadas a um servidor: leitura, corte e exportação são feitos localmente no navegador. Cada lote aceita até 12 imagens de 25 MB, e fotos acima de 40 megapixels são recusadas para não esgotar a memória do aparelho. O original continua disponível para comparação e pode ser baixado sem alteração. O comportamento de orientação EXIF e suporte a HEIC dependem dos codecs do navegador e do dispositivo; se uma foto não abrir, salve uma cópia em JPEG e tente novamente.',
       'O arquivo exportado é uma preparação técnica, não uma simulação da compressão do Instagram. A plataforma pode recomprimir a imagem depois da publicação, então não existe garantia de que uma versão preparada ficará visualmente melhor em todos os aparelhos. Compare as opções publicando-as sob as mesmas condições e observando o resultado no próprio Instagram.',
       'Depois da comparação, você pode guardar uma nota local com aparelho, versão do Instagram, tipo de publicação e condições usadas. Esse histórico fica no navegador deste aparelho e não contém as imagens.',
     ],
@@ -59,6 +59,6 @@ export const instagramImageOptimizerFaq: FaqItem[] = [
   {
     question: 'Quais formatos posso usar?',
     answer:
-      'JPEG, PNG e WebP são os formatos mais compatíveis. HEIC/HEIF pode abrir em alguns navegadores; se o aparelho não tiver um codec compatível, salve a foto como JPEG antes de enviá-la.',
+      'JPEG, PNG e WebP são os formatos mais compatíveis. HEIC/HEIF pode abrir em alguns navegadores; se o aparelho não tiver um codec compatível, salve a foto como JPEG antes de enviá-la. O limite é de 12 imagens por lote, com até 25 MB cada.',
   },
 ];

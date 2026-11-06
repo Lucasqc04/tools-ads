@@ -18,42 +18,47 @@ export type SlugGeneratorLocaleContent = {
 const contentByLocale: Record<AppLocale, SlugGeneratorLocaleContent> = {
   'pt-br': {
     name: 'Gerador de Slug para URL',
-    shortDescription: 'Transforme titulos e frases em slugs limpos para URL com opcoes de separador, limite e sugestoes.',
+    shortDescription: 'Transforme títulos e frases em slugs limpos para URL, com opção de separador, limite de tamanho e sugestões.',
     primaryKeyword: 'gerador de slug para url',
     secondaryKeywords: ['slug generator', 'criar slug online', 'url amigavel', 'slug para wordpress', 'slug para nextjs'],
     searchIntent: 'Criadores e devs que precisam gerar URLs amigaveis para blog, e-commerce e CMS.',
-    seoTitle: 'Gerador de Slug para URL Online | Criar URL Amigavel',
-    seoDescription: 'Converta textos em slugs limpos com remocao de acentos, controle de separador, limite de tamanho e preview da URL final.',
+    seoTitle: 'Gerador de Slug para URL Online | Criar Slug Amigável',
+    seoDescription: 'Gere o slug de um título: a ferramenta tira acentos e símbolos, escolhe hífen ou underscore, limita o tamanho e monta a URL completa com prefixo.',
     h1: 'Gerador de Slug para URL',
-    intro: 'Crie slugs limpos e consistentes para posts, paginas, produtos e categorias com controle total de formato.',
+    intro: 'Digite um título ou uma frase e gere um slug limpo para a URL de posts, páginas, produtos e categorias, sem acentos, símbolos nem espaços.',
     contentBlocks: [
       {
-        title: 'O que e slug e por que importa',
+        title: 'O que é um slug e como gerar o seu',
         paragraphs: [
-          'Slug e a parte da URL que identifica um conteudo de forma legivel. Um bom slug facilita navegacao e melhora organizacao de links em diferentes sistemas.',
-          'Nesta ferramenta voce transforma textos em slugs padronizados com remocao de acentos, simbolos e espacos extras.',
+          'Slug é o trecho final de uma URL que identifica a página de forma legível, como "camiseta-premium-azul" em site.com/loja/camiseta-premium-azul. Cole o título no campo "Texto original" e o slug aparece na hora, junto com a URL completa montada com o prefixo que você informar.',
+          'Exemplo: "Lançamento: Camiseta Premium Azul #Coleção" vira "lancamento-camiseta-premium-azul-colecao". A ferramenta sempre tira os acentos e a cedilha e troca espaços e traços repetidos por um único separador.',
         ],
       },
       {
-        title: 'Configuracoes para diferentes cenarios',
+        title: 'Opções de configuração',
         paragraphs: [
-          'Voce pode escolher separador, definir limite maximo, cortar sem quebrar palavra e remover termos comuns para deixar URL mais objetiva.',
-          'Tambem e possivel montar preview com prefixo de dominio ou categoria, util para CMS, WordPress, Shopify e projetos Next.js.',
+          'Você pode escolher hífen ou underscore como separador, manter ou não as letras minúsculas, remover pontuação, emojis e palavras comuns (como "de", "para", "com", "the" e "el") e definir o tamanho máximo (80 caracteres por padrão). Com "cortar só entre palavras" ligado, o limite vale por palavras inteiras: uma palavra que não cabe é pulada, e palavras menores que vierem depois ainda podem entrar.',
+          'Os botões de sugestão mostram variações do slug gerado: com underscore, com hífen, sem separador e com o sufixo -2026. O histórico guarda os 20 últimos slugs que você salvar, no armazenamento local deste navegador.',
+        ],
+        list: [
+          'Hífen é o separador mais comum em blogs, CMS e lojas.',
+          'Use o prefixo para ver a URL final antes de colar no painel.',
+          'O alerta de slug longo aparece acima de 72 caracteres.',
         ],
       },
       {
-        title: 'Boas praticas e limitacoes',
+        title: 'Boas práticas e limites',
         paragraphs: [
-          'Slugs muito longos ficam dificeis de manter e compartilhar. Prefira termos diretos e coerentes com o conteudo da pagina.',
-          'A ferramenta ajuda na normalizacao, mas a escolha final de palavras continua sendo uma decisao editorial.',
+          'Prefira slugs curtos, com as palavras que descrevem a página, e evite mudá-los depois de publicar, pois o endereço antigo deixa de funcionar a menos que exista um redirecionamento. Remover palavras comuns deixa o slug menor, mas confira se o sentido continua claro.',
+          'A ferramenta não confere se o slug já existe no seu site e não converte alfabetos como o cirílico ou o chinês para letras latinas: esses caracteres são mantidos. Tudo é processado no navegador, sem envio do texto ao servidor.',
         ],
       },
     ],
     faq: [
-      { question: 'Posso escolher hifen ou underscore?', answer: 'Sim. Voce escolhe o separador conforme seu padrao.' },
-      { question: 'A ferramenta remove acentos e emojis?', answer: 'Sim. Existem opcoes para limpeza de acentos, pontuacao e emojis.' },
-      { question: 'Posso limitar tamanho sem quebrar palavra?', answer: 'Sim. Ha opcao para manter limites por palavra.' },
-      { question: 'Consigo copiar URL completa com prefixo?', answer: 'Sim. Voce pode informar prefixo e copiar o resultado final.' },
+      { question: 'Posso escolher hífen ou underscore?', answer: 'Sim. O seletor de separador alterna entre hífen (-) e underscore (_). Os dois formatos são aceitos em URLs, mas o hífen é o mais usado.' },
+      { question: 'A ferramenta remove acentos e emojis?', answer: 'Os acentos e a cedilha são sempre removidos. Pontuação e emojis também saem por padrão, mas você pode desmarcar essas opções.' },
+      { question: 'Como limitar o tamanho do slug?', answer: 'Informe o tamanho máximo. Com "cortar só entre palavras" ligado, a ferramenta usa só palavras inteiras que cabem no limite; desligado, ela corta o texto no tamanho exato.' },
+      { question: 'Consigo copiar a URL completa com o prefixo do meu site?', answer: 'Sim. Digite o endereço base no campo de prefixo, por exemplo https://meusite.com/blog, e use "Copiar URL completa". Barras no final do prefixo são ignoradas.' },
     ],
   },
   en: {

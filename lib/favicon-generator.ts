@@ -93,7 +93,7 @@ const renderIconCanvas = (
   const context = canvas.getContext('2d');
 
   if (!context) {
-    throw new Error('Canvas indisponivel.');
+    throw new Error('Canvas indisponível.');
   }
 
   canvas.width = size;
@@ -264,7 +264,7 @@ export const generateFaviconPackage = async (
   const icoInputs = await Promise.all(
     [16, 32, 48].map(async (size) => {
       const asset = assets.find((item) => item.fileName === `favicon-${size}x${size}.png`);
-      if (!asset) throw new Error('Asset de ICO nao encontrado.');
+      if (!asset) throw new Error('Arquivo de ícone ICO não encontrado.');
       return { size, blob: asset.blob };
     }),
   );

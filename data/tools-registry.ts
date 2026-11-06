@@ -456,7 +456,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'bitcoin-wallet',
     name: 'Carteira Bitcoin Testnet e Mainnet',
     shortDescription:
-      'Gere carteira Bitcoin, importe seed/WIF, veja saldo e UTXOs e envie BTC em testnet ou mainnet usando mempool API.',
+      'Gere carteira Bitcoin, importe seed/WIF, veja saldo e UTXOs e envie BTC em testnet ou mainnet, com a assinatura feita no navegador.',
     category: 'crypto',
     primaryKeyword: 'carteira bitcoin testnet e mainnet',
     secondaryKeywords: [
@@ -474,17 +474,17 @@ export const toolsRegistry: ToolDefinition[] = [
       'saldo bitcoin testnet',
     ],
     searchIntent:
-      'Usuarios e devs que precisam criar ou importar carteira Bitcoin e enviar transacoes com processamento local no navegador.',
+      'Usuários e devs que precisam criar ou importar carteira Bitcoin e enviar transações com assinatura local no navegador.',
     seoTitle:
       'Carteira Bitcoin Testnet/Mainnet | Gerar, Importar e Enviar BTC',
     seoDescription:
-      'Crie carteira Bitcoin com seed BIP39, importe WIF, consulte saldo e UTXOs e envie BTC em testnet ou mainnet com assinatura local. Gratis, sem cadastro.',
+      'Crie carteira Bitcoin com seed BIP39, importe WIF, consulte saldo e UTXOs e envie BTC em testnet ou mainnet com assinatura local. Grátis, sem cadastro.',
     h1: 'Carteira Bitcoin Testnet e Mainnet com Envio Local de BTC',
     intro: bitcoinWalletIntro,
     canonicalPath: '/tools/bitcoin-wallet',
     faq: bitcoinWalletFaq,
     contentBlocks: bitcoinWalletContentBlocks,
-    relatedToolIds: ['crypto-unit-converter', 'json-formatter', 'qr-code-generator'],
+    relatedToolIds: ['bitcoin-fee-calculator', 'bitcoin-address-tx-decoder', 'crypto-unit-converter'],
   },
   {
     id: 'crypto-unit-converter',
@@ -517,7 +517,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/crypto-unit-converter',
     faq: cryptoConverterFaq,
     contentBlocks: cryptoConverterContentBlocks,
-    relatedToolIds: ['image-converter', 'html-viewer', 'json-formatter'],
+    relatedToolIds: ['bitcoin-fee-calculator', 'bitcoin-wallet', 'lightning-decoder'],
   },
   {
     id: 'html-viewer',
@@ -645,7 +645,7 @@ export const toolsRegistry: ToolDefinition[] = [
     category: 'documents',
     ...getZplLabelEditorContent('pt-br'),
     canonicalPath: '/tools/editor-etiquetas-zpl',
-    relatedToolIds: ['csv-viewer', 'image-converter', 'html-viewer'],
+    relatedToolIds: ['pdf-organizer', 'image-converter', 'csv-viewer'],
   },
   {
     id: 'data-converter',
@@ -710,7 +710,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'open-graph-preview',
     name: 'Open Graph Preview e Gerador de Meta Tags',
     shortDescription:
-      'Veja preview de links para redes sociais, valide tags OG/Twitter e gere snippets HTML e Next.js.',
+      'Informe a URL de uma página pública, veja o preview do link nas redes sociais, confira as tags OG/Twitter e copie snippets HTML e Next.js.',
     category: 'dev',
     primaryKeyword: 'open graph preview',
     secondaryKeywords: [
@@ -725,22 +725,22 @@ export const toolsRegistry: ToolDefinition[] = [
     ],
     searchIntent:
       'Devs e profissionais de marketing que precisam validar como um link aparece em plataformas sociais antes de publicar.',
-    seoTitle: 'Open Graph Preview Online | Testar Link e Gerar Meta Tags',
+    seoTitle: 'Open Graph Preview Online | Testar Link e Copiar Meta Tags',
     seoDescription:
-      'Visualize previews de link para Facebook, LinkedIn, WhatsApp e X, valide Open Graph/Twitter Card e gere meta tags HTML e metadata Next.js.',
-    h1: 'Open Graph Preview Online com Diagnóstico e Gerador de Meta Tags',
+      'Veja como uma URL pública aparece no WhatsApp, Facebook, LinkedIn e X, confira as tags Open Graph e Twitter Card e copie meta tags HTML ou metadata Next.js.',
+    h1: 'Open Graph Preview Online: Veja como seu Link Aparece nas Redes',
     intro: openGraphPreviewIntro,
     canonicalPath: '/tools/open-graph-preview',
     faq: openGraphPreviewFaq,
     contentBlocks: openGraphPreviewContentBlocks,
-    relatedToolIds: ['json-formatter', 'html-viewer', 'markdown-editor', 'url-encoder-decoder'],
+    relatedToolIds: ['gerador-link-whatsapp-telegram', 'html-viewer', 'url-encoder-decoder', 'dns-lookup'],
   },
   {
     id: 'cpf-generator',
     slug: 'cpf-generator',
     name: 'Criador de CPF Válido',
     shortDescription:
-      'Gere CPF válido para testes com opção com ou sem pontuação, grátis, sem cadastro e com cópia rápida.',
+      'Gere CPFs de teste com dígitos verificadores corretos, com ou sem pontuação, em lotes de até 100 e com cópia rápida. Grátis e sem cadastro.',
     category: 'utility',
     primaryKeyword: 'gerador de cpf valido gratis',
     secondaryKeywords: [
@@ -757,20 +757,20 @@ export const toolsRegistry: ToolDefinition[] = [
       'Usuários e devs que precisam gerar CPF válido para testes de formulário, integração e QA sem cadastro.',
     seoTitle: 'Gerador de CPF Válido Grátis | Com ou Sem Pontuação',
     seoDescription:
-      'Crie CPF válido online para testes com opção com ou sem pontuação, geração em lote e cópia rápida, grátis, sem cadastro e sem login.',
+      'Gere CPFs válidos para testes de formulários e sistemas, com ou sem pontuação, em lote e com cópia rápida. Números sorteados, sem consulta à Receita.',
     h1: 'Gerador de CPF Válido Grátis, Sem Cadastro e Com Cópia Rápida',
     intro: cpfGeneratorIntro,
     canonicalPath: '/tools/cpf-generator',
     faq: cpfGeneratorFaq,
     contentBlocks: cpfGeneratorContentBlocks,
-    relatedToolIds: ['gerador-pessoa-fake', 'json-formatter', 'qr-code-generator'],
+    relatedToolIds: ['gerador-pessoa-fake', 'gerador-cnpj', 'pix-decoder'],
   },
   {
     id: 'gerador-pessoa-fake',
     slug: 'gerador-pessoa-fake',
     name: 'Gerador de Pessoa Fake para Testes',
     shortDescription:
-      'Gere identidade ficticia coerente com CPF valido, RG, email, telefone, endereco, idade e nascimento para desenvolvimento e QA.',
+      'Gere perfis fictícios coerentes, com CPF válido, RG, e-mail, telefone, endereço, idade e nascimento, para desenvolvimento e QA.',
     category: 'utility',
     primaryKeyword: 'gerador de pessoa fake',
     secondaryKeywords: [
@@ -787,24 +787,24 @@ export const toolsRegistry: ToolDefinition[] = [
       'dados ficticios para homologacao',
     ],
     searchIntent:
-      'Devs, QAs e analistas que precisam gerar pessoas ficticias coerentes para testar formularios, APIs, banco de dados e automacoes.',
+      'Devs, QAs e analistas que precisam gerar pessoas fictícias coerentes para testar formulários, APIs, bancos de dados e automações.',
     seoTitle:
-      'Gerador de Pessoa Fake para Testes | CPF, RG, Email, Telefone e Endereco',
+      'Gerador de Pessoa Fake para Testes | CPF, RG, E-mail e Endereço',
     seoDescription:
-      'Crie pessoas ficticias coerentes para testes com CPF valido, RG, idade, nascimento, estado, cidade, DDD, CEP e exportacao em JSON, CSV e SQL.',
-    h1: 'Gerador de Pessoa Fake para Testes com CPF, RG e Endereco Coerente',
+      'Crie pessoas fictícias coerentes para testes, com CPF válido, RG, idade, nascimento, estado, cidade, DDD, CEP e exportação em JSON, CSV e SQL.',
+    h1: 'Gerador de Pessoa Fake para Testes com CPF, RG e Endereço Coerente',
     intro: fakePersonGeneratorIntro,
     canonicalPath: '/tools/gerador-pessoa-fake',
     faq: fakePersonGeneratorFaq,
     contentBlocks: fakePersonGeneratorContentBlocks,
-    relatedToolIds: ['cpf-generator', 'json-formatter', 'password-generator'],
+    relatedToolIds: ['cpf-generator', 'gerador-cnpj', 'json-formatter'],
   },
   {
     id: 'password-generator',
     slug: 'password-generator',
     name: 'Gerador de Senha Forte',
     shortDescription:
-      'Crie senha forte com tamanho personalizado e combinacao de letras, numeros e simbolos, gratis e sem cadastro.',
+      'Crie senha forte com tamanho personalizado e combinação de letras, números e símbolos, grátis e sem cadastro.',
     category: 'utility',
     primaryKeyword: 'gerador de senha forte gratis',
     secondaryKeywords: [
@@ -818,16 +818,16 @@ export const toolsRegistry: ToolDefinition[] = [
       'password generator online',
     ],
     searchIntent:
-      'Usuarios que precisam gerar senha forte rapidamente para contas pessoais, profissionais e testes de sistema.',
-    seoTitle: 'Gerador de Senha Forte Gratis | Com Letras, Numeros e Simbolos',
+      'Usuários que precisam gerar senha forte rapidamente para contas pessoais, profissionais e testes de sistema.',
+    seoTitle: 'Gerador de Senha Forte Grátis | Letras, Números e Símbolos',
     seoDescription:
-      'Gere senha forte online com tamanho personalizado, escolha de caracteres, regeneracao automatica e botao de copiar. Gratis, sem cadastro e sem login.',
-    h1: 'Gerador de Senha Forte Gratis, Sem Cadastro e Com Copia Rapida',
+      'Gere uma senha forte com o tamanho e os caracteres que quiser, atualizada na hora e criada no navegador. Grátis, sem cadastro e sem login.',
+    h1: 'Gerador de Senha Forte Grátis, Sem Cadastro e Com Cópia Rápida',
     intro: passwordGeneratorIntro,
     canonicalPath: '/tools/password-generator',
     faq: passwordGeneratorFaq,
     contentBlocks: passwordGeneratorContentBlocks,
-    relatedToolIds: ['cpf-generator', 'json-formatter', 'qr-code-generator'],
+    relatedToolIds: ['authenticator-code-generator', 'gerador-de-uuid-e-nanoid', 'gerador-pessoa-fake'],
   },
   {
     id: 'base64-image-viewer',
@@ -894,7 +894,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'image-converter',
     name: 'Conversor de Imagem e PDF',
     shortDescription:
-      'Converta mais de 20 formatos de imagem e PDF no navegador, grátis, sem cadastro, sem login e com download imediato.',
+      'Converta imagens entre PNG, JPEG, WEBP e AVIF, ou entre imagem e PDF, direto no navegador e sem cadastro.',
     category: 'documents',
     primaryKeyword: 'conversor de imagem para pdf gratis',
     secondaryKeywords: [
@@ -915,22 +915,22 @@ export const toolsRegistry: ToolDefinition[] = [
     searchIntent:
       'Usuários que precisam converter arquivos visuais entre formatos de imagem e PDF rápido, grátis e sem cadastro.',
     seoTitle:
-      'Conversor de Imagem e PDF Grátis (20+ formatos) | Sem Cadastro',
+      'Conversor de Imagem e PDF Grátis | PNG, JPEG, WEBP e AVIF',
     seoDescription:
-      'Converta imagens e PDFs online com processamento local, sem cadastro, sem login e com fluxo rápido para desktop e mobile.',
-    h1: 'Conversor de Imagem e PDF Grátis, Sem Cadastro, Sem Login e Rápido',
+      'Converta imagem para PNG, JPEG, WEBP ou AVIF, imagem para PDF e PDF para imagem no navegador, sem cadastro. Escolha a qualidade e baixe na hora.',
+    h1: 'Conversor de Imagem e PDF Grátis, sem Cadastro',
     intro: imageConverterIntro,
     canonicalPath: '/tools/image-converter',
     faq: imageConverterFaq,
     contentBlocks: imageConverterContentBlocks,
-    relatedToolIds: ['html-viewer', 'qr-code-generator'],
+    relatedToolIds: ['image-compression', 'redimensionar-imagem', 'pdf-organizer', 'image-to-base64'],
   },
   {
     id: 'image-compression',
     slug: 'image-compression',
     name: 'Compressor de Imagem em Lote',
     shortDescription:
-      'Comprima varias imagens online, ajuste nivel de compressao, veja estimativa de tamanho e preview antes de baixar.',
+      'Comprima várias imagens de uma vez, ajuste o nível de compressão e compare o antes e o depois antes de baixar.',
     category: 'documents',
     primaryKeyword: 'comprimir imagem online gratis',
     secondaryKeywords: [
@@ -946,17 +946,17 @@ export const toolsRegistry: ToolDefinition[] = [
       'compressor de imagem sem login',
     ],
     searchIntent:
-      'Usuarios que precisam reduzir tamanho de imagem rapido, com controle de compressao e preview antes do download.',
+      'Usuários que precisam reduzir o tamanho de imagens com controle de compressão e prévia antes do download.',
     seoTitle:
-      'Compressor de Imagem Online Gratis em Lote | Reduzir Tamanho com Preview',
+      'Compressor de Imagem Online Grátis em Lote | Reduzir Tamanho',
     seoDescription:
-      'Comprima varias imagens de uma vez com controle de nivel, estimativa de tamanho final, preview antes/depois e download rapido. Gratis, sem cadastro e sem login.',
-    h1: 'Compressor de Imagem em Lote Gratis com Preview e Controle de Compressao',
+      'Comprima várias imagens de uma vez, escolha o nível de compressão e compare antes e depois. Grátis, sem cadastro e direto no navegador.',
+    h1: 'Compressor de Imagem em Lote Grátis, com Prévia do Resultado',
     intro: imageCompressionIntro,
     canonicalPath: '/tools/image-compression',
     faq: imageCompressionFaq,
     contentBlocks: imageCompressionContentBlocks,
-    relatedToolIds: ['image-converter', 'image-to-base64', 'video-compression'],
+    relatedToolIds: ['image-converter', 'redimensionar-imagem', 'exif-viewer', 'video-compression'],
   },
   {
     id: 'instagram-image-optimizer',
@@ -1015,7 +1015,7 @@ export const toolsRegistry: ToolDefinition[] = [
       'removedor de fundo online sem cadastro',
     ],
     searchIntent:
-      'Usuarios que precisam remover fundo chroma de uma imagem e baixar PNG transparente sem reduzir a resolucao.',
+      'Usuários que precisam remover o fundo chroma de uma imagem e baixar PNG transparente sem reduzir a resolução.',
     seoTitle:
       'Remover Fundo de Imagem Chroma Key Online | PNG Transparente',
     seoDescription:
@@ -1025,14 +1025,14 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/remover-fundo-imagem',
     faq: backgroundRemoverFaq,
     contentBlocks: backgroundRemoverContentBlocks,
-    relatedToolIds: ['image-converter', 'image-compression', 'image-to-base64', 'image-color-extractor'],
+    relatedToolIds: ['image-converter', 'image-compression', 'redimensionar-imagem', 'image-color-extractor'],
   },
   {
     id: 'video-compression',
     slug: 'video-compression',
-    name: 'Compressor de Video Online',
+    name: 'Compressor de Vídeo Online',
     shortDescription:
-      'Comprima videos online em lote, ajuste nivel, veja estimativa de tamanho e preview antes de baixar.',
+      'Comprima vídeos em lote, ajuste o nível de compressão e compare o resultado em MP4 antes de baixar.',
     category: 'documents',
     primaryKeyword: 'comprimir video online gratis',
     secondaryKeywords: [
@@ -1048,17 +1048,17 @@ export const toolsRegistry: ToolDefinition[] = [
       'diminuir tamanho do video para whatsapp',
     ],
     searchIntent:
-      'Usuarios que querem reduzir tamanho de video com controle de compressao, mantendo preview antes do download.',
+      'Usuários que querem reduzir o tamanho de vídeos com controle de compressão e prévia antes do download.',
     seoTitle:
-      'Compressor de Video Online Gratis | Reduzir Tamanho',
+      'Compressor de Vídeo Online Grátis | Reduzir Tamanho de MP4',
     seoDescription:
-      'Comprima varios videos online com controle de nivel, estimativa de tamanho final, preview antes/depois e download local. Gratis, sem cadastro e sem login.',
-    h1: 'Compressor de Video Online Gratis com Preview Antes do Download',
+      'Comprima vídeos de até 10 GB, escolha o nível de compressão e compare antes e depois. Grátis, sem cadastro. Acima de 512 MB, tudo no seu aparelho.',
+    h1: 'Compressor de Vídeo Online Grátis, com Prévia antes de Baixar',
     intro: videoCompressionIntro,
     canonicalPath: '/tools/video-compression',
     faq: videoCompressionFaq,
     contentBlocks: videoCompressionContentBlocks,
-    relatedToolIds: ['extrair-audio-de-video', 'image-compression', 'image-converter'],
+    relatedToolIds: ['extrair-audio-de-video', 'timelapse-creator', 'transcricao-de-audio-e-video'],
   },
   {
     id: 'video-downloader',
@@ -1091,9 +1091,9 @@ export const toolsRegistry: ToolDefinition[] = [
   {
     id: 'extrair-audio-de-video',
     slug: 'extrair-audio-de-video',
-    name: 'Editor de Audio e Extrator de Audio de Video',
+    name: 'Editor de Áudio e Extrator de Áudio de Vídeo',
     shortDescription:
-      'Extraia audio de videos, importe audios ou URLs diretas de midia, corte pela waveform, renomeie trechos e baixe clips separados em MP3, WAV, M4A, OGG ou WEBM.',
+      'Extraia o áudio de vídeos, abra áudios ou links diretos, corte pela forma de onda e baixe cada trecho em MP3, WAV, M4A, OGG ou WEBM.',
     category: 'documents',
     primaryKeyword: 'extrair audio de video online gratis',
     secondaryKeywords: [
@@ -1110,22 +1110,20 @@ export const toolsRegistry: ToolDefinition[] = [
       'audio cutter online',
     ],
     searchIntent:
-      'Usuarios que precisam extrair sons especificos de videos ou audios, recortar pela onda sonora e baixar trechos separados sem instalar editor pesado.',
+      'Usuários que precisam extrair sons específicos de vídeos ou áudios, recortar pela onda sonora e baixar trechos separados sem instalar um editor pesado.',
     seoTitle:
-      'Extrair Audio de Video Online Gratis | Editor com Waveform e MP3',
+      'Extrair Áudio de Vídeo Online Grátis | Cortar e Baixar em MP3',
     seoDescription:
-      'Extraia audio de video, importe MP3/WAV/M4A ou URLs diretas, corte pela waveform, ouca trechos, renomeie clips e baixe audios separados. Gratis e sem cadastro.',
-    h1: 'Extrair Audio de Video Online com Editor de Waveform e Cortes em MP3',
+      'Extraia o áudio de um vídeo, corte trechos na forma de onda e baixe em MP3, WAV, M4A, OGG ou WEBM. Grátis, sem cadastro e direto no navegador.',
+    h1: 'Extrair Áudio de Vídeo Online e Cortar Trechos pela Forma de Onda',
     intro: audioEditorIntro,
     canonicalPath: '/tools/extrair-audio-de-video',
     faq: audioEditorFaq,
     contentBlocks: audioEditorContentBlocks,
     relatedToolIds: [
       'transcricao-de-audio-e-video',
+      'audio-blaster',
       'video-compression',
-      'image-converter',
-      'image-compression',
-      'markdown-editor',
     ],
   },
   {
@@ -1180,7 +1178,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/estourador-de-audio',
     faq: audioBlasterFaq,
     contentBlocks: audioBlasterContentBlocks,
-    relatedToolIds: ['extrair-audio-de-video', 'transcricao-de-audio-e-video', 'video-compression'],
+    relatedToolIds: ['extrair-audio-de-video', 'transcricao-de-audio-e-video'],
   },
   {
     id: 'transcricao-de-audio-e-video',
@@ -1215,7 +1213,7 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/transcricao-de-audio-e-video',
     faq: audioVideoTranscriptionFaq,
     contentBlocks: audioVideoTranscriptionContentBlocks,
-    relatedToolIds: ['extrair-audio-de-video', 'video-compression', 'text-diff', 'markdown-editor'],
+    relatedToolIds: ['extrair-audio-de-video', 'video-compression', 'markdown-editor'],
   },
   {
     id: 'qr-code-generator',
@@ -1238,15 +1236,15 @@ export const toolsRegistry: ToolDefinition[] = [
     ],
     searchIntent:
       'Usuários que querem gerar QR Code rápido, grátis, sem cadastro, sem login, personalizar visual e baixar imagem.',
-    seoTitle: 'Gerador de QR Code Grátis, Sem Cadastro e Sem Login | PNG, PDF e SVG',
+    seoTitle: 'Gerador de QR Code Grátis, sem Cadastro | PNG, SVG e PDF',
     seoDescription:
-      'Gere QR Code online grátis, sem cadastro, sem login e sem pagar nada. Personalize cores, adicione logo central e exporte em PNG, JPEG, WEBP, SVG e PDF.',
-    h1: 'Gerador de QR Code Grátis, Sem Cadastro, Sem Login e com Download',
+      'Gere QR Code grátis e sem cadastro a partir de texto, link ou Pix. Personalize as cores, coloque um logo no centro e baixe em PNG, JPEG, WEBP, SVG ou PDF.',
+    h1: 'Gerador de QR Code Grátis, sem Cadastro e com Logo',
     intro: qrCodeGeneratorIntro,
     canonicalPath: '/tools/qr-code-generator',
     faq: qrCodeGeneratorFaq,
     contentBlocks: qrCodeGeneratorContentBlocks,
-    relatedToolIds: ['image-converter', 'json-formatter'],
+    relatedToolIds: ['qr-code-wifi-vcard-evento', 'qr-code-scanner', 'gerador-link-whatsapp-telegram', 'image-converter'],
   },
   {
     id: 'authenticator-code-generator',
@@ -1275,22 +1273,22 @@ export const toolsRegistry: ToolDefinition[] = [
     canonicalPath: '/tools/authenticator-code-generator',
     faq: authenticatorCodeGeneratorFaq,
     contentBlocks: authenticatorCodeGeneratorContentBlocks,
-    relatedToolIds: ['password-generator', 'qr-code-generator', 'jwt-decoder', 'email-temporario'],
+    relatedToolIds: ['qr-code-scanner', 'password-generator', 'jwt-decoder', 'email-temporario'],
   },
   ...frontOnlyToolDefinitions,
   {
     id: 'transfer',
     slug: 'transfer',
-    name: 'Transferencia Entre Dispositivos',
+    name: 'Transferência Entre Dispositivos',
     shortDescription:
-      'Transfira texto, links, Pix, JSON, comandos e arquivos entre celular e PC com QR Code e canal P2P WebRTC, sem login e com processamento local.',
+      'Passe links, textos curtos, Pix e JSON do celular para o PC por QR Code, ou crie uma sala por link para enviar arquivos direto entre os navegadores.',
     category: 'utility',
     primaryKeyword: 'transferir arquivo entre celular e pc por qr code',
     secondaryKeywords: [
       'transferir texto por qr code',
-      'transferencia entre dispositivos no navegador',
+      'transferência entre dispositivos no navegador',
       'enviar arquivo de celular para pc sem cabo',
-      'webrtc datachannel transferencia',
+      'webrtc datachannel transferência',
       'copiar link do celular para pc',
       'pix por qr code entre dispositivos',
       'transferir json entre dispositivos',
@@ -1299,12 +1297,11 @@ export const toolsRegistry: ToolDefinition[] = [
       'device to device transfer online',
     ],
     searchIntent:
-      'Usuarios que precisam passar texto pequeno por QR ou conectar celular e PC para enviar arquivos e textos maiores sem login e com o minimo de intermediarios.',
-    seoTitle:
-      'Transferir Entre Celular e PC por QR Code e P2P | Texto, Links e Arquivos',
+      'Pessoas que precisam passar um texto curto por QR Code ou enviar arquivos entre celular e PC, sem cabo, sem login e sem passar o arquivo por um servidor.',
+    seoTitle: 'Transferir Arquivos Entre Celular e PC por QR Code e Link',
     seoDescription:
-      'Transfira texto rapido por QR Code e arquivos por WebRTC P2P entre celular e PC. Sem cadastro, sem login e com processamento local no navegador.',
-    h1: 'Transferir Texto e Arquivos Entre Celular e PC por QR Code e P2P',
+      'Envie texto curto por QR Code ou arquivos por uma sala com link entre celular e PC, direto entre os navegadores. Grátis e sem cadastro.',
+    h1: 'Transferir Arquivos e Texto Entre Celular e PC por QR Code ou Link',
     intro: transferIntro,
     canonicalPath: '/tools/transfer',
     faq: transferFaq,
@@ -1332,7 +1329,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'gerador-link-whatsapp-telegram',
     name: 'Gerador de Link com Mensagem para WhatsApp e Telegram',
     shortDescription:
-      'Gere link pronto para WhatsApp e Telegram com mensagem predefinida usando numero ou @nick.',
+      'Gere links wa.me e t.me com mensagem pronta a partir de um número com código do país ou de um @nick, sem cadastro.',
     category: 'utility',
     primaryKeyword: 'gerador de link whatsapp com mensagem',
     secondaryKeywords: [
@@ -1348,20 +1345,20 @@ export const toolsRegistry: ToolDefinition[] = [
       'Usuarios que precisam criar links de contato para WhatsApp e Telegram com mensagem pronta para acelerar o primeiro atendimento.',
     seoTitle: 'Gerador de Link WhatsApp e Telegram com Mensagem Pronta',
     seoDescription:
-      'Crie link de WhatsApp e Telegram com mensagem pronta. Informe numero ou @nick, personalize o texto e copie o link final.',
+      'Crie links wa.me e t.me com mensagem pronta a partir de um número com código do país ou de um @nick. Gere no navegador, copie e use em botões, bio e anúncios.',
     h1: 'Gerador de Link para WhatsApp e Telegram com Mensagem Pronta',
     intro: whatsappTelegramLinkIntro,
     canonicalPath: '/tools/gerador-link-whatsapp-telegram',
     faq: whatsappTelegramLinkFaq,
     contentBlocks: whatsappTelegramLinkContentBlocks,
-    relatedToolIds: ['qr-code-generator', 'url-encoder-decoder', 'open-graph-preview'],
+    relatedToolIds: ['qr-code-generator', 'url-encoder-decoder', 'open-graph-preview', 'qr-code-wifi-vcard-evento'],
   },
   {
     id: 'sorteador',
     slug: 'sorteador',
     name: 'Sorteador Online Completo',
     shortDescription:
-      'Sortear nomes e numeros online com parsing inteligente, roleta visual, multiplos resultados e compartilhamento por link.',
+      'Sorteie nomes, números ou equipes a partir de uma lista, com roleta, contagem regressiva, CSV e link para compartilhar.',
     category: 'utility',
     primaryKeyword: 'sorteador online',
     secondaryKeywords: [
@@ -1380,22 +1377,22 @@ export const toolsRegistry: ToolDefinition[] = [
     searchIntent:
       'Usuarios que querem sortear nomes, numeros ou listas completas de forma rapida, com transparencia e opcoes avancadas de configuracao.',
     seoTitle:
-      'Sorteador Online Completo | Sortear Nomes, Numeros e Roleta',
+      'Sorteador Online de Nomes, Números e Equipes | Com Roleta',
     seoDescription:
-      'Use o sorteador online para nomes e numeros com auto-deteccao de separador, sorteio com/sem repeticao, roleta animada, CSV e link compartilhavel.',
-    h1: 'Sorteador Online de Nomes e Numeros com Modo Roleta',
+      'Sorteie nomes, números ou equipes online: cole a lista, use roleta e contagem regressiva, baixe o resultado em CSV e compartilhe a configuração por link.',
+    h1: 'Sorteador Online de Nomes, Números e Equipes com Roleta',
     intro: sorteadorIntro,
     canonicalPath: '/tools/sorteador',
     faq: sorteadorFaq,
     contentBlocks: sorteadorContentBlocks,
-    relatedToolIds: ['calculadora-juros-compostos', 'password-generator', 'qr-code-generator'],
+    relatedToolIds: ['gerador-de-uuid-e-nanoid', 'password-generator', 'gerador-pessoa-fake'],
   },
   {
     id: 'contador-de-caracteres',
     slug: 'contador-de-caracteres',
     name: 'Contador de Caracteres e Palavras Online',
     shortDescription:
-      'Conte caracteres, palavras, linhas, frases, paragrafos, emojis e limites para SEO, redes sociais, redacao e programacao.',
+      'Conte caracteres, palavras, linhas, frases, parágrafos, emojis e hashtags, e confira limites de SEO, Instagram, X, WhatsApp e outras plataformas.',
     category: 'utility',
     primaryKeyword: 'contador de caracteres e palavras online',
     secondaryKeywords: [
@@ -1410,16 +1407,15 @@ export const toolsRegistry: ToolDefinition[] = [
     ],
     searchIntent:
       'Usuarios que precisam analisar texto de forma completa para SEO, social media, estudos, redacao e tarefas tecnicas.',
-    seoTitle:
-      'Contador de Caracteres e Palavras Online | SEO, Instagram, X, YouTube e Redacao',
+    seoTitle: 'Contador de Caracteres e Palavras Online | Limites por Rede',
     seoDescription:
-      'Ferramenta completa para contar caracteres, palavras, linhas, frases, emojis, hashtags e limites por plataforma com analise e exportacao.',
+      'Conte caracteres, palavras, linhas, frases, emojis e hashtags, veja se o texto cabe nos limites de SEO, Instagram, X e WhatsApp e exporte as métricas.',
     h1: 'Contador de Caracteres e Palavras Online',
     intro: characterCounterIntro,
     canonicalPath: '/tools/contador-de-caracteres',
     faq: characterCounterFaq,
     contentBlocks: characterCounterContentBlocks,
-    relatedToolIds: ['markdown-editor', 'json-formatter', 'invisible-character', 'sorteador'],
+    relatedToolIds: ['remover-acentos', 'gerador-de-slug', 'invisible-character', 'markdown-editor'],
   },
   {
     id: 'jwt-decoder',
@@ -1487,7 +1483,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'gerador-de-uuid-e-nanoid',
     name: 'Gerador de UUID, ULID, KSUID, CUID2 e NanoID',
     shortDescription:
-      'Gere UUID v1-v7, NanoID, ULID, KSUID, CUID2 e ObjectId em lote com copia rapida e exportacao TXT/CSV.',
+      'Gere UUID v1 a v7, NanoID, ULID, KSUID, CUID2 e ObjectId em lote, com cópia rápida e exportação em TXT ou CSV.',
     category: 'dev',
     primaryKeyword: 'gerador de uuid ulid ksuid cuid2 e nanoid online',
     secondaryKeywords: [
@@ -1501,13 +1497,13 @@ export const toolsRegistry: ToolDefinition[] = [
       'Desenvolvedores que precisam gerar identificadores unicos para APIs, bancos de dados, eventos e dados de teste.',
     seoTitle: 'Gerador de UUID v1-v7, ULID, KSUID, CUID2 e NanoID Online',
     seoDescription:
-      'Crie IDs com UUID (todas as versoes), NanoID, ULID, KSUID, CUID2 e ObjectId. Copie e exporte em TXT e CSV.',
+      'Gere até 500 IDs por vez no navegador: UUID v1 a v7, NanoID com alfabeto próprio, ULID, KSUID, CUID2 e ObjectId. Copie ou exporte em TXT e CSV.',
     h1: 'Gerador de UUID, ULID, KSUID, CUID2 e NanoID Online',
     intro: uuidNanoIdIntro,
     canonicalPath: '/tools/gerador-de-uuid-e-nanoid',
     faq: uuidNanoIdFaq,
     contentBlocks: uuidNanoIdContentBlocks,
-    relatedToolIds: ['password-generator', 'json-formatter', 'base64-image-viewer', 'conversor-unix-timestamp'],
+    relatedToolIds: ['password-generator', 'conversor-unix-timestamp', 'jwt-decoder', 'gerador-de-slug'],
   },
   {
     id: 'conversor-unix-timestamp',
@@ -1568,7 +1564,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'gerador-de-slug',
     name: 'Gerador de Slug para URL',
     shortDescription:
-      'Converta titulos e frases em slugs amigaveis com controle de separador, limite de tamanho e preview da URL final.',
+      'Transforme títulos e frases em slugs limpos para URL, com opção de separador, limite de tamanho e prévia da URL final.',
     category: 'utility',
     primaryKeyword: 'gerador de slug para url',
     secondaryKeywords: [
@@ -1580,22 +1576,22 @@ export const toolsRegistry: ToolDefinition[] = [
     ],
     searchIntent:
       'Criadores de conteudo e desenvolvedores que precisam padronizar URLs limpas para blogs, CMS e e-commerce.',
-    seoTitle: 'Gerador de Slug para URL Online | Criar Slug Amigavel',
+    seoTitle: 'Gerador de Slug para URL Online | Criar Slug Amigável',
     seoDescription:
-      'Gere slug para URL removendo acentos e simbolos, ajuste separador, limite tamanho e copie URL completa.',
+      'Gere o slug de um título: a ferramenta tira acentos e símbolos, escolhe hífen ou underscore, limita o tamanho e monta a URL completa com prefixo.',
     h1: 'Gerador de Slug para URL',
     intro: slugGeneratorIntro,
     canonicalPath: '/tools/gerador-de-slug',
     faq: slugGeneratorFaq,
     contentBlocks: slugGeneratorContentBlocks,
-    relatedToolIds: ['remover-acentos', 'url-encoder-decoder', 'contador-de-caracteres', 'json-formatter'],
+    relatedToolIds: ['remover-acentos', 'url-encoder-decoder', 'contador-de-caracteres', 'gerador-de-uuid-e-nanoid'],
   },
   {
     id: 'remover-acentos',
     slug: 'remover-acentos',
     name: 'Remover Acentos de Texto',
     shortDescription:
-      'Remova acentos, cedilha e caracteres especiais para padronizar texto em URLs, arquivos e sistemas.',
+      'Remova acentos, til e cedilha de um texto para padronizar nomes de arquivo, planilhas, URLs e sistemas.',
     category: 'utility',
     primaryKeyword: 'remover acentos de texto online',
     secondaryKeywords: [
@@ -1607,15 +1603,15 @@ export const toolsRegistry: ToolDefinition[] = [
     ],
     searchIntent:
       'Usuarios que precisam normalizar textos para planilhas, integracoes, identificadores e URL.',
-    seoTitle: 'Remover Acentos de Texto Online | Texto Sem Acentuacao',
+    seoTitle: 'Remover Acentos de Texto Online | Tirar Cedilha e Til',
     seoDescription:
-      'Converta texto com acentos para versao normalizada com opcoes de caixa, simbolos, emojis e modo slug.',
+      'Tire acentos, til e cedilha de um texto colado, escolha maiúsculas ou minúsculas, limpe símbolos e emojis, troque espaços por hífen ou underscore e copie o resultado.',
     h1: 'Remover Acentos de Texto Online',
     intro: removeAccentsIntro,
     canonicalPath: '/tools/remover-acentos',
     faq: removeAccentsFaq,
     contentBlocks: removeAccentsContentBlocks,
-    relatedToolIds: ['gerador-de-slug', 'url-encoder-decoder', 'contador-de-caracteres', 'markdown-editor'],
+    relatedToolIds: ['gerador-de-slug', 'url-encoder-decoder', 'contador-de-caracteres', 'invisible-character'],
   },
   {
     id: 'conversor-universal',
@@ -1652,7 +1648,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'calculadora-juros-compostos',
     name: 'Calculadora de Juros Compostos',
     shortDescription:
-      'Simule juros compostos com aporte mensal, descubra aporte para meta e taxa necessaria com grafico, tabela e comparacao com juros simples.',
+      'Simule juros compostos com aporte mensal, descubra o aporte para uma meta e a taxa necessária, com gráfico, tabela e comparação com juros simples.',
     category: 'utility',
     primaryKeyword: 'calculadora de juros compostos',
     secondaryKeywords: [
@@ -1669,17 +1665,17 @@ export const toolsRegistry: ToolDefinition[] = [
       'juros simples vs compostos',
     ],
     searchIntent:
-      'Usuarios que precisam calcular crescimento de patrimonio com juros compostos e comparar cenarios para investimento, meta financeira e planejamento de prazo.',
+      'Usuários que precisam calcular crescimento de patrimônio com juros compostos e comparar cenários para investimento, meta financeira e planejamento de prazo.',
     seoTitle:
-      'Calculadora de Juros Compostos Online | Simulador com Aporte Mensal',
+      'Calculadora de Juros Compostos | Simulador com Aporte Mensal',
     seoDescription:
-      'Calcule juros compostos com valor inicial, aporte mensal, taxa e prazo. Veja valor final, juros totais, grafico, tabela, comparacao com juros simples e metas.',
+      'Calcule juros compostos com valor inicial, aporte mensal, taxa e prazo. Veja valor final, juros, gráfico, tabela, comparação com juros simples e metas.',
     h1: 'Calculadora de Juros Compostos Online com Aporte Mensal',
     intro: compoundInterestIntro,
     canonicalPath: '/tools/calculadora-juros-compostos',
     faq: compoundInterestFaq,
     contentBlocks: compoundInterestContentBlocks,
-    relatedToolIds: ['sorteador', 'crypto-unit-converter', 'json-formatter'],
+    relatedToolIds: ['conversor-universal', 'csv-viewer', 'crypto-unit-converter'],
   },
   {
     id: 'invisible-character',
@@ -1889,20 +1885,20 @@ export const toolsRegistry: ToolDefinition[] = [
       'Usuarios que precisam saber o IP publico atual, provedor e detalhes basicos do dispositivo para diagnostico e configuracao de rede.',
     seoTitle: 'Descobrir IP Público | ISP, Localização e Dispositivo',
     seoDescription:
-      'Descubra seu IP publico, provedor (ISP), cidade aproximada, pais e informacoes do dispositivo. Consulta via servico publico, sem passar pelo nosso servidor.',
+      'Veja seu IP público, provedor (ISP), cidade e país estimados, além do navegador e do sistema. A consulta vai direto do seu navegador a um serviço de IP.',
     h1: 'Descubra seu IP Público e Informações do Dispositivo',
     intro: descobrirIpPublicoIntro,
     canonicalPath: '/tools/descobrir-ip-publico',
     faq: descobrirIpPublicoFaq,
     contentBlocks: descobrirIpPublicoContentBlocks,
-    relatedToolIds: ['json-formatter', 'qr-code-generator'],
+    relatedToolIds: ['dns-lookup', 'email-temporario', 'password-generator'],
   },
   {
     id: 'email-temporario',
     slug: 'email-temporario',
-    name: 'E-mail Temporario',
+    name: 'E-mail Temporário',
     shortDescription:
-      'Gere e-mail descartavel para receber mensagens por 1 hora, com inbox temporaria e expiracao automatica.',
+      'Gere um e-mail descartável para receber mensagens por 1 hora, com inbox temporária e expiração automática.',
     category: 'utility',
     primaryKeyword: 'e-mail temporario gratis',
     secondaryKeywords: [
@@ -1917,15 +1913,15 @@ export const toolsRegistry: ToolDefinition[] = [
     ],
     searchIntent:
       'Usuarios e times tecnicos que precisam receber e-mails por tempo limitado para testes, cadastros simples e protecao de privacidade.',
-    seoTitle: 'E-mail Temporário Grátis',
+    seoTitle: 'E-mail Temporário Grátis | Inbox Descartável por 1 Hora',
     seoDescription:
-      'Crie um e-mail temporario gratis para receber mensagens por tempo limitado. Inbox descartavel para testes, cadastros rapidos e privacidade.',
-    h1: 'E-mail Temporário',
+      'Crie um e-mail temporário grátis, sem cadastro, e receba mensagens por 1 hora com leitura isolada. Ideal para testes e cadastros rápidos, não para contas importantes.',
+    h1: 'E-mail Temporário Grátis, sem Cadastro',
     intro: emailTemporarioIntro,
     canonicalPath: '/tools/email-temporario',
     faq: emailTemporarioFaq,
     contentBlocks: emailTemporarioContentBlocks,
-    relatedToolIds: ['password-generator', 'gerador-pessoa-fake', 'descobrir-ip-publico'],
+    relatedToolIds: ['password-generator', 'gerador-pessoa-fake', 'authenticator-code-generator'],
   },
   {
     id: 'css-generator',
@@ -1994,7 +1990,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'image-color-extractor',
     name: 'Extrator de Cores de Imagem',
     shortDescription:
-      'Extraia cores de qualquer imagem direto no navegador, gere paletas, copie variáveis CSS e crie temas para seus projetos — tudo localmente.',
+      'Extraia as cores predominantes de uma imagem ou logo e copie a paleta em CSS, SCSS, JSON ou Tailwind, direto no navegador.',
     category: 'dev',
     primaryKeyword: 'extrair cores de imagem online',
     secondaryKeywords: [
@@ -2025,7 +2021,7 @@ export const toolsRegistry: ToolDefinition[] = [
     slug: 'lightning-decoder',
     name: 'Lightning Decoder',
     shortDescription:
-      'Decodifique Lightning Address, LNURL, BOLT11 e BOLT12 com visual colorido por campos, exporte JSON/TXT e gere QR Code customizado em PNG e SVG — tudo localmente no navegador.',
+      'Decodifique BOLT11, BOLT12, LNURL e Lightning Address, veja os campos agrupados, exporte JSON ou TXT e gere QR Code em PNG ou SVG, tudo no navegador.',
     category: 'crypto',
     primaryKeyword: 'lightning decoder bolt11 lnurl online',
     secondaryKeywords: [
@@ -2042,22 +2038,22 @@ export const toolsRegistry: ToolDefinition[] = [
     ],
     searchIntent:
       'Usuários e desenvolvedores que precisam decodificar payloads Lightning (BOLT11, BOLT12, LNURL e Lightning Address) com visual técnico e exportação.',
-    seoTitle: 'Lightning Decoder Online | BOLT11, BOLT12, LNURL e Lightning Address',
+    seoTitle: 'Lightning Decoder | BOLT11, BOLT12, LNURL e Lightning Address',
     seoDescription:
-      'Decodifique BOLT11, BOLT12, LNURL e Lightning Address com visual colorido por campos, exporte JSON/TXT e gere QR Code. 100% local no navegador.',
+      'Decodifique BOLT11, BOLT12, LNURL e Lightning Address, veja os campos agrupados, exporte JSON ou TXT e gere QR Code. Tudo no navegador.',
     h1: 'Lightning Decoder Online com QR Code e Exportação',
     intro: lightningDecoderIntro,
     canonicalPath: '/tools/lightning-decoder',
     faq: lightningDecoderFaq,
     contentBlocks: lightningDecoderContentBlocks,
-    relatedToolIds: ['pix-decoder', 'qr-code-generator', 'crypto-unit-converter'],
+    relatedToolIds: ['bitcoin-address-tx-decoder', 'qr-code-generator', 'crypto-unit-converter'],
   },
   {
     id: 'pix-decoder',
     slug: 'pix-decoder',
     name: 'Validador e Gerador de Pix',
     shortDescription:
-      'Gere Pix Copia e Cola estático ou dinâmico, decodifique payload EMV campo por campo, valide CRC16, corrija erros, visualize a árvore de campos e baixe o QR Code — tudo localmente no navegador.',
+      'Gere, valide e decodifique Pix Copia e Cola: veja os campos EMV, confira o CRC16 e baixe o QR Code. Tudo no navegador.',
     category: 'utility',
     primaryKeyword: 'gerador pix copia e cola online',
     secondaryKeywords: [
@@ -2076,13 +2072,13 @@ export const toolsRegistry: ToolDefinition[] = [
       'Desenvolvedores, lojistas e usuários que precisam gerar, validar, decodificar ou corrigir payloads Pix Copia e Cola (BR Code EMV).',
     seoTitle: 'Gerador e Validador de Pix Copia e Cola Online | Decoder EMV',
     seoDescription:
-      'Gere Pix Copia e Cola, valide payload, decodifique campos EMV, corrija CRC16, visualize árvore e baixe QR Code. 100% local no navegador.',
+      'Gere, valide e decodifique Pix Copia e Cola: veja os campos EMV, confira o CRC16 e baixe o QR Code. Tudo no navegador, sem enviar dados.',
     h1: 'Validador e Gerador de Pix Copia e Cola Online',
     intro: pixDecoderIntro,
     canonicalPath: '/tools/pix-decoder',
     faq: pixDecoderFaq,
     contentBlocks: pixDecoderContentBlocks,
-    relatedToolIds: ['qr-code-generator', 'cpf-generator', 'conversor-universal'],
+    relatedToolIds: ['validar-boleto', 'qr-code-generator', 'cpf-generator'],
   },
   {
     id: 'code-converter',

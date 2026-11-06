@@ -54,133 +54,133 @@ export type Cs2CrosshairCodesLocaleContent = {
 };
 
 const ptBrContent: Cs2CrosshairCodesLocaleContent = {
-  name: 'Codigos de Mira CS2 de Pro Players',
+  name: 'Códigos de Mira CS2 de Pro Players',
   shortDescription:
-    'Encontre codigos de mira CS2 e CS:GO de jogadores profissionais, filtre por time/pais/funcao e copie em um clique.',
-  primaryKeyword: 'codigos de mira cs2',
+    'Encontre códigos de mira CS2 e CS:GO de jogadores profissionais, filtre por time/país/função e copie em um clique.',
+  primaryKeyword: 'códigos de mira cs2',
   secondaryKeywords: [
-    'codigo de mira cs go',
+    'código de mira cs go',
     'mira de pro players cs2',
     'crosshair code cs2',
     'mira yuurih cs2',
     'mira donk cs2',
   ],
   searchIntent:
-    'Jogadores de Counter-Strike que querem copiar codigos de mira de pro players, testar rapidamente e ajustar para seu proprio estilo.',
-  seoTitle: 'Codigos de Mira CS2 e CS:GO de Pro Players | Copiar Crosshair',
+    'Jogadores de Counter-Strike que querem copiar códigos de mira de pro players, testar rapidamente e ajustar para seu próprio estilo.',
+  seoTitle: 'Códigos de Mira CS2 e CS:GO de Pro Players | Copiar Crosshair',
   seoDescription:
-    'Copie codigos de mira CS2/CS:GO de pro players, filtre por time, pais e funcao e veja como importar no Counter-Strike 2 em segundos.',
-  h1: 'Codigos de Mira CS2 e CS:GO de Pro Players',
+    'Copie códigos de mira CS2/CS:GO de pro players, filtre por time, país e função e veja como importar no Counter-Strike 2 em segundos.',
+  h1: 'Códigos de Mira CS2 e CS:GO de Pro Players',
   intro:
-    'Copie codigos de mira de jogadores profissionais do Counter-Strike 2, pesquise por nome, filtre por time, pais e funcao e importe a crosshair no jogo em poucos passos.',
+    'Copie códigos de mira de jogadores profissionais do Counter-Strike 2, pesquise por nome, filtre por time, país e função e importe a crosshair no jogo em poucos passos.',
   contentBlocks: [
     {
       title: 'Como usar esta base de miras no CS2',
       paragraphs: [
-        'Esta pagina foi pensada para quem quer testar miras de pro players sem perder tempo em listas confusas. Voce pode buscar pelo nome do jogador, aplicar filtros por funcao e copiar o codigo no mesmo card.',
-        'A base agora tem 31 perfis com codigos no formato atual. Vinte usam o codigo da partida mais recente registrada na CSstats, com partidas datadas de 8 a 28 de outubro de 2026; os outros 11 foram gerados a partir de configuracoes profissionais publicas. Cada ficha mostra a origem, a data da verificacao e, quando disponivel, a data da partida.',
-        'Depois de importar, use o codigo como base e ajuste tamanho, gap, espessura e cor para o seu monitor e estilo de jogo. A melhor mira e a que voce consegue ler com clareza em qualquer mapa e situacao de combate.',
+        'Esta página foi pensada para quem quer testar miras de pro players sem perder tempo em listas confusas. Você pode buscar pelo nome do jogador, aplicar filtros por função e copiar o código no mesmo card.',
+        'A base reúne 178 jogadores: 31 com código no formato atual (começa com CS), 114 com código antigo (começa com CSGO-) e 33 ainda sem código. Entre os 31 atuais, vinte usam o código da partida mais recente registrada na CSstats, com partidas datadas de 8 a 28 de outubro de 2026; os outros 11 foram gerados a partir de configurações profissionais públicas. Cada ficha mostra a origem, a data da verificação e, quando disponível, a data da partida.',
+        'Depois de importar, use o código como base e ajuste tamanho, gap, espessura e cor para o seu monitor e estilo de jogo. A melhor mira é a que você consegue ler com clareza em qualquer mapa e situação de combate.',
       ],
     },
     {
       title: 'Quando copiar mira de pro player ajuda de verdade',
       paragraphs: [
-        'Copiar mira de jogador profissional funciona melhor quando voce quer encurtar o processo de tentativa e erro. Em vez de comecar do zero, voce parte de um setup ja usado em alto nivel competitivo e ajusta pequenos detalhes.',
-        'Tambem e util quando voce muda de resolucao, de monitor ou de funcao no time. Um AWPer pode preferir uma leitura diferente de quem joga mais como entry ou lurker, por exemplo.',
+        'Copiar mira de jogador profissional funciona melhor quando você quer encurtar o processo de tentativa e erro. Em vez de começar do zero, você parte de um setup já usado em alto nível competitivo e ajusta pequenos detalhes.',
+        'Também é útil quando você muda de resolução, de monitor ou de função no time. Um AWPer pode preferir uma leitura diferente de quem joga mais como entry ou lurker, por exemplo.',
       ],
       list: [
         'Teste pelo menos 2 ou 3 miras por alguns mapas antes de decidir.',
-        'Nao troque de mira a cada partida para nao quebrar consistencia muscular.',
-        'Guarde seus codigos favoritos no autoexec para trocar rapidamente.',
+        'Não troque de mira a cada partida para não quebrar consistência muscular.',
+        'Guarde seus códigos favoritos no autoexec para trocar rapidamente.',
       ],
     },
     {
       title: 'Limites e avisos importantes',
       paragraphs: [
-        'Jogadores profissionais podem mudar configuracoes por campeonato, monitor ou preferencia pessoal. A CSstats mostra o codigo da partida mais recente que registrou, mas esse historico depende das partidas disponiveis para cada atleta. Os 11 codigos gerados a partir de configuracoes publicas nao foram compartilhados diretamente pelos jogadores; codigos antigos que ainda nao foram renovados continuam marcados para confirmacao no cliente.',
-        'Quando um codigo nao estiver confirmado com seguranca, ele fica marcado com confianca baixa. Nessas situacoes, use como referencia inicial e valide com outras fontes antes de tratar como configuracao definitiva.',
-        'Tudo aqui e focado em praticidade para treino e melhoria de consistencia. O codigo nao substitui fundamentos como posicionamento, pre-fire, controle de spray e leitura de timing.',
+        'Jogadores profissionais podem mudar configurações por campeonato, monitor ou preferência pessoal. A CSstats mostra o código da partida mais recente que registrou, mas esse histórico depende das partidas disponíveis para cada atleta. Os 11 códigos gerados a partir de configurações públicas não foram compartilhados diretamente pelos jogadores; códigos antigos que ainda não foram renovados continuam marcados para confirmação no cliente.',
+        'Cada ficha mostra o nível de confiança (alta, média ou baixa) e a fonte do código. Os códigos antigos exibem um aviso e precisam ser conferidos no jogo; jogadores sem código aparecem sem o botão de copiar. Trate qualquer código como ponto de partida e valide com outras fontes antes de tomá-lo como configuração definitiva.',
+        'Tudo aqui é focado em praticidade para treino e melhoria de consistência. O código não substitui fundamentos como posicionamento, pre-fire, controle de spray e leitura de timing.',
       ],
     },
     {
       title: 'Privacidade e velocidade da ferramenta',
       paragraphs: [
-        'A busca, os filtros e a copia do codigo funcionam no navegador. Voce nao precisa criar conta e nao precisa enviar documentos ou dados pessoais para usar a ferramenta.',
-        'A pagina foi montada para ser leve e abrir rapido no celular e no desktop, mantendo foco total em copiar o codigo, importar no jogo e voltar para o treino.',
+        'A busca, os filtros e a cópia do código funcionam no navegador. Você não precisa criar conta e não precisa enviar documentos ou dados pessoais para usar a ferramenta.',
+        'A página foi montada para ser leve e abrir rápido no celular e no desktop, mantendo foco total em copiar o código, importar no jogo e voltar para o treino.',
       ],
     },
   ],
   faq: [
     {
-      question: 'Como importar um codigo de mira no CS2?',
+      question: 'Como importar um código de mira no CS2?',
       answer:
-        'Abra Settings > Crosshair/Scopes > Share or Import e cole o codigo. Os codigos atuais comecam com CS; os antigos com CSGO- aparecem marcados no card e devem ser conferidos no jogo apos a conversao.',
+        'Abra Settings > Game > Crosshair > Share or Import e cole o código. Os códigos atuais começam com CS; os antigos com CSGO- aparecem marcados no card e devem ser conferidos no jogo após a conversão.',
     },
     {
-      question: 'Esses codigos tambem funcionam para quem busca CS:GO crosshair?',
+      question: 'Esses códigos também funcionam para quem busca CS:GO crosshair?',
       answer:
-        'Os termos de CS:GO ainda ajudam a encontrar configuracoes de mira. A Valve mudou o formato compartilhado em setembro de 2026, entao codigos anteriores a atualizacao precisam ser conferidos no jogo atual.',
+        'Os termos de CS:GO ainda ajudam a encontrar configurações de mira. A Valve mudou o formato compartilhado em setembro de 2026, então códigos anteriores à atualização precisam ser conferidos no jogo atual.',
     },
     {
       question: 'A mira de pro player pode mudar com o tempo?',
       answer:
-        'Pode sim. Jogadores profissionais ajustam configuracoes com frequencia. Verifique a data de checagem e o nivel de confianca exibidos na pagina.',
+        'Pode sim. Jogadores profissionais ajustam configurações com frequência. Verifique a data de checagem e o nível de confiança exibidos na página.',
     },
     {
       question: 'Copiar mira de pro player melhora minha mira automaticamente?',
       answer:
-        'Nao automaticamente. O codigo ajuda como ponto de partida, mas consistencia vem de treino de mira, crosshair placement e tomada de decisao.',
+        'Não automaticamente. O código ajuda como ponto de partida, mas consistência vem de treino de mira, crosshair placement e tomada de decisão.',
     },
     {
       question: 'Preciso cadastrar conta para usar a ferramenta?',
-      answer: 'Nao. A ferramenta e gratuita e pode ser usada sem cadastro.',
+      answer: 'Não. A ferramenta é gratuita e pode ser usada sem cadastro.',
     },
   ],
   ui: {
     searchLabel: 'Buscar jogador',
     searchPlaceholder: 'Ex.: yuurih, donk, ZywOo',
-    countryLabel: 'Pais',
-    countryAll: 'Todos os paises',
+    countryLabel: 'País',
+    countryAll: 'Todos os países',
     teamLabel: 'Time',
     teamAll: 'Todos os times',
-    roleLabel: 'Funcao',
-    roleAll: 'Todas as funcoes',
-    withCodeOnly: 'Mostrar apenas jogadores com codigo confirmado',
+    roleLabel: 'Função',
+    roleAll: 'Todas as funções',
+    withCodeOnly: 'Mostrar apenas jogadores com código',
     resultCount: 'jogador(es) encontrado(s)',
     emptyState: 'Nenhum jogador encontrado com esses filtros.',
-    copyCode: 'Copiar codigo',
-    copiedCode: 'Codigo copiado',
-    noCode: 'Codigo de mira ainda nao confirmado com confianca.',
+    copyCode: 'Copiar código',
+    copiedCode: 'Código copiado',
+    noCode: 'Ainda não há código de mira confirmado para este jogador.',
     importTitle: 'Como importar no CS2',
     importSteps: [
       'Abra o CS2 e entre em Settings.',
       'Vá em Game > Crosshair.',
       'Clique em Share or Import.',
-      'Cole o codigo e confirme.',
+      'Cole o código e confirme.',
     ],
-    updatedLabel: 'Ultima checagem',
-    lastUsedLabel: 'Ultima partida registrada',
-    confidenceLabel: 'Confianca',
+    updatedLabel: 'Última checagem',
+    lastUsedLabel: 'Última partida registrada',
+    confidenceLabel: 'Confiança',
     confidenceValues: {
       high: 'Alta',
-      medium: 'Media',
+      medium: 'Média',
       low: 'Baixa',
     },
     cautionTitle: 'Aviso importante',
     cautionText:
-      'A base tem 31 perfis com codigos atuais: 20 de partidas recentes e 11 baseados em configuracoes publicas. Confira a origem e a data em cada ficha.',
+      'A base tem 31 perfis com códigos atuais: 20 de partidas recentes e 11 baseados em configurações públicas. Confira a origem e a data em cada ficha.',
     sourceLabel: 'Fonte',
-    currentCodeNote: 'Codigo no formato atual; veja a origem e a data abaixo.',
+    currentCodeNote: 'Código no formato atual; veja a origem e a data abaixo.',
     legacyCodeNote:
-      'Codigo anterior a atualizacao de setembro de 2026. Ele ainda nao foi revalidado no formato atual do CS2.',
+      'Código anterior à atualização de setembro de 2026. Ele ainda não foi revalidado no formato atual do CS2.',
     pixelGeneratorTitle: 'Gerador de mira no sistema atual de pixels',
     pixelGeneratorHelp:
-      'A Valve agora mede espessura e comprimento em pixels. O exemplo oficial usa 1 px de espessura, 8 px de comprimento e gap 4. O jogo redimensiona os valores se a resolucao mudar.',
+      'A Valve agora mede espessura e comprimento em pixels. O exemplo oficial usa 1 px de espessura, 8 px de comprimento e gap 4. O jogo redimensiona os valores se a resolução mudar.',
     thicknessLabel: 'Espessura (px)',
     lengthLabel: 'Comprimento (px)',
     gapLabel: 'Gap',
     gapHelp:
-      'O gap negativo e permitido no estilo dinamico classico. Este gerador nao altera o estilo da sua mira.',
+      'O gap negativo é permitido no estilo dinâmico clássico. Este gerador não altera o estilo da sua mira.',
     copySettings: 'Copiar comandos',
     copiedSettings: 'Comandos copiados',
     officialUpdateLink: 'Notas oficiais da Valve',

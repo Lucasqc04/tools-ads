@@ -19,7 +19,7 @@ const contentByLocale: Record<AppLocale, WhatsAppTelegramLinkLocaleContent> = {
   'pt-br': {
     name: 'Gerador de Link com Mensagem para WhatsApp e Telegram',
     shortDescription:
-      'Gere link de WhatsApp e Telegram com mensagem pronta usando numero ou @nick, sem cadastro e com copia rapida.',
+      'Gere links wa.me e t.me com mensagem pronta a partir de um número com código do país ou de um @nick, sem cadastro.',
     primaryKeyword: 'gerador de link whatsapp com mensagem',
     secondaryKeywords: [
       'link whatsapp com texto pronto',
@@ -32,36 +32,35 @@ const contentByLocale: Record<AppLocale, WhatsAppTelegramLinkLocaleContent> = {
       'Usuarios que querem criar links prontos para iniciar conversa no WhatsApp ou Telegram com texto predefinido.',
     seoTitle: 'Gerador de Link WhatsApp e Telegram com Mensagem Pronta',
     seoDescription:
-      'Crie link de WhatsApp e Telegram com mensagem pronta. Informe numero ou @nick, personalize o texto e copie o link final.',
+      'Crie links wa.me e t.me com mensagem pronta a partir de um número com código do país ou de um @nick. Gere no navegador, copie e use em botões, bio e anúncios.',
     h1: 'Gerador de Link para WhatsApp e Telegram com Mensagem Pronta',
     intro:
-      'Digite numero ou @nick, escreva a mensagem e gere links prontos para abrir conversa no WhatsApp e no Telegram em um clique.',
+      'Digite o número com código do país ou um @nick, escreva a mensagem e gere links prontos para abrir a conversa no WhatsApp e no Telegram.',
     contentBlocks: [
       {
         title: 'Como funciona o link com mensagem pronta',
         paragraphs: [
-          'A ferramenta monta automaticamente URLs oficiais de abertura de conversa com o texto ja preenchido. Isso acelera atendimento, suporte, vendas e chamadas para acao.',
-          'No WhatsApp, o formato usa numero com codigo do pais. No Telegram, voce pode usar @nick ou numero no padrao internacional.',
+          'A ferramenta monta o link de conversa no formato wa.me (WhatsApp) ou t.me (Telegram) e acrescenta a mensagem como parâmetro de texto, com os caracteres especiais já codificados. Quem clicar no link abre a conversa com o texto preenchido, pronto para enviar.',
+          'Se você digitar um número, a ferramenta remove espaços, parênteses, hífens e o sinal de +, e gera os dois links. Ela não acrescenta o código do país nem verifica se o número existe: digite o número completo, por exemplo 5511999998888 (55 do Brasil, 11 de DDD e o telefone). Se digitar um @nick, só o link do Telegram é gerado.',
         ],
       },
       {
         title: 'Quando usar no dia a dia',
         paragraphs: [
-          'Use os links prontos em botao de site, bio de rede social, assinatura de e-mail, anuncio pago, landing pages e mensagens automatizadas.',
-          'Com texto pronto voce reduz atrito e aumenta a chance de a pessoa enviar a mensagem com o contexto correto.',
+          'Use os links em botões do site, na bio de redes sociais, em assinaturas de e-mail, em anúncios e em páginas de vendas. Com a mensagem pronta, a pessoa não precisa escrever do zero e você já recebe o contexto do pedido.',
         ],
         list: [
-          'Botao Fale no WhatsApp com mensagem inicial.',
-          'Atalho no Telegram para suporte tecnico.',
-          'Link de campanha com termo UTM no proprio texto.',
-          'Mensagem de triagem para atendimento comercial.',
+          'Botão "Fale no WhatsApp" com a mensagem "Olá! Quero saber mais sobre o produto X".',
+          'Link de suporte no Telegram com um texto de abertura padronizado.',
+          'Mensagem inicial diferente para cada campanha, para saber de onde veio o contato.',
+          'Link de triagem para o atendimento comercial, com o assunto já preenchido.',
         ],
       },
       {
-        title: 'Limites importantes e boas praticas',
+        title: 'Limites e cuidados',
         paragraphs: [
-          'WhatsApp exige numero valido e nao abre conversa por @nick. Para Telegram, prefira @nick quando houver para evitar erro de formato em numeros antigos.',
-          'Evite mensagens muito longas e inclua um contexto claro para facilitar resposta rapida no primeiro contato.',
+          'O WhatsApp só aceita número de telefone no link wa.me; não existe link por @nick. No Telegram, o @nick público é a forma mais segura de apontar para um perfil. Já o link por número depende de como o Telegram e as configurações de privacidade do contato tratam o telefone, então teste antes de divulgar.',
+          'O texto aparece preenchido, mas a pessoa ainda precisa enviar a mensagem. Prefira textos curtos, teste o link no celular e no computador, e lembre que quem tiver o link pode ver o número ou o @nick e a mensagem. Os links são gerados no navegador, e nada é enviado ao servidor do site.',
         ],
       },
     ],
@@ -69,22 +68,22 @@ const contentByLocale: Record<AppLocale, WhatsAppTelegramLinkLocaleContent> = {
       {
         question: 'Posso usar @nick no WhatsApp?',
         answer:
-          'Nao. O WhatsApp aceita apenas numero de telefone no link wa.me, com codigo do pais.',
+          'Não. O WhatsApp aceita apenas número de telefone no link wa.me, com código do país. Ao digitar um @nick, a ferramenta gera só o link do Telegram e avisa sobre o WhatsApp.',
       },
       {
-        question: 'Funciona com numero no Telegram?',
+        question: 'Preciso colocar o código do país no número?',
         answer:
-          'Sim. O Telegram aceita link com numero internacional, mas quando houver @nick publico ele costuma ser a opcao mais estavel.',
+          'Sim. A ferramenta só limpa os caracteres que não são dígitos. Para o Brasil, use 55 + DDD + número, como 5511999998888. Números com menos de 8 dígitos não são aceitos como telefone.',
       },
       {
-        question: 'Preciso pagar ou criar conta para usar?',
+        question: 'Funciona com número no Telegram?',
         answer:
-          'Nao. A ferramenta e gratuita e pode ser usada sem cadastro e sem login.',
+          'A ferramenta gera o link t.me com o número, mas o resultado depende do Telegram e da privacidade do contato. Quando houver um @nick público, ele costuma ser a opção mais estável.',
       },
       {
-        question: 'Minha mensagem e enviada para servidor?',
+        question: 'Minha mensagem é enviada para algum servidor?',
         answer:
-          'Nao por padrao. A geracao do link e feita localmente no navegador.',
+          'Não. Os links são montados no navegador e a mensagem só aparece nos links que você copiar. Ao abrir o link, o WhatsApp ou o Telegram recebe o texto.',
       },
     ],
   },

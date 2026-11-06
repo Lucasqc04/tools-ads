@@ -299,37 +299,43 @@ const buildContentBlocks = (
 
   return [
     {
-      title: `Simbolos para nickname de ${platform.name} com preview`,
+      title: `Símbolos para nickname de ${platform.name} com preview`,
       paragraphs: [
-        `Esta versao abre o gerador com ${platform.name} selecionado. Digite um nome base e compare primeiro as molduras recomendadas: ${frames}. ${guidance}`,
-        `${context} Posicione o cursor em qualquer ponto e use o teclado de simbolos para montar o nome livremente, ou combine molduras laterais com um estilo Unicode. A lista pronta ainda oferece alternativas mais curtas quando o resultado fica carregado.`,
+        `Esta versão abre o gerador com ${platform.name} selecionado. Digite um nome base e compare primeiro as molduras recomendadas: ${frames}. ${guidance}`,
+        `${context} Posicione o cursor em qualquer ponto e use o teclado de símbolos para montar o nome livremente, ou combine molduras laterais com um estilo Unicode. A lista pronta ainda oferece alternativas mais curtas quando o resultado fica carregado.`,
       ],
     },
     {
-      title: `Como montar um nickname legivel para ${platform.name}`,
+      title: `Como montar um nickname legível para ${platform.name}`,
       paragraphs: [
-        'Comece com um nome curto e adicione uma decoracao por vez. Compare as letras originais com small caps ou outro estilo Unicode e confira o total de caracteres. Simbolos de texto curtos normalmente continuam mais reconheciveis que varios emoji ou molduras complexas empilhadas.',
+        'Comece com um nome curto e adicione uma decoração por vez. Compare as letras originais com small caps ou outro estilo Unicode e confira o total de caracteres. Símbolos de texto curtos normalmente continuam mais reconhecíveis que vários emoji ou molduras complexas empilhadas.',
         `Copie o resultado e cole no campo real de ${platform.name} antes de confirmar. Se a plataforma rejeitar ou mostrar quadrados vazios, volte ao estilo original, remova um lado da moldura ou escolha um preset minimalista.`,
       ],
       list: [
-        'Digite um nickname base em vez de depender de um nome aleatorio.',
+        'Digite um nickname base em vez de depender de um nome aleatório.',
         'Teste primeiro os presets do jogo e depois personalize os dois lados.',
-        'Confira a leitura nos locais em que outros jogadores verao o nome.',
-        'Guarde uma versao simples antes de confirmar a alteracao.',
+        'Confira a leitura nos locais em que outros jogadores verão o nome.',
+        'Guarde uma versão simples antes de confirmar a alteração.',
       ],
     },
     {
       title: 'Por que o suporte a Unicode pode mudar',
       paragraphs: [
-        `O resultado e texto formado por caracteres Unicode, nao uma imagem. ${platform.name}, a conta vinculada, o aparelho e a fonte ativa podem afetar a aceitacao e a exibicao de cada glifo. Um simbolo visivel no navegador ainda pode virar quadrado ou desaparecer no jogo.`,
-        'Por isso os presets sao pontos de partida praticos, nao garantias. Regras e fontes podem mudar depois de atualizacoes, entao a verificacao final precisa acontecer dentro do jogo.',
+        `O resultado é texto formado por caracteres Unicode, não uma imagem. ${platform.name}, a conta vinculada, o aparelho e a fonte ativa podem afetar a aceitação e a exibição de cada glifo. Um símbolo visível no navegador ainda pode virar quadrado ou desaparecer no jogo. ${
+          platform.deviceCategory === 'mobile'
+            ? 'Como o jogo é mobile, teste o nome no mesmo aparelho em que você joga: a fonte do sistema muda de um celular para outro.'
+            : platform.deviceCategory === 'pc'
+              ? 'No PC, confira o nome no cliente do jogo e no placar, porque a fonte do jogo pode ser diferente da do navegador.'
+              : 'Como há versões para mobile e PC, teste o nome em ambas, porque cada uma pode usar uma fonte diferente.'
+        }`,
+        'Por isso os presets são pontos de partida práticos, não garantias. Regras e fontes podem mudar depois de atualizações, então a verificação final precisa acontecer dentro do jogo.',
       ],
     },
     {
-      title: 'Geracao local e privada',
+      title: 'Geração local e privada',
       paragraphs: [
-        'O nome, a transformacao de letras, a selecao de simbolos, o preview e as variantes sao gerados localmente no navegador. Nao e necessario conectar conta nem fazer cadastro.',
-        `Esta ferramenta independente nao e afiliada a ${platform.name} nem ao publisher e nao consegue reservar ou verificar disponibilidade. Respeite as regras da comunidade e evite imitacao enganosa.`,
+        'O nome, a transformação de letras, a seleção de símbolos, o preview e as variantes são gerados localmente no navegador. Não é necessário conectar conta nem fazer cadastro.',
+        `Esta ferramenta independente não é afiliada a ${platform.name} nem ao publisher e não consegue reservar ou verificar disponibilidade. Respeite as regras da comunidade e evite imitação enganosa.`,
       ],
     },
   ];
@@ -404,20 +410,20 @@ const buildFaq = (
 
   return [
     {
-      question: `Quais simbolos funcionam no nome de ${platform.name}?`,
+      question: `Quais símbolos funcionam no nome de ${platform.name}?`,
       answer: `${platform.guidanceByLocale['pt-br']} Comece pelas molduras curtas recomendadas e valide o resultado dentro do jogo.`,
     },
     {
       question: `O gerador verifica disponibilidade no ${platform.name}?`,
-      answer: 'Nao. Ele cria variacoes localmente, mas disponibilidade e aceitacao dependem da plataforma e da sua conta.',
+      answer: 'Não. Ele cria variações localmente, mas disponibilidade e aceitação dependem da plataforma e da sua conta.',
     },
     {
-      question: 'Por que um simbolo aparece como quadrado?',
-      answer: 'A fonte ativa do jogo ou aparelho pode nao conter aquele glifo Unicode. Teste letras originais e um simbolo mais simples.',
+      question: 'Por que um símbolo aparece como quadrado?',
+      answer: 'A fonte ativa do jogo ou aparelho pode não conter aquele glifo Unicode. Teste letras originais e um símbolo mais simples.',
     },
     {
-      question: 'O nome digitado e enviado para servidor?',
-      answer: 'Nao. O gerador e o preview funcionam localmente no navegador por padrao.',
+      question: 'O nome digitado é enviado para servidor?',
+      answer: 'Não. O gerador e o preview funcionam localmente no navegador por padrão.',
     },
   ];
 };
@@ -427,10 +433,10 @@ const buildFallbackContent = (
 ): LocalizedNicknameSymbolPlatformContent => {
   const fallback = {
     'pt-br': {
-      title: 'Gerador de Simbolos para Nickname',
-      intro: 'Crie um nickname gamer com simbolos e molduras Unicode.',
-      seoTitle: 'Gerador de Simbolos para Nickname',
-      seoDescription: 'Crie nomes gamer com simbolos Unicode prontos para copiar.',
+      title: 'Gerador de Símbolos para Nickname',
+      intro: 'Crie um nickname gamer com símbolos e molduras Unicode.',
+      seoTitle: 'Gerador de Símbolos para Nickname',
+      seoDescription: 'Crie nomes gamer com símbolos Unicode prontos para copiar.',
     },
     en: {
       title: 'Gaming Name Symbol Generator',
@@ -503,10 +509,10 @@ export const getLocalizedNicknameSymbolPlatformContent = (
   }
 
   return {
-    title: `Simbolos para Nickname de ${platform.name}`,
-    intro: `Crie nomes de ${platform.name} com simbolos Unicode, molduras recomendadas, letras estilizadas, preview e variacoes prontas para copiar.`,
-    seoTitle: `Simbolos para Nickname ${platform.name} | Gerador Online`,
-    seoDescription: `Gere nomes de ${platform.name} com simbolos, molduras e letras Unicode. Veja o total de caracteres, copie nicknames e teste presets.`,
+    title: `Símbolos para Nickname de ${platform.name}`,
+    intro: `Crie nomes de ${platform.name} com símbolos Unicode, molduras recomendadas, letras estilizadas, preview e variações prontas para copiar.`,
+    seoTitle: `Símbolos para Nickname ${platform.name} | Gerador Online`,
+    seoDescription: `Gere nomes de ${platform.name} com símbolos, molduras e letras Unicode. Veja o total de caracteres, copie nicknames e teste presets.`,
     keywords,
     contentBlocks: buildContentBlocks(locale, platform),
     faq: buildFaq(locale, platform),

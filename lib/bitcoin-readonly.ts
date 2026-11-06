@@ -57,7 +57,7 @@ const detectAddressType = (input: string): string => {
   if (/^[mn]/.test(input)) return 'Testnet Legacy (P2PKH)';
   if (input.startsWith('2')) return 'Testnet Script Hash (P2SH)';
 
-  return 'Endereco Bitcoin';
+  return 'Endereço Bitcoin';
 };
 
 const reverseBufferHex = (buffer: Uint8Array): string =>
@@ -113,7 +113,7 @@ export const inspectBitcoinAddress = (
       ok: false,
       input: trimmed,
       network: selectedNetwork,
-      error: error instanceof Error ? error.message : 'Endereco invalido para a rede selecionada.',
+      error: error instanceof Error ? error.message : 'Endereço inválido para a rede selecionada.',
     };
   }
 };
@@ -125,7 +125,7 @@ export const decodeBitcoinTransaction = (
   const cleaned = txHex.trim().replaceAll(/\s+/g, '');
 
   if (!/^[0-9a-fA-F]+$/.test(cleaned) || cleaned.length % 2 !== 0) {
-    return { ok: false, error: 'Informe uma transacao em hexadecimal valido.' };
+    return { ok: false, error: 'Informe uma transação em hexadecimal válido.' };
   }
 
   try {
@@ -176,7 +176,7 @@ export const decodeBitcoinTransaction = (
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : 'Nao foi possivel decodificar a transacao.',
+      error: error instanceof Error ? error.message : 'Não foi possível decodificar a transação.',
     };
   }
 };

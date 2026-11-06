@@ -25,12 +25,12 @@ const contentByLocale: Record<AppLocale, GamerUsernameGeneratorContent> = {
       'gerador de nome para free fire',
       'gerador de nick fortnite',
       'gerador de nome gamer',
-      'nome aleatorio para jogo',
-      'gerador de nickname aleatorio',
+      'nome aleatório para jogo',
+      'gerador de nickname aleatório',
       'nome para roblox gerador',
     ],
     searchIntent:
-      'Jogadores que querem gerar um nome de usuário criativo e disponível para um jogo especifico rapidamente, sem precisar pensar do zero.',
+      'Jogadores que querem gerar um nome de usuário criativo e disponível para um jogo específico rapidamente, sem precisar pensar do zero.',
     seoTitle: 'Gerador de Nick para Jogos Grátis | Fortnite, Free Fire, Roblox e Mais',
     seoDescription:
       'Gere nicknames aleatórios para jogos com estilo clássico, leet speak ou decorado com símbolos. Sorteie quantas vezes quiser, favorite os melhores e copie com um clique.',
@@ -41,14 +41,14 @@ const contentByLocale: Record<AppLocale, GamerUsernameGeneratorContent> = {
       {
         title: 'Como gerar um nickname para jogos',
         paragraphs: [
-          'Escolha o jogo (ou deixe em branco para um nome genérico), o estilo do nome e se quer incluir um número no final. Clique em gerar para sortear uma combinação de palavras, ou continue clicando para ver novas opções até encontrar uma que goste. Favorite os nomes que mais gostou para comparar depois.',
-          'O estilo clássico combina um adjetivo e um substantivo (por exemplo, "ShadowWolf"). O estilo leet speak troca algumas letras por números (como "Sh4d0wW0lf"). O estilo com símbolos adiciona um símbolo decorativo no início e no fim do nome.',
+          'Escolha o jogo (ou "Genérico" para um nome sem tema), o estilo do nome e se quer incluir um número no final. Clique em gerar para sortear uma combinação de palavras, ou continue clicando para ver novas opções até encontrar uma que goste. Favorite os nomes que mais gostou para comparar depois.',
+          'O estilo clássico combina um adjetivo e um substantivo (por exemplo, "ShadowWolf"). O estilo leet speak troca algumas letras por números (como "5h4d0wW0lf"). O estilo com símbolos adiciona um símbolo decorativo no início e no fim do nome.',
         ],
       },
       {
         title: 'Nomes com contexto por jogo',
         paragraphs: [
-          'Cada jogo tem um banco de palavras próprio: Valorant usa termos táticos, Minecraft usa termos de construção e mineração, Free Fire e PUBG Mobile usam termos de battle royale, e assim por diante. Isso deixa o nome sorteado mais coerente com o universo do jogo escolhido, em vez de uma combinação genérica.',
+          'Dez jogos têm um banco de palavras próprio (Fortnite, Free Fire, Roblox, Valorant, COD Mobile, PUBG Mobile, Counter-Strike 2, Minecraft, Brawl Stars e Rocket League): Valorant usa termos táticos, Minecraft usa termos de construção e mineração, Free Fire e PUBG Mobile usam termos de battle royale, e assim por diante. Isso deixa o nome sorteado mais coerente com o universo do jogo escolhido. Para os demais jogos, a ferramenta usa um banco genérico de palavras.',
         ],
         list: [
           'Sorteie várias vezes até encontrar um nome que soe bem.',
@@ -66,7 +66,7 @@ const contentByLocale: Record<AppLocale, GamerUsernameGeneratorContent> = {
       {
         title: 'Processamento local e privacidade',
         paragraphs: [
-          'Toda a geração de nomes acontece localmente no seu navegador. Os favoritos ficam salvos apenas no seu dispositivo, e nenhum dado é enviado para um servidor.',
+          'Toda a geração de nomes acontece localmente no seu navegador. Os favoritos e a lista dos últimos nomes gerados ficam salvos apenas no seu navegador, e nenhum dado é enviado para um servidor.',
         ],
       },
     ],
@@ -79,7 +79,7 @@ const contentByLocale: Record<AppLocale, GamerUsernameGeneratorContent> = {
       {
         question: 'Posso escolher o jogo para deixar o nome mais temático?',
         answer:
-          'Sim. Cada jogo tem um banco de palavras próprio que deixa o nome sorteado mais coerente com o universo daquele jogo.',
+          'Sim, para dez jogos, como Fortnite, Free Fire, Roblox e Valorant, que têm palavras próprias. Os outros jogos usam um banco genérico.',
       },
       {
         question: 'O que é o estilo leet speak?',
@@ -89,7 +89,7 @@ const contentByLocale: Record<AppLocale, GamerUsernameGeneratorContent> = {
       {
         question: 'Os favoritos ficam salvos?',
         answer:
-          'Sim. Os nomes favoritados ficam salvos localmente no seu navegador e continuam disponíveis na próxima visita.',
+          'Sim. Os nomes favoritados, assim como a lista dos últimos gerados, ficam salvos localmente no seu navegador e continuam disponíveis na próxima visita. Limpar os dados do navegador apaga essas listas.',
       },
       {
         question: 'É gratuito e funciona no celular?',

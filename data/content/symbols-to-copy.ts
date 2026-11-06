@@ -20,28 +20,28 @@ const contentByLocale: Record<AppLocale, SymbolsToCopyContent> = {
     name: 'Símbolos para Copiar e Colar',
     shortDescription:
       'Mais de 300 símbolos Unicode organizados em 12 categorias com busca, favoritos, histórico e cópia como texto, entidade HTML ou codepoint.',
-    primaryKeyword: 'simbolos para copiar e colar',
+    primaryKeyword: 'símbolos para copiar e colar',
     secondaryKeywords: [
       'seta para copiar',
-      'coracao para copiar',
+      'coração para copiar',
       'estrela para copiar',
-      'simbolos para instagram',
-      'simbolos matematicos para copiar',
-      'simbolo de moeda para copiar',
+      'símbolos para instagram',
+      'símbolos matemáticos para copiar',
+      'símbolo de moeda para copiar',
     ],
     searchIntent:
-      'Usuarios que procuram um simbolo especifico (seta, coracao, estrela, simbolo matematico) para copiar e colar rapidamente em bio, post ou documento.',
+      'Usuários que procuram um símbolo específico (seta, coração, estrela, símbolo matemático) para copiar e colar rapidamente em bio, post ou documento.',
     seoTitle: 'Símbolos para Copiar e Colar | Setas, Corações, Estrelas e Mais',
     seoDescription:
       'Copie símbolos Unicode organizados por categoria: setas, corações, estrelas, matemática, moedas e mais. Busque, monte sequências e copie como texto, HTML ou codepoint.',
     h1: 'Símbolos para Copiar e Colar Grátis, Organizados por Categoria',
     intro:
-      'Escolha uma categoria ou busque por nome, clique para copiar e monte sequências combinando varios símbolos antes de colar em qualquer lugar.',
+      'Escolha uma categoria ou busque pelo nome dela, clique para copiar e monte sequências combinando vários símbolos antes de colar em qualquer lugar.',
     contentBlocks: [
       {
         title: 'Como usar o catálogo de símbolos',
         paragraphs: [
-          'Escolha uma categoria no topo da ferramenta (setas, corações, estrelas, matemática, moedas, marcas de certo/errado, linhas e bordas, música, zodíaco, letras gregas, marcadores de lista ou xadrez e jogos) ou digite um termo na busca para filtrar por nome. Clique em qualquer símbolo para copiar instantaneamente, ou ative o modo "montar sequência" para juntar varios símbolos em uma única string antes de copiar tudo de uma vez.',
+          'Escolha uma categoria no topo da ferramenta (setas, corações, estrelas, matemática, moedas, marcas de certo/errado, linhas e bordas, música, zodíaco, letras gregas, marcadores de lista ou xadrez e jogos) ou digite um termo na busca (como seta ou coração) para filtrar as categorias. Clique em qualquer símbolo para copiar instantaneamente, ou ative o modo "montar sequência" para juntar vários símbolos em uma única string antes de copiar tudo de uma vez.',
           'O botão de formato permite alternar entre copiar o caractere puro, a entidade HTML (útil para código-fonte de sites) ou o codepoint Unicode (útil para documentação técnica e debugging). Favoritos e o histórico de símbolos copiados recentemente ficam salvos localmente no navegador, então continuam disponíveis na próxima visita.',
         ],
       },

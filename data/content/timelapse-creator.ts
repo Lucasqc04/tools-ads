@@ -14,8 +14,8 @@ export const timelapseCreatorContentBlocks: ContentBlock[] = [
   {
     title: 'Ajuste a duração, a fluidez e o formato',
     paragraphs: [
-      'A duração final estimada muda conforme a velocidade e os trechos incluídos. Um segmento de dez minutos em 10× ocupa cerca de um minuto no vídeo final; se outro segmento ficar em 0,5×, ele passa a durar o dobro. A estimativa aparece enquanto você ajusta as velocidades, então fica fácil decidir se o timelapse serve para uma publicação curta ou para uma demonstração mais longa.',
-      'Escolha 24, 30 ou 60 quadros por segundo, qualidade alta, equilibrada ou mais leve, e exporte em MP4 ou WebM. Para compartilhar em redes sociais, MP4 costuma ser a opção mais compatível. WebM pode ser útil quando o navegador ou fluxo de edição já trabalha com esse formato.',
+      'A duração final estimada muda conforme a velocidade e os trechos incluídos. Um segmento de dez minutos em 10× ocupa cerca de um minuto no vídeo final; se outro segmento ficar em 0,5×, ele passa a durar o dobro. A estimativa aparece enquanto você ajusta as velocidades, então fica fácil decidir se o timelapse serve para uma publicação curta ou para uma demonstração mais longa. As velocidades disponíveis são 0,25×, 0,5×, 1×, 2×, 4×, 8× e 16×: 1× mantém o ritmo original, valores abaixo de 1 deixam o trecho em câmera lenta e o botão “Acelerar tudo 8×” aplica 8× a todos os trechos de uma vez.',
+      'Os quadros por segundo (24, 30 ou 60; o padrão é 30) definem a fluidez do vídeo exportado, e a qualidade (alta, equilibrada ou leve; o padrão é alta) define o quanto o arquivo é comprimido. Exporte em MP4 ou WebM. Para compartilhar em redes sociais, MP4 costuma ser a opção mais compatível. WebM pode ser útil quando o navegador ou fluxo de edição já trabalha com esse formato.',
     ],
     list: [
       'Acelerar o vídeo inteiro ou só alguns segmentos.',

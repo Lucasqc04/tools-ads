@@ -116,7 +116,7 @@ const getCanvasContext = (
   const context = canvas.getContext('2d', { willReadFrequently: true });
 
   if (!context) {
-    throw new Error('Nao foi possivel iniciar o canvas para processar a imagem.');
+    throw new Error('Não foi possível iniciar o canvas para processar a imagem.');
   }
 
   return context;
@@ -371,7 +371,7 @@ export const loadImageDataFromFile = async (
   }
 
   if (!isSupportedChromaImage(file)) {
-    throw new Error('Formato nao suportado. Use PNG, JPG, JPEG, WEBP ou BMP.');
+    throw new Error('Formato não suportado. Use PNG, JPG, JPEG, WEBP ou BMP.');
   }
 
   const objectUrl = URL.createObjectURL(file);
@@ -381,7 +381,7 @@ export const loadImageDataFromFile = async (
       const element = new Image();
 
       element.onload = () => resolve(element);
-      element.onerror = () => reject(new Error('Nao foi possivel abrir a imagem.'));
+      element.onerror = () => reject(new Error('Não foi possível abrir a imagem.'));
       element.src = objectUrl;
     });
 
@@ -428,7 +428,7 @@ export const imageDataToPngBlob = (imageData: ImageData): Promise<Blob> => {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (!blob) {
-        reject(new Error('Nao foi possivel gerar o PNG transparente.'));
+        reject(new Error('Não foi possível gerar o PNG transparente.'));
         return;
       }
 

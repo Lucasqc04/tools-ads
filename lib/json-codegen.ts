@@ -239,7 +239,7 @@ export const generateJsonCode = (rawJson: string, rootNameInput = 'GeneratedPayl
   const notes: string[] = [];
 
   if (inferred.kind === 'array') {
-    notes.push('A raiz do JSON e uma lista; o tipo principal representa o item e o alias exportado usa array.');
+    notes.push('A raiz do JSON é uma lista; o tipo principal representa o item e o alias exportado usa array.');
   }
 
   const rootNode = inferred.kind === 'array' ? inferred.item : inferred;

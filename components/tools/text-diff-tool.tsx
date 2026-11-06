@@ -49,29 +49,29 @@ type Ui = {
 const uiByLocale: Record<AppLocale, Ui> = {
   'pt-br': {
     intro:
-      'Compare duas versoes de texto com diff por caractere, palavra, linha, paragrafo ou lista. Tudo local no navegador.',
+      'Compare duas versões de texto com diff por caractere, palavra, linha, parágrafo ou lista. Tudo local no navegador.',
     textA: 'Texto original',
     textB: 'Texto novo',
     compare: 'Comparar textos',
     clear: 'Limpar',
     swap: 'Trocar lados',
-    copyReport: 'Copiar relatorio',
+    copyReport: 'Copiar relatório',
     copyFinal: 'Copiar texto final',
     copied: 'Copiado',
     exportTxt: 'Exportar TXT',
     exportJson: 'Exportar JSON',
-    mode: 'Modo de comparacao',
+    mode: 'Modo de comparação',
     similarity: 'Similaridade',
-    added: 'Adicoes',
-    removed: 'Remocoes',
+    added: 'Adições',
+    removed: 'Remoções',
     changedLines: 'Linhas alteradas',
-    diffSize: 'Diferenca de tamanho',
+    diffSize: 'Diferença de tamanho',
     summary: 'Resumo executivo',
     sideBySide: 'Diff lado a lado',
     inline: 'Diff inline',
-    changes: 'Lista de alteracoes',
-    listMode: 'Comparacao de listas',
-    options: 'Opcoes de comparacao',
+    changes: 'Lista de alterações',
+    listMode: 'Comparação de listas',
+    options: 'Opções de comparação',
     noResult: 'Cole os dois textos e clique em comparar para gerar o diff.',
   },
   en: {
@@ -161,7 +161,7 @@ const modes: Array<{ value: DiffMode; label: string }> = [
   { value: 'character', label: 'Caractere' },
   { value: 'word', label: 'Palavra' },
   { value: 'line', label: 'Linha' },
-  { value: 'paragraph', label: 'Paragrafo' },
+  { value: 'paragraph', label: 'Parágrafo' },
   { value: 'list', label: 'Lista' },
 ];
 
@@ -324,7 +324,7 @@ export function TextDiffTool({ locale = 'pt-br' }: TextDiffToolProps) {
 
           <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm">
             <input type="checkbox" checked={options.ignoreCase} onChange={(e) => setOption('ignoreCase', e.target.checked)} />
-            Ignorar maiusculas/minusculas
+            Ignorar maiúsculas/minúsculas
           </label>
           <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm">
             <input type="checkbox" checked={options.ignoreAccents} onChange={(e) => setOption('ignoreAccents', e.target.checked)} />
@@ -332,11 +332,11 @@ export function TextDiffTool({ locale = 'pt-br' }: TextDiffToolProps) {
           </label>
           <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm">
             <input type="checkbox" checked={options.ignoreExtraSpaces} onChange={(e) => setOption('ignoreExtraSpaces', e.target.checked)} />
-            Ignorar espacos extras
+            Ignorar espaços extras
           </label>
           <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm">
             <input type="checkbox" checked={options.ignorePunctuation} onChange={(e) => setOption('ignorePunctuation', e.target.checked)} />
-            Ignorar pontuacao
+            Ignorar pontuação
           </label>
           <label className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm">
             <input type="checkbox" checked={options.ignoreLineBreaks} onChange={(e) => setOption('ignoreLineBreaks', e.target.checked)} />
@@ -471,11 +471,11 @@ export function TextDiffTool({ locale = 'pt-br' }: TextDiffToolProps) {
                   <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap">{result.listCompare.common.join('\n')}</pre>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white p-3">
-                  <p className="font-semibold text-slate-800">So no A ({result.listCompare.onlyA.length})</p>
+                  <p className="font-semibold text-slate-800">Só no A ({result.listCompare.onlyA.length})</p>
                   <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap">{result.listCompare.onlyA.join('\n')}</pre>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white p-3">
-                  <p className="font-semibold text-slate-800">So no B ({result.listCompare.onlyB.length})</p>
+                  <p className="font-semibold text-slate-800">Só no B ({result.listCompare.onlyB.length})</p>
                   <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap">{result.listCompare.onlyB.join('\n')}</pre>
                 </div>
               </div>

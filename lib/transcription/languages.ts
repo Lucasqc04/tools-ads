@@ -31,15 +31,15 @@ export const WHISPER_LANGUAGE_NAME: Record<WhisperLanguageCode, string> = {
 export const LANGUAGE_OPTION_LABELS: Record<AppLocale, Record<TranscriptionLanguageOption, string>> = {
   'pt-br': {
     auto: 'Detectar automaticamente',
-    pt: 'Portugues',
-    en: 'Ingles',
+    pt: 'Português',
+    en: 'Inglês',
     es: 'Espanhol',
-    fr: 'Frances',
-    de: 'Alemao',
+    fr: 'Francês',
+    de: 'Alemão',
     it: 'Italiano',
-    ja: 'Japones',
+    ja: 'Japonês',
     ko: 'Coreano',
-    zh: 'Chines',
+    zh: 'Chinês',
     ru: 'Russo',
   },
   en: {

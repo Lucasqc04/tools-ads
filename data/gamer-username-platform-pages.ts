@@ -1,4 +1,4 @@
-import { generateUsername } from '@/lib/gamer-username-generator';
+import { generateUsername, hasGameWordBank } from '@/lib/gamer-username-generator';
 import {
   getNicknameSymbolPlatformBySlug,
   nicknameSymbolPlatforms,
@@ -207,8 +207,12 @@ const buildContentBlocks = (
     {
       title: `Gerador de nick para ${platform.name}`,
       paragraphs: [
-        `Esta página abre o gerador com um banco de palavras com temática de ${platform.name} já selecionado, por exemplo "${sample}". Clique em gerar quantas vezes quiser, escolha um estilo (clássico, leet speak ou símbolos) e copie o resultado.`,
-        `Ao encontrar um nome que goste, favorite para comparar com outras opções, e depois confirme diretamente no ${platform.name} se ele está disponível antes de criar sua conta ou alterar seu perfil.`,
+        `${
+          hasGameWordBank(platform.id)
+            ? `Esta página abre o gerador com palavras temáticas de ${platform.name}, por exemplo "${sample}".`
+            : `Esta página abre o gerador com ${platform.name} selecionado. Esse jogo ainda não tem palavras próprias, então os nomes usam o banco genérico, por exemplo "${sample}".`
+        } Clique em gerar quantas vezes quiser, escolha um estilo (clássico, leet speak ou símbolos) e copie o resultado.`,
+        `Quando encontrar um nome de que você goste, favorite para comparar com outras opções e confirme diretamente no ${platform.name} se ele está disponível antes de criar sua conta ou alterar seu perfil.`,
       ],
     },
     {
@@ -287,9 +291,9 @@ const buildFallbackContent = (locale: AppLocale): LocalizedGamerUsernamePlatform
   const fallback = {
     'pt-br': {
       title: 'Gerador de Nick para Jogos',
-      intro: 'Gere um nickname aleatorio para o seu jogo.',
+      intro: 'Gere um nickname aleatório para o seu jogo.',
       seoTitle: 'Gerador de Nick para Jogos',
-      seoDescription: 'Gere nicknames aleatorios prontos para copiar.',
+      seoDescription: 'Gere nicknames aleatórios prontos para copiar.',
     },
     en: {
       title: 'Gamer Username Generator',
@@ -351,9 +355,9 @@ export const getLocalizedGamerUsernamePlatformContent = (
 
   return {
     title: `Gerador de Nick para ${platform.name}`,
-    intro: `Gere nicknames aleatorios de ${platform.name} com banco de palavras tematizado, estilos classico/leet/simbolos e copia com um clique.`,
-    seoTitle: `Gerador de Nick para ${platform.name} | Nomes Gratis`,
-    seoDescription: `Gere nicknames aleatorios de ${platform.name} com banco de palavras tematizado. Sorteie, troque de estilo, favorite resultados e copie na hora.`,
+    intro: `Gere nicknames aleatórios para ${platform.name} ${hasGameWordBank(platform.id) ? 'com palavras temáticas do jogo' : 'com um banco genérico de palavras'}, nos estilos clássico, leet speak ou com símbolos, e copie com um clique.`,
+    seoTitle: `Gerador de Nick para ${platform.name} | Nomes Grátis`,
+    seoDescription: `Gere nicknames aleatórios para ${platform.name} ${hasGameWordBank(platform.id) ? 'com palavras temáticas' : 'com banco genérico de palavras'}. Sorteie, troque de estilo, favorite resultados e copie na hora.`,
     keywords,
     contentBlocks: buildContentBlocks(locale, platform),
     faq: buildFaq(locale, platform),
@@ -372,7 +376,7 @@ export const toLocalizedGamerUsernamePlatformLink = (
       ? `Generate random usernames for ${page.gameName}.`
       : locale === 'es'
         ? `Genera nombres aleatorios para ${page.gameName}.`
-        : `Gere nicknames aleatorios para ${page.gameName}.`,
+        : `Gere nicknames aleatórios para ${page.gameName}.`,
 });
 
 export const getFeaturedGamerUsernamePlatformPages = (

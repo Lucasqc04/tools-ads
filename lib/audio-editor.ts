@@ -231,7 +231,7 @@ export const readAudioMetadata = async (file: File): Promise<AudioFileMetadata> 
         });
       };
 
-      audio.onerror = () => reject(new Error('Nao foi possivel ler os metadados do audio.'));
+      audio.onerror = () => reject(new Error('Não foi possível ler os metadados do áudio.'));
       audio.src = objectUrl;
     });
   } finally {
@@ -388,7 +388,7 @@ export const extractAudioTracksFromMedia = async (
 
       if (exitCode !== 0) {
         throw new Error(
-          'Este arquivo nao tem uma faixa de audio detectavel. O video foi lido, mas nao existe stream de audio para extrair.',
+          'Este arquivo não tem uma faixa de áudio detectável. O vídeo foi lido, mas não existe stream de áudio para extrair.',
         );
       }
 
@@ -462,7 +462,7 @@ export const exportAudioSegment = async (
     ]);
 
     if (exitCode !== 0) {
-      throw new Error('Nao foi possivel exportar este trecho de audio.');
+      throw new Error('Não foi possível exportar este trecho de áudio.');
     }
 
     const outputData = await ffmpeg.readFile(outputName);

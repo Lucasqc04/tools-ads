@@ -2,43 +2,41 @@ import type { AppLocale } from '@/lib/i18n/config';
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const lightningDecoderIntro =
-  'Decodifique Lightning Address, LNURL, BOLT11 e BOLT12 com visual colorido por campos, exporte JSON/TXT e gere QR Code customizado em PNG e SVG — tudo localmente no navegador.';
+  'Cole uma invoice BOLT11, uma offer BOLT12, um LNURL ou uma Lightning Address para ver os campos organizados, exportar em JSON ou TXT e gerar um QR Code. Tudo no navegador.';
 
 export const lightningDecoderContentBlocks: ContentBlock[] = [
   {
     title: 'O que este Lightning Decoder faz',
     paragraphs: [
-      'Esta ferramenta analisa strings do ecossistema Lightning Network e mostra os detalhes estruturados para inspeção técnica. Você pode colar invoice BOLT11, offer BOLT12, links LNURL e também Lightning Address.',
-      'O decoder organiza as seções por categoria visual (header, pagamento, tempo, roteamento e segurança), facilitando auditoria, debugging e validação antes de pagar ou integrar em aplicações.',
+      'Esta ferramenta lê textos da Lightning Network e mostra os detalhes de forma estruturada para inspeção técnica. Você pode colar uma invoice BOLT11, uma offer BOLT12, um link LNURL ou uma Lightning Address, com ou sem o prefixo "lightning:".',
+      'Os campos aparecem agrupados por categoria (cabeçalho, pagamento, tempo, roteamento, segurança e metadados), o que facilita conferir uma invoice antes de integrá-la a um sistema ou investigar por que uma carteira recusou um pagamento.',
     ],
   },
   {
-    title: 'Formatos suportados',
+    title: 'Formatos suportados e como ler o resultado',
     paragraphs: [
-      'BOLT11: leitura de rede, valor em millisats, timestamp, expiração, tags, assinatura e detalhes brutos.',
-      'BOLT12: decode estrutural do payload bech32 com visualização local dos bytes em texto ou hexadecimal.',
-      'LNURL: decode do conteúdo bech32 para URL/payload, útil para inspecionar endpoints de login e pagamento.',
-      'Lightning Address: decomposição do formato usuario@dominio com endpoint LNURLp calculado automaticamente.',
+      'BOLT11 (começa com lnbc, lntb, lnbcrt ou lnsb): mostra rede, valor em millisats (1.000 millisats = 1 satoshi), data de criação, expiração, chave pública do recebedor, tags, dicas de rota e a assinatura. Se a invoice não tiver tempo de expiração, a ferramenta considera o padrão de 3.600 segundos.',
+      'BOLT12 (começa com lno1, lnr1 ou lnf1): decodifica o texto bech32 e lista os campos TLV mais comuns, como moeda, valor, descrição e expiração. Campos fora desse mapeamento aparecem como unknown_tag.',
+      'LNURL: converte o texto bech32 de volta em URL, para você ver qual endereço ele aponta antes de abrir. Lightning Address (usuario@dominio.com): separa usuário e domínio e monta o endpoint LNURLp padrão, https://dominio.com/.well-known/lnurlp/usuario.',
     ],
     list: [
-      'Decode local no navegador.',
-      'Visual colorido por grupo de campos.',
-      'Geração de QR Code do payload normalizado.',
-      'Exportação de dados em TXT e JSON.',
+      'Decodificação local no navegador.',
+      'Campos agrupados por cores e categorias.',
+      'QR Code do conteúdo, para baixar em PNG ou SVG.',
+      'Exportação dos dados em TXT e JSON.',
     ],
   },
   {
     title: 'Quando usar',
     paragraphs: [
-      'Use este decoder para validar payloads recebidos, depurar integrações de checkout Lightning e conferir campos críticos antes da cobrança. É útil para devs, suporte técnico, operações e criadores de conteúdo de Bitcoin.',
-      'Também ajuda em troubleshooting quando uma wallet rejeita um payload: você pode identificar estrutura inválida, campos ausentes ou inconsistências de formatação rapidamente.',
+      'Use para validar payloads recebidos, depurar o checkout Lightning de uma loja e conferir valor e expiração antes de cobrar. Também ajuda quando uma carteira rejeita um código: a ferramenta mostra se a estrutura está inválida ou se há campos ausentes.',
     ],
   },
   {
-    title: 'Privacidade e segurança',
+    title: 'Limites, privacidade e segurança',
     paragraphs: [
-      'Todo processamento acontece no navegador do usuário. Não há envio automático dos payloads para servidor nesta ferramenta.',
-      'Mesmo com decode válido, sempre confirme destinatário e valor dentro da sua carteira/app de pagamento. Esta página não substitui validações de segurança da wallet.',
+      'A decodificação é estrutural. A ferramenta não valida a assinatura da invoice, não verifica se o recebedor existe e não consulta a rede. Na Lightning Address, o endpoint é apenas calculado: ele não é acessado, então nada indica se o endereço funciona.',
+      'Todo o processamento acontece no navegador, e o texto colado não é enviado ao servidor do site. Mesmo com a decodificação correta, confira o destinatário e o valor na sua carteira antes de pagar, e não abra URLs de LNURL que você não reconhece.',
     ],
   },
 ];
@@ -47,27 +45,27 @@ export const lightningDecoderFaq: FaqItem[] = [
   {
     question: 'Quais formatos posso decodificar?',
     answer:
-      'A ferramenta suporta Lightning Address, LNURL, BOLT11 e BOLT12. Basta colar o valor no campo principal e clicar em decodificar.',
+      'BOLT11, BOLT12, LNURL e Lightning Address. Cole o texto no campo principal, com ou sem "lightning:" no início, e clique em decodificar.',
   },
   {
-    question: 'Posso gerar QR Code do conteúdo decodificado?',
+    question: 'Posso gerar um QR Code do conteúdo decodificado?',
     answer:
-      'Sim. A aba de QR Code cria o código a partir do payload normalizado e permite baixar em PNG ou SVG com personalização de cor e tamanho.',
+      'Sim. A aba de QR Code cria o código a partir do texto normalizado e permite baixar em PNG ou SVG, com cor e tamanho ajustáveis.',
   },
   {
-    question: 'Os dados ficam salvos no servidor?',
+    question: 'O texto que eu colo é enviado ao servidor?',
     answer:
-      'Não. O decode e as exportações são processados localmente no navegador.',
+      'Não. A decodificação e as exportações acontecem no navegador, e a ferramenta também não consulta endpoints de LNURL ou de Lightning Address.',
   },
   {
-    question: 'Este decoder valida assinatura criptográfica?',
+    question: 'Este decoder valida a assinatura da invoice?',
     answer:
-      'Ele faz decode estrutural e exibe os campos técnicos. Para validação criptográfica completa, use também sua stack de verificação na wallet/backend.',
+      'Não. Ele mostra os campos, inclusive a assinatura, mas não faz a verificação criptográfica. Essa checagem cabe à sua carteira ou ao seu backend.',
   },
   {
     question: 'Posso exportar os detalhes técnicos?',
     answer:
-      'Sim. Você pode copiar ou baixar os resultados em TXT e JSON para auditoria, logs e documentação.',
+      'Sim. Você pode copiar ou baixar o resultado em TXT e JSON, para auditoria, logs e documentação.',
   },
 ];
 
@@ -104,9 +102,9 @@ const contentByLocale: Record<AppLocale, LightningDecoderLocaleContent> = {
     ],
     searchIntent:
       'Usuários e desenvolvedores que precisam decodificar payloads Lightning (BOLT11, BOLT12, LNURL e Lightning Address) com visual técnico e exportação.',
-    seoTitle: 'Lightning Decoder Online | BOLT11, BOLT12, LNURL e Lightning Address',
+    seoTitle: 'Lightning Decoder | BOLT11, BOLT12, LNURL e Lightning Address',
     seoDescription:
-      'Decodifique BOLT11, BOLT12, LNURL e Lightning Address com visual colorido por campos, exporte JSON/TXT e gere QR Code. 100% local no navegador.',
+      'Decodifique BOLT11, BOLT12, LNURL e Lightning Address, veja os campos agrupados, exporte JSON ou TXT e gere QR Code. Tudo no navegador.',
     h1: 'Lightning Decoder Online com QR Code e Exportação',
     intro: lightningDecoderIntro,
     contentBlocks: lightningDecoderContentBlocks,

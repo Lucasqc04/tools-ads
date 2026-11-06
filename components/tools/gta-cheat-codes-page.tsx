@@ -30,9 +30,9 @@ const toolSlug = 'gta-cheat-codes';
 
 const relatedGtaCopy: Record<AppLocale, { title: string; description: string }> = {
   'pt-br': {
-    title: 'Paginas GTA por jogo e intencao',
+    title: 'Páginas GTA por jogo e intenção',
     description:
-      'Acesse atalhos por jogo e categorias buscadas com frequencia, como armas, policia, tanque e clima.',
+      'Acesse atalhos por jogo e categorias buscadas com frequência, como armas, polícia, tanque e clima.',
   },
   en: {
     title: 'GTA pages by game and intent',

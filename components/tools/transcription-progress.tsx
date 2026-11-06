@@ -23,11 +23,11 @@ type ProgressUi = {
 
 const uiByLocale: Record<AppLocale, ProgressUi> = {
   'pt-br': {
-    extractingAudio: 'Extraindo audio do arquivo...',
+    extractingAudio: 'Extraindo o áudio do arquivo...',
     preparingModel: 'Preparando modelo...',
-    downloadingModel: 'Baixando modelo de transcricao...',
+    downloadingModel: 'Baixando o modelo de transcrição...',
     transcribing: 'Transcrevendo...',
-    modelCached: 'Modelo ja estava salvo no navegador (sem novo download).',
+    modelCached: 'O modelo já estava salvo no navegador (sem novo download).',
     modelDownloaded: 'Modelo baixado e pronto para uso local.',
     processedOf: (processed, total) => `${processed} / ${total} processados`,
   },

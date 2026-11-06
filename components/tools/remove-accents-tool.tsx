@@ -95,7 +95,7 @@ export function RemoveAccentsTool({ locale = 'pt-br' }: RemoveAccentsToolProps) 
     <Card className="space-y-5">
       <section className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
         {isPt
-          ? 'Processamento local no navegador. Texto nao precisa ser enviado para servidor.'
+          ? 'O texto é processado no navegador e não é enviado ao servidor.'
           : isEs
             ? 'Procesamiento local en navegador. El texto no necesita enviarse al servidor.'
             : 'Local browser processing. Text does not need to be sent to a server.'}
@@ -107,20 +107,20 @@ export function RemoveAccentsTool({ locale = 'pt-br' }: RemoveAccentsToolProps) 
       </label>
 
       <div className="grid gap-2 text-sm text-slate-700 md:grid-cols-2">
-        <label className="inline-flex items-center gap-2"><input type="radio" checked={mode === 'keep-case'} onChange={() => setMode('keep-case')} />keep case</label>
-        <label className="inline-flex items-center gap-2"><input type="radio" checked={mode === 'lowercase'} onChange={() => setMode('lowercase')} />lowercase</label>
-        <label className="inline-flex items-center gap-2"><input type="radio" checked={mode === 'uppercase'} onChange={() => setMode('uppercase')} />UPPERCASE</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removePunct} onChange={(event) => setRemovePunct(event.target.checked)} />remove punctuation</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removeSymbols} onChange={(event) => setRemoveSymbols(event.target.checked)} />remove symbols</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removeEmojis} onChange={(event) => setRemoveEmojis(event.target.checked)} />remove emojis</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={collapseSpaces} onChange={(event) => setCollapseSpaces(event.target.checked)} />collapse spaces</label>
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={toSlug} onChange={(event) => setToSlug(event.target.checked)} />slug mode</label>
+        <label className="inline-flex items-center gap-2"><input type="radio" checked={mode === 'keep-case'} onChange={() => setMode('keep-case')} />{isPt ? 'manter maiúsculas e minúsculas' : 'keep case'}</label>
+        <label className="inline-flex items-center gap-2"><input type="radio" checked={mode === 'lowercase'} onChange={() => setMode('lowercase')} />{isPt ? 'minúsculas' : 'lowercase'}</label>
+        <label className="inline-flex items-center gap-2"><input type="radio" checked={mode === 'uppercase'} onChange={() => setMode('uppercase')} />{isPt ? 'MAIÚSCULAS' : 'UPPERCASE'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removePunct} onChange={(event) => setRemovePunct(event.target.checked)} />{isPt ? 'remover pontuação' : 'remove punctuation'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removeSymbols} onChange={(event) => setRemoveSymbols(event.target.checked)} />{isPt ? 'remover símbolos' : 'remove symbols'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={removeEmojis} onChange={(event) => setRemoveEmojis(event.target.checked)} />{isPt ? 'remover emojis' : 'remove emojis'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={collapseSpaces} onChange={(event) => setCollapseSpaces(event.target.checked)} />{isPt ? 'juntar espaços e quebras de linha' : 'collapse spaces'}</label>
+        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={toSlug} onChange={(event) => setToSlug(event.target.checked)} />{isPt ? 'modo slug' : 'slug mode'}</label>
       </div>
 
       <div className="flex flex-wrap gap-2 text-sm">
-        <Button variant={spaceReplacement === 'none' ? 'secondary' : 'ghost'} onClick={() => setSpaceReplacement('none')}>space none</Button>
-        <Button variant={spaceReplacement === '-' ? 'secondary' : 'ghost'} onClick={() => setSpaceReplacement('-')}>space {'->'} -</Button>
-        <Button variant={spaceReplacement === '_' ? 'secondary' : 'ghost'} onClick={() => setSpaceReplacement('_')}>space {'->'} _</Button>
+        <Button variant={spaceReplacement === 'none' ? 'secondary' : 'ghost'} onClick={() => setSpaceReplacement('none')}>{isPt ? 'espaço: manter' : 'space none'}</Button>
+        <Button variant={spaceReplacement === '-' ? 'secondary' : 'ghost'} onClick={() => setSpaceReplacement('-')}>{isPt ? 'espaço' : 'space'} {'->'} -</Button>
+        <Button variant={spaceReplacement === '_' ? 'secondary' : 'ghost'} onClick={() => setSpaceReplacement('_')}>{isPt ? 'espaço' : 'space'} {'->'} _</Button>
       </div>
 
       <section className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -128,7 +128,7 @@ export function RemoveAccentsTool({ locale = 'pt-br' }: RemoveAccentsToolProps) 
         <Textarea value={output.value} onChange={(event) => setSource(event.target.value)} className="min-h-[150px]" />
         <div className="flex flex-wrap gap-3 text-xs text-slate-700">
           <span>{isPt ? 'Caracteres alterados' : isEs ? 'Caracteres alterados' : 'Changed chars'}: {output.changedCount}</span>
-          <span>{isPt ? 'Ja estava limpo' : isEs ? 'Ya estaba limpio' : 'Already clean'}: {output.alreadyClean ? 'sim' : 'nao'}</span>
+          <span>{isPt ? 'Já estava limpo' : isEs ? 'Ya estaba limpio' : 'Already clean'}: {output.alreadyClean ? 'sim' : 'não'}</span>
         </div>
       </section>
 

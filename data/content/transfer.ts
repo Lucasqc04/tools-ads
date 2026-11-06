@@ -17,15 +17,15 @@ export type TransferLocaleContent = {
 
 const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
   'pt-br': {
-    name: 'Transferencia Entre Dispositivos',
+    name: 'Transferência Entre Dispositivos',
     shortDescription:
-      'Envie e receba arquivos, texto, links, Pix e JSON entre celular e PC por QR Code ou uma sala WebRTC no navegador.',
+      'Passe links, textos curtos, Pix e JSON do celular para o PC por QR Code, ou crie uma sala por link para enviar arquivos direto entre os navegadores.',
     primaryKeyword: 'transferir arquivo entre celular e pc por qr code',
     secondaryKeywords: [
       'transferir texto por qr code',
-      'transferencia entre dispositivos no navegador',
+      'transferência entre dispositivos no navegador',
       'enviar arquivo de celular para pc sem cabo',
-      'webrtc datachannel transferencia',
+      'webrtc datachannel transferência',
       'copiar link do celular para pc',
       'pix por qr code entre dispositivos',
       'transferir json entre dispositivos',
@@ -34,75 +34,74 @@ const contentByLocale: Record<AppLocale, TransferLocaleContent> = {
       'device to device transfer online',
     ],
     searchIntent:
-      'Usuarios que precisam passar texto pequeno por QR ou conectar celular e PC para enviar arquivos e textos maiores sem login e com o minimo de intermediarios.',
-    seoTitle:
-      'Transferir Entre Celular e PC por QR Code e P2P | Texto, Links e Arquivos',
+      'Pessoas que precisam passar um texto curto por QR Code ou enviar arquivos entre celular e PC, sem cabo, sem login e sem passar o arquivo por um servidor.',
+    seoTitle: 'Transferir Arquivos Entre Celular e PC por QR Code e Link',
     seoDescription:
-      'Transfira texto rapido por QR Code e arquivos por WebRTC P2P entre celular e PC. Sem cadastro, sem login e com processamento local no navegador.',
-    h1: 'Transferir Texto e Arquivos Entre Celular e PC por QR Code e P2P',
+      'Envie texto curto por QR Code ou arquivos por uma sala com link entre celular e PC, direto entre os navegadores. Grátis e sem cadastro.',
+    h1: 'Transferir Arquivos e Texto Entre Celular e PC por QR Code ou Link',
     intro:
-      'Use QR Code para passar conteudo curto ou crie uma sala por link para que todos os dispositivos possam enviar e receber arquivos com WebRTC.',
+      'Para transferir um arquivo entre celular e PC, crie uma sala e abra o link no outro aparelho. Para um link, uma chave Pix, um JSON curto ou um comando, gere um QR Code e leia no outro dispositivo.',
     contentBlocks: [
       {
-        title: 'Dois modos para problemas diferentes',
+        title: 'Dois modos para dois tipos de conteúdo',
         paragraphs: [
-          'Esta ferramenta foi pensada para dois cenarios comuns. O primeiro e copiar conteudo pequeno, como links, chaves Pix, comandos de terminal, tokens temporarios e JSON curto. Nesse caso, o proprio QR Code ja carrega o conteudo ou um fragmento de URL processado no navegador.',
-          'Para arquivos, PDFs, imagens e outros dados maiores, crie uma sala e compartilhe o link. Todos os dispositivos conectados podem enviar arquivos entre si; os recebidos ficam listados para cada pessoa escolher quando baixar. O pareamento manual por QR segue disponivel como alternativa.',
-        ],
-      },
-      {
-        title: 'Quando usar o modo QR simples',
-        paragraphs: [
-          'O modo QR simples e o melhor caminho quando voce quer sair do celular e chegar no PC em poucos segundos sem depender de conta, login ou backend. Ele funciona bem para compartilhar um link aberto no navegador, um payload Pix Copia e Cola, um endereco cripto ou um snippet tecnico curto.',
-          'Se o texto crescer demais, a ferramenta pode dividir o payload em varias partes. Isso ajuda em alguns fluxos tecnicos, mas para dados mais pesados a melhor escolha continua sendo o modo P2P.',
+          'O QR rápido serve para conteúdo curto. O texto é compactado e vai dentro do próprio QR Code. O outro dispositivo lê pela câmera do navegador, por uma imagem do QR ou pela câmera do celular, que abre a página com o conteúdo já carregado. Se o texto for grande, ele é dividido em várias partes, e é preciso ler todas no destino.',
+          'Para PDFs, fotos e outros arquivos, use a sala por link: você cria a sala, copia o convite e abre no outro aparelho. Todos os dispositivos da sala podem enviar e receber arquivos. O que chega fica numa lista, e cada pessoa baixa quando quiser.',
         ],
         list: [
-          'Links, URLs, rotas internas e deep links.',
-          'Senhas temporarias, tokens de uso curto e codigos de verificacao.',
-          'Chaves Pix, enderecos cripto, JSON pequeno e comandos de terminal.',
-          'Trechos curtos de texto que precisam ser copiados rapido entre dispositivos.',
+          'QR rápido: links, chaves Pix, comandos de terminal, JSON pequeno e senhas temporárias.',
+          'Sala por link: arquivos de qualquer tipo, enviados para todos os dispositivos da sala.',
+          'QR manual: pareamento sem sala, trocando manualmente os dados de conexão por QR Code, por texto colado, por NFC ou pelo compartilhamento do sistema.',
         ],
       },
       {
-        title: 'Como funciona o envio grande por WebRTC P2P',
+        title: 'Como enviar um arquivo pela sala',
         paragraphs: [
-          'No modo por link, uma pessoa cria a sala e compartilha o convite. Todos os dispositivos conectados podem enviar e receber arquivos entre si pelo DataChannel WebRTC. Cada arquivo recebido aparece em uma lista e so e baixado quando a pessoa escolhe. Tambem e possivel usar o pareamento manual por QR.',
-          'A conexao pode usar STUN apenas para descobrir a melhor rota entre os peers. Nao existe relay TURN nesta implementacao. Isso preserva a ideia de conexao direta, mas tambem significa que algumas redes mais restritas podem nao fechar a conexao.',
+          'Clique em Criar sala, copie o convite e abra o link no celular ou no outro computador. Quando o dispositivo aparecer como conectado, escolha os arquivos e use Enviar para todos. A lista de transferências mostra o andamento de cada envio.',
+          'A página não define um tamanho máximo de arquivo. Quem recebe guarda o arquivo na memória do navegador até baixar ou remover, então arquivos muito grandes podem falhar em aparelhos com pouca memória. Nesse caso, envie um arquivo por vez e mantenha as duas telas abertas durante o envio.',
         ],
       },
       {
-        title: 'Privacidade, limites e o que nao prometer',
+        title: 'O que passa pelo servidor e o que não passa',
         paragraphs: [
-          'O texto curto e tratado no navegador. Na sala por link, o servidor coordena a conexao e mantem dados temporarios de sinalizacao; o arquivo nao e armazenado nele e segue pelo DataChannel. A conectividade ainda depende da rede, NAT e firewall. Sem TURN, alguns cenarios podem falhar.',
-          'Tambem e importante lembrar que QR Code tem limite pratico de tamanho. Se voce estiver tentando empacotar muito conteudo no modo simples, a ferramenta vai dividir em partes ou sugerir migracao para o P2P.',
+          'No QR rápido, o texto é processado no navegador e fica no trecho do endereço depois do #, que o navegador não envia ao servidor. Isso é compactação, não criptografia: qualquer pessoa que enxergue o QR Code consegue ler o conteúdo, então evite mostrar senhas permanentes.',
+          'Na sala por link, o servidor guarda por pouco tempo o nome do dispositivo e os dados de conexão que os navegadores usam para se encontrar. Os arquivos não passam por ele nem ficam guardados: seguem pela conexão direta entre os navegadores. Para descobrir a rota, o navegador consulta um servidor STUN público, que pode ver o endereço de rede do aparelho. Ao encerrar a sala, ela fecha para todos; salas abandonadas expiram sozinhas.',
+          'A sala é aberta a quem tiver o convite, até o limite de dispositivos. Compartilhe o link apenas com quem deve receber os arquivos, porque cada envio vai para todos os dispositivos conectados.',
+        ],
+      },
+      {
+        title: 'Limitações',
+        paragraphs: [
+          'Não há servidor de retransmissão (TURN). Em redes corporativas, firewalls rígidos ou alguns tipos de NAT, a conexão direta pode não abrir. Se isso acontecer, tente outra rede, como o Wi-Fi do celular, ou use o pareamento manual por QR.',
+          'O QR Code tem capacidade limitada, por isso textos longos viram várias partes. Para conteúdo grande, prefira a sala por link.',
         ],
       },
     ],
     faq: [
       {
-        question: 'Essa ferramenta envia meus dados para servidor?',
+        question: 'Meus dados passam por algum servidor?',
         answer:
-          'O modo simples processa o conteudo localmente. No modo por link, o servidor coordena a sala e a conexao, mas nao recebe nem armazena o arquivo. O conteudo segue por WebRTC entre os navegadores. Pode haver STUN para descoberta de rota; esta implementacao nao inclui relay TURN.',
+          'No QR rápido, o texto é processado no seu navegador e não é enviado ao servidor. Na sala por link, o servidor só coordena a conexão e guarda por pouco tempo o nome do dispositivo e os dados de conexão. Os arquivos seguem direto entre os navegadores e não ficam armazenados.',
       },
       {
-        question: 'Funciona para arquivos grandes?',
+        question: 'Existe limite de tamanho para os arquivos?',
         answer:
-          'Todos na sala podem enviar e receber arquivos. O envio acontece em partes; os arquivos recebidos ficam disponiveis para baixar quando voce quiser. A estabilidade depende da memoria do navegador, da rede e da conexao WebRTC entre os dispositivos.',
+          'A página não define um limite fixo. O limite prático é a memória do navegador de quem recebe e a estabilidade da rede. Para arquivos muito grandes, envie um por vez e mantenha as telas abertas até terminar.',
+      },
+      {
+        question: 'Quem pode entrar na sala?',
+        answer:
+          'Qualquer pessoa com o link do convite, até o limite de dispositivos da sala. Os arquivos enviados chegam a todos os dispositivos conectados, então compartilhe o convite só com quem deve recebê-los.',
       },
       {
         question: 'Preciso instalar app ou criar conta?',
         answer:
-          'Nao. A ideia e funcionar direto no navegador, sem cadastro, sem login e sem app dedicado.',
+          'Não. Tudo funciona no navegador do celular e do computador, sem cadastro e sem login.',
       },
       {
-        question: 'Posso escanear o QR pela propria pagina?',
+        question: 'Por que a conexão direta pode falhar?',
         answer:
-          'Sim, em navegadores compatveis voce pode usar a camera pela propria pagina ou enviar uma imagem do QR. Em celulares, o seletor de imagem tambem pode abrir a camera do sistema.',
-      },
-      {
-        question: 'Por que a conexao P2P pode falhar em algumas redes?',
-        answer:
-          'Porque esta implementacao usa conexao direta com suporte opcional a STUN, mas sem TURN relay. Redes corporativas, NATs muito restritivos e firewalls agressivos podem impedir o fechamento da sessao.',
+          'Algumas redes, firewalls e tipos de NAT bloqueiam conexões diretas, e esta ferramenta não usa servidor de retransmissão (TURN). Tente outra rede ou use o pareamento manual por QR.',
       },
     ],
   },

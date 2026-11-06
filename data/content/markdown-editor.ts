@@ -1,34 +1,34 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const markdownEditorIntro =
-  'Visualizador e editor de Markdown com upload de arquivo .md, preview em tempo real, modo foco em tela cheia e exportacao em MD, HTML, PNG e PDF.';
+  'Escreva ou abra um arquivo .md, veja o resultado renderizado ao lado do texto e exporte em Markdown, HTML, PNG, PDF ou Word (.docx). Tudo no navegador.';
 
 export const markdownEditorContentBlocks: ContentBlock[] = [
   {
-    title: 'Editor de Markdown completo para escrita e revisao visual',
+    title: 'Editor de Markdown com preview ao lado do texto',
     paragraphs: [
-      'Esta ferramenta foi criada para quem precisa escrever, revisar e publicar Markdown com rapidez, sem depender de software instalado. Voce edita o texto bruto e acompanha ao mesmo tempo o resultado renderizado, com suporte para titulos, listas, links, imagens, tabelas, citacoes e blocos de codigo.',
-      'O modo de edicao em tela cheia amplia a area de trabalho para aproveitar melhor o monitor no desktop. Assim, fica mais facil trabalhar com documentos longos, documentacao tecnica, README de projeto, notas de reuniao e conteudos para blog sem perder contexto entre o texto e o resultado final.',
+      'Você digita o Markdown no editor e acompanha o resultado renderizado na hora, em visualização dividida, só editor ou só preview. A barra de ferramentas insere a sintaxe de títulos (H1 a H3), negrito, itálico, tachado, destaque, citação, listas, lista de tarefas, link, imagem, código, bloco de código, tabela e linha horizontal.',
+      'O preview entende também notas de rodapé, texto sobrescrito e subscrito. HTML escrito dentro do Markdown não é interpretado: ele aparece como texto. O modo de tela cheia amplia a área de trabalho, útil para README, documentação técnica, notas de reunião e rascunhos de blog.',
     ],
   },
   {
-    title: 'Upload de arquivo .md, atalhos de insercao e exportacao multipla',
+    title: 'Abrir arquivo .md e exportar',
     paragraphs: [
-      'Se voce ja tem um arquivo Markdown pronto, basta enviar o .md para abrir e continuar editando na hora. A barra de acoes acelera tarefas comuns com insercao de H1, H2, listas ordenadas e nao ordenadas, tabela, bloco de codigo, link e imagem, reduzindo o trabalho manual de sintaxe.',
-      'Depois de revisar, voce pode exportar no formato que fizer mais sentido para o seu fluxo: manter em .md para versionamento, gerar .html para publicacao web, baixar em imagem PNG para compartilhamento visual ou converter para PDF para envio e arquivamento.',
+      'O botão "Abrir .md" aceita arquivos .md e .markdown. O texto vai para o editor e o nome do arquivo é usado como base ao exportar. Os botões "Exemplo" e "Limpar" ajudam a começar ou recomeçar.',
+      'Na exportação você escolhe o formato. Markdown devolve o texto como está. HTML gera uma página completa com o estilo do preview. Word (.docx) é montado a partir do texto Markdown. PNG e PDF são gerados a partir de uma imagem do preview.',
     ],
     list: [
-      'Upload local de arquivos .md e .markdown.',
-      'Preview renderizado em tempo real sem sair da pagina.',
-      'Modo foco em tela cheia com editor e preview lado a lado.',
-      'Exportacao em Markdown, HTML, PNG e PDF.',
+      'Markdown (.md) e HTML (.html): arquivos de texto, ideais para versionar ou publicar.',
+      'Word (.docx): para quem precisa abrir ou revisar o documento no Word.',
+      'PNG: uma única imagem do preview, boa para compartilhar.',
+      'PDF: páginas A4 feitas a partir da imagem do preview, então o texto do PDF não é selecionável nem pesquisável.',
     ],
   },
   {
-    title: 'Privacidade, limites e boas praticas de uso',
+    title: 'Limites e privacidade',
     paragraphs: [
-      'Por padrao, o processamento acontece localmente no navegador. Isso aumenta a privacidade para documentos internos e rascunhos de trabalho, porque o conteudo nao precisa ser enviado para backend para renderizar ou exportar.',
-      'Para documentos muito grandes com muitas imagens externas, a exportacao em PNG ou PDF pode levar mais tempo dependendo da memoria e da CPU do dispositivo. Em fluxos longos, a recomendacao e dividir o conteudo em secoes e exportar por partes quando necessario.',
+      'O texto é processado no navegador e não é enviado ao nosso servidor. Para você não perder o trabalho ao recarregar a página, o conteúdo e o nome do arquivo ficam salvos no armazenamento local deste navegador. Use "Limpar" e evite deixar documentos sensíveis em computadores compartilhados.',
+      'Imagens inseridas por link são carregadas do endereço original, e o preview as busca na internet. Na exportação para PNG e PDF, imagens externas só entram se o site de origem permitir o acesso. Caso contrário, elas são trocadas por um aviso e a ferramenta informa isso. A imagem do PNG e do PDF tem altura máxima de 12.000 pixels, e documentos mais longos são cortados (a ferramenta avisa). Para textos muito grandes, exporte em partes ou use HTML ou Word.',
     ],
   },
 ];
@@ -37,26 +37,26 @@ export const markdownEditorFaq: FaqItem[] = [
   {
     question: 'Posso abrir um arquivo .md existente?',
     answer:
-      'Sim. Voce pode enviar arquivos .md ou .markdown e continuar editando normalmente com preview em tempo real.',
+      'Sim. Use "Abrir .md" para enviar um arquivo .md ou .markdown. O conteúdo vai para o editor e o preview é atualizado enquanto você edita.',
   },
   {
-    question: 'A ferramenta funciona em tela cheia?',
+    question: 'Quais formatos de exportação estão disponíveis?',
     answer:
-      'Sim. Existe um modo foco em tela cheia que prioriza a area de edicao e preview, ideal para desktop e documentos longos.',
+      'Markdown (.md), HTML (.html), Word (.docx), PNG e PDF. O PDF é feito a partir de uma imagem do preview, por isso o texto não é selecionável.',
   },
   {
-    question: 'Quais formatos de exportacao estao disponiveis?',
+    question: 'O conteúdo é enviado para algum servidor?',
     answer:
-      'Voce pode exportar em Markdown (.md), HTML (.html), imagem PNG e PDF, escolhendo o formato mais adequado para compartilhar ou publicar.',
+      'Não. Edição, preview e exportação acontecem no navegador. O texto fica salvo apenas no armazenamento local do seu navegador, para você retomar depois, e pode ser apagado com o botão "Limpar".',
   },
   {
-    question: 'O conteudo e enviado para servidor?',
+    question: 'Por que minha imagem não aparece no PNG ou no PDF?',
     answer:
-      'Nao por padrao. Edicao, preview e exportacao rodam localmente no navegador do usuario.',
+      'Imagens externas só são incluídas se o site de origem permitir o acesso pelo navegador. Quando isso não acontece, a imagem é trocada por um aviso e a ferramenta mostra uma mensagem na exportação. Imagens embutidas no próprio Markdown (data URL) funcionam normalmente.',
   },
   {
     question: 'Funciona no celular?',
     answer:
-      'Sim. O layout e responsivo para mobile, com visualizacao adaptada para telas menores e sem rolagem horizontal.',
+      'Sim, mas a visualização dividida fica apertada em telas pequenas. No celular, use os botões "Editor" e "Preview" para ver um painel por vez. Para documentos longos, o computador é mais confortável.',
   },
 ];

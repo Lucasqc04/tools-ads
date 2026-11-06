@@ -18,42 +18,42 @@ export type UnixTimestampLocaleContent = {
 const contentByLocale: Record<AppLocale, UnixTimestampLocaleContent> = {
   'pt-br': {
     name: 'Conversor Unix Timestamp',
-    shortDescription: 'Converta timestamp Unix em data legivel e data em timestamp (segundos e milissegundos) com UTC e horario local.',
+    shortDescription: 'Converta um timestamp Unix (em segundos ou milissegundos) em data UTC e local, e uma data em timestamp. Tudo no navegador.',
     primaryKeyword: 'conversor unix timestamp online',
     secondaryKeywords: ['timestamp para data', 'data para timestamp', 'epoch converter', 'timestamp segundos milissegundos', 'converter exp jwt'],
     searchIntent: 'Devs e analistas que precisam interpretar datas de APIs, logs, JWT e banco de dados.',
     seoTitle: 'Conversor Unix Timestamp Online | Segundos e Milissegundos',
-    seoDescription: 'Converta timestamp Unix para data local/UTC e data para timestamp em segundos e milissegundos com deteccao automatica.',
+    seoDescription: 'Converta um timestamp Unix em data UTC e local, ou uma data em timestamp, em segundos e milissegundos. Roda no navegador, sem cadastro.',
     h1: 'Conversor Unix Timestamp para Data e Data para Timestamp',
-    intro: 'Interprete timestamps de APIs, logs e JWT com conversao bidirecional, incluindo horario local, UTC e diferenca relativa.',
+    intro: 'Cole um timestamp de uma API, log ou JWT e veja a data em UTC e no horário local, ou escolha uma data para obter o timestamp em segundos e milissegundos.',
     contentBlocks: [
       {
-        title: 'Timestamp Unix na pratica',
+        title: 'O que é o timestamp Unix e como usar a ferramenta',
         paragraphs: [
-          'Timestamp Unix representa tempo como numero desde 1970-01-01 UTC. Em sistemas, ele aparece com frequencia em logs, eventos, webhooks e campos de expiracao.',
-          'Nesta pagina voce converte tanto timestamp para data quanto data para timestamp, com suporte a segundos e milissegundos.',
+          'O timestamp Unix (ou epoch) é a quantidade de tempo passada desde 1º de janeiro de 1970, 00:00 em UTC. Ele aparece em logs, webhooks, bancos de dados e em claims de JWT como exp e iat. No campo "Timestamp -> Data", cole o número e a ferramenta mostra a data em UTC (formato ISO), a data no horário do seu navegador, o fuso usado, quanto tempo falta ou passou e se a data está no passado ou no futuro. Por exemplo, 1716890240 e 1716890240000 correspondem a 2024-05-28T09:57:20Z.',
+          'O botão "Usar agora" preenche o campo com o instante atual em milissegundos, e o rodapé mostra o timestamp atual em segundos e milissegundos, atualizado em tempo real. Também é possível colar uma data em texto, como 2024-05-28T10:17:20Z.',
         ],
       },
       {
-        title: 'Segundos vs milissegundos',
+        title: 'Segundos ou milissegundos: como a ferramenta decide',
         paragraphs: [
-          'Uma fonte comum de erro e confundir timestamp em segundos com milissegundos. A ferramenta detecta automaticamente e mostra os dois formatos para evitar bugs.',
-          'Tambem exibimos data local, UTC e indicador de passado/futuro para acelerar analise em debugging.',
+          'A ferramenta não tem uma chave para escolher a unidade: números inteiros com valor absoluto menor que 1 trilhão (10^12) são tratados como segundos, e os maiores são tratados como milissegundos. Com isso, valores de 10 dígitos (como 1716890240) são segundos e valores de 13 dígitos (como 1716890240000) são milissegundos. O resultado mostra sempre os dois valores. Um timestamp em milissegundos de antes de setembro de 2001 tem menos de 13 dígitos e seria lido como segundos, e um número de 11 ou 12 dígitos em segundos aparece com ano muito distante, o que costuma indicar que a unidade está trocada.',
+          'Se o texto não for um número inteiro, ele é lido como data pelo próprio navegador. Datas com horário e sem fuso explícito (2024-05-28T10:17:20) usam o fuso do navegador, enquanto datas só com dia (2024-05-28) são lidas como UTC. Quando o fuso importa, informe o Z ou o deslocamento (por exemplo, -03:00).',
         ],
       },
       {
-        title: 'Uso em API, banco e JWT',
+        title: 'Data para timestamp e limites',
         paragraphs: [
-          'Ao depurar autenticacao, o campo exp do JWT normalmente usa Unix em segundos. Em bancos e logs, milissegundos tambem sao comuns.',
-          'Essa diferenca impacta timezone e validacao temporal, por isso vale confirmar sempre o formato antes de comparar datas.',
+          'No bloco "Data -> Timestamp", escolha a data e a hora (sem hora, vale 00:00). A hora é interpretada no fuso do seu navegador, e o resultado traz o UTC, o horário local e o timestamp em segundos e em milissegundos. Esse bloco ainda não converte corretamente datas anteriores a 9 de setembro de 2001. Para essas datas, use o campo de texto e informe a data completa com fuso, como 2000-01-01T00:00:00Z.',
+          'A conversão acontece no navegador e os valores digitados não são enviados ao nosso servidor. A ferramenta não considera segundos bissextos, como é o padrão do tempo Unix, e não converte para outros fusos além de UTC e do fuso do seu navegador.',
         ],
       },
     ],
     faq: [
-      { question: 'A ferramenta detecta segundos e milissegundos?', answer: 'Sim. A deteccao e automatica e mostramos ambos os formatos.' },
-      { question: 'Posso converter data para timestamp?', answer: 'Sim. Basta informar data/hora no formulario reverso.' },
-      { question: 'Mostra UTC e horario local?', answer: 'Sim. Exibimos os dois para facilitar comparacao.' },
-      { question: 'Funciona sem backend?', answer: 'Sim. O processamento ocorre no navegador.' },
+      { question: 'A ferramenta detecta segundos e milissegundos?', answer: 'Sim, automaticamente: inteiros abaixo de 10^12 são lidos como segundos e os maiores como milissegundos. O resultado mostra o valor nas duas unidades.' },
+      { question: 'Posso converter uma data para timestamp?', answer: 'Sim. No bloco "Data -> Timestamp", escolha a data e, se quiser, a hora. A hora é lida no fuso do seu navegador, e o resultado vem em segundos e milissegundos.' },
+      { question: 'A ferramenta mostra UTC e o horário local?', answer: 'Sim. Ela mostra a data em UTC (ISO 8601), a data no horário local do navegador e o nome do fuso horário usado.' },
+      { question: 'Os valores que digito são enviados para algum servidor?', answer: 'Não. A conversão é feita no navegador e os valores não saem do seu aparelho.' },
     ],
   },
   en: {

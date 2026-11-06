@@ -1,14 +1,14 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const htmlViewerIntro =
-  'Editor HTML online com CodeMirror, preview sandbox, CSS, JavaScript, console capturado, templates rápidos, upload de arquivos e exportação .html.';
+  'Edite HTML, CSS e JavaScript em abas, veja o resultado em um preview isolado (sandbox) e acompanhe os erros no console, tudo no navegador.';
 
 export const htmlViewerContentBlocks: ContentBlock[] = [
   {
     title: 'Editor HTML com highlight, abas e preview real',
     paragraphs: [
-      'Esta página deixou de ser apenas um visualizador simples e virou um playground de HTML. Você edita HTML, CSS e JavaScript em abas com highlight de sintaxe, números de linha, gutter de lint e um preview renderizado em iframe sandbox.',
-      'O fluxo é pensado para desenvolvedores, criadores e estudantes que precisam testar snippets, componentes, landing sections, tabelas, formulários ou emails HTML sem abrir uma IDE completa.',
+      'Você edita HTML, CSS e JavaScript em abas separadas, com cores de sintaxe, números de linha e marcação de erros simples, e vê o resultado em um preview renderizado em iframe com sandbox.',
+      'O fluxo é pensado para desenvolvedores, criadores e estudantes que precisam testar snippets, componentes, seções de landing page, tabelas, formulários ou e-mails em HTML sem abrir uma IDE completa.',
     ],
   },
   {
@@ -27,15 +27,16 @@ export const htmlViewerContentBlocks: ContentBlock[] = [
   {
     title: 'Arquivos, viewport e exportação',
     paragraphs: [
-      'Se você separa estrutura, estilo e script em arquivos diferentes, pode subir .html, .css e .js de uma vez. O HTML principal popula o editor e os arquivos CSS/JS são combinados para o preview.',
+      'Se você separa estrutura, estilo e script em arquivos diferentes, pode enviar .html, .htm, .css e .js de uma vez. O HTML principal preenche a aba HTML e os arquivos CSS e JS são combinados nas respectivas abas.',
       'O preview tem modos desktop, tablet e mobile para validar responsividade sem sair da página. Depois do teste, você pode copiar o documento final, baixar um .html completo, abrir em nova aba ou usar tela cheia.',
     ],
   },
   {
-    title: 'Boas práticas de segurança e uso',
+    title: 'Segurança, limites e privacidade',
     paragraphs: [
-      'Mesmo com sandbox, scripts podem executar lógica dentro do contexto do preview. Por isso, rode apenas código de fontes confiáveis quando estiver testando snippets externos.',
-      'Para inspeção rápida em mobile, use a abertura em nova aba e o modo tela cheia. Isso melhora área útil de leitura e facilita validação de layout responsivo.',
+      'O preview roda em um iframe com sandbox e sem acesso ao site que o contém. Mesmo assim, o JavaScript que você cola é executado de verdade e pode, por exemplo, carregar scripts ou imagens de endereços externos ou fazer requisições de rede. Rode apenas código em que você confia.',
+      'O botão "Nova aba" abre o documento fora do preview, sem o isolamento do iframe. Use essa opção só com código seu ou de fonte confiável. A edição e a renderização acontecem no navegador e o conteúdo digitado não é enviado ao nosso servidor.',
+      'As checagens apontam problemas simples (tags HTML possivelmente abertas, chaves de CSS desbalanceadas e erros de sintaxe do JavaScript) e não substituem um validador completo. O console guarda as 80 mensagens mais recentes. O HTML copiado ou baixado já traz o CSS e o JS embutidos, além de um pequeno script que envia as mensagens do console ao editor.',
     ],
   },
 ];
@@ -54,7 +55,7 @@ export const htmlViewerFaq: FaqItem[] = [
   {
     question: 'Consigo usar arquivos separados de HTML, CSS e JS?',
     answer:
-      'Sim. Você pode importar múltiplos arquivos .html, .css e .js, escolher o HTML principal e continuar editando no playground.',
+      'Sim. Você pode importar vários arquivos .html, .htm, .css e .js de uma vez. Os CSS e JS são combinados nas abas correspondentes e, se houver mais de um HTML, você escolhe qual é o principal. Outras extensões são ignoradas.',
   },
   {
     question: 'Posso baixar ou copiar o HTML final?',
@@ -64,6 +65,6 @@ export const htmlViewerFaq: FaqItem[] = [
   {
     question: 'Essa ferramenta envia meu código para servidor?',
     answer:
-      'Não por padrão. O processamento, a edição e a renderização acontecem localmente no navegador.',
+      'Não. A edição e a renderização acontecem no navegador e o código digitado não é enviado ao nosso servidor. Atenção: se o seu HTML ou JavaScript carregar recursos externos ou fizer requisições, é o próprio código que acessa esses endereços.',
   },
 ];

@@ -1,40 +1,46 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const descobrirIpPublicoIntro =
-  'Descubra rapidamente o seu endereço IP público, o provedor estimado (ISP) e informações básicas sobre o dispositivo e localização aproximada.';
+  'Descubra o seu endereço IP público, o provedor de internet (ISP) estimado, a localização aproximada e o navegador e o sistema que você está usando.';
 
 export const descobrirIpPublicoContentBlocks: ContentBlock[] = [
   {
-    title: 'O que esta ferramenta faz',
+    title: 'O que esta ferramenta mostra',
     paragraphs: [
-      'Esta ferramenta identifica o seu endereço IP público visível na internet e consulta uma API pública para retornar informações adicionais como provedor (ISP), cidade/estado aproximados e coordenadas geográficas aproximadas. O objetivo é fornecer uma visão rápida e prática para depuracao, configuracoes de rede e verificacao de acesso.',
-      'A consulta é realizada diretamente do navegador para um serviço público e os resultados são exibidos na tela. A ferramenta também apresenta detalhes do dispositivo (sistema operacional e navegador) detectados a partir do User-Agent para facilitar diagnósticos simples.',
+      'Ao abrir a página, a ferramenta consulta um serviço público de informações de IP e exibe o endereço IP público da sua conexão, o provedor (ISP), a cidade, a região e o país estimados. Você pode refazer a consulta a qualquer momento com o botão "Descobrir meu IP".',
+      'Também aparecem o tipo de dispositivo (celular, tablet ou computador), o navegador e o sistema operacional. Esses dados são lidos do próprio navegador (User-Agent) e não dependem da consulta externa.',
     ],
   },
   {
     title: 'Quando usar',
     paragraphs: [
-      'Use quando precisar verificar qual IP público sua conexão está usando, confirmar se um provedor mudou, validar regras de firewall, testar bloqueios geográficos ou simplesmente obter informações para suporte técnico. Esta ferramenta é útil para desenvolvedores, administradores de rede e usuários em geral que precisam saber o IP visto por serviços externos.',
+      'Use quando precisar saber qual IP os serviços externos enxergam na sua conexão: ao liberar o acesso em um firewall, configurar uma lista de IPs permitidos, confirmar se uma VPN está ativa ou passar a informação ao suporte do provedor.',
     ],
     list: [
-      'Verificar o IP público antes de configurar um serviço externo.',
-      'Confirmar qual ISP aparece para um serviço remoto.',
-      'Obter localidade aproximada para fins de diagnóstico (não é precisa para endereços exatos).',
-      'Copiar o IP em formatos diferentes (com ou sem pontos) para uso em scripts ou validações).',
+      'Conferir o IP antes de cadastrá-lo em um painel, servidor ou banco de dados.',
+      'Verificar se a VPN ou o proxy trocou o IP e o provedor exibidos.',
+      'Ver qual ISP aparece para serviços remotos.',
+      'Copiar IP, provedor e localização de uma vez para abrir um chamado.',
     ],
   },
   {
-    title: 'Privacidade e limitacoes',
+    title: 'Como a consulta é feita',
     paragraphs: [
-      'A ferramenta realiza uma chamada a um serviço público de IP diretamente do seu navegador. Nenhum dado é enviado ao servidor deste site; a requisição parte do seu dispositivo para a API externa. Se preferir, você pode bloquear a requisição usando extensões ou ajustar permissões de rede.',
-      'A localizacao fornecida e estimada com base no endereco IP do provedor e pode estar incorreta ou apontar apenas a cidade/regiao do ISP. Nao utilize estes dados para decisões legais, de seguranca fisica ou em situacoes que exijam precisao de endereco.',
-      'Para reduzir latencia e dependencia de terceiros, a consulta e simples e otimizada para respostas rapidas. Em casos de limite de uso da API publica, a ferramenta pode retornar erros temporarios.',
+      'A consulta sai diretamente do seu navegador, sem passar por uma API deste site. A ferramenta tenta os serviços ipwho.is, ipapi.co e ipwhois.app, nessa ordem, e, se todos falharem, usa o api.ipify.org, que devolve apenas o IP (provedor e localização ficam em branco).',
+      'Como em qualquer consulta de IP, o serviço externo recebe o seu IP para respondê-la e trata esse dado conforme a própria política. O site não grava o resultado, mas não controla o que esses serviços registram.',
+    ],
+  },
+  {
+    title: 'Limites e como ler o resultado',
+    paragraphs: [
+      'A localização é uma estimativa feita a partir do IP e costuma apontar para a região do provedor, não para o seu endereço. Não use esse dado para decisões legais, de segurança ou que exijam precisão.',
+      'Se você usa VPN, proxy ou rede corporativa, o IP exibido é o da saída dessa rede. Em redes com NAT, vários dispositivos compartilham o mesmo IP público. Se os serviços não responderem em 7 segundos cada, ou atingirem limite de uso, a ferramenta mostra uma mensagem de erro e você pode tentar de novo.',
     ],
   },
   {
     title: 'Como copiar o IP',
     paragraphs: [
-      'Você pode copiar o IP exatamente como aparece (com pontos) ou no formato compacto sem pontos, útil para sistemas que exigem apenas os dígitos. A interface oferece botões de cópia para ambas as opções.',
+      'O botão "Copiar" leva o IP como aparece. "Copiar (sem pontos)" remove os pontos: 203.0.113.45 vira 203011345. "Copiar tudo" leva IP, provedor e localização em texto simples.',
     ],
   },
 ];
@@ -43,25 +49,26 @@ export const descobrirIpPublicoFaq: FaqItem[] = [
   {
     question: 'O que significa IP público?',
     answer:
-      'O IP público e o endereco que identifica sua conexao na internet e e visto por servidores externos. Se voce usa um roteador com NAT, todos dispositivos da sua rede podem compartilhar o mesmo IP publico.',
+      'É o endereço que identifica a sua conexão para os serviços da internet. Em casa ou no trabalho, vários dispositivos costumam compartilhar o mesmo IP público por causa do roteador (NAT).',
   },
   {
-    question: 'A ferramenta envia meu IP para o servidor do site?',
+    question: 'A consulta passa pelo servidor deste site?',
     answer:
-      'Nao. A consulta e feita diretamente do seu navegador para um serviço publico de IP. O site nao recebe automaticamente seu IP nem persiste esses dados. Consulte a secao de privacidade para mais detalhes.',
+      'Não. O navegador chama diretamente serviços públicos de IP (ipwho.is, ipapi.co, ipwhois.app e, como reserva, api.ipify.org). Esses serviços recebem o seu IP e têm suas próprias políticas de privacidade.',
   },
   {
-    question: 'A localizacao e precisa?',
+    question: 'A localização é precisa?',
     answer:
-      'Nao necessariamente. A localizacao retornada e uma estimativa baseada no IP do provedor. Pode apontar para a regiao do ISP e não para sua localizacao fisica exata.',
+      'Não. Ela é estimada pelo IP e geralmente indica a cidade ou a região do provedor, podendo estar errada. Com VPN ou proxy, mostra o local da saída da rede.',
   },
   {
-    question: 'Posso copiar o IP sem pontos?',
+    question: 'Por que o provedor ou a localização aparecem em branco?',
     answer:
-      'Sim. Existe um botao que copia o IP no formato sem pontos (por exemplo 123456789 em vez de 123.456.78.9) para usos que exigem apenas os digitos.',
+      'Isso acontece quando só o serviço de reserva responde, pois ele informa apenas o IP. Tente "Descobrir meu IP" de novo daqui a pouco.',
   },
   {
-    question: 'A ferramenta e gratuita?',
-    answer: 'Sim. A consulta usa um servico publico e a funcionalidade e gratuita para uso basico.',
+    question: 'Para que serve copiar o IP sem pontos?',
+    answer:
+      'Para campos ou scripts que aceitam só os dígitos. O botão apenas remove os pontos, por exemplo 203.0.113.45 vira 203011345. Em IPv6 os dois-pontos permanecem.',
   },
 ];

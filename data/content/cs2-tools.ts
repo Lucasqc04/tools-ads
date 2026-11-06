@@ -92,7 +92,7 @@ export type Cs2SharedUiCopy = {
 
 const safeWarning: Record<AppLocale, string> = {
   'pt-br':
-    'Servidores oficiais podem bloquear automacoes que combinam movimento ou ataque no mesmo input. Esta ferramenta usa binds de uma unica acao, treino local separado e configuracoes client-side seguras.',
+    'Servidores oficiais podem bloquear automações que combinam movimento ou ataque no mesmo input. Esta ferramenta usa binds de uma única ação, treino local separado e configurações client-side seguras.',
   en:
     'Official servers can block automation that combines movement or attack actions on one input. This tool uses one-action binds, separate local practice, and safe client-side settings.',
   es:
@@ -103,7 +103,7 @@ const safeWarning: Record<AppLocale, string> = {
 
 const performanceNote: Record<AppLocale, string> = {
   'pt-br':
-    'Esses comandos ajudam a ajustar limite de FPS, telemetria e elementos visuais, mas o ganho real depende do hardware e das configuracoes do jogo.',
+    'Esses comandos ajudam a ajustar limite de FPS, telemetria e elementos visuais, mas o ganho real depende do hardware e das configurações do jogo.',
   en:
     'These commands help tune FPS caps, telemetry, and visual elements, but real gains depend on your hardware and full game setup.',
   es:
@@ -124,7 +124,7 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     safeOnlyLabel: 'Apenas comandos seguros para competitivo',
     localOnlyLabel: 'Apenas treino local/private server',
     svCheatsLabel: 'Apenas comandos que exigem sv_cheats 1',
-    needsValidationLabel: 'Mostrar comandos marcados para validacao',
+    needsValidationLabel: 'Mostrar comandos marcados para validação',
     recommendedLabel: 'Mostrar apenas recomendados para esta ferramenta',
     resultsLabel: 'comando(s) encontrado(s)',
     commandLabel: 'Comando',
@@ -137,14 +137,14 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     copiedCfg: '.cfg copiado',
     downloadCfg: 'Baixar .cfg',
     generatedPreviewTitle: 'Preview gerado',
-    safetyTitle: 'Aviso de seguranca',
+    safetyTitle: 'Aviso de segurança',
     safetyText: safeWarning['pt-br'],
     warningTitle: 'Aviso',
     safeBadge: 'Seguro',
     localBadge: 'Treino local',
     svCheatsBadge: 'Requer sv_cheats',
     cautionBadge: 'Cuidado',
-    dangerBadge: 'Nao recomendado',
+    dangerBadge: 'Não recomendado',
     presetTitle: 'Presets prontos',
     emptyState: 'Nenhum comando encontrado com os filtros atuais.',
     radarGeneratorTitle: 'Gerador de radar',
@@ -153,29 +153,29 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     volumeGeneratorTitle: 'Gerador de volume',
     fpsGeneratorTitle: 'Gerador de FPS',
     fpsGeneratorHelp:
-      'Defina fps_max antes de entrar em um servidor. Desde 2025, o CS2 nao permite alterar esse limite enquanto voce esta conectado.',
+      'Defina fps_max antes de entrar em um servidor. Desde 2025, o CS2 não permite alterar esse limite enquanto você está conectado.',
     telemetryGeneratorTitle: 'Gerador de telemetria',
     telemetryGeneratorHelp:
       'Use indicadores apenas quando houver problema para manter a tela limpa e ainda identificar travamentos, ping e perda de pacotes.',
     telemetryFrameLabel: 'Frame time / FPS',
     telemetryPingLabel: 'Ping',
     telemetryNetworkLabel: 'Perda ou pacotes fora de ordem',
-    telemetryGraphLabel: 'Incluir grafico de qualidade da rede',
+    telemetryGraphLabel: 'Incluir gráfico de qualidade da rede',
     telemetryOffOption: 'Desativado',
-    telemetryPoorOption: 'Somente em condicao ruim',
+    telemetryPoorOption: 'Somente em condição ruim',
     telemetryAlwaysOption: 'Sempre mostrar',
     bindGeneratorTitle: 'Gerador de binds seguros',
     bindGeneratorHelp:
-      'Gera um bind de uma unica acao para comunicacao, utilitarios ou viewmodel. Escolha uma tecla livre para evitar sobrescrever seu layout.',
+      'Gera um bind de uma única ação para comunicação, utilitários ou viewmodel. Escolha uma tecla livre para evitar sobrescrever seu layout.',
     bindKeyLabel: 'Tecla',
-    bindActionLabel: 'Acao',
+    bindActionLabel: 'Ação',
     bindPingAction: 'Marcar local (ping)',
     bindClutchAction: 'Alternar modo clutch',
-    bindSwitchHandsAction: 'Alternar mao do viewmodel',
+    bindSwitchHandsAction: 'Alternar mão do viewmodel',
     bindHeAction: 'Selecionar HE',
     bindFlashAction: 'Selecionar flashbang',
     bindSmokeAction: 'Selecionar smoke',
-    bindFireAction: 'Selecionar molotov/incendiaria',
+    bindFireAction: 'Selecionar molotov/incendiária',
     autoexecGeneratorTitle: 'Gerador de autoexec',
     autoexecHelp:
       'Gere arquivos separados para competitivo (autoexec.cfg), treino local (practice.cfg) e servidor privado (fun.cfg).',
@@ -183,7 +183,7 @@ export const cs2SharedUiCopyByLocale: Record<AppLocale, Cs2SharedUiCopy> = {
     autoexecIncludeHud: 'Incluir bloco de HUD',
     autoexecIncludeViewmodel: 'Incluir bloco de viewmodel',
     autoexecIncludeFps: 'Incluir bloco de FPS',
-    autoexecIncludeAudio: 'Incluir bloco de audio',
+    autoexecIncludeAudio: 'Incluir bloco de áudio',
     autoexecIncludeBinds: 'Incluir binds simples',
     autoexecIncludePractice: 'Incluir practice.cfg',
     autoexecIncludeFun: 'Incluir fun.cfg',
@@ -882,23 +882,23 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Comandos de Treino CS2',
         shortDescription:
-          'Copie comandos de treino CS2 para smokes, bots, tempo de rodada, compra e repeticao de granadas.',
+          'Copie comandos de treino do CS2 para tempo de rodada, compra livre, munição infinita, granadas e smokes.',
         primaryKeyword: 'comandos de treino cs2',
         secondaryKeywords: [
           'config de treino cs2',
           'comandos granadas cs2',
           'treinar smoke cs2',
           'sv_cheats cs2',
-          'comandos bots cs2',
+          'comandos para treinar no cs2',
         ],
         searchIntent:
-          'Jogadores que querem montar uma sessao de treino local no CS2 com comandos prontos e sem perder tempo.',
-        seoTitle: 'Comandos de Treino CS2 - Config para Smokes, Bots e Granadas',
+          'Jogadores que querem montar uma sala de treino local no CS2 com comandos prontos, sem digitar um por um.',
+        seoTitle: 'Comandos de Treino CS2 - Rodada Longa, Compra e Granadas',
         seoDescription:
-          'Copie comandos de treino para CS2 com dinheiro alto, tempo longo, municao infinita, noclip, rethrow e presets para smokes e spray.',
+          'Copie comandos de treino do CS2 com rodada longa, compra livre, munição infinita, rethrow e noclip, ou baixe presets prontos em .cfg.',
         h1: 'Comandos de treino CS2',
         intro:
-          'Copie comandos uteis para criar sessao de treino no Counter-Strike 2 com dinheiro maximo, tempo longo, municao infinita, bots e granadas.',
+          'Copie comandos de treino do CS2 para montar uma sala local com rodada longa, dinheiro alto, compra livre e munição infinita. Use a busca e os filtros para achar o comando certo ou baixe um preset completo.',
         focus: 'comandos de treino',
       },
       en: {
@@ -974,7 +974,7 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Config de Treino CS2',
         shortDescription:
-          'Monte practice.cfg para treino solo, smokes, spray, bots e movimentacao com comandos prontos para copiar e baixar.',
+          'Escolha um preset de treino do CS2 (básico, granadas, smoke, spray, bots ou scrim), copie os comandos e baixe o .cfg para carregar com exec.',
         primaryKeyword: 'config de treino cs2',
         secondaryKeywords: [
           'practice cfg cs2',
@@ -983,13 +983,13 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'autoexec treino cs2',
         ],
         searchIntent:
-          'Jogadores que querem gerar e baixar arquivos .cfg para treino local no CS2 sem montar comandos manualmente.',
-        seoTitle: 'Config de Treino CS2 - Gerar practice.cfg com Smokes, Bots e Spray',
+          'Jogadores que querem baixar um arquivo .cfg de treino local no CS2 sem montar os comandos manualmente.',
+        seoTitle: 'Config de Treino CS2 - Presets de Treino em .cfg',
         seoDescription:
-          'Gere practice.cfg para CS2 com presets de treino basico, granadas, bots e spray. Copie comandos ou baixe arquivo pronto.',
+          'Config de treino para CS2 com presets de treino básico, granadas, smoke, spray, bots e scrim privada. Copie os comandos ou baixe o .cfg.',
         h1: 'Config de treino CS2',
         intro:
-          'Monte uma config de treino para Counter-Strike 2 com presets prontos, copie os comandos e baixe practice.cfg para usar no lobby local.',
+          'Monte sua config de treino do CS2 a partir de presets prontos de treino básico, granadas, smoke, spray, bots e scrim privada. Copie os comandos ou baixe o .cfg e carregue com exec.',
         focus: 'config de treino',
       },
       en: {
@@ -1063,7 +1063,7 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Comandos de Granadas CS2',
         shortDescription:
-          'Comandos para treino de granadas no CS2: trajetoria, rethrow, impactos, noclip e limpeza de projetis.',
+          'Comandos de treino de granadas no CS2: trajetória, rethrow, impactos, mira de arremesso, noclip e limpeza de projéteis.',
         primaryKeyword: 'comandos granadas cs2',
         secondaryKeywords: [
           'comando rastro granada cs2',
@@ -1072,13 +1072,13 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'sv_rethrow_last_grenade',
         ],
         searchIntent:
-          'Jogadores que querem repetir lineups de granada no CS2 com feedback visual e comandos de reset rapido.',
-        seoTitle: 'Comandos de Granadas CS2 - Rastro, Rethrow e Treino de Utility',
+          'Jogadores que querem repetir lineups de granada no CS2 com feedback visual e reinício rápido.',
+        seoTitle: 'Comandos de Granadas CS2 - Trajetória, Rethrow e Lineups',
         seoDescription:
-          'Copie comandos de granada para CS2: sv_grenade_trajectory_prac_pipreview, sv_rethrow_last_grenade, noclip, impactos e limpeza de projetis.',
+          'Copie comandos de granada do CS2: sv_grenade_trajectory_prac_pipreview, sv_rethrow_last_grenade, mira de arremesso e limpeza de projéteis.',
         h1: 'Comandos de granadas CS2',
         intro:
-          'Treine lineups de granadas no CS2 com comandos de rastro, repeticao da ultima granada, noclip e impactos para validar cada tentativa.',
+          'Treine lineups de granada no CS2 com comandos de trajetória, repetição da última granada, mira de arremesso e limpeza de projéteis. Tudo para uma sala local ou servidor privado.',
         focus: 'comandos de granadas',
       },
       en: {
@@ -1151,7 +1151,7 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Comandos de Smoke CS2',
         shortDescription:
-          'Comandos focados em treino de smoke no CS2 com rethrow, noclip, trajetoria e round longo para repeticao.',
+          'Comandos para treinar smoke no CS2: rethrow, trajetória, noclip, compra livre e preset de smoke pronto para copiar.',
         primaryKeyword: 'comandos smoke cs2',
         secondaryKeywords: [
           'treinar smoke cs2',
@@ -1160,13 +1160,13 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'rethrow granada cs2',
         ],
         searchIntent:
-          'Jogadores que querem rotina dedicada para treinar smoke no CS2 com repeticao rapida e leitura visual de trajeto.',
-        seoTitle: 'Comandos de Smoke CS2 - Treinar Lineups com Rethrow e Trajetoria',
+          'Jogadores que querem uma rotina dedicada para treinar smoke no CS2, com repetição rápida e leitura visual do trajeto.',
+        seoTitle: 'Comandos de Smoke CS2 - Treinar Lineups com Rethrow',
         seoDescription:
-          'Copie comandos para treinar smoke no CS2 com sv_grenade_trajectory_prac_pipreview, sv_rethrow_last_grenade, noclip e tempo de round alto.',
+          'Copie o preset de smoke do CS2 com sv_grenade_trajectory_prac_pipreview, sv_rethrow_last_grenade, noclip, compra livre e rodada longa.',
         h1: 'Comandos para treinar smoke no CS2',
         intro:
-          'Use comandos focados em smoke para acelerar treino de lineup no CS2 com repeticao da ultima granada, noclip e trajetoria visual.',
+          'Use o preset de smoke para treinar lineups no CS2 com repetição da última granada, noclip e trajetória visível. Copie os comandos ou baixe o .cfg e carregue na sua sala local.',
         focus: 'comandos de smoke',
       },
       en: {
@@ -1239,17 +1239,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Comandos de Bots CS2',
         shortDescription:
-          'Adicione, pare, posicione e configure bots no CS2 para treino de peek, pre-fire, spray e movimentacao.',
+          'Adicione, congele, posicione e configure bots no CS2 para treinar peek, pre-fire e spray em uma sala local.',
         primaryKeyword: 'comandos bot cs2',
-        secondaryKeywords: ['como colocar bot cs2', 'bot_place cs2', 'bot_stop 1 cs2', 'treino com bots cs2'],
+        secondaryKeywords: [
+          'como colocar bot cs2',
+          'bot_place cs2',
+          'bot_stop 1 cs2',
+          'treino com bots cs2',
+        ],
         searchIntent:
-          'Jogadores que querem controlar bots no CS2 para treinos especificos sem depender de servidor cheio.',
-        seoTitle: 'Comandos de Bot CS2 - Como Colocar, Parar e Treinar com Bots',
+          'Jogadores que querem controlar bots no CS2 em treinos específicos, sem depender de servidor cheio.',
+        seoTitle: 'Comandos de Bot CS2 - Adicionar, Parar e Posicionar Bots',
         seoDescription:
-          'Use comandos de bot no CS2 para adicionar bot_add_t, bot_add_ct, bot_stop, bot_place, dificuldade e treino de respawn.',
+          'Comandos de bot do CS2: bot_add_t, bot_add_ct, bot_stop, bot_place, dificuldade e quantidade. Copie a lista ou baixe o preset de treino com bots.',
         h1: 'Comandos de bots CS2',
         intro:
-          'Configure bots no CS2 para treino de pre-fire, posicionamento, spray e movimentacao com comandos simples e blocos prontos.',
+          'Controle bots no CS2 para treinar peek, pre-fire e spray sem depender de servidor cheio. Copie comandos para adicionar, parar, posicionar e ajustar a dificuldade dos bots.',
         focus: 'comandos de bots',
       },
       en: {
@@ -1309,10 +1314,10 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
     mode: 'radar',
     localized: {
       'pt-br': {
-        name: 'Configuracao de Radar CS2',
+        name: 'Configuração de Radar CS2',
         shortDescription:
-          'Gere comandos de radar CS2 para leitura competitiva com escala, rotacao, centralizacao e cores de teammates.',
-        primaryKeyword: 'configuracao radar cs2',
+          'Gere comandos de radar do CS2: escala, tamanho na HUD, rotação, centralização, ícones e cores dos companheiros.',
+        primaryKeyword: 'configuração radar cs2',
         secondaryKeywords: [
           'comandos radar cs2',
           'cl_radar_scale cs2',
@@ -1320,14 +1325,14 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
           'cl_hud_radar_scale cs2',
         ],
         searchIntent:
-          'Jogadores que querem ajustar radar do CS2 para melhorar leitura de mapa e informacao de equipe.',
-        seoTitle: 'Configuracao de Radar CS2 - Gerador de Comandos Competitivos',
+          'Jogadores que querem ajustar o radar do CS2 para ler melhor o mapa e a posição do time.',
+        seoTitle: 'Configuração de Radar CS2 - Comandos e Gerador de Radar',
         seoDescription:
-          'Ajuste cl_radar_scale, cl_hud_radar_scale, cl_radar_rotate e outros comandos de radar CS2 para melhorar tomada de decisao.',
-        h1: 'Configuracao de radar CS2',
+          'Ajuste o radar do CS2 com cl_radar_scale, cl_hud_radar_scale, cl_radar_rotate e cl_radar_always_centered. Copie os comandos ou gere um radar.cfg.',
+        h1: 'Configuração de radar CS2',
         intro:
-          'Monte comandos de radar no CS2 para ganhar leitura de rotacao, espacamento e informacao de teammates em partidas competitivas.',
-        focus: 'configuracao de radar',
+          'Ajuste o radar do CS2 para ler melhor o mapa e a posição do time. Escolha escala, rotação e centralização no gerador, copie os comandos ou baixe um radar.cfg.',
+        focus: 'configuração de radar',
       },
       en: {
         name: 'CS2 Radar Settings Generator',
@@ -1399,17 +1404,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Comandos de HUD CS2',
         shortDescription:
-          'Ajuste HUD no CS2 com escala, loadout, death notices e cores para manter informacao clara em partidas competitivas.',
+          'Comandos de HUD do CS2 para escala, inventário, contagem de jogadores, killfeed, cor e mira, com gerador de binds de uma ação.',
         primaryKeyword: 'comandos hud cs2',
-        secondaryKeywords: ['hud_scaling cs2', 'cl_showloadout cs2', 'cl_hud_color cs2', 'mudar hud cs2'],
+        secondaryKeywords: [
+          'hud_scaling cs2',
+          'cl_showloadout cs2',
+          'cl_hud_color cs2',
+          'mudar hud cs2',
+        ],
         searchIntent:
-          'Jogadores que querem HUD mais limpo e legivel no CS2 sem remover informacoes importantes.',
-        seoTitle: 'Comandos HUD CS2 - Escala, Cores e Interface Competitiva',
+          'Jogadores que querem uma HUD mais limpa e legível no CS2 sem esconder informações importantes.',
+        seoTitle: 'Comandos HUD CS2 - Escala, Inventário e Interface',
         seoDescription:
-          'Copie comandos de HUD CS2 para ajustar hud_scaling, cl_showloadout, cl_hud_color e elementos de interface para leitura mais rapida.',
+          'Copie comandos de HUD do CS2: hud_scaling, cl_showloadout, cl_hud_playercount_showcount, cl_hud_color e opções de mira, mais binds de uma ação.',
         h1: 'Comandos de HUD CS2',
         intro:
-          'Ajuste a interface do CS2 com comandos de HUD para equilibrar visibilidade, foco no round e leitura de informacoes essenciais.',
+          'Deixe a interface do CS2 mais limpa sem perder informação importante. Copie comandos de escala, inventário, contagem de jogadores e killfeed, e gere binds simples de ping, clutch e granadas.',
         focus: 'comandos de HUD',
       },
       en: {
@@ -1466,17 +1476,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Gerador de Cor da HUD CS2',
         shortDescription:
-          'Escolha cor da HUD no CS2 por nome amigavel e gere comando cl_hud_color para copiar no autoexec.',
+          'Escolha a cor da HUD do CS2 pelo nome e copie o comando cl_hud_color pronto, de 0 (padrão) a 10 (pink).',
         primaryKeyword: 'mudar cor hud cs2',
-        secondaryKeywords: ['cl_hud_color cs2', 'cores hud cs2', 'hud color cs2 comando', 'hud rosa cs2'],
+        secondaryKeywords: [
+          'cl_hud_color cs2',
+          'cores hud cs2',
+          'hud color cs2 comando',
+          'hud rosa cs2',
+        ],
         searchIntent:
-          'Jogadores que querem mudar cor da HUD no CS2 rapidamente sem decorar valores numericos.',
-        seoTitle: 'Mudar Cor da HUD CS2 - Gerador cl_hud_color',
+          'Jogadores que querem mudar a cor da HUD do CS2 rapidamente, sem decorar os valores numéricos.',
+        seoTitle: 'Mudar Cor da HUD CS2 - Gerador do Comando cl_hud_color',
         seoDescription:
-          'Gere comando cl_hud_color no CS2 com nomes de cores amigaveis e copie rapidamente para sua config.',
+          'Escolha a cor da HUD do CS2 pelo nome e copie o comando cl_hud_color de 0 a 10 para o console, um .cfg ou o seu autoexec.',
         h1: 'Mudar cor da HUD no CS2',
         intro:
-          'Escolha a cor da HUD no CS2 por nome, veja o comando correspondente e copie cl_hud_color pronto para usar no console ou autoexec.',
+          'Escolha a cor da HUD no CS2 pelo nome, veja o comando cl_hud_color correspondente e copie para o console ou para o seu autoexec.',
         focus: 'cor da HUD',
       },
       en: {
@@ -1533,17 +1548,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Gerador de Viewmodel CS2',
         shortDescription:
-          'Ajuste viewmodel_fov e offsets no CS2 com presets prontos e comando final para copiar no console ou autoexec.',
+          'Ajuste viewmodel_fov, offsets X, Y e Z e o preset de posição da arma no CS2 e copie os comandos prontos.',
         primaryKeyword: 'gerador viewmodel cs2',
-        secondaryKeywords: ['viewmodel cs2', 'viewmodel_fov 68', 'viewmodel_offset_x', 'config viewmodel competitivo'],
+        secondaryKeywords: [
+          'viewmodel cs2',
+          'viewmodel_fov 68',
+          'viewmodel_offset_x',
+          'config viewmodel competitivo',
+        ],
         searchIntent:
-          'Jogadores que querem ajustar posicao da arma no CS2 para melhorar leitura de tela sem perder referencia.',
-        seoTitle: 'Gerador de Viewmodel CS2 - FOV, Offsets e Presets Prontos',
+          'Jogadores que querem ajustar a posição da arma no CS2 para melhorar a leitura da tela sem perder a referência.',
+        seoTitle: 'Gerador de Viewmodel CS2 - FOV, Offsets e Posição da Arma',
         seoDescription:
-          'Monte seu viewmodel no CS2 com viewmodel_fov, offset_x/y/z e presets como compact, pro style e max visibility.',
+          'Monte seu viewmodel no CS2 com viewmodel_fov, viewmodel_offset_x/y/z e viewmodel_presetpos. Copie os comandos ou baixe o viewmodel.cfg.',
         h1: 'Gerador de viewmodel CS2',
         intro:
-          'Ajuste FOV e offsets da arma no CS2 com presets prontos e copie o comando final para manter consistencia no treino e competitivo.',
+          'Ajuste a posição da arma na tela do CS2 com FOV, offsets X, Y e Z e preset de posição. O gerador monta os comandos e você copia para o console ou baixa um viewmodel.cfg.',
         focus: 'viewmodel',
       },
       en: {
@@ -1606,17 +1626,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Comandos de FPS CS2',
         shortDescription:
-          'Ajuste limite de FPS, telemetria e elementos visuais no CS2 com comandos prontos para copiar e testar.',
+          'Gere comandos de fps_max, cl_showfps, telemetria de rede e volume para o CS2 e acompanhe o desempenho do seu PC.',
         primaryKeyword: 'comandos fps cs2',
-        secondaryKeywords: ['aumentar fps cs2', 'fps_max cs2', 'cl_showfps cs2', 'comandos performance cs2'],
+        secondaryKeywords: [
+          'aumentar fps cs2',
+          'fps_max cs2',
+          'cl_showfps cs2',
+          'comandos performance cs2',
+        ],
         searchIntent:
-          'Jogadores que querem organizar comandos de performance no CS2 sem promessa falsa de ganho garantido.',
-        seoTitle: 'Comandos FPS CS2 - Limite, Telemetria e Ajustes de Performance',
+          'Jogadores que querem organizar comandos de desempenho no CS2 e medir o efeito de cada ajuste, sem promessa de ganho garantido.',
+        seoTitle: 'Comandos FPS CS2 - fps_max, Telemetria e Volume',
         seoDescription:
-          'Copie comandos de FPS para CS2 como fps_max, cl_showfps, cq_netgraph e ajustes visuais para testar performance no seu PC.',
+          'Copie comandos de FPS do CS2: fps_max, fps_max_ui, cl_showfps e telemetria de ping e perda de pacotes. Meça o efeito antes de adotar.',
         h1: 'Comandos de FPS no CS2',
         intro:
-          'Teste comandos de limite de FPS e telemetria no CS2 para equilibrar fluidez, estabilidade e visibilidade durante partidas e treinos.',
+          'Defina o limite de FPS, exiba FPS e telemetria de rede e ajuste o volume do CS2 com comandos prontos. Eles ajudam a medir e organizar o desempenho; o ganho real depende do seu PC.',
         focus: 'comandos de FPS',
       },
       en: {
@@ -1673,17 +1698,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Gerador de Autoexec CS2',
         shortDescription:
-          'Gere autoexec.cfg, practice.cfg e fun.cfg separados com radar, HUD, viewmodel, FPS, audio e binds simples.',
+          'Gere autoexec.cfg, practice.cfg e fun.cfg separados, com radar, HUD, viewmodel, FPS, áudio e binds simples.',
         primaryKeyword: 'gerador autoexec cs2',
-        secondaryKeywords: ['autoexec cs2', 'practice cfg cs2', 'fun cfg cs2', 'config competitiva cs2'],
+        secondaryKeywords: [
+          'autoexec cs2',
+          'practice cfg cs2',
+          'fun cfg cs2',
+          'config competitiva cs2',
+        ],
         searchIntent:
-          'Jogadores que querem organizar configuracoes do CS2 em arquivos separados para competitivo, treino e fun/private server.',
-        seoTitle: 'Gerador Autoexec CS2 - autoexec.cfg, practice.cfg e fun.cfg',
+          'Jogadores que querem organizar as configurações do CS2 em arquivos separados para jogo competitivo, treino e servidor privado.',
+        seoTitle: 'Gerador de Autoexec CS2 - autoexec.cfg, practice.cfg e fun.cfg',
         seoDescription:
-          'Monte arquivos de config CS2 separados por objetivo: autoexec competitivo, practice cfg para treino local e fun cfg para servidor privado.',
+          'Monte autoexec.cfg, practice.cfg e fun.cfg do CS2 escolhendo os blocos de radar, HUD, viewmodel, FPS, áudio e binds. Copie ou baixe cada arquivo.',
         h1: 'Gerador de autoexec CS2',
         intro:
-          'Selecione blocos de comandos e gere arquivos separados para autoexec competitivo, treino local e comandos divertidos de servidor privado.',
+          'Escolha os blocos de radar, HUD, viewmodel, FPS, áudio e binds e gere arquivos separados: autoexec.cfg para o dia a dia, practice.cfg para treino local e fun.cfg para servidor privado.',
         focus: 'autoexec',
       },
       en: {
@@ -1741,17 +1771,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Config Competitiva CS2',
         shortDescription:
-          'Monte config competitiva segura no CS2 com radar, viewmodel, HUD, FPS e binds simples sem comandos de treino.',
+          'Monte uma config competitiva para o CS2 com radar, HUD, viewmodel, FPS, áudio e binds de uma ação, sem comandos de treino.',
         primaryKeyword: 'config competitiva cs2',
-        secondaryKeywords: ['config safe cs2', 'binds seguros cs2', 'radar competitivo cs2', 'viewmodel competitivo cs2'],
+        secondaryKeywords: [
+          'config safe cs2',
+          'binds seguros cs2',
+          'radar competitivo cs2',
+          'viewmodel competitivo cs2',
+        ],
         searchIntent:
-          'Jogadores que querem base de configuracao competitiva no CS2 sem comandos arriscados ou locais.',
-        seoTitle: 'Config Competitiva CS2 - Radar, Viewmodel, HUD e Binds Seguros',
+          'Jogadores que querem uma base de configuração competitiva no CS2, sem comandos de treino local nem automações arriscadas.',
+        seoTitle: 'Config Competitiva CS2 - Radar, HUD, Viewmodel e Binds',
         seoDescription:
-          'Gere config competitiva segura para CS2 com comandos client-side comuns e sem sv_cheats, noclip ou automacao arriscada.',
+          'Monte sua config competitiva do CS2 com radar, HUD, viewmodel, FPS, áudio e binds simples. Só comandos de cliente, sem sv_cheats nem comandos de treino.',
         h1: 'Config competitiva CS2',
         intro:
-          'Monte uma config competitiva segura para CS2 com foco em leitura de radar, clareza de HUD, viewmodel consistente e binds simples.',
+          'Monte uma config competitiva para o CS2 com radar legível, HUD limpa, viewmodel consistente, telemetria de FPS e ping e binds simples. A lista mostra só comandos de cliente, sem sv_cheats.',
         focus: 'config competitiva',
       },
       en: {
@@ -1809,17 +1844,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Config Campeonato CS2',
         shortDescription:
-          'Monte config segura para campeonato CS2 com comandos client-side comuns e sem blocos de treino/local.',
+          'Monte uma config limpa para campeonato no CS2: só comandos de cliente, binds de uma ação e nenhum bloco de treino ou sv_cheats.',
         primaryKeyword: 'config campeonato cs2',
-        secondaryKeywords: ['config segura cs2', 'config para competitivo cs2', 'binds seguros cs2', 'autoexec campeonato cs2'],
+        secondaryKeywords: [
+          'config segura cs2',
+          'config para competitivo cs2',
+          'binds seguros cs2',
+          'autoexec campeonato cs2',
+        ],
         searchIntent:
-          'Jogadores que precisam separar uma config limpa para campeonato sem risco de comandos locais ou automacoes.',
-        seoTitle: 'Config Campeonato CS2 - Setup Seguro para Competitivo Oficial',
+          'Jogadores que precisam de uma config limpa para campeonato, sem risco de levar comandos locais ou automações para a partida.',
+        seoTitle: 'Config Campeonato CS2 - Setup Limpo e Sem Comandos de Treino',
         seoDescription:
-          'Crie config de campeonato CS2 com radar, HUD, viewmodel, binds simples e sem sv_cheats ou automacoes de risco.',
+          'Prepare uma config para campeonato do CS2 com radar, HUD, viewmodel, FPS, áudio e binds simples, sem sv_cheats, bots ou comandos de treino.',
         h1: 'Config campeonato CS2',
         intro:
-          'Monte uma config simples e segura para partidas competitivas no CS2, sem comandos de treino local, sem sv_cheats e sem automacoes arriscadas.',
+          'Prepare uma config enxuta para jogar campeonato no CS2: apenas comandos de cliente, binds de uma ação e nenhum comando de treino. Confira o regulamento do evento antes de aplicar.',
         focus: 'config de campeonato',
       },
       en: {
@@ -1881,17 +1921,22 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
       'pt-br': {
         name: 'Comandos Divertidos CS2',
         shortDescription:
-          'Comandos fun para servidor privado no CS2 com gravidade, bunnyhop, noclip, respawn e experimentos locais.',
+          'Comandos fun para servidor privado no CS2: gravidade, bunnyhop automático, noclip, god, timescale e respawn.',
         primaryKeyword: 'comandos divertidos cs2',
-        secondaryKeywords: ['comandos sv_cheats cs2', 'comandos private cs2', 'gravity cs2', 'bunnyhop treino cs2'],
+        secondaryKeywords: [
+          'comandos sv_cheats cs2',
+          'comandos private cs2',
+          'gravity cs2',
+          'bunnyhop treino cs2',
+        ],
         searchIntent:
-          'Jogadores que querem testar comandos fun no CS2 em servidor local/private sem impacto em competitivo.',
-        seoTitle: 'Comandos Divertidos CS2 - Servidor Privado, Gravidade e Bunnyhop',
+          'Jogadores que querem testar comandos divertidos no CS2 em sala local ou servidor privado, sem impacto em partidas competitivas.',
+        seoTitle: 'Comandos Divertidos CS2 - Gravidade, Bunnyhop e Noclip',
         seoDescription:
-          'Copie comandos fun do CS2 para servidor privado com sv_cheats, noclip, gravidade, respawn e testes locais marcados com aviso.',
+          'Copie comandos divertidos do CS2 para servidor privado: sv_gravity, bunnyhop automático, noclip, god, host_timescale e respawn. A maioria exige sv_cheats 1.',
         h1: 'Comandos divertidos para CS2 (servidor privado)',
         intro:
-          'Teste comandos divertidos de CS2 em ambiente local/private server com avisos claros sobre o que nao deve ir para competitivo oficial.',
+          'Experimente gravidade baixa, bunnyhop automático, noclip, modo god e timescale em uma sala local ou servidor privado seu. Os comandos que exigem sv_cheats vêm com aviso e servem só para treino.',
         focus: 'comandos divertidos',
       },
       en: {
@@ -1945,6 +1990,744 @@ const seedByToolId: Record<Cs2ToolId, ToolSeed> = {
   },
 };
 
+type Cs2PtBrToolContent = {
+  contentBlocks: ContentBlock[];
+  faq: FaqItem[];
+};
+
+/**
+ * Texto pt-BR específico de cada ferramenta CS2. Os fatos vêm do catálogo
+ * (data/cs2/commands.ts), dos presets (data/cs2/command-presets.ts), da
+ * configuração de cada página (data/cs2/tool-ui-config.ts) e dos geradores
+ * em components/tools/cs2-shared-ui.tsx.
+ */
+const ptBrContentByToolId: Record<Cs2ToolId, Cs2PtBrToolContent> = {
+  'cs2-practice-commands': {
+    contentBlocks: [
+      {
+        title: 'O que esta lista reúne',
+        paragraphs: [
+          'A lista reúne comandos de sete categorias: treino, round/tempo, dinheiro/compra, granadas, smokes, servidor e binds. Cada cartão mostra o comando, uma descrição curta, um selo ("Treino local" ou "Requer sv_cheats") e o botão para copiar.',
+          'Ao abrir a página, os filtros já mostram só comandos de treino local. Para ver a lista completa, desmarque "Apenas treino local/private server". Os comandos são texto: a ferramenta não executa nada no jogo.',
+        ],
+      },
+      {
+        title: 'Como montar uma sala de treino',
+        paragraphs: [
+          'Crie uma partida local ou um servidor seu e abra o console. Comece por sv_cheats 1: comandos com o selo "Requer sv_cheats", como sv_infinite_ammo 1, noclip, sv_rethrow_last_grenade e sv_showimpacts 1, só funcionam depois dele. Já os ajustes de regra, como mp_freezetime 0, mp_roundtime 60, mp_buytime 9999, mp_buy_anywhere 1 e mp_startmoney 60000, não têm esse selo no catálogo.',
+          'O preset "Treino básico" junta tudo em ordem: sv_cheats 1, bot_kick, mp_warmup_end, mp_freezetime 0, rodada de 60 minutos, compra liberada, dinheiro inicial e máximo de 60000, munição infinita, ammo_grenade_limit_total 5 e, por fim, mp_restartgame 1 para reiniciar a partida já com tudo aplicado. Os outros presets da página são granadas, smoke, spray e regras de scrim privada.',
+        ],
+        list: [
+          'Copiar preset: leva todos os comandos do preset, um por linha, para colar no console.',
+          'Baixar .cfg: gera um arquivo com o nome do preset (por exemplo, basic-practice.cfg). Salve na pasta cfg do CS2 e carregue com exec basic-practice.',
+          'A prévia do cartão mostra só os 8 primeiros comandos; a cópia e o download levam o preset inteiro.',
+        ],
+      },
+      {
+        title: 'Limites desta página',
+        paragraphs: [
+          'Os comandos são para sala local, lobby privado ou servidor que você controla. Alguns estão marcados para validação (como sv_showimpacts_time e os ent_fire que limpam granadas) porque podem mudar entre atualizações; um filtro lista só esses.',
+          'Esta página não traz comandos de bots: eles estão em Comandos de bots CS2 e em Config de treino CS2. Tudo é gerado no seu navegador e nada do que você escolhe é enviado a um servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Preciso de sv_cheats 1 para todos os comandos de treino?',
+        answer:
+          'Não. Segundo o catálogo da ferramenta, só os comandos com o selo "Requer sv_cheats" dependem dele, como sv_infinite_ammo 1, noclip, sv_rethrow_last_grenade e sv_showimpacts 1. Os ajustes de regra, como mp_roundtime e mp_startmoney, valem apenas em servidor seu, mas não têm esse selo.',
+      },
+      {
+        question: 'Posso usar esses comandos em partida competitiva oficial?',
+        answer:
+          'Não. Os comandos desta página servem para sala local ou servidor privado, e a maioria está marcada como treino local no catálogo. Para o dia a dia no competitivo, use a Config competitiva CS2, que lista só ajustes de cliente.',
+      },
+      {
+        question: 'Como guardo um preset para usar de novo?',
+        answer:
+          'Clique em "Baixar .cfg" no preset, salve o arquivo na pasta cfg do CS2 e rode exec com o nome do arquivo, sem a extensão (por exemplo, exec basic-practice). O arquivo traz um comando por linha, sem cabeçalho.',
+      },
+      {
+        question: 'Qual a diferença para a página Config de treino CS2?',
+        answer:
+          'Esta página lista comandos de treino, rodada, dinheiro, granadas, smokes, servidor e binds. A Config de treino CS2 acrescenta os comandos e o preset de bots, para quem treina duelos e posicionamento.',
+      },
+    ],
+  },
+  'cs2-practice-config': {
+    contentBlocks: [
+      {
+        title: 'Presets de treino disponíveis',
+        paragraphs: [
+          'Cada preset é uma lista fixa de comandos que você copia ou baixa. Nesta página há seis, e cinco deles começam com sv_cheats 1:',
+        ],
+        list: [
+          'Treino básico: rodada de 60 minutos, compra liberada, dinheiro alto, munição infinita e reinício da partida.',
+          'Treino de granadas: base de treino mais trajetória e rastro da granada, mira de arremesso, impactos, bind V para noclip e bind R para repetir a última granada.',
+          'Treino de smoke: versão enxuta, com trajetória, rethrow e noclip, sem limpar bots nem encerrar o aquecimento.',
+          'Treino de spray: munição infinita e marcação de impactos por 10 segundos para ajustar o controle de recuo.',
+          'Treino com bots: bot_add_t, bot_add_ct, bot_stop 1, bot_dont_shoot 1, bot_freeze 1, bot_ignore_enemies 1, bot_place e respawn automático dos dois lados.',
+          'Regras de scrim privada: bomba em 40 segundos, 30 rounds, overtime de 6 rounds com dinheiro de 10000 e pausas táticas. Este é o único que não usa sv_cheats.',
+        ],
+      },
+      {
+        title: 'Como transformar o preset em practice.cfg',
+        paragraphs: [
+          'O arquivo baixado leva o nome do preset, como basic-practice.cfg ou bot-practice.cfg. Para usá-lo, salve na pasta cfg do CS2 e rode exec com esse nome. Se preferir o nome practice.cfg, renomeie o arquivo antes de salvar e use exec practice.',
+          'Se você quer um único practice.cfg com todos os presets de treino juntos, o Gerador de autoexec CS2 faz isso: ele reúne treino básico, granadas, smoke, spray, bots e scrim, remove linhas repetidas e coloca host_writeconfig no final.',
+        ],
+      },
+      {
+        title: 'Limites e cuidados',
+        paragraphs: [
+          'Os presets são listas prontas: a página não edita o conteúdo antes do download. Para tirar ou trocar uma linha, abra o .cfg em um editor de texto. Como os comandos rodam em sequência, mantenha sv_cheats 1 antes dos que dependem dele.',
+          'Não carregue esses arquivos em partida oficial: eles misturam comandos de treino local. A página roda no navegador e não envia o que você escolhe a nenhum servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Qual preset devo usar primeiro?',
+        answer:
+          'Comece pelo "Treino básico". Ele libera compra, dinheiro e munição e deixa a rodada longa. Depois acrescente o de granadas, smoke, spray ou bots conforme o que você quer treinar.',
+      },
+      {
+        question: 'O arquivo baixado já se chama practice.cfg?',
+        answer:
+          'Não. O nome segue o preset, como basic-practice.cfg. Você pode carregá-lo com exec basic-practice ou renomear para practice.cfg. Para reunir todos os presets de treino em um só arquivo, use o Gerador de autoexec CS2.',
+      },
+      {
+        question: 'Todos os presets exigem sv_cheats 1?',
+        answer:
+          'Cinco dos seis começam com sv_cheats 1. As "Regras de scrim privada" usam só comandos mp_, como mp_maxrounds e mp_overtime_enable, e valem em servidor que você controla.',
+      },
+      {
+        question: 'Posso levar essa config para o competitivo?',
+        answer:
+          'Não. Os presets de treino ligam recursos como munição infinita, noclip e bots. Para jogar partidas, use a Config competitiva CS2 ou a Config campeonato CS2.',
+      },
+    ],
+  },
+  'cs2-grenade-practice-commands': {
+    contentBlocks: [
+      {
+        title: 'Comandos que mostram o arremesso',
+        paragraphs: [
+          'Para ver onde a granada vai cair, ligue sv_grenade_trajectory_prac_pipreview 1 (prévia da trajetória) e sv_grenade_trajectory_prac_trailtime 10 (rastro visível por 10 segundos). Os dois exigem sv_cheats 1. Também há sv_grenade_trajectory_time_spectator 10, que define por quanto tempo a trajetória aparece para espectadores.',
+          'A mira de arremesso funciona separada: cl_grenadecrosshair_smoke, _flash, _fire, _explosive e _decoy, mais cl_grenadecrosshair_keepusercrosshair 1. São ajustes de cliente, não pedem sv_cheats e aparecem como seguros no catálogo. Para conferir onde a granada bateu, use sv_showimpacts 1 e sv_showimpacts_time 10.',
+        ],
+      },
+      {
+        title: 'Repetir, repor e limpar granadas',
+        paragraphs: [
+          'sv_rethrow_last_grenade repete a última granada para você comparar lineup e timing. O preset "Treino de granadas" já traz bind "r" "sv_rethrow_last_grenade" e bind "v" "noclip", para voltar ao ponto de arremesso sem refazer o caminho.',
+          'Para repor utilitários, a lista tem give weapon_smokegrenade, give weapon_flashbang e ammo_grenade_limit_total 5. Para remover projéteis ativos há ent_fire com smokegrenade_projectile, flashbang_projectile, hegrenade_projectile e molotov_projectile; todos exigem sv_cheats 1 e estão marcados para validação.',
+        ],
+        list: [
+          'Ative sv_cheats 1 e aplique o preset de granadas.',
+          'Faça o arremesso e confira a trajetória e o ponto de impacto.',
+          'Aperte R para repetir a última granada e compare o resultado.',
+          'Use V (noclip) para ir até o alvo e conferir de perto.',
+        ],
+      },
+      {
+        title: 'Limites',
+        paragraphs: [
+          'A página não guarda coordenadas nem confere se um lineup está certo: ela só entrega os comandos que ajudam a repetir e a enxergar cada tentativa. Os comandos de trajetória, rethrow e limpeza servem para sala local ou servidor privado. Se um ent_fire não surtir efeito após uma atualização do jogo, reinicie a partida com mp_restartgame 1.',
+          'Tudo é gerado no navegador e não é enviado a servidor algum.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Quais comandos de granada exigem sv_cheats?',
+        answer:
+          'Os que têm o selo "Requer sv_cheats": prévia e rastro da trajetória, sv_rethrow_last_grenade, give, ent_fire e as marcações de impacto. A mira de arremesso (cl_grenadecrosshair_*) é ajuste de cliente e não pede sv_cheats.',
+      },
+      {
+        question: 'Como repetir a última granada com uma tecla?',
+        answer:
+          'Use bind "r" "sv_rethrow_last_grenade", que já vem no preset de treino de granadas. Ative sv_cheats 1 antes, senão o bind não tem efeito. Se a tecla R já estiver em uso, troque no comando.',
+      },
+      {
+        question: 'Posso usar a mira de arremesso no competitivo?',
+        answer:
+          'No catálogo da ferramenta, os cl_grenadecrosshair_* aparecem como seguros e sem sv_cheats. Já trajetória, rethrow, give e ent_fire ficam restritos ao treino local. Confirme as regras do servidor ou do campeonato onde você vai jogar.',
+      },
+      {
+        question: 'O ent_fire para limpar granadas sempre funciona?',
+        answer:
+          'Não há garantia. Esses comandos estão marcados para validação porque podem mudar entre atualizações do jogo. Se não funcionarem, reinicie a partida com mp_restartgame 1.',
+      },
+    ],
+  },
+  'cs2-smoke-practice-commands': {
+    contentBlocks: [
+      {
+        title: 'O que o preset de smoke faz',
+        paragraphs: [
+          'O preset "Treino de smoke" é uma lista enxuta de dez comandos: sv_cheats 1, mp_roundtime_defuse 60, mp_buy_anywhere 1, mp_buytime 9999, sv_infinite_ammo 1, ammo_grenade_limit_total 5, prévia e rastro da trajetória, bind "r" para repetir a última granada e bind "v" para noclip.',
+          'Ele não limpa bots nem encerra o aquecimento, e define o tempo de rodada só para mapas de bomba (mp_roundtime_defuse). Para esses ajustes, use o "Treino básico", que também aparece nesta página.',
+        ],
+      },
+      {
+        title: 'Rotina para treinar um lineup de smoke',
+        paragraphs: [
+          'Aplique o preset, vá até a posição de arremesso e jogue a smoke. A trajetória e o rastro mostram o caminho; o noclip (tecla V) leva você até o ponto de queda para conferir se a smoke fechou o que devia. Depois, aperte R para repetir a última granada e compare.',
+          'Para tirar a smoke do mapa antes da próxima tentativa, a lista traz ent_fire smokegrenade_projectile kill, que tenta remover smokes ativas no servidor local. Ele está marcado para validação: se não funcionar na sua versão do jogo, use mp_restartgame 1.',
+        ],
+        list: [
+          'give weapon_smokegrenade entrega uma smoke na hora, sem abrir o menu de compra.',
+          'sv_grenade_trajectory_prac_trailtime 10 mantém o rastro por 10 segundos.',
+          'Salve o preset como .cfg para repetir a sessão sem copiar tudo de novo.',
+        ],
+      },
+      {
+        title: 'O que esta página não faz',
+        paragraphs: [
+          'Ela não traz lineups prontos nem coordenadas de mapas: entrega os comandos para você repetir e enxergar os seus. A lista de comandos é a mesma de Comandos de granadas CS2; aqui o foco é a rotina de smoke.',
+          'Os comandos valem em sala local ou servidor privado. O texto é gerado no navegador, sem envio a servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Qual a diferença entre esta página e a de comandos de granadas?',
+        answer:
+          'A lista de comandos e os presets exibidos são os mesmos nas duas páginas. A diferença é o foco do texto: aqui, a rotina de smoke e o preset enxuto "Treino de smoke"; na outra, o conjunto de granadas, com mira de arremesso e marcação de impactos.',
+      },
+      {
+        question: 'Como remover a smoke para repetir o lineup?',
+        answer:
+          'Use ent_fire smokegrenade_projectile kill, que exige sv_cheats 1 e tenta remover smokes ativas. Como está marcado para validação, pode falhar após atualizações; nesse caso, reinicie com mp_restartgame 1.',
+      },
+      {
+        question: 'Preciso comprar smoke a cada tentativa?',
+        answer:
+          'Não. O preset libera compra em qualquer lugar (mp_buy_anywhere 1), compra sem limite de tempo (mp_buytime 9999) e munição infinita. Se quiser uma smoke na hora, use give weapon_smokegrenade, que também exige sv_cheats 1.',
+      },
+      {
+        question: 'Posso usar o preset de smoke em servidor oficial?',
+        answer:
+          'Não. O preset começa com sv_cheats 1 e inclui noclip e rethrow, que são comandos de treino local. Use apenas em sala sua ou servidor privado.',
+      },
+    ],
+  },
+  'cs2-bot-commands': {
+    contentBlocks: [
+      {
+        title: 'Criar e controlar bots',
+        paragraphs: [
+          'Para colocar bots na sala, use bot_add_t e bot_add_ct (um bot em cada lado), bot_add (no time disponível) ou bot_quota 10 com bot_quota_mode fill para preencher os times até a quantidade desejada. bot_kick remove todos. mp_limitteams 0 permite adicionar bots sem restrição de balanceamento e mp_autoteambalance 0 evita a troca automática de bots entre os times.',
+          'A dificuldade vai de bot_difficulty 0 (fácil) a 3 (expert). Para duelos mais fáceis ou mais duros, escolha o nível antes de adicionar os bots.',
+        ],
+      },
+      {
+        title: 'Congelar, posicionar e repetir o treino',
+        paragraphs: [
+          'bot_stop 1 e bot_freeze 1 deixam os bots parados como alvos fixos; bot_dont_shoot 1 faz com que eles não atirem, útil para pre-fire e para treinar trajetória de granada; bot_ignore_enemies 1 os faz ignorar adversários e bot_crouch 1 os mantém agachados. Com sv_cheats 1, bot_place coloca o bot no ponto da sua mira, para simular um ângulo específico.',
+          'O preset "Treino com bots" reúne: sv_cheats 1, bot_kick, bot_add_t, bot_add_ct, bot_stop 1, bot_dont_shoot 1, bot_freeze 1, bot_ignore_enemies 1, bot_place e mp_respawn_on_death_ct 1 e _t 1, para você reaparecer sem reiniciar a rodada.',
+        ],
+        list: [
+          'bot_knives_only 1 limita os bots a facas.',
+          'bot_all_weapons 1 libera todas as armas para eles.',
+          'bot_allow_grenades 1 permite que comprem e usem granadas.',
+        ],
+      },
+      {
+        title: 'Limites',
+        paragraphs: [
+          'Bots seguem a inteligência do jogo e não reproduzem o comportamento de jogadores reais, então servem para mecânica (pre-fire, spray, ângulos) e não para treinar leitura de jogo. bot_mimic está marcado como experimental e para validação.',
+          'Os comandos valem em sala local ou servidor seu; bot_place também pede sv_cheats 1. A página gera o texto no navegador e não envia nada a servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Como colocar um bot parado na minha mira?',
+        answer:
+          'Ative sv_cheats 1, adicione o bot com bot_add_t ou bot_add_ct, congele com bot_stop 1 e use bot_place, que posiciona o bot no ponto para onde você está mirando.',
+      },
+      {
+        question: 'Como fazer os bots pararem de atirar?',
+        answer:
+          'Use bot_dont_shoot 1. Para ter alvos imóveis, combine com bot_stop 1 ou bot_freeze 1. Para voltar ao normal, use bot_dont_shoot 0 e bot_stop 0.',
+      },
+      {
+        question: 'Preciso de sv_cheats para adicionar bots?',
+        answer:
+          'No catálogo, apenas bot_place exige sv_cheats 1. bot_add_t, bot_add_ct, bot_stop, bot_difficulty e os demais comandos de bot valem em servidor seu sem esse selo.',
+      },
+      {
+        question: 'Por que os bots não entram no time que escolhi?',
+        answer:
+          'Pode ser a restrição de balanceamento de times. A lista traz mp_limitteams 0, que permite adicionar bots sem essa restrição, e mp_autoteambalance 0, que evita a troca automática de bots entre os times.',
+      },
+    ],
+  },
+  'cs2-radar-settings': {
+    contentBlocks: [
+      {
+        title: 'O que cada ajuste de radar muda',
+        paragraphs: [
+          'cl_radar_scale controla o zoom do mapa: 0.35 mostra mais área, 0.5 equilibra detalhe e visão geral e 0.7 aproxima. cl_hud_radar_scale define o tamanho do radar na tela (1 é o padrão; 1.15 e 1.2 aumentam). Não confunda os dois: um muda o zoom do mapa, o outro muda o tamanho da janela do radar.',
+          'cl_radar_always_centered 0 mostra mais área do mapa; com 1, você fica fixo no centro. cl_radar_rotate 0 mantém o radar fixo e 1 gira conforme a sua direção. cl_radar_icon_scale_min define o tamanho mínimo dos ícones (0.6 menores, 1 maiores). A lista inclui ainda cl_teammate_colors_show, cl_radar_square_with_scoreboard e opções de fundo do radar.',
+        ],
+      },
+      {
+        title: 'Usar o gerador de radar',
+        paragraphs: [
+          'O gerador tem cinco campos, na ordem do resultado: escala do radar, escala do radar na HUD, radar centralizado (0 ou 1), rotação (0 ou 1) e escala mínima dos ícones. Os valores iniciais são 0.5, 1.2, 0, 0 e 1.',
+          'Com esses valores, o resultado é: cl_radar_scale 0.5, cl_hud_radar_scale 1.2, cl_radar_always_centered 0, cl_radar_rotate 0 e cl_radar_icon_scale_min 1. Use "Copiar .cfg" para colar no console ou "Baixar .cfg" para salvar radar.cfg e carregar com exec radar.',
+        ],
+        list: [
+          'Mude um valor por vez e teste em uma partida de treino.',
+          'Digite números com ponto decimal, como nos exemplos.',
+          'O preset "Radar competitivo" traz sete comandos prontos, incluindo cl_teammate_colors_show 1.',
+        ],
+      },
+      {
+        title: 'Limites',
+        paragraphs: [
+          'Os campos numéricos do gerador aceitam qualquer texto e não validam faixas de valor, então confira o resultado antes de salvar. A página não mostra uma prévia do radar; o efeito só aparece dentro do jogo. Algumas opções, como cl_radar_scale_dynamic e cl_radar_show_all_players_when_spectating, dependem do modo de jogo.',
+          'Os comandos de radar são ajustes de interface do cliente, não exigem sv_cheats e aparecem como seguros no catálogo. Tudo é gerado no seu navegador.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Qual a diferença entre cl_radar_scale e cl_hud_radar_scale?',
+        answer:
+          'cl_radar_scale é o zoom do mapa dentro do radar. cl_hud_radar_scale é o tamanho do radar na tela. Você pode deixar o mapa mais aberto e o radar maior ao mesmo tempo.',
+      },
+      {
+        question: 'Devo deixar o radar girar ou fixo?',
+        answer:
+          'É preferência pessoal. cl_radar_rotate 0 mantém a orientação fixa, o que o catálogo descreve como mais rápido para ler o mapa. Com 1, o radar gira conforme a direção em que você olha.',
+      },
+      {
+        question: 'Esses comandos funcionam em partida oficial?',
+        answer:
+          'São ajustes locais de interface, sem sv_cheats, e todos os comandos de radar da lista estão marcados como seguros no catálogo da ferramenta.',
+      },
+      {
+        question: 'O gerador confere se os números são válidos?',
+        answer:
+          'Não. Os campos aceitam o que você digitar e o resultado sai exatamente como escrito. Use os valores da lista (0.35, 0.5, 0.7 para a escala; 1, 1.15, 1.2 para o tamanho) como referência.',
+      },
+    ],
+  },
+  'cs2-hud-commands': {
+    contentBlocks: [
+      {
+        title: 'O que a lista de HUD inclui',
+        paragraphs: [
+          'hud_scaling define o tamanho da interface: 0.85 deixa a HUD mais compacta e libera área de visão, 0.95 é intermediário e 1 volta ao padrão. cl_showloadout 1 mostra armas e granadas equipadas o tempo todo. cl_hud_playercount_showcount 1 troca os avatares pela contagem numérica de vivos, e cl_teamid_overhead_mode 2 mostra nome e equipamento sobre os aliados.',
+          'cl_draw_only_deathnotices 1 deixa só o killfeed na tela, o que o catálogo indica para gravação e análise em treino. A lista traz também cl_hud_color de 0 a 10 (para escolher pelo nome, veja Mudar cor da HUD no CS2) e opções de mira: contorno, formato em T, cl_crosshair_recoil, aviso de aliado e o estilo Static Quadrant (cl_crosshairstyle 9).',
+        ],
+      },
+      {
+        title: 'Gerador de binds de uma ação',
+        paragraphs: [
+          'Abaixo da lista há um gerador de bind: você escolhe a tecla (mouse3, mouse4, mouse5, H, V, C, X, Z ou Alt) e a ação (ping, modo clutch, trocar a mão do viewmodel ou selecionar granada). O resultado é uma linha, como bind "mouse5" "clutch_mode_toggle", que você cola no console ou baixa em binds.cfg.',
+          'Se a tecla já tem uma função, o bind novo a substitui. Escolha uma tecla livre e, se precisar, ajuste o comando antes de copiar. O modo clutch, segundo o catálogo, alterna temporariamente o chat de voz recebido para ajudar no foco.',
+        ],
+      },
+      {
+        title: 'Limites',
+        paragraphs: [
+          'A página não mostra como a HUD ficará: teste no jogo, de preferência em uma partida de treino. cl_crosshair_recoil faz a mira acompanhar o recuo como recurso visual e não reduz o recoil.',
+          'O gerador cria apenas binds de uma ação. Scripts que misturam movimento ou ataque em uma tecla (jumpthrow, null bind, Snap Tap) são marcados como não recomendados no catálogo da ferramenta, e o gerador não os cria. Tudo roda no navegador.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Qual valor de hud_scaling devo usar?',
+        answer:
+          'A lista traz 0.85, 0.95 e 1. Valores menores deixam a HUD mais compacta e liberam espaço na tela; 1 é o padrão. Teste em treino para ver qual leitura é mais confortável no seu monitor.',
+      },
+      {
+        question: 'O bind do gerador pode sobrescrever minhas teclas?',
+        answer:
+          'Sim, se a tecla já tiver um bind. Por isso o gerador deixa você escolher a tecla antes de copiar. Use uma tecla que você não usa para outra função.',
+      },
+      {
+        question: 'cl_crosshair_recoil reduz o recuo da arma?',
+        answer:
+          'Não. Segundo o catálogo, ele só faz a mira acompanhar o recuo como recurso visual de treino. O recoil continua igual.',
+      },
+      {
+        question: 'Esses comandos de HUD são permitidos em partida oficial?',
+        answer:
+          'Os comandos de HUD da lista são ajustes locais de interface e estão marcados como seguros no catálogo, sem sv_cheats. Os binds do gerador executam uma única ação por tecla.',
+      },
+    ],
+  },
+  'cs2-hud-color': {
+    contentBlocks: [
+      {
+        title: 'Valores de cl_hud_color e suas cores',
+        paragraphs: [
+          'O gerador converte o nome da cor no número que o comando espera. A lista completa do seletor é:',
+        ],
+        list: [
+          '0 - default (padrão)',
+          '1 - white, 2 - light blue, 3 - blue',
+          '4 - purple, 5 - red, 6 - orange',
+          '7 - yellow, 8 - green, 9 - aqua, 10 - pink',
+        ],
+      },
+      {
+        title: 'Como aplicar e manter a cor',
+        paragraphs: [
+          'Escolha a cor e o preview mostra uma única linha, por exemplo cl_hud_color 5 para vermelho. Cole no console para testar na hora, copie para o seu próprio .cfg ou baixe hud-color.cfg e carregue com exec hud-color depois de salvar o arquivo na pasta cfg do CS2.',
+          'Atenção ao autoexec: o bloco de HUD do Gerador de autoexec CS2 grava cl_hud_color 0 (cor padrão). Se você usar esse gerador, cole a sua linha cl_hud_color no campo opcional dele (rotulado como bloco de crosshair, mas ele aceita qualquer comando): as linhas desse campo entram no fim do arquivo e prevalecem sobre o valor padrão.',
+        ],
+      },
+      {
+        title: 'Como escolher e quais os limites',
+        paragraphs: [
+          'A cor muda a paleta da HUD inteira, e o resultado depende do mapa e do brilho do monitor. A ferramenta não mostra uma prévia visual da cor: teste em partida de treino e, se quiser, compare em mapas claros e escuros antes de fixar.',
+          'O seletor gera apenas os valores de 0 a 10. É um ajuste visual do cliente, sem sv_cheats, marcado como seguro no catálogo. Para mexer também em escala, inventário e killfeed, use Comandos de HUD CS2. O texto é gerado no navegador, sem envio a servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Como mudar a cor da HUD no CS2?',
+        answer:
+          'Abra o console e use cl_hud_color com um número de 0 a 10, por exemplo cl_hud_color 5 para vermelho. Para guardar a escolha, coloque a linha em um .cfg que você carregue com exec.',
+      },
+      {
+        question: 'Por que a cor volta ao padrão depois de usar meu autoexec?',
+        answer:
+          'Provavelmente o arquivo tem cl_hud_color 0 depois da sua linha. O bloco de HUD do Gerador de autoexec CS2 inclui cl_hud_color 0; coloque a sua cor no campo opcional dele, que é escrito por último.',
+      },
+      {
+        question: 'Posso usar uma cor fora da lista, como um código hexadecimal?',
+        answer:
+          'Esta ferramenta gera apenas os 11 valores do seletor (0 a 10). Ela não aceita códigos hexadecimais nem valores personalizados.',
+      },
+      {
+        question: 'Mudar a cor da HUD é permitido no competitivo?',
+        answer:
+          'No catálogo da ferramenta, cl_hud_color é um ajuste visual do cliente, sem sv_cheats e marcado como seguro para servidores oficiais.',
+      },
+    ],
+  },
+  'cs2-viewmodel-generator': {
+    contentBlocks: [
+      {
+        title: 'O que cada parâmetro do viewmodel faz',
+        paragraphs: [
+          'viewmodel_fov define quanto campo de visão a arma ocupa: a lista traz 54 (compacto), 60 (equilibrado) e 68 (máxima visibilidade, valor comum em configs competitivas). viewmodel_offset_x move a arma na horizontal, viewmodel_offset_y ajusta a profundidade e viewmodel_offset_z a move para cima ou para baixo. viewmodel_presetpos aplica uma posição rápida (1, 2 ou 3).',
+          'O gerador tem quatro campos de texto, na ordem do comando (FOV, X, Y e Z), e um seletor de preset. Os valores iniciais são 68, 2.5, 1, -1.5 e preset 3, que geram cinco linhas: viewmodel_fov 68, viewmodel_offset_x 2.5, viewmodel_offset_y 1, viewmodel_offset_z -1.5 e viewmodel_presetpos 3.',
+        ],
+      },
+      {
+        title: 'Como testar o resultado',
+        paragraphs: [
+          'Copie as linhas para o console ou baixe viewmodel.cfg, salve na pasta cfg do CS2 e carregue com exec viewmodel. Altere um parâmetro por vez e confira dentro do jogo, porque a página não mostra uma prévia da arma.',
+          'Se a arma não ficar onde você configurou, verifique a ordem: viewmodel_presetpos sai na última linha do resultado. Aplique-o antes, ou reaplique os offsets depois dele, para ver se ele está interferindo.',
+        ],
+        list: [
+          'cl_prefer_lefthanded 1 define a mão esquerda como preferência; com 0, a direita.',
+          'O gerador de binds, nesta página, cria um bind "h" "switchhands" para alternar a mão com uma tecla.',
+          'O preset "Viewmodel limpo" traz os mesmos valores iniciais do gerador.',
+        ],
+      },
+      {
+        title: 'Limites',
+        paragraphs: [
+          'Os campos aceitam qualquer texto e não validam faixas de valor. O resultado sai exatamente como digitado, então confira os valores dentro do jogo.',
+          'São ajustes visuais do cliente, sem sv_cheats, marcados como seguros no catálogo. O texto é gerado no navegador e não é enviado a servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Qual valor de viewmodel_fov devo usar?',
+        answer:
+          'A lista tem 54, 60 e 68. O valor inicial do gerador é 68, que o catálogo descreve como popular em configs competitivas para abrir o campo visual. Escolha o que for mais confortável para você.',
+      },
+      {
+        question: 'O que o viewmodel_presetpos faz?',
+        answer:
+          'Aplica uma posição rápida da arma (1, 2 ou 3). O gerador usa 3 por padrão. Como ele é escrito depois dos offsets, teste o resultado e, se preciso, reaplique os offsets depois dele.',
+      },
+      {
+        question: 'Como trocar a arma para a mão esquerda?',
+        answer:
+          'Use cl_prefer_lefthanded 1, que está na lista, ou crie um bind com o gerador de binds desta página: a ação "Alternar mão do viewmodel" gera bind "h" "switchhands", por exemplo.',
+      },
+      {
+        question: 'O viewmodel exige sv_cheats?',
+        answer:
+          'Não. Todos os comandos de viewmodel da lista são ajustes de cliente, sem o selo de sv_cheats, e aparecem como seguros no catálogo.',
+      },
+    ],
+  },
+  'cs2-fps-commands': {
+    contentBlocks: [
+      {
+        title: 'Limite de FPS e exibição de desempenho',
+        paragraphs: [
+          'fps_max define o teto de FPS: 0 deixa sem limite, e o gerador oferece 144, 165, 240, 300 e 400. fps_max_ui (60 ou 120) limita o FPS nos menus. cl_showfps (0, 1 ou 2) mostra o FPS na tela, e cq_netgraph exibe dados de rede e desempenho. O aviso do gerador lembra que, desde 2025, o fps_max precisa ser definido antes de entrar em um servidor.',
+          'Os valores iniciais do gerador geram fps_max 0, fps_max_ui 120 e cl_showfps 1, e você pode baixar o resultado como fps.cfg. A lista traz ainda r_show_build_info e r_drawtracers_firstperson, e engine_low_latency_sleep_after_client_tick, que o catálogo marca com cautela porque pode piorar o frametime em alguns PCs.',
+        ],
+      },
+      {
+        title: 'Telemetria de rede e volume',
+        paragraphs: [
+          'O gerador de telemetria tem três seletores (frame time, ping e perda ou pacotes fora de ordem), cada um com as opções Desativado (0), Somente em condição ruim (1) e Sempre mostrar (2), mais uma caixa para o gráfico de qualidade da rede. Com os valores iniciais, o resultado é cl_hud_telemetry_frametime_show 1, cl_hud_telemetry_ping_show 1 e cl_hud_telemetry_net_misdelivery_show 1.',
+          'O gerador de volume usa um controle de 0 a 100% e escreve volume com o valor em decimal; no padrão de 45%, a linha é volume 0.45. A lista inclui também voice_modenable e cl_mute_enemy_team para a voz.',
+        ],
+      },
+      {
+        title: 'Como medir sem se enganar',
+        paragraphs: [
+          'Compare sempre no mesmo mapa, na mesma resolução e na mesma situação, mudando um comando por vez, com cl_showfps ligado. A ferramenta não mede o seu FPS: ela só gera os comandos. O ganho real depende do hardware e do resto da configuração, e nenhum comando aqui garante mais FPS.',
+          'Os ajustes são do cliente, sem sv_cheats. O texto é gerado no navegador, sem envio a servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Qual valor de fps_max devo escolher?',
+        answer:
+          'O gerador oferece 0 (sem limite) e 144, 165, 240, 300 e 400. O catálogo sugere 0 ou um valor fixo alinhado com o seu monitor. Teste e compare o FPS e a estabilidade no seu PC.',
+      },
+      {
+        question: 'Posso mudar o fps_max durante a partida?',
+        answer:
+          'Segundo o aviso do gerador, desde 2025 o CS2 não permite alterar esse limite enquanto você está conectado. Defina o valor antes de entrar no servidor.',
+      },
+      {
+        question: 'Esses comandos garantem mais FPS?',
+        answer:
+          'Não. Eles ajudam a organizar o limite de FPS e a mostrar telemetria, mas o resultado depende do seu hardware e da configuração completa. Compare antes e depois com cl_showfps.',
+      },
+      {
+        question: 'O que significa mostrar telemetria "somente em condição ruim"?',
+        answer:
+          'O indicador de frame time, ping ou perda de pacotes só aparece quando o jogo detecta um problema, o que mantém a tela limpa. Com "Sempre mostrar", ele fica visível o tempo todo.',
+      },
+    ],
+  },
+  'cs2-autoexec-generator': {
+    contentBlocks: [
+      {
+        title: 'O que cada arquivo gerado contém',
+        paragraphs: [
+          'O gerador cria até três arquivos. O autoexec.cfg junta os blocos marcados, com um valor inicial por ajuste: radar (7 comandos), HUD (6, incluindo hud_scaling 0.85 e cl_hud_color 0), viewmodel (6, com FOV 68), FPS (8, com fps_max 0 e telemetria), áudio (voice_modenable 1 e cl_mute_enemy_team 1) e binds simples (7 linhas).',
+          'O practice.cfg reúne todos os presets de treino (básico, granadas, smoke, spray, bots e scrim privada), sem linhas repetidas, e o fun.cfg traz o preset de comandos divertidos. Cada arquivo começa com comentários que identificam a origem e termina com host_writeconfig, que grava a configuração atual no arquivo do jogo.',
+        ],
+      },
+      {
+        title: 'Como usar os arquivos',
+        paragraphs: [
+          'Salve os arquivos na pasta cfg do CS2 e carregue conforme o contexto: exec autoexec para o dia a dia, exec practice antes de treinar e exec fun em servidor privado. O practice.cfg tem sv_cheats 1, então não o carregue em partida oficial.',
+          'Revise antes de salvar: o bloco de binds sobrescreve a roda do mouse (pular), espaço, C, X, Z e H. O bloco de HUD grava cl_hud_color 0. Desmarque o que não quiser. Para personalizar valores, use os geradores de radar, viewmodel, FPS, volume, telemetria e binds desta página e cole as linhas no campo opcional: ele aceita qualquer comando, elimina linhas vazias e entra no fim do autoexec.cfg.',
+        ],
+        list: [
+          'Desmarque "Incluir practice.cfg" e "Incluir fun.cfg" se quiser só o arquivo do dia a dia.',
+          'O campo opcional não valida o que você cola.',
+          'Cada arquivo tem botões para copiar ou baixar.',
+        ],
+      },
+      {
+        title: 'Limites',
+        paragraphs: [
+          'Os valores dos blocos são fixos: a ferramenta não deixa editar cada número dentro do arquivo gerado. O catálogo marca como não recomendados jumpthrow automatizado, null bind e Snap Tap/SOCD, e esses itens não entram em nenhum dos arquivos. Os arquivos são gerados localmente no navegador, como diz o cabeçalho de cada um.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Onde salvar autoexec.cfg, practice.cfg e fun.cfg?',
+        answer:
+          'Na pasta cfg do CS2. Depois, use exec autoexec, exec practice e exec fun no console, conforme o que for jogar.',
+      },
+      {
+        question: 'Por que separar em três arquivos?',
+        answer:
+          'O autoexec.cfg só tem ajustes de cliente. O practice.cfg tem comandos de treino, como sv_cheats 1 e noclip, e o fun.cfg tem comandos de servidor privado. Separados, os de treino não entram sem querer no seu dia a dia.',
+      },
+      {
+        question: 'Meus binds atuais serão sobrescritos?',
+        answer:
+          'Se o bloco "Incluir binds simples" estiver marcado, sim: ele define a roda do mouse, espaço, C, X, Z e H. Desmarque o bloco para manter os seus.',
+      },
+      {
+        question: 'Como incluo minha mira no autoexec?',
+        answer:
+          'Cole os comandos de mira no campo opcional, uma linha por comando. Eles são acrescentados ao fim do autoexec.cfg, sem validação, então confira a digitação.',
+      },
+      {
+        question: 'O que o host_writeconfig faz no fim dos arquivos?',
+        answer:
+          'Segundo o catálogo, grava os comandos atuais no arquivo de configuração do jogo, para que eles permaneçam depois de sair.',
+      },
+    ],
+  },
+  'cs2-competitive-config': {
+    contentBlocks: [
+      {
+        title: 'O que entra numa config competitiva',
+        paragraphs: [
+          'A lista cobre radar, HUD, viewmodel, FPS/performance, áudio/voz e binds. Ao abrir a página, o filtro "Apenas comandos seguros para competitivo" já vem marcado, então só aparecem ajustes de cliente, sem sv_cheats e sem comandos de treino.',
+          'O preset "Config competitiva segura" reúne 21 comandos: cinco de radar, contagem de jogadores e identificação de aliados, hud_scaling 0.85, cl_showloadout 1, viewmodel 68/2.5/1/-1.5, fps_max 0, r_show_build_info 0, telemetria de frame time, ping e perda de pacotes, binds de pulo na roda do mouse e bind H para trocar a mão. Há também presets só de radar, de viewmodel, de FPS e telemetria e de binds de comunicação e utilitários.',
+        ],
+      },
+      {
+        title: 'Passo a passo para montar a sua',
+        paragraphs: [
+          'Comece pelo preset seguro e refine com os geradores da própria página: radar, cor da HUD, viewmodel, FPS, volume, telemetria e binds. Cada um gera um arquivo pequeno (radar.cfg, viewmodel.cfg, fps.cfg, audio.cfg e outros). Para juntar tudo em um só autoexec.cfg, use o Gerador de autoexec no fim da página.',
+          'Nesse gerador, desmarque practice.cfg e fun.cfg se quiser apenas o arquivo competitivo; eles vêm marcados por padrão e trazem comandos de treino.',
+        ],
+        list: [
+          'Teste cada bloco em treino antes de usar em partida.',
+          'Defina fps_max antes de conectar ao servidor.',
+          'Mantenha uma cópia do seu autoexec anterior.',
+        ],
+      },
+      {
+        title: 'O que "seguro" significa e o que não cobre',
+        paragraphs: [
+          'Aqui "seguro" é a marcação do catálogo para comandos de cliente, sem sv_cheats e sem automação de várias ações em uma tecla. Jumpthrow automatizado, null bind e Snap Tap/SOCD aparecem como não recomendados e não são gerados. A marcação não substitui as regras de cada plataforma ou campeonato.',
+          'Esta página e a Config campeonato CS2 usam os mesmos comandos e presets; use esta para o seu setup do dia a dia. Tudo é gerado no navegador.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'O que significa "seguro" nesta config?',
+        answer:
+          'Que o comando é um ajuste de cliente, não exige sv_cheats e não combina várias ações em um único input. É uma classificação do catálogo da ferramenta e não uma autorização de plataforma ou campeonato.',
+      },
+      {
+        question: 'Posso incluir comandos de treino nesta config?',
+        answer:
+          'Não é recomendado. Comandos como sv_infinite_ammo e noclip exigem sv_cheats 1 e ficam em outro arquivo. Use o Gerador de autoexec CS2 para mantê-los no practice.cfg, separados do autoexec.cfg.',
+      },
+      {
+        question: 'Qual a diferença para a Config campeonato CS2?',
+        answer:
+          'As duas páginas usam os mesmos comandos, presets e geradores. Esta é pensada para o setup do dia a dia; a de campeonato traz um roteiro de conferência antes de uma partida de evento.',
+      },
+      {
+        question: 'Preciso usar todos os blocos?',
+        answer:
+          'Não. Radar, HUD, viewmodel, FPS, áudio e binds são independentes: copie só o que quiser. No gerador de autoexec, cada bloco tem uma caixa para marcar ou desmarcar.',
+      },
+    ],
+  },
+  'cs2-tournament-safe-config': {
+    contentBlocks: [
+      {
+        title: 'Roteiro de conferência antes da partida',
+        paragraphs: [
+          'Para campeonato, o objetivo é levar só o que é ajuste de cliente. A página já abre com o filtro de comandos seguros marcado e usa o preset "Config competitiva segura" como referência. Antes de jogar, confira:',
+        ],
+        list: [
+          'Você vai rodar só o autoexec.cfg: nada de exec practice nem exec fun.',
+          'O arquivo não contém sv_cheats, noclip nem linhas começando com mp_ ou bot_.',
+          'Os binds executam uma única ação (como +jump na roda do mouse ou switchhands).',
+          'Não há jumpthrow, null bind nem Snap Tap/SOCD, que o catálogo marca como não recomendados.',
+          'fps_max está definido antes de conectar ao servidor.',
+        ],
+      },
+      {
+        title: 'Como gerar o arquivo limpo',
+        paragraphs: [
+          'Use o Gerador de autoexec no fim da página: marque radar, HUD, viewmodel, FPS, áudio e binds e desmarque "Incluir practice.cfg" e "Incluir fun.cfg". Salve o autoexec.cfg na pasta cfg do CS2 e rode exec autoexec. Se preferir só um bloco, baixe o preset "Config competitiva segura" ou use o gerador específico (radar.cfg, viewmodel.cfg, fps.cfg).',
+          'Os geradores desta página são os mesmos da Config competitiva CS2; o que muda aqui é o foco na conferência e na separação dos arquivos de treino.',
+        ],
+      },
+      {
+        title: 'Limites',
+        paragraphs: [
+          'A ferramenta não consulta o regulamento de nenhum campeonato. "Seguro" é a marcação do catálogo para ajustes de cliente sem sv_cheats e sem automação; cada organização define o que aceita, então confirme com ela. Tudo é gerado no seu navegador, sem envio a servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Essa config é aprovada por campeonatos?',
+        answer:
+          'Não. A ferramenta usa apenas comandos de cliente marcados como seguros no catálogo, mas não consulta regulamentos. Confirme com a organização do evento o que é aceito.',
+      },
+      {
+        question: 'Como garantir que não há comando de treino no meu arquivo?',
+        answer:
+          'Gere o autoexec com practice.cfg e fun.cfg desmarcados e abra o arquivo para procurar sv_cheats, noclip e linhas com mp_ ou bot_. O autoexec gerado pelos blocos desta página não traz esses comandos.',
+      },
+      {
+        question: 'Posso usar bind de pulo na roda do mouse?',
+        answer:
+          'O preset seguro inclui bind "mwheelup" "+jump" e bind "mwheeldown" "+jump", que executam uma única ação. A ferramenta evita automações que combinam movimento ou ataque em um input.',
+      },
+      {
+        question: 'Qual a diferença para a Config competitiva CS2?',
+        answer:
+          'Os comandos, presets e geradores são os mesmos. Esta página acrescenta o roteiro de conferência para eventos e reforça a separação entre autoexec e arquivos de treino.',
+      },
+    ],
+  },
+  'cs2-fun-commands': {
+    contentBlocks: [
+      {
+        title: 'O que o preset fun faz',
+        paragraphs: [
+          'O preset "Comandos divertidos para servidor privado" começa com sv_cheats 1 e reúne: noclip, sv_gravity 300 (gravidade baixa), sv_autobunnyhopping 1, sv_enablebunnyhopping 1, sv_airaccelerate 1000, respawn automático nos dois lados, mp_ignore_round_win_conditions 1, god, buddha e host_timescale 0.5 e 2.',
+          'Repare que host_timescale 0.5 e 2 aparecem em sequência: no arquivo, vale o último que rodar. Para ficar em câmera lenta, apague a linha do 2; para acelerar, a do 0.5. God (invencibilidade) e buddha (vida mínima) estão marcados para validação porque podem mudar entre atualizações.',
+        ],
+      },
+      {
+        title: 'Como testar com segurança e voltar ao normal',
+        paragraphs: [
+          'Crie uma partida local, ative sv_cheats 1 e cole os comandos que quiser. Os cartões com o selo vermelho "Não recomendado" (bunnyhop automático, airaccelerate, gravidades extremas, god, buddha e timescale) alteram movimento, física ou velocidade do jogo e devem ficar restritos a sala sua.',
+          'Para reverter, a lista tem sv_gravity 800 (gravidade padrão) e host_timescale 1; para sair do voo, rode noclip de novo. A lista também traz comandos de servidor, como mp_friendlyfire 1 e mp_teammates_are_enemies 1, para modos personalizados.',
+        ],
+        list: [
+          'Teste um comando por vez para saber qual causou cada efeito.',
+          'sv_clantags_enabled 0 só serve em servidor personalizado que você administra.',
+          'Baixe o preset em .cfg para repetir a sessão sem copiar tudo de novo.',
+        ],
+      },
+      {
+        title: 'Limites',
+        paragraphs: [
+          'Nada aqui vale em partida oficial nem em servidor de terceiros: são comandos pensados para sala local, lobby privado ou servidor que você controla. A maioria exige sv_cheats 1, e os que não exigem, como mp_respawn_on_death, valem apenas em servidor seu. A página só copia texto e gera o arquivo no navegador, sem enviar a servidor.',
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: 'Esses comandos funcionam em matchmaking ou em servidor de outras pessoas?',
+        answer:
+          'Não são para isso. Eles são marcados como treino local no catálogo e servem para sala sua, lobby privado ou servidor que você controla. Não use em partida oficial.',
+      },
+      {
+        question: 'Preciso ativar sv_cheats 1?',
+        answer:
+          'Para a maioria, sim: noclip, gravidade, bunnyhop, god, buddha e timescale têm o selo "Requer sv_cheats". O preset já começa com sv_cheats 1. Já mp_respawn_on_death_ct e _t não exigem.',
+      },
+      {
+        question: 'Como voltar ao normal depois de testar?',
+        answer:
+          'Use sv_gravity 800 para a gravidade padrão e host_timescale 1 para a velocidade normal. Para sair do voo, rode noclip de novo. Se algo ficar fora do lugar, reinicie a partida ou crie uma nova sala.',
+      },
+      {
+        question: 'Qual a diferença entre god e buddha?',
+        answer:
+          'Segundo o catálogo, god dá invencibilidade e buddha mantém a vida no mínimo. Ambos são comandos fun de servidor local, marcados para validação porque podem não funcionar em todas as versões.',
+      },
+    ],
+  },
+};
+
 const buildContent = (toolId: Cs2ToolId, locale: AppLocale): Cs2ToolLocaleContent => {
   const seed = seedByToolId[toolId];
   const entry = seed.localized[locale];
@@ -1959,8 +2742,11 @@ const buildContent = (toolId: Cs2ToolId, locale: AppLocale): Cs2ToolLocaleConten
     seoDescription: entry.seoDescription,
     h1: entry.h1,
     intro: entry.intro,
-    contentBlocks: buildContentBlocks(locale, seed.mode, entry.focus),
-    faq: buildFaq(locale, seed.mode),
+    contentBlocks:
+      locale === 'pt-br'
+        ? ptBrContentByToolId[toolId].contentBlocks
+        : buildContentBlocks(locale, seed.mode, entry.focus),
+    faq: locale === 'pt-br' ? ptBrContentByToolId[toolId].faq : buildFaq(locale, seed.mode),
   };
 };
 
