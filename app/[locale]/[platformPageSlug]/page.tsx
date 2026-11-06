@@ -1,36 +1,17 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { JsonLd } from '@/components/shared/json-ld';
-import { AudioEditorTool } from '@/components/tools/audio-editor-tool';
-import { AudioBlasterTool } from '@/components/tools/audio-blaster-tool';
-import { AudioVideoTranscriptionTool } from '@/components/tools/audio-video-transcription-tool';
-import { AuthenticatorCodeGeneratorTool } from '@/components/tools/authenticator-code-generator-tool';
-import { Base64ImageViewerTool } from '@/components/tools/base64-image-viewer-tool';
-import { BitcoinWalletTool } from '@/components/tools/bitcoin-wallet-tool';
-import { CompoundInterestTool } from '@/components/tools/compound-interest-tool';
-import { CpfGeneratorTool } from '@/components/tools/cpf-generator-tool';
-import { CsvViewerTool } from '@/components/tools/csv-viewer-tool';
-import { ZplLabelEditorTool } from '@/components/tools/zpl-label-editor-tool';
-import { DataConverterTool } from '@/components/tools/data-converter-tool';
-import { TextDiffTool } from '@/components/tools/text-diff-tool';
-import { OpenGraphPreviewTool } from '@/components/tools/open-graph-preview-tool';
 import { Cs2ToolSuite } from '@/components/tools/cs2-tool-suite';
-import { FakePersonGeneratorTool } from '@/components/tools/fake-person-generator-tool';
 import {
   frontOnlyToolSoftwareCategory,
   renderFrontOnlyToolUi,
 } from '@/components/tools/front-only-tool-router';
 import { CryptoConversionLinks } from '@/components/tools/crypto-conversion-links';
 import { CryptoUnitConverterTool } from '@/components/tools/crypto-unit-converter';
-import { LazyHtmlViewerTool } from '@/components/tools/lazy-html-viewer-tool';
-import { MarkdownEditorTool } from '@/components/tools/markdown-editor-tool';
+import { PlatformAliasToolRouter } from '@/components/tools/platform-alias-tool-router';
 import { ImageConversionLinks } from '@/components/tools/image-conversion-links';
-import { ImageConverterTool } from '@/components/tools/image-converter-tool';
-import { ImageCompressionTool } from '@/components/tools/image-compression-tool';
-import { InstagramImageOptimizerTool } from '@/components/tools/instagram-image-optimizer-tool';
-import { ChromaBackgroundRemoverTool } from '@/components/tools/chroma-background-remover-tool';
-import { ImageToBase64Tool } from '@/components/tools/image-to-base64-tool';
 import { InvisibleCharacterTool } from '@/components/tools/invisible-character-tool';
 import { InvisiblePlatformLinks } from '@/components/tools/invisible-platform-links';
 import { NicknameSymbolGeneratorTool } from '@/components/tools/nickname-symbol-generator-tool';
@@ -43,37 +24,9 @@ import { KeyboardShortcutsTool } from '@/components/tools/keyboard-shortcuts-too
 import { KeyboardShortcutsAppLinks } from '@/components/tools/keyboard-shortcuts-app-links';
 import { GamerUsernameGeneratorTool } from '@/components/tools/gamer-username-generator-tool';
 import { GamerUsernamePlatformLinks } from '@/components/tools/gamer-username-platform-links';
-import { JsonFormatterTool } from '@/components/tools/json-formatter-tool';
 import { GtaCheatCodesTool } from '@/components/tools/gta-cheat-codes-tool';
-import { PasswordGeneratorTool } from '@/components/tools/password-generator-tool';
-import { PixDecoderTool } from '@/components/tools/pix-decoder-tool';
-import { QrCodeGeneratorTool } from '@/components/tools/qr-code-generator';
-import { SorteadorTool } from '@/components/tools/sorteador-tool';
 import { ToolAliasLinks } from '@/components/tools/tool-alias-links';
-import { WhatsAppTelegramLinkGeneratorTool } from '@/components/tools/whatsapp-telegram-link-generator-tool';
 import { ToolPageShell } from '@/components/tools/tool-page-shell';
-import { VideoCompressionTool } from '@/components/tools/video-compression-tool';
-import { VideoDownloaderTool } from '@/components/tools/video-downloader-tool';
-import { ShareScreenTool } from '@/components/tools/share-screen-tool';
-import { CelularComoWebcamTool } from '@/components/tools/celular-como-webcam-tool';
-import { TimelapseCreatorTool } from '@/components/tools/timelapse-creator-tool';
-import { UniversalConverterTool } from '@/components/tools/universal-converter-tool';
-import { CssGeneratorTool } from '@/components/tools/css-generator-tool';
-import { ImageColorExtractorTool } from '@/components/tools/image-color-extractor-tool';
-import { IpDiscoveryTool } from '@/components/tools/ip-discovery-tool';
-import { CodeConverterTool } from '@/components/tools/code-converter-tool';
-import { ColorConverterTool } from '@/components/tools/color-converter-tool';
-import { TempEmailTool } from '@/components/tools/temp-email-tool';
-import { RegexTesterTool } from '@/components/tools/regex-tester-tool';
-import { UnixTimestampConverterTool } from '@/components/tools/unix-timestamp-converter-tool';
-import { LightningDecoderTool } from '@/components/tools/lightning-decoder-tool';
-import { RemoveAccentsTool } from '@/components/tools/remove-accents-tool';
-import { CharacterCounterTool } from '@/components/tools/character-counter-tool';
-import { UrlEncoderDecoderTool } from '@/components/tools/url-encoder-decoder-tool';
-import { SlugGeneratorTool } from '@/components/tools/slug-generator-tool';
-import { JwtDecoderTool } from '@/components/tools/jwt-decoder-tool';
-import { UuidNanoIdGeneratorTool } from '@/components/tools/uuid-nanoid-generator-tool';
-import { TransferToolWrapper } from '@/components/tools/transfer-tool-wrapper';
 import {
   getFeaturedCryptoConversionPages,
   getLocalizedCryptoConversionContent,
@@ -197,6 +150,13 @@ import { getInvisiblePlatformById } from '@/lib/invisible-character';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { isCs2ToolId } from '@/data/cs2/tools';
 import type { ToolDefinition } from '@/types/tool';
+
+const ImageConverterTool = dynamic(() =>
+  import('@/components/tools/image-converter-tool').then((module) => module.ImageConverterTool),
+);
+const UniversalConverterTool = dynamic(() =>
+  import('@/components/tools/universal-converter-tool').then((module) => module.UniversalConverterTool),
+);
 
 export const dynamicParams = true;
 
@@ -554,8 +514,6 @@ type AliasUiResolution = {
   focusedSection: ReactNode | null;
 };
 
-type SimpleAliasToolUiRenderer = (context: RenderContext) => ReactNode;
-
 const dedupeKeywords = (keywords: string[]): string[] =>
   Array.from(new Set(keywords.map((item) => item.trim()).filter(Boolean)));
 
@@ -773,58 +731,56 @@ const getContextualLandingContent = (
   return undefined;
 };
 
-const simpleAliasToolUiRenderers: Record<string, SimpleAliasToolUiRenderer> = {
-  'transcricao-de-audio-e-video': ({ locale }) => <AudioVideoTranscriptionTool locale={locale} />,
-  'authenticator-code-generator': ({ locale }) => <AuthenticatorCodeGeneratorTool locale={locale} />,
-  'bitcoin-wallet': ({ locale }) => <BitcoinWalletTool locale={locale} />,
-  'html-viewer': ({ locale }) => <LazyHtmlViewerTool locale={locale} />,
-  'markdown-editor': ({ locale }) => <MarkdownEditorTool locale={locale} />,
-  'json-formatter': ({ locale }) => <JsonFormatterTool locale={locale} />,
-  'csv-viewer': ({ locale }) => <CsvViewerTool locale={locale} />,
-  'editor-etiquetas-zpl': ({ locale }) => <ZplLabelEditorTool locale={locale} />,
-  'data-converter': ({ locale }) => <DataConverterTool locale={locale} />,
-  'text-diff': ({ locale }) => <TextDiffTool locale={locale} />,
-  'open-graph-preview': ({ locale }) => <OpenGraphPreviewTool locale={locale} />,
-  'cpf-generator': ({ locale }) => <CpfGeneratorTool locale={locale} />,
-  'gerador-pessoa-fake': ({ locale }) => <FakePersonGeneratorTool locale={locale} />,
-  [credentialGeneratorToolSlug]: ({ locale }) => <PasswordGeneratorTool locale={locale} />,
-  'base64-image-viewer': ({ locale }) => <Base64ImageViewerTool locale={locale} />,
-  'image-to-base64': ({ locale }) => <ImageToBase64Tool locale={locale} />,
-  'image-compression': ({ locale }) => <ImageCompressionTool locale={locale} />,
-  'instagram-image-optimizer': ({ locale }) => <InstagramImageOptimizerTool locale={locale} />,
-  'remover-fundo-imagem': ({ locale }) => <ChromaBackgroundRemoverTool locale={locale} />,
-  'video-compression': ({ locale }) => <VideoCompressionTool locale={locale} />,
-  'video-downloader': ({ locale }) => <VideoDownloaderTool locale={locale} />,
-  'share-screen': ({ locale }) => <ShareScreenTool locale={locale} />,
-  'celular-como-webcam': ({ locale }) => <CelularComoWebcamTool locale={locale} />,
-  'extrair-audio-de-video': ({ locale }) => <AudioEditorTool locale={locale} />,
-  'criador-de-timelapse': ({ locale }) => <TimelapseCreatorTool locale={locale} />,
-  'estourador-de-audio': ({ locale }) => <AudioBlasterTool locale={locale} />,
-  'qr-code-generator': ({ locale }) => <QrCodeGeneratorTool locale={locale} />,
-  'gerador-link-whatsapp-telegram': ({ locale }) => (
-    <WhatsAppTelegramLinkGeneratorTool locale={locale} />
-  ),
-  sorteador: ({ locale }) => <SorteadorTool locale={locale} />,
-  'calculadora-juros-compostos': ({ locale }) => <CompoundInterestTool locale={locale} />,
-  'pix-decoder': ({ locale }) => <PixDecoderTool locale={locale} />,
-  'password-generator': ({ locale }) => <PasswordGeneratorTool locale={locale} />,
-  'css-generator': ({ locale }) => <CssGeneratorTool locale={locale} />,
-  'image-color-extractor': ({ locale }) => <ImageColorExtractorTool locale={locale} />,
-  'descobrir-ip-publico': ({ locale }) => <IpDiscoveryTool locale={locale} />,
-  'code-converter': ({ locale }) => <CodeConverterTool locale={locale} />,
-  'color-converter': ({ locale }) => <ColorConverterTool locale={locale} />,
-  'email-temporario': ({ locale }) => <TempEmailTool locale={locale} />,
-  'regex-tester': ({ locale }) => <RegexTesterTool locale={locale} />,
-  'conversor-unix-timestamp': ({ locale }) => <UnixTimestampConverterTool locale={locale} />,
-  'lightning-decoder': ({ locale }) => <LightningDecoderTool locale={locale} />,
-  'remover-acentos': ({ locale }) => <RemoveAccentsTool locale={locale} />,
-  'contador-de-caracteres': ({ locale }) => <CharacterCounterTool locale={locale} />,
-  'url-encoder-decoder': ({ locale }) => <UrlEncoderDecoderTool locale={locale} />,
-  'gerador-de-slug': ({ locale }) => <SlugGeneratorTool locale={locale} />,
-  'jwt-decoder': ({ locale }) => <JwtDecoderTool locale={locale} />,
-  'gerador-de-uuid-e-nanoid': ({ locale }) => <UuidNanoIdGeneratorTool locale={locale} />,
-  transfer: ({ locale }) => <TransferToolWrapper locale={locale} />,
-};
+const simpleAliasToolSlugs = new Set([
+  'transcricao-de-audio-e-video',
+  'authenticator-code-generator',
+  'bitcoin-wallet',
+  'html-viewer',
+  'markdown-editor',
+  'json-formatter',
+  'csv-viewer',
+  'editor-etiquetas-zpl',
+  'data-converter',
+  'text-diff',
+  'open-graph-preview',
+  'cpf-generator',
+  'gerador-pessoa-fake',
+  credentialGeneratorToolSlug,
+  'base64-image-viewer',
+  'image-to-base64',
+  'image-compression',
+  'instagram-image-optimizer',
+  'remover-fundo-imagem',
+  'video-compression',
+  'video-downloader',
+  'share-screen',
+  'celular-como-webcam',
+  'extrair-audio-de-video',
+  'criador-de-timelapse',
+  'estourador-de-audio',
+  'qr-code-generator',
+  'gerador-link-whatsapp-telegram',
+  'sorteador',
+  'calculadora-juros-compostos',
+  'pix-decoder',
+  'password-generator',
+  'css-generator',
+  'image-color-extractor',
+  'descobrir-ip-publico',
+  'code-converter',
+  'color-converter',
+  'email-temporario',
+  'regex-tester',
+  'conversor-unix-timestamp',
+  'lightning-decoder',
+  'remover-acentos',
+  'contador-de-caracteres',
+  'url-encoder-decoder',
+  'gerador-de-slug',
+  'jwt-decoder',
+  'gerador-de-uuid-e-nanoid',
+  'transfer',
+]);
 
 const resolveCryptoAliasUi = (
   aliasPage: ToolAliasPage,
@@ -976,13 +932,17 @@ const resolveToolAliasUi = (
     return specialUi;
   }
 
-  const simpleRenderer = simpleAliasToolUiRenderers[aliasPage.toolSlug];
-  if (!simpleRenderer) {
+  if (!simpleAliasToolSlugs.has(aliasPage.toolSlug)) {
     return { toolUi: null, focusedSection: null };
   }
 
   return {
-    toolUi: simpleRenderer(context),
+    toolUi: (
+      <PlatformAliasToolRouter
+        toolSlug={aliasPage.toolSlug}
+        locale={context.locale}
+      />
+    ),
     focusedSection: null,
   };
 };

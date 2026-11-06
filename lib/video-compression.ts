@@ -56,9 +56,6 @@ const CORE_SOURCES = [
 export const LARGE_VIDEO_THRESHOLD_BYTES = 512 * 1024 * 1024;
 export const MAX_VIDEO_FILE_SIZE_BYTES = 10 * 1024 * 1024 * 1024;
 
-const SERVER_COMPRESS_ENDPOINT = '/api/video-compress';
-const SERVER_REQUEST_TIMEOUT_MS = 8 * 60 * 1000;
-
 let ffmpegInstance: FFmpeg | null = null;
 let ffmpegLoadPromise: Promise<FFmpeg> | null = null;
 
@@ -243,88 +240,6 @@ const getTargetVideoBitrateKbps = (
   return 1400;
 };
 
-const parseOutputFilename = (contentDisposition: string | null, fallbackName: string): string => {
-  if (!contentDisposition) {
-    return fallbackName;
-  }
-
-  const match = contentDisposition.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/i);
-
-  if (!match?.[1]) {
-    return fallbackName;
-  }
-
-  try {
-    return decodeURIComponent(match[1]);
-  } catch {
-    return match[1];
-  }
-};
-
-const compressVideoViaApi = async (
-  file: File,
-  options: VideoCompressionOptions,
-): Promise<File> => {
-  if (typeof window === 'undefined') {
-    throw new Error('API de compressão indisponível fora do navegador.');
-  }
-
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('compressionLevel', String(options.compressionLevel));
-
-  const controller = new AbortController();
-  const timeout = globalThis.setTimeout(() => controller.abort(), SERVER_REQUEST_TIMEOUT_MS);
-  let syntheticProgress = 0.08;
-  const progressTicker = globalThis.setInterval(() => {
-    syntheticProgress = Math.min(0.82, syntheticProgress + 0.02);
-    emitProgress(options, syntheticProgress);
-  }, 900);
-
-  emitProgress(options, syntheticProgress);
-
-  try {
-    const response = await fetch(SERVER_COMPRESS_ENDPOINT, {
-      method: 'POST',
-      body: formData,
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      let message = `API de compressao retornou status ${response.status}.`;
-
-      try {
-        const payload = (await response.json()) as { error?: string };
-        if (payload.error) {
-          message = payload.error;
-        }
-      } catch {
-        // ignore payload parsing failure
-      }
-
-      throw new Error(message);
-    }
-
-    emitProgress(options, 0.9);
-
-    const outputBlob = await response.blob();
-    const outputName = parseOutputFilename(
-      response.headers.get('Content-Disposition'),
-      toOutputName(file.name),
-    );
-
-    emitProgress(options, 1);
-
-    return new File([outputBlob], outputName, {
-      type: outputBlob.type || 'video/mp4',
-      lastModified: Date.now(),
-    });
-  } finally {
-    globalThis.clearTimeout(timeout);
-    globalThis.clearInterval(progressTicker);
-  }
-};
-
 const ensureFfmpeg = async (): Promise<FFmpeg> => {
   if (ffmpegInstance?.loaded) {
     return ffmpegInstance;
@@ -462,22 +377,7 @@ export const compressVideoFile = async (
     };
   }
 
-  try {
-    emitLog(options, 'Tentando compressão via servidor do site...');
-    const serverOutputFile = await compressVideoViaApi(file, options);
-    emitLog(options, 'Compressão concluída via servidor do site.');
-
-    return {
-      file: serverOutputFile,
-      metadata,
-      estimatedSize,
-      profile,
-    };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    emitLog(options, `Servidor indisponível: ${message}. Iniciando o processamento local (FFmpeg.wasm).`);
-  }
-
+  emitLog(options, 'Processando localmente no navegador com FFmpeg.wasm...');
   let ffmpeg: FFmpeg;
   try {
     ffmpeg = await ensureFfmpeg();

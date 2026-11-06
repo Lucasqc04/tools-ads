@@ -58,6 +58,12 @@ type RoomPeerRuntime = {
   candidates: PendingCandidate[];
   initiatedLocally: boolean;
 };
+type TransferRosterPayload = {
+  host?: { id: string; displayName: string };
+  hostPeerId?: string;
+  peers?: Array<{ id: string; displayName: string; state: string }>;
+  pending?: Array<{ id: string; displayName: string }>;
+};
 type RoomRuntime = {
   roomId: string;
   role: RoomRole;
@@ -67,13 +73,12 @@ type RoomRuntime = {
   viewerToken?: string;
   iceServers: RTCIceServer[];
   cursor: number;
+  nextRosterAt: number;
   peers: Map<string, RoomPeerRuntime>;
   closed: boolean;
   signalInFlight: boolean;
-  rosterInFlight: boolean;
   connectedEventSent: boolean;
   signalTimer?: number;
-  rosterTimer?: number;
   heartbeatTimer?: number;
 };
 type RoomMeta = {
@@ -437,7 +442,6 @@ export function TransferLinkRoom({ locale, initialRoomId }: Props) {
     if (!runtime || runtime.closed) return;
     runtime.closed = true;
     if (runtime.signalTimer) window.clearInterval(runtime.signalTimer);
-    if (runtime.rosterTimer) window.clearInterval(runtime.rosterTimer);
     if (runtime.heartbeatTimer) window.clearInterval(runtime.heartbeatTimer);
     runtime.peers.forEach((peer) => {
       peer.channel?.close();
@@ -536,23 +540,93 @@ export function TransferLinkRoom({ locale, initialRoomId }: Props) {
     }
   }, [closePeer, closeRuntime, copy.deviceNameTemplate, copy.roomExpired, createPeerConnection, participants.length, sendSignal]);
 
+  const statusForPeer = useCallback((runtime: RoomRuntime, peerId: string, fallback?: string): ParticipantStatus => {
+    const peer = runtime.peers.get(peerId);
+    if (peer?.channel?.readyState === 'open') return 'connected';
+    if (peer) return connectionStateToStatus(peer.pc.connectionState);
+    return fallback === 'disconnected' ? 'disconnected' : 'connecting';
+  }, []);
+
+  const syncHostRoster = useCallback((runtime: RoomRuntime, roster: TransferRosterPayload) => {
+    if (runtime.closed) return;
+    const peers = roster.peers ?? [];
+    setParticipants([
+      { id: runtime.selfPeerId, displayName: runtime.localName, role: 'host', state: 'connected', isLocal: true },
+      ...peers.map((person) => ({
+        id: person.id,
+        displayName: person.displayName,
+        role: 'viewer' as const,
+        state: statusForPeer(runtime, person.id, person.state),
+        isLocal: false,
+      })),
+    ]);
+    for (const person of peers) {
+      const peer = runtime.peers.get(person.id);
+      if (!peer) void startOutgoingPeer(runtime, person);
+      else peer.displayName = person.displayName;
+    }
+    const activeIds = new Set(peers.map((person) => person.id));
+    for (const peerId of runtime.peers.keys()) {
+      if (!activeIds.has(peerId)) closePeer(runtime, peerId);
+    }
+  }, [closePeer, startOutgoingPeer, statusForPeer]);
+
+  const syncViewerRoster = useCallback((runtime: RoomRuntime, roster: TransferRosterPayload) => {
+    if (runtime.closed || !roster.host) return;
+    const hostId = roster.hostPeerId ?? roster.host.id ?? 'host';
+    const remoteParticipants = [
+      { id: hostId, displayName: roster.host.displayName || deviceNameFor(copy.deviceNameTemplate, 1), state: 'connected' },
+      ...(roster.peers ?? []).filter((person) => person.id !== runtime.selfPeerId && person.id !== hostId),
+    ];
+    setParticipants([
+      { id: runtime.selfPeerId, displayName: runtime.localName, role: 'viewer', state: 'connected', isLocal: true },
+      ...remoteParticipants.map((person) => ({
+        id: person.id,
+        displayName: person.displayName,
+        role: person.id === hostId ? 'host' as const : 'viewer' as const,
+        state: statusForPeer(runtime, person.id, person.state),
+        isLocal: false,
+      })),
+    ]);
+
+    const remoteIds = new Set(remoteParticipants.map((person) => person.id));
+    for (const person of remoteParticipants) {
+      if (person.id === hostId || runtime.peers.has(person.id)) continue;
+      if (runtime.selfPeerId < person.id) void startOutgoingPeer(runtime, person);
+    }
+    for (const peerId of runtime.peers.keys()) {
+      if (!remoteIds.has(peerId)) closePeer(runtime, peerId);
+    }
+  }, [closePeer, copy.deviceNameTemplate, startOutgoingPeer, statusForPeer]);
+
   const pollRoomSignals = useCallback(async (runtime: RoomRuntime) => {
     if (runtime.closed || runtime.signalInFlight) return;
     runtime.signalInFlight = true;
     try {
+      const rosterInterval = runtime.role === 'host' ? 3_000 : 4_000;
+      const includeRoster = Date.now() >= runtime.nextRosterAt;
+      if (includeRoster) runtime.nextRosterAt = Date.now() + rosterInterval;
       const query = runtime.role === 'host'
         ? `role=host&after=${runtime.cursor}`
         : `role=viewer&peerId=${runtime.selfPeerId}&after=${runtime.cursor}`;
       const headers: Record<string, string> = runtime.role === 'host'
         ? { 'X-Screenshare-Host-Token': runtime.hostToken ?? '' }
         : { 'X-Screenshare-Viewer-Token': runtime.viewerToken ?? '' };
-      const result = await requestRoomApi<{ messages: ScreenShareSignal[]; roomState?: string }>(
-        `/api/screenshare/rooms/${runtime.roomId}/signals?${query}`,
+      const result = await requestRoomApi<{
+        messages: ScreenShareSignal[];
+        roomState?: string;
+        roster?: TransferRosterPayload | null;
+      }>(
+        `/api/screenshare/rooms/${runtime.roomId}/signals?${query}${includeRoster ? '&roster=1' : ''}`,
         { headers },
       );
       for (const signal of result.messages) {
         runtime.cursor = Math.max(runtime.cursor, signal.sequence);
         await processSignal(runtime, signal);
+      }
+      if (includeRoster && result.roster) {
+        if (runtime.role === 'host') syncHostRoster(runtime, result.roster);
+        else syncViewerRoster(runtime, result.roster);
       }
       if (result.roomState === 'closed' || result.roomState === 'expired') {
         setNotice({ tone: 'error', text: copy.roomExpired });
@@ -567,100 +641,7 @@ export function TransferLinkRoom({ locale, initialRoomId }: Props) {
     } finally {
       runtime.signalInFlight = false;
     }
-  }, [closeRuntime, copy.roomExpired, processSignal]);
-
-  const statusForPeer = useCallback((runtime: RoomRuntime, peerId: string, fallback?: string): ParticipantStatus => {
-    const peer = runtime.peers.get(peerId);
-    if (peer?.channel?.readyState === 'open') return 'connected';
-    if (peer) return connectionStateToStatus(peer.pc.connectionState);
-    return fallback === 'disconnected' ? 'disconnected' : 'connecting';
-  }, []);
-
-  const syncHostRoster = useCallback(async (runtime: RoomRuntime) => {
-    if (runtime.closed || runtime.rosterInFlight) return;
-    runtime.rosterInFlight = true;
-    try {
-      const result = await requestRoomApi<{
-        host: { id: string; displayName: string };
-        peers: Array<{ id: string; displayName: string; state: string }>;
-      }>(`/api/screenshare/rooms/${runtime.roomId}/peers`, {
-        headers: { 'X-Screenshare-Host-Token': runtime.hostToken ?? '' },
-      });
-      setParticipants([
-        { id: runtime.selfPeerId, displayName: runtime.localName, role: 'host', state: 'connected', isLocal: true },
-        ...result.peers.map((person) => ({
-          id: person.id,
-          displayName: person.displayName,
-          role: 'viewer' as const,
-          state: statusForPeer(runtime, person.id, person.state),
-          isLocal: false,
-        })),
-      ]);
-      for (const person of result.peers) {
-        const peer = runtime.peers.get(person.id);
-        if (!peer) void startOutgoingPeer(runtime, person);
-        else peer.displayName = person.displayName;
-      }
-      const activeIds = new Set(result.peers.map((person) => person.id));
-      for (const peerId of runtime.peers.keys()) {
-        if (!activeIds.has(peerId)) closePeer(runtime, peerId);
-      }
-    } catch (error) {
-      const code = (error as ApiError)?.code;
-      if (code === 'room_ended' || code === 'not_found') {
-        setNotice({ tone: 'error', text: copy.roomExpired });
-        await closeRuntime(false);
-      }
-    } finally {
-      runtime.rosterInFlight = false;
-    }
-  }, [closePeer, closeRuntime, copy.roomExpired, startOutgoingPeer, statusForPeer]);
-
-  const syncViewerRoster = useCallback(async (runtime: RoomRuntime) => {
-    if (runtime.closed || runtime.rosterInFlight) return;
-    runtime.rosterInFlight = true;
-    try {
-      const result = await requestRoomApi<{
-        host: { id: string; displayName: string };
-        hostPeerId?: string;
-        peers: Array<{ id: string; displayName: string; state: string }>;
-      }>(`/api/screenshare/rooms/${runtime.roomId}/participants?peerId=${runtime.selfPeerId}`, {
-        headers: { 'X-Screenshare-Viewer-Token': runtime.viewerToken ?? '' },
-      });
-      const hostId = result.hostPeerId ?? result.host.id ?? 'host';
-      const remoteParticipants = [
-        { id: hostId, displayName: result.host.displayName || deviceNameFor(copy.deviceNameTemplate, 1), state: 'connected' },
-        ...result.peers.filter((person) => person.id !== runtime.selfPeerId && person.id !== hostId),
-      ];
-      setParticipants([
-        { id: runtime.selfPeerId, displayName: runtime.localName, role: 'viewer', state: 'connected', isLocal: true },
-        ...remoteParticipants.map((person) => ({
-          id: person.id,
-          displayName: person.displayName,
-          role: person.id === hostId ? 'host' as const : 'viewer' as const,
-          state: statusForPeer(runtime, person.id, person.state),
-          isLocal: false,
-        })),
-      ]);
-
-      const remoteIds = new Set(remoteParticipants.map((person) => person.id));
-      for (const person of remoteParticipants) {
-        if (person.id === hostId || runtime.peers.has(person.id)) continue;
-        if (runtime.selfPeerId < person.id) void startOutgoingPeer(runtime, person);
-      }
-      for (const peerId of runtime.peers.keys()) {
-        if (!remoteIds.has(peerId)) closePeer(runtime, peerId);
-      }
-    } catch (error) {
-      const code = (error as ApiError)?.code;
-      if (code === 'room_ended' || code === 'not_found') {
-        setNotice({ tone: 'error', text: copy.roomExpired });
-        await closeRuntime(false);
-      }
-    } finally {
-      runtime.rosterInFlight = false;
-    }
-  }, [closePeer, closeRuntime, copy.deviceNameTemplate, copy.roomExpired, startOutgoingPeer, statusForPeer]);
+  }, [closeRuntime, copy.roomExpired, processSignal, syncHostRoster, syncViewerRoster]);
 
   const startRoomLoops = useCallback((runtime: RoomRuntime) => {
     const heartbeat = () => {
@@ -684,15 +665,11 @@ export function TransferLinkRoom({ locale, initialRoomId }: Props) {
             }),
       }).catch(() => undefined);
     };
-    const syncRoster = () => runtime.role === 'host' ? syncHostRoster(runtime) : syncViewerRoster(runtime);
-
     void pollRoomSignals(runtime);
-    void syncRoster();
     heartbeat();
     runtime.signalTimer = window.setInterval(() => { void pollRoomSignals(runtime); }, 1_200);
-    runtime.rosterTimer = window.setInterval(syncRoster, runtime.role === 'host' ? 3_000 : 4_000);
     runtime.heartbeatTimer = window.setInterval(heartbeat, 20_000);
-  }, [pollRoomSignals, syncHostRoster, syncViewerRoster]);
+  }, [pollRoomSignals]);
 
   const createRoom = useCallback(async () => {
     const cleanName = deviceName.trim() || deviceNameFor(copy.deviceNameTemplate, 1);
@@ -723,10 +700,10 @@ export function TransferLinkRoom({ locale, initialRoomId }: Props) {
         hostToken,
         iceServers: config.iceServers,
         cursor: 0,
+        nextRosterAt: 0,
         peers: new Map(),
         closed: false,
         signalInFlight: false,
-        rosterInFlight: false,
         connectedEventSent: false,
       };
       runtimeRef.current = runtime;
@@ -774,10 +751,10 @@ export function TransferLinkRoom({ locale, initialRoomId }: Props) {
         viewerToken,
         iceServers: config.iceServers,
         cursor: 0,
+        nextRosterAt: 0,
         peers: new Map(),
         closed: false,
         signalInFlight: false,
-        rosterInFlight: false,
         connectedEventSent: false,
       };
       runtimeRef.current = runtime;

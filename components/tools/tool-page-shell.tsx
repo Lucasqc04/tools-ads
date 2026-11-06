@@ -144,37 +144,37 @@ export function ToolPageShell({
     'image-converter': {
       'pt-br': {
         title: 'Privacidade e conversão de imagem',
-        text: 'A maioria das conversões acontece no navegador. Para converter HEIC ou HEIF em JPEG, o arquivo é enviado ao servidor do site para processamento; os arquivos temporários são removidos ao final da solicitação.',
+        text: 'As imagens são processadas no navegador e não são enviadas ao servidor. Arquivos HEIC ou HEIF só podem ser convertidos se o navegador conseguir abri-los.',
       },
       en: {
         title: 'Privacy and image conversion',
-        text: 'Most conversions happen in your browser. To convert HEIC or HEIF to JPEG, the file is sent to the site server for processing; temporary files are removed when the request finishes.',
+        text: 'Images are processed in your browser and are not sent to the server. HEIC or HEIF files can only be converted if your browser can open them.',
       },
       es: {
         title: 'Privacidad y conversión de imágenes',
-        text: 'La mayoría de las conversiones ocurre en el navegador. Para convertir HEIC o HEIF a JPEG, el archivo se envía al servidor del sitio; los archivos temporales se eliminan al finalizar la solicitud.',
+        text: 'Las imágenes se procesan en el navegador y no se envían al servidor. Los archivos HEIC o HEIF solo se pueden convertir si el navegador puede abrirlos.',
       },
       zh: {
         title: '图片转换与隐私',
-        text: '大多数转换在浏览器中完成。将 HEIC 或 HEIF 转换为 JPEG 时,文件会发送到网站服务器处理；请求结束后会删除临时文件。',
+        text: '图像在浏览器中处理，不会发送到服务器。只有浏览器能够打开 HEIC 或 HEIF 文件时，才能转换这些格式。',
       },
     },
     'video-compression': {
       'pt-br': {
         title: 'Privacidade e compressão de vídeo',
-        text: 'Vídeos acima de 512 MB são processados no navegador. Arquivos menores podem ser enviados à API do site para compressão. Se não puder enviar um vídeo ao servidor, não use essa opção com esse arquivo.',
+        text: 'Os vídeos são processados no navegador e não são enviados ao servidor. O tempo de processamento depende do tamanho do arquivo e do aparelho.',
       },
       en: {
         title: 'Privacy and video compression',
-        text: 'Videos over 512 MB are processed in your browser. Smaller files may be sent to the site API for compression. If a video cannot be sent to a server, do not use this option for that file.',
+        text: 'Videos are processed in your browser and are not sent to the server. Processing time depends on the file size and your device.',
       },
       es: {
         title: 'Privacidad y compresión de video',
-        text: 'Los videos de más de 512 MB se procesan en el navegador. Los archivos más pequeños pueden enviarse a la API del sitio para comprimirlos. Si no puedes enviar un video al servidor, no uses esta opción con ese archivo.',
+        text: 'Los videos se procesan en el navegador y no se envían al servidor. El tiempo de procesamiento depende del tamaño del archivo y del dispositivo.',
       },
       zh: {
         title: '视频压缩与隐私',
-        text: '超过 512 MB 的视频在浏览器中处理。较小的文件可能会发送到网站 API 进行压缩。如果不希望将视频发送到服务器,请勿对该文件使用此选项。',
+        text: '视频在浏览器中处理，不会发送到服务器。处理时间取决于文件大小和设备性能。',
       },
     },
     'open-graph-preview': {

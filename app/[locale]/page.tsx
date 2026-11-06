@@ -8,8 +8,6 @@ import { getDictionary } from '@/lib/i18n/dictionary';
 import { resolveLocale } from '@/lib/i18n/resolve-locale';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import {
-  isToolCategoryFilter,
-  isToolGameFilter,
   type ToolCategoryFilter,
   type ToolGameFilter,
 } from '@/lib/tools/catalog';
@@ -19,11 +17,6 @@ import type { Metadata } from 'next';
 type HomePageProps = {
   params: Promise<{
     locale: string;
-  }>;
-  searchParams?: Promise<{
-    search?: string;
-    category?: string;
-    game?: string;
   }>;
 };
 
@@ -142,28 +135,10 @@ export async function generateMetadata({
 
 export default async function HomePage({
   params,
-  searchParams,
 }: Readonly<HomePageProps>) {
   const { locale: localeParam } = await params;
   const locale = resolveLocale(localeParam);
   const dictionary = getDictionary(locale);
-
-  const resolvedSearchParams = await searchParams;
-  const query =
-    typeof resolvedSearchParams?.search === 'string'
-      ? resolvedSearchParams.search.trim()
-      : '';
-  const rawCategory =
-    typeof resolvedSearchParams?.category === 'string'
-      ? resolvedSearchParams.category
-      : 'all';
-  const rawGame =
-    typeof resolvedSearchParams?.game === 'string' ? resolvedSearchParams.game : 'all';
-
-  const category: ToolCategoryFilter = isToolCategoryFilter(rawCategory)
-    ? rawCategory
-    : 'all';
-  const game: ToolGameFilter = isToolGameFilter(rawGame) ? rawGame : 'all';
 
   const tools = getLocalizedToolsRegistry(locale);
   const popularity = await getVercelToolPopularity(locale);
@@ -207,9 +182,9 @@ export default async function HomePage({
         <ToolCatalogExplorer
           tools={tools}
           locale={locale}
-          initialQuery={query}
-          initialCategory={category}
-          initialGame={game}
+          initialQuery=""
+          initialCategory="all"
+          initialGame="all"
           labelsCategory={labelsCategory}
           labelsGame={labelsGame}
           labelsSection={labelsSection}

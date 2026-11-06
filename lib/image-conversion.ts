@@ -43,6 +43,13 @@ type PdfJsRuntime = {
   };
 };
 
+export class UnsupportedHeicInputError extends Error {
+  constructor() {
+    super('unsupported_heic_input');
+    this.name = 'UnsupportedHeicInputError';
+  }
+}
+
 const mimeTypeByFormat: Partial<Record<RasterImageFormatId, string>> = {
   png: 'image/png',
   jpeg: 'image/jpeg',
@@ -154,37 +161,18 @@ const loadImageFromFile = async (file: File): Promise<HTMLImageElement> => {
     }
   };
 
+  const lower = file.name.toLowerCase();
+  const isHeic =
+    file.type === 'image/heic' || file.type === 'image/heif' || lower.endsWith('.heic') || lower.endsWith('.heif');
+
   try {
     return await tryLoadFromBlob(file);
-  } catch (initialError) {
-    // Se falhar de primeira, para HEIC/HEIF tenta fallback server-side.
-    const lower = file.name.toLowerCase();
-    const isHeic =
-      file.type === 'image/heic' || file.type === 'image/heif' || lower.endsWith('.heic') || lower.endsWith('.heif');
-
-    if (!isHeic) {
-      throw initialError;
+  } catch (error) {
+    if (isHeic) {
+      throw new UnsupportedHeicInputError();
     }
 
-    try {
-      const form = new FormData();
-      form.append('file', file as unknown as Blob);
-
-      const resp = await fetch('/api/convert/heic', { method: 'POST', body: form });
-
-      if (!resp.ok) {
-        const text = await resp.text();
-        throw new Error(text || `Server returned ${resp.status}`);
-      }
-
-      const blob = await resp.blob();
-      return await tryLoadFromBlob(blob);
-    } catch (serverErr) {
-      const msg = serverErr instanceof Error ? serverErr.message : String(serverErr);
-      throw new Error(
-        `Falha ao carregar imagem HEIC/HEIF. Conversao server-side falhou: ${msg}`,
-      );
-    }
+    throw error;
   }
 };
 

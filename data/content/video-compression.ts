@@ -1,7 +1,7 @@
 import type { ContentBlock, FaqItem } from '@/types/content';
 
 export const videoCompressionIntro =
-  'Comprima vídeos de até 10 GB, ajuste o nível de compressão e compare o resultado antes de baixar. Vídeos acima de 512 MB são processados no seu aparelho; arquivos menores podem passar pelo servidor do site.';
+  'Comprima vídeos de até 10 GB, ajuste o nível e compare o resultado antes de baixar. O arquivo é processado no navegador e não é enviado ao servidor.';
 
 export const videoCompressionContentBlocks: ContentBlock[] = [
   {
@@ -27,7 +27,7 @@ export const videoCompressionContentBlocks: ContentBlock[] = [
   {
     title: 'Privacidade, desempenho e limites',
     paragraphs: [
-      'O que acontece com o seu arquivo depende do tamanho. Vídeos acima de 512 MB ficam no aparelho e são comprimidos por uma tarefa do navegador, com saída temporária no armazenamento local, e nunca vão para o servidor. Vídeos de até 512 MB são enviados primeiro ao servidor do site, que comprime e devolve o arquivo; o envio é temporário e os arquivos são apagados ao fim do processamento. Se o servidor estiver indisponível ou demorar demais, a compressão continua no navegador com FFmpeg, que pode precisar baixar seus componentes no primeiro uso.',
+      'O vídeo permanece no aparelho e é processado no navegador. Arquivos acima de 512 MB usam processamento local em fluxo; os menores usam FFmpeg.wasm. Os componentes de compressão podem ser baixados no primeiro uso, mas o vídeo não é enviado ao servidor do site.',
       'O limite é de 10 GB por arquivo, mas a conclusão depende de memória, espaço livre e dos codecs do navegador. Vídeos grandes podem levar bastante tempo, principalmente no celular, e o navegador pode pausar a tarefa se você trocar de aplicativo ou bloquear a tela. Mantenha a página aberta e, se possível, conecte o aparelho à energia.',
       'A compressão não divide o vídeo em cortes independentes: ela processa o fluxo de mídia inteiro para preservar a linha do tempo e a sincronia do áudio.',
     ],
@@ -53,7 +53,7 @@ export const videoCompressionFaq: FaqItem[] = [
   {
     question: 'Meu vídeo é enviado para algum servidor?',
     answer:
-      'Depende do tamanho. Acima de 512 MB, o vídeo é processado no navegador e não é enviado. Até 512 MB, ele é enviado ao servidor do site, comprimido e apagado ao fim do processamento. Se o servidor falhar, a compressão é refeita no navegador.',
+      'Não. O vídeo é processado no navegador e não é enviado ao servidor do site. Os componentes necessários podem ser baixados no primeiro uso.',
   },
   {
     question: 'Consigo comprimir um vídeo de 5 GB no celular?',

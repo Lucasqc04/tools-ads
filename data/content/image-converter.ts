@@ -28,8 +28,8 @@ export const imageConverterContentBlocks: ContentBlock[] = [
   {
     title: 'Formatos de origem, HEIC e limites',
     paragraphs: [
-      'A lista de origem inclui também TIFF, DDS, HDR, EXR, PSD e formatos RAW de câmera (CR2, NEF, ARW), mas quem lê o arquivo é o próprio navegador. Formatos comuns da web, como PNG, JPEG, WEBP, GIF, BMP e SVG, abrem sem problema. Os profissionais e RAW normalmente não abrem, e nesse caso a conversão termina com uma mensagem de erro. Se isso acontecer, exporte antes o arquivo para PNG ou JPEG no programa onde ele foi criado.',
-      'Todo o processamento de imagens e PDFs acontece no navegador, com uma exceção: se o navegador não conseguir abrir uma foto HEIC ou HEIF (o Safari costuma conseguir), o arquivo é enviado ao servidor do site, convertido em JPEG e descartado ao fim do pedido. Esse envio só vale para HEIC/HEIF e tem limite de 50 MB. O leitor de PDF também carrega um script de apoio de um CDN público, mas o conteúdo do seu PDF não é enviado.',
+      'A lista de origem inclui também TIFF, DDS, HDR, EXR, PSD e formatos RAW de câmera (CR2, NEF, ARW), mas quem lê o arquivo é o próprio navegador. Formatos comuns da web, como PNG, JPEG, WEBP, GIF, BMP e SVG, abrem sem problema. HEIC e HEIF dependem de o navegador oferecer suporte; se a foto não abrir, exporte uma cópia em JPEG no aparelho e tente novamente. Os formatos profissionais e RAW normalmente não abrem; nesse caso, exporte o arquivo para PNG ou JPEG no programa onde ele foi criado.',
+      'Todo o processamento de imagens e PDFs acontece no navegador. Arquivos HEIC e HEIF também não são enviados ao servidor: eles só podem ser convertidos quando o navegador consegue lê-los. O leitor de PDF carrega um script de apoio de um CDN público, mas o conteúdo do seu PDF não é enviado.',
       'Arquivos muito grandes ou PDFs com muitas páginas dependem da memória do aparelho. No celular, converta poucas páginas por vez. A conversão não preserva camadas, animações de GIF nem metadados da imagem original.',
     ],
   },
@@ -39,7 +39,7 @@ export const imageConverterFaq: FaqItem[] = [
   {
     question: 'Meus arquivos são enviados para um servidor?',
     answer:
-      'Normalmente não: a conversão roda no navegador. A única exceção são fotos HEIC ou HEIF que o navegador não consegue abrir. Nesse caso, o arquivo (até 50 MB) é enviado ao servidor do site só para virar JPEG e não é guardado.',
+      'Não. A conversão acontece no navegador e os arquivos não são enviados ao servidor. Para abrir HEIC ou HEIF, o navegador precisa ter suporte a esses formatos; se não abrir, salve uma cópia em JPEG no aparelho.',
   },
   {
     question: 'Para quais formatos posso converter?',

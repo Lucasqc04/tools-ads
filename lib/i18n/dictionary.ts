@@ -293,7 +293,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         {
           title: '1. Dados processados nas ferramentas',
           body:
-            'O tratamento depende da ferramenta. Pix e boleto são processados no navegador. A conversão de HEIC/HEIF e a compressão de vídeos menores podem enviar o arquivo ao servidor do site; vídeos acima de 512 MB são processados no navegador. A prévia Open Graph envia a URL informada ao servidor para buscar metadados. O baixador de vídeos envia o link informado ao servidor para localizar a mídia, e o arquivo é baixado pelo navegador. O editor de etiquetas ZPL envia o código ZPL, pelo servidor do site, ao serviço externo Labelary para gerar a imagem ou o PDF. Consultas de IP, DNS, endereços (CEP) e cripto podem usar serviços externos. A caixa de e-mail temporário mantém endereço e mensagens no servidor até a expiração configurada ou a exclusão. Leia o aviso da ferramenta e evite inserir dados sensíveis quando não forem necessários.',
+            'O tratamento depende da ferramenta. Pix, boleto, conversão de imagens e compressão de vídeos são processados no navegador; arquivos não são enviados ao servidor para essas tarefas. HEIC/HEIF só pode ser convertido se o navegador conseguir abrir o formato. A prévia Open Graph envia a URL informada ao servidor para buscar metadados. O baixador de vídeos envia o link informado ao servidor para localizar a mídia, e o arquivo é baixado pelo navegador. O editor de etiquetas ZPL envia o código ZPL, pelo servidor do site, ao serviço externo Labelary para gerar a imagem ou o PDF. Consultas de IP, DNS, endereços (CEP) e cripto podem usar serviços externos. A caixa de e-mail temporário mantém endereço e mensagens no servidor até a expiração configurada ou a exclusão. Leia o aviso da ferramenta e evite inserir dados sensíveis quando não forem necessários.',
         },
         {
           title: '2. Salas em tempo real e dados locais',
@@ -552,7 +552,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         {
           title: '1. Data processed in tools',
           body:
-            'Data handling depends on the tool. Pix and boleto checks run in the browser. HEIC/HEIF conversion and compression of smaller videos may send the file to the site server; videos over 512 MB are processed in the browser. The Open Graph preview sends the URL to our server to retrieve metadata. IP, DNS, and crypto lookups may use external services. The temporary email inbox keeps its address and messages on the server until the configured expiry or deletion. Read the tool notice and avoid entering sensitive data when it is not needed.',
+            'Data handling depends on the tool. Pix and boleto checks, image conversion, and video compression run in your browser; files are not sent to the site server for these tasks. HEIC/HEIF can only be converted if your browser can open the format. The Open Graph preview sends the URL to our server to retrieve metadata. IP, DNS, and crypto lookups may use external services. The temporary email inbox keeps its address and messages on the server until the configured expiry or deletion. Read the tool notice and avoid entering sensitive data when it is not needed.',
         },
         {
           title: '2. Analytics and preferences',
@@ -806,7 +806,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         {
           title: '1. Datos procesados en las herramientas',
           body:
-            'El tratamiento depende de cada herramienta. Pix y los boletos brasileños se procesan en el navegador. La conversión HEIC/HEIF y la compresión de videos pequeños pueden enviar el archivo al servidor del sitio; los videos de más de 512 MB se procesan en el navegador. La vista previa Open Graph envía la URL al servidor para obtener metadatos. Las consultas de IP, DNS y cripto pueden usar servicios externos. La bandeja de correo temporal conserva la dirección y los mensajes en el servidor hasta el vencimiento configurado o su eliminación. Lee el aviso de cada herramienta y evita ingresar datos sensibles cuando no sean necesarios.',
+            'El tratamiento depende de cada herramienta. Pix, los boletos brasileños, la conversión de imágenes y la compresión de videos se procesan en el navegador; esos archivos no se envían al servidor del sitio. HEIC/HEIF solo se puede convertir si el navegador puede abrir el formato. La vista previa Open Graph envía la URL al servidor para obtener metadatos. Las consultas de IP, DNS y cripto pueden usar servicios externos. La bandeja de correo temporal conserva la dirección y los mensajes en el servidor hasta el vencimiento configurado o su eliminación. Lee el aviso de cada herramienta y evita ingresar datos sensibles cuando no sean necesarios.',
         },
         {
           title: '2. Métricas y preferencias',
@@ -1060,7 +1060,7 @@ const dictionaries: Record<AppLocale, SiteDictionary> = {
         {
           title: '1. 工具中处理的数据',
           body:
-            '数据处理方式因工具而异。Pix 和巴西 boleto 检查在浏览器中运行。HEIC/HEIF 转换和较小视频的压缩可能会将文件发送到网站服务器；超过 512 MB 的视频在浏览器中处理。Open Graph 预览会将输入的网址发送到服务器以获取元数据。IP、DNS 和加密货币查询可能使用外部服务。临时邮箱地址和邮件会保存在服务器中,直到设定的过期时间或手动删除。请阅读工具提示,并避免输入非必要的敏感数据。',
+            '数据处理方式因工具而异。Pix、巴西 boleto 检查、图像转换和视频压缩均在浏览器中运行；这些任务不会将文件发送到网站服务器。只有浏览器能够打开 HEIC/HEIF 格式时才能进行转换。Open Graph 预览会将输入的网址发送到服务器以获取元数据。IP、DNS 和加密货币查询可能使用外部服务。临时邮箱地址和邮件会保存在服务器中,直到设定的过期时间或手动删除。请阅读工具提示,并避免输入非必要的敏感数据。',
         },
         {
           title: '2. 统计与偏好设置',

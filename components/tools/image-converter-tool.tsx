@@ -18,6 +18,7 @@ import {
   formatSupportsQuality,
   getPdfPageCount,
   isImageFormatAvailableForOutput,
+  UnsupportedHeicInputError,
 } from '@/lib/image-conversion';
 import { type AppLocale } from '@/lib/i18n/config';
 import type { ImageFormatId, RasterImageFormatId } from '@/types/image-conversion';
@@ -181,6 +182,7 @@ type LocaleUi = {
   multiResultSummary: (generated: number, total: number) => string;
   noFileHint: string;
   genericError: string;
+  heicUnsupported: string;
   partialPagesNotice: (converted: number, total: number) => string;
   invalidFileForFormat: (formatLabel: string) => string;
   unsupportedOutput: (formatLabel: string) => string;
@@ -224,6 +226,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
       `${generated} imagem(ns) gerada(s) de ${total} página(s) do PDF.`,
     noFileHint: 'Selecione um arquivo para iniciar.',
     genericError: 'Não foi possível concluir a conversão.',
+    heicUnsupported: 'Este navegador não conseguiu abrir a imagem HEIC/HEIF. Tente um navegador compatível ou converta o arquivo para JPEG antes.',
     partialPagesNotice: (converted, total) =>
       `Foram convertidas ${converted} de ${total} páginas. Ajuste o limite para converter mais.`,
     invalidFileForFormat: (formatLabel) =>
@@ -296,6 +299,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
       `${generated} image(s) generated from ${total} PDF page(s).`,
     noFileHint: 'Select a file to start.',
     genericError: 'Could not complete conversion.',
+    heicUnsupported: 'This browser could not open the HEIC/HEIF image. Try a compatible browser or convert the file to JPEG first.',
     partialPagesNotice: (converted, total) =>
       `${converted} of ${total} pages were converted. Increase the page limit to process more.`,
     invalidFileForFormat: (formatLabel) =>
@@ -369,6 +373,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
       `${generated} imagen(es) generada(s) de ${total} página(s) del PDF.`,
     noFileHint: 'Selecciona un archivo para comenzar.',
     genericError: 'No fue posible completar la conversión.',
+    heicUnsupported: 'Este navegador no pudo abrir la imagen HEIC/HEIF. Prueba un navegador compatible o convierte el archivo a JPEG antes.',
     partialPagesNotice: (converted, total) =>
       `Se convirtieron ${converted} de ${total} páginas. Aumenta el límite para procesar más.`,
     invalidFileForFormat: (formatLabel) =>
@@ -441,6 +446,7 @@ const uiByLocale: Record<AppLocale, LocaleUi> = {
       `${generated} image(s) generated from ${total} PDF page(s).`,
     noFileHint: 'Select a file to start.',
     genericError: 'Could not complete conversion.',
+    heicUnsupported: '此浏览器无法打开 HEIC/HEIF 图片。请使用兼容的浏览器，或先将文件转换为 JPEG。',
     partialPagesNotice: (converted, total) =>
       `${converted} of ${total} pages were converted. Increase the page limit to process more.`,
     invalidFileForFormat: (formatLabel) =>
@@ -797,7 +803,13 @@ export function ImageConverterTool({
         format: outputFormat,
       });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : ui.genericError);
+      setErrorMessage(
+        error instanceof UnsupportedHeicInputError
+          ? ui.heicUnsupported
+          : error instanceof Error
+            ? error.message
+            : ui.genericError,
+      );
       trackEvent('tool_error', {
         tool: TOOL_ID.imageConverter,
         locale,

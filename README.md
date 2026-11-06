@@ -94,6 +94,15 @@ types/                  contratos TypeScript
 6. Configurar metadata, canonical, JSON-LD e ferramentas relacionadas.
 7. Validar responsividade, acessibilidade, lint, typecheck e build.
 
+### Limites de execução na Vercel
+
+- Não adicionar polling por padrão. Prefira atualização por ação do usuário ou eventos já disponíveis no navegador.
+- Se uma operação realmente exigir polling, use o intervalo mais longo que preserve a tarefa, aumente o intervalo após tentativas sem resultado, pause quando a aba estiver oculta e impeça chamadas concorrentes. Timers e requests devem ser limpos ao sair do fluxo.
+- Evite loops subsegundo e atualizações automáticas contínuas em telas administrativas ou ferramentas. Explique qualquer atraso necessário para a pessoa usuária.
+- Prefira processar arquivos e cálculos no navegador ou em Web Workers quando isso preservar compatibilidade, segurança e experiência. Não envie arquivos a uma Function só por conveniência.
+- Toda Function pública que executar processamento pesado deve ter limites de tamanho e frequência aplicados no servidor. Um cooldown na interface melhora a experiência, mas não limita chamadas diretas à API.
+- Acompanhe o orçamento de Fluid Active CPU do plano Vercel. Duração da requisição inclui espera por rede; priorize a métrica de CPU ativa por rota ao avaliar consumo. Se uma operação server-side pesada não puder ser limitada nem substituída por processamento local seguro, remova esse caminho do produto.
+
 ## SEO e distribuição de conteúdo
 
 - metadata dinâmica por rota;

@@ -91,7 +91,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
       'Comprima vários vídeos, ajuste o nível de compressão e compare o resultado antes de baixar.',
     filesLabel: 'Vídeos para comprimir',
     filesHint:
-      'Adicione vários arquivos de até 10 GB. Vídeos acima de 512 MB são processados no seu aparelho; arquivos menores podem usar o processamento do site.',
+      'Adicione vídeos de até 10 GB. Todos são processados no navegador; os arquivos não são enviados ao servidor do site.',
     compressionLevelLabel: 'Nível de compressão',
     compressionLevelHint:
       'Nível maior reduz mais o tamanho, com mais perda de qualidade e possível redução da resolução.',
@@ -114,7 +114,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     ffmpegWarmupNote:
       'No primeiro uso, o mecanismo de compressão pode baixar recursos e iniciar mais devagar.',
     processingLocalNote:
-      'Vídeos acima de 512 MB ficam no aparelho e são processados no navegador. Arquivos menores podem ser enviados ao servidor do site para compressão, quando disponível.',
+      'Todos os vídeos ficam no aparelho e são processados no navegador. Arquivos acima de 512 MB usam processamento local em fluxo.',
     done: 'Concluído',
     pending: 'Pendente',
     error: 'Erro',
@@ -141,7 +141,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
       'Compress multiple videos directly in your browser, control compression level, and preview before download.',
     filesLabel: 'Videos to compress',
     filesHint:
-      'Batch uploads up to 10 GB are supported. Videos over 512 MB are streamed locally; smaller files may use the site processing API.',
+      'Batch uploads up to 10 GB are supported. Every video is processed in your browser and is not sent to the site server.',
     compressionLevelLabel: 'Compression level',
     compressionLevelHint:
       'Higher levels usually reduce size more, with stronger quality and resolution impact.',
@@ -164,7 +164,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     ffmpegWarmupNote:
       'On first run, the compression engine may download assets and start slower.',
     processingLocalNote:
-      'Videos over 512 MB stay on your device and are processed in the browser. Smaller files may be sent to the site processing API when available.',
+      'Every video stays on your device and is processed in your browser. Files over 512 MB use streamed local processing.',
     done: 'Done',
     pending: 'Pending',
     error: 'Error',
@@ -191,7 +191,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
       'Comprime varios videos en el navegador, ajusta el nivel de compresion y previsualiza antes de descargar.',
     filesLabel: 'Videos para comprimir',
     filesHint:
-      'Admite cargas por lote de hasta 10 GB. Los videos de mas de 512 MB se procesan localmente en flujo; los archivos menores pueden usar la API del sitio.',
+      'Admite cargas por lote de hasta 10 GB. Todos los videos se procesan en el navegador y no se envian al servidor del sitio.',
     compressionLevelLabel: 'Nivel de compresion',
     compressionLevelHint:
       'Un nivel mayor suele reducir mas el tamano, con mayor impacto en calidad y resolucion.',
@@ -214,7 +214,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     ffmpegWarmupNote:
       'En el primer uso, el motor de compresion puede descargar recursos e iniciar mas lento.',
     processingLocalNote:
-      'Los videos de mas de 512 MB permanecen en el dispositivo y se procesan en el navegador. Los archivos menores pueden enviarse a la API del sitio cuando este disponible.',
+      'Todos los videos permanecen en el dispositivo y se procesan en el navegador. Los archivos de mas de 512 MB usan procesamiento local en flujo.',
     done: 'Listo',
     pending: 'Pendiente',
     error: 'Error',
@@ -241,7 +241,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
       'Compress multiple videos directly in your browser, control compression level, and preview before download.',
     filesLabel: 'Videos to compress',
     filesHint:
-      'Batch uploads up to 10 GB are supported. Videos over 512 MB are streamed locally; smaller files may use the site processing API.',
+      'Batch uploads up to 10 GB are supported. Every video is processed in your browser and is not sent to the site server.',
     compressionLevelLabel: 'Compression level',
     compressionLevelHint:
       'Higher levels usually reduce size more, with stronger quality and resolution impact.',
@@ -264,7 +264,7 @@ const uiByLocale: Record<AppLocale, VideoCompressionUi> = {
     ffmpegWarmupNote:
       'On first run, the compression engine may download assets and start slower.',
     processingLocalNote:
-      'Videos over 512 MB stay on your device and are processed in the browser. Smaller files may be sent to the site processing API when available.',
+      'Every video stays on your device and is processed in your browser. Files over 512 MB use streamed local processing.',
     done: 'Done',
     pending: 'Pending',
     error: 'Error',

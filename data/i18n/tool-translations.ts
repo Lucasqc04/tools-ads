@@ -822,7 +822,7 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       {
         question: 'Are files uploaded to a server?',
         answer:
-          'By default, no. Processing is local in the browser, which helps with privacy and faster response.',
+          'No. Processing is local in the browser and files are not sent to the site server. HEIC/HEIF input requires a browser that can open those formats; if it cannot, save a JPEG copy on your device first.',
       },
       {
         question: 'Which formats are supported?',
@@ -1904,7 +1904,7 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
   'video-compression': {
     name: 'Online Video Compressor',
     shortDescription:
-      'Compress videos up to 10 GB with adjustable quality, streamed local processing for large files, and before/after preview.',
+      'Compress videos up to 10 GB in your browser with adjustable quality and before/after preview. Files stay on your device.',
     primaryKeyword: 'compress video online free',
     secondaryKeywords: [
       'video compressor online',
@@ -1922,16 +1922,16 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       'Users who need to reduce video size with control over compression level and preview before downloading.',
     seoTitle: 'Free Online Video Compressor | Reduce Video Size',
     seoDescription:
-      'Compress videos up to 10 GB with an adjustable level, size estimate, and before/after preview. Large videos stay on your device.',
+      'Compress videos up to 10 GB in your browser with an adjustable level, size estimate, and before/after preview. Files stay on your device.',
     h1: 'Free Video Compressor for Large Files with Preview',
     intro:
-      'Add videos up to 10 GB, adjust compression strength, preview the result, and download smaller MP4 files. Large files are processed on your device.',
+      'Add videos up to 10 GB, adjust compression strength, preview the result, and download smaller MP4 files. Every file is processed on your device.',
     contentBlocks: [
       {
         title: 'In-browser video compression',
         paragraphs: [
           'This tool compresses videos directly in the browser, with no desktop installation required.',
-          'You can process multiple files in one queue and keep track of progress file by file. Videos larger than 512 MB use streamed local processing and are not sent to the site server.',
+          'You can process multiple files in one queue and keep track of progress file by file. All videos are processed in your browser and are not sent to the site server. Files larger than 512 MB use streamed local processing.',
         ],
       },
       {
@@ -1950,7 +1950,7 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       {
         title: 'Privacy and performance notes',
         paragraphs: [
-          'Videos over 512 MB stay on your device and are compressed in a browser worker, with temporary output written to local storage. Smaller files may use the site processing API when it is available.',
+          'Every video stays on your device and is compressed in the browser. Files over 512 MB use a browser worker with temporary output written to local storage. The compression components may download on first use.',
           'Large, high-resolution videos can take a long time. Mobile browsers may pause work when you switch apps or lock your phone, so keep this page open and connect the device to power when possible.',
           'The tool streams media data instead of splitting the video into separately compressed clips, which avoids introducing cut points or audio synchronization gaps when joining segments.',
         ],
@@ -1975,7 +1975,7 @@ const enTranslations: Record<ToolId, ToolTranslation> = {
       {
         question: 'Are videos uploaded to a server?',
         answer:
-          'Videos over 512 MB are processed locally and are not sent to the server. Smaller files may be sent to the site processing API when it is available.',
+          'No. Videos are processed in your browser and are not sent to the site server. Compression components may download the first time you use the tool.',
       },
       {
         question: 'Can I compress a 5 GB video on a phone?',
@@ -3439,7 +3439,7 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       {
         question: '¿Los archivos se suben a servidor?',
         answer:
-          'No por defecto. El procesamiento ocurre localmente en el navegador para mejorar privacidad y velocidad.',
+          'No. El procesamiento ocurre en el navegador y los archivos no se envían al servidor del sitio. Para abrir HEIC/HEIF, el navegador debe admitir esos formatos; si no los abre, guarda primero una copia JPEG en tu dispositivo.',
       },
       {
         question: '¿Qué formatos están disponibles?',
@@ -4188,7 +4188,7 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
   'video-compression': {
     name: 'Compresor de Video Online',
     shortDescription:
-      'Comprime videos de hasta 10 GB con calidad ajustable, procesamiento local en flujo para archivos grandes y vista previa.',
+      'Comprime videos de hasta 10 GB en el navegador con calidad ajustable y vista previa. Los archivos permanecen en tu dispositivo.',
     primaryKeyword: 'comprimir video online gratis',
     secondaryKeywords: [
       'compresor de video online',
@@ -4206,16 +4206,16 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       'Usuarios que buscan reducir tamano de video con control de compresion y preview antes de descargar.',
     seoTitle: 'Compresor de Video Online Gratis | Reducir Tamano',
     seoDescription:
-      'Comprime videos de hasta 10 GB con nivel ajustable, estimacion de tamano y vista previa. Los archivos grandes permanecen en tu dispositivo.',
+      'Comprime videos de hasta 10 GB en el navegador con nivel ajustable, estimacion de tamano y vista previa. Los archivos permanecen en tu dispositivo.',
     h1: 'Compresor de Video Gratis para Archivos Grandes',
     intro:
-      'Agrega videos de hasta 10 GB, ajusta la compresion, revisa el resultado y descarga archivos MP4 mas livianos. Los archivos grandes se procesan en tu dispositivo.',
+      'Agrega videos de hasta 10 GB, ajusta la compresion, revisa el resultado y descarga archivos MP4 mas livianos. Todos los archivos se procesan en tu dispositivo.',
     contentBlocks: [
       {
         title: 'Compresion de video en navegador',
         paragraphs: [
           'La herramienta reduce tamano de videos sin instalar software de escritorio.',
-          'Permite trabajar por lote y acompanar el progreso de cada archivo. Los videos de mas de 512 MB se procesan localmente en flujo y no se envian al servidor del sitio.',
+          'Permite trabajar por lote y acompañar el progreso de cada archivo. Todos los videos se procesan en el navegador y no se envían al servidor del sitio. Los archivos de más de 512 MB usan procesamiento local en flujo.',
         ],
       },
       {
@@ -4234,7 +4234,7 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       {
         title: 'Privacidad y rendimiento',
         paragraphs: [
-          'Los videos de mas de 512 MB permanecen en el dispositivo y se comprimen en un worker del navegador, con el resultado temporal en el almacenamiento local. Los archivos menores pueden usar la API del sitio cuando este disponible.',
+          'Todos los videos permanecen en el dispositivo y se comprimen en el navegador. Los archivos de más de 512 MB usan un worker con resultado temporal en el almacenamiento local. Los componentes de compresión pueden descargarse en el primer uso.',
           'Los videos grandes y de alta resolucion pueden tardar bastante. Los navegadores moviles pueden pausar el trabajo al cambiar de aplicacion o bloquear el celular; deja esta pagina abierta y conecta el dispositivo a la corriente si es posible.',
           'La herramienta procesa el flujo de medios en lugar de dividir el video en clips comprimidos por separado, para evitar cortes y problemas de sincronizacion al unir segmentos.',
         ],
@@ -4259,7 +4259,7 @@ const esTranslations: Record<ToolId, ToolTranslation> = {
       {
         question: '¿Los videos se envian al servidor?',
         answer:
-          'Los videos de mas de 512 MB se procesan localmente y no se envian al servidor. Los archivos menores pueden enviarse a la API del sitio cuando este disponible.',
+          'No. Los videos se procesan en el navegador y no se envían al servidor del sitio. Los componentes de compresión pueden descargarse la primera vez que uses la herramienta.',
       },
       {
         question: '¿Puedo comprimir un video de 5 GB en el celular?',

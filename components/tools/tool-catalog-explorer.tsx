@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { ToolCard } from '@/components/tools/tool-card';
@@ -11,6 +11,8 @@ import type { AppLocale } from '@/lib/i18n/config';
 import { localizePath } from '@/lib/i18n/config';
 import {
   filterToolsCatalog,
+  isToolCategoryFilter,
+  isToolGameFilter,
   sortToolsCatalog,
   type ToolCategoryFilter,
   type ToolGameFilter,
@@ -69,13 +71,33 @@ export function ToolCatalogExplorer({
   popularity,
   viewAllLabel,
 }: ToolCatalogExplorerProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState<ToolCategoryFilter>(initialCategory);
   const [game, setGame] = useState<ToolGameFilter>(
     initialCategory === 'all' || initialCategory === 'gaming' ? initialGame : 'all',
   );
+  const [filtersReady, setFiltersReady] = useState(false);
+
+  useEffect(() => {
+    const readFiltersFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      const nextCategory = params.get('category') ?? 'all';
+      const nextGame = params.get('game') ?? 'all';
+      setQuery(params.get('search')?.trim() ?? '');
+      setCategory(isToolCategoryFilter(nextCategory) ? nextCategory : 'all');
+      setGame(
+        isToolCategoryFilter(nextCategory) && nextCategory !== 'all' && nextCategory !== 'gaming'
+          ? 'all'
+          : isToolGameFilter(nextGame) ? nextGame : 'all',
+      );
+      setFiltersReady(true);
+    };
+
+    readFiltersFromUrl();
+    window.addEventListener('popstate', readFiltersFromUrl);
+    return () => window.removeEventListener('popstate', readFiltersFromUrl);
+  }, []);
 
   const trimmedQuery = query.trim();
   const filteredTools = useMemo(
@@ -90,6 +112,8 @@ export function ToolCatalogExplorer({
   const visibleTools = sortedTools.slice(0, visibleLimit);
 
   useEffect(() => {
+    if (!filtersReady) return;
+
     const handle = window.setTimeout(() => {
       const params = new URLSearchParams();
       if (trimmedQuery) params.set('search', trimmedQuery);
@@ -97,11 +121,15 @@ export function ToolCatalogExplorer({
       if (game !== 'all') params.set('game', game);
 
       const queryString = params.toString();
-      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+      window.history.replaceState(
+        null,
+        '',
+        queryString ? `${pathname}?${queryString}` : pathname,
+      );
     }, 180);
 
     return () => window.clearTimeout(handle);
-  }, [trimmedQuery, category, game, pathname, router]);
+  }, [filtersReady, trimmedQuery, category, game, pathname]);
 
   const showGameFilter = category === 'all' || category === 'gaming';
   const querySuffix =

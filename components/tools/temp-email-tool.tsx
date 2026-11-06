@@ -58,7 +58,7 @@ type TempEmailUi = {
   loadingInitial: string;
   inboxTitle: string;
   live: string;
-  autoRefresh: string;
+  refreshHint: string;
   expiresIn: string;
   expiredBadge: string;
   copy: string;
@@ -66,6 +66,7 @@ type TempEmailUi = {
   copyAddress: string;
   refresh: string;
   refreshing: string;
+  refreshCooldown: (seconds: number) => string;
   deleteEmail: string;
   deleting: string;
   deleteConfirm: string;
@@ -148,7 +149,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     loadingInitial: 'Recuperando sua inbox salva...',
     inboxTitle: 'Inbox ativa',
     live: 'Ativa',
-    autoRefresh: 'Atualiza automaticamente',
+    refreshHint: 'Clique em Atualizar para buscar novas mensagens.',
     expiresIn: 'Expira em',
     expiredBadge: 'Expirada',
     copy: 'Copiar',
@@ -156,6 +157,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     copyAddress: 'Copiar endereço',
     refresh: 'Atualizar',
     refreshing: 'Atualizando...',
+    refreshCooldown: (seconds) => `Atualizar em ${seconds}s`,
     deleteEmail: 'Apagar inbox',
     deleting: 'Apagando...',
     deleteConfirm: 'Apagar esta inbox e todas as mensagens agora?',
@@ -163,7 +165,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     message: 'mensagem',
     messagesCount: 'mensagens',
     emptyInbox: 'Sua inbox está aguardando a primeira mensagem.',
-    emptyInboxHint: 'O endereço já está pronto para receber. Esta tela atualiza automaticamente.',
+    emptyInboxHint: 'O endereço já está pronto para receber. Clique em Atualizar para conferir mensagens novas.',
     from: 'De',
     to: 'Para',
     replyTo: 'Responder para',
@@ -213,7 +215,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     loadingInitial: 'Restoring your saved inbox...',
     inboxTitle: 'Active inbox',
     live: 'Active',
-    autoRefresh: 'Refreshes automatically',
+    refreshHint: 'Click Refresh to check for new messages.',
     expiresIn: 'Expires in',
     expiredBadge: 'Expired',
     copy: 'Copy',
@@ -221,6 +223,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     copyAddress: 'Copy address',
     refresh: 'Refresh',
     refreshing: 'Refreshing...',
+    refreshCooldown: (seconds) => `Refresh in ${seconds}s`,
     deleteEmail: 'Delete inbox',
     deleting: 'Deleting...',
     deleteConfirm: 'Delete this inbox and all messages now?',
@@ -228,7 +231,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     message: 'message',
     messagesCount: 'messages',
     emptyInbox: 'Your inbox is waiting for its first message.',
-    emptyInboxHint: 'The address is ready to receive. This screen refreshes automatically.',
+    emptyInboxHint: 'The address is ready to receive. Click Refresh to check for new messages.',
     from: 'From',
     to: 'To',
     replyTo: 'Reply to',
@@ -278,7 +281,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     loadingInitial: 'Recuperando tu inbox guardada...',
     inboxTitle: 'Inbox activa',
     live: 'Activa',
-    autoRefresh: 'Se actualiza automaticamente',
+    refreshHint: 'Haz clic en Actualizar para buscar mensajes nuevos.',
     expiresIn: 'Expira en',
     expiredBadge: 'Expirada',
     copy: 'Copiar',
@@ -286,6 +289,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     copyAddress: 'Copiar direccion',
     refresh: 'Actualizar',
     refreshing: 'Actualizando...',
+    refreshCooldown: (seconds) => `Actualizar en ${seconds}s`,
     deleteEmail: 'Eliminar inbox',
     deleting: 'Eliminando...',
     deleteConfirm: 'Eliminar esta inbox y todos los mensajes ahora?',
@@ -293,7 +297,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     message: 'mensaje',
     messagesCount: 'mensajes',
     emptyInbox: 'Tu inbox esta esperando el primer mensaje.',
-    emptyInboxHint: 'La direccion ya puede recibir. Esta pantalla se actualiza automaticamente.',
+    emptyInboxHint: 'La direccion ya puede recibir. Haz clic en Actualizar para buscar mensajes nuevos.',
     from: 'De',
     to: 'Para',
     replyTo: 'Responder a',
@@ -343,7 +347,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     loadingInitial: 'Restoring your saved inbox...',
     inboxTitle: 'Active inbox',
     live: 'Active',
-    autoRefresh: 'Refreshes automatically',
+    refreshHint: 'Click Refresh to check for new messages.',
     expiresIn: 'Expires in',
     expiredBadge: 'Expired',
     copy: 'Copy',
@@ -351,6 +355,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     copyAddress: 'Copy address',
     refresh: 'Refresh',
     refreshing: 'Refreshing...',
+    refreshCooldown: (seconds) => `Refresh in ${seconds}s`,
     deleteEmail: 'Delete inbox',
     deleting: 'Deleting...',
     deleteConfirm: 'Delete this inbox and all messages now?',
@@ -358,7 +363,7 @@ const uiByLocale: Record<AppLocale, TempEmailUi> = {
     message: 'message',
     messagesCount: 'messages',
     emptyInbox: 'Your inbox is waiting for its first message.',
-    emptyInboxHint: 'The address is ready to receive. This screen refreshes automatically.',
+    emptyInboxHint: 'The address is ready to receive. Click Refresh to check for new messages.',
     from: 'From',
     to: 'To',
     replyTo: 'Reply to',
@@ -537,11 +542,13 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
   const [isHydrated, setIsHydrated] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshCooldownUntil, setRefreshCooldownUntil] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [copiedTarget, setCopiedTarget] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
   const hasReceivedFirstMessageRef = useRef(false);
+  const lastManualRefreshAtRef = useRef(0);
 
   const clearStoredInbox = useCallback(() => {
     globalThis.localStorage.removeItem(localStorageKeys.token);
@@ -667,20 +674,6 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
   }, [clearStoredInbox, fetchMessages, ui.restoreInfo]);
 
   useEffect(() => {
-    if (!inbox?.token) {
-      return;
-    }
-
-    const intervalId = globalThis.setInterval(() => {
-      if (globalThis.document.visibilityState === 'visible') {
-        void fetchMessages(inbox.token, { silent: true });
-      }
-    }, 10_000);
-
-    return () => globalThis.clearInterval(intervalId);
-  }, [fetchMessages, inbox?.token]);
-
-  useEffect(() => {
     if (!inbox || getRemainingSeconds(inbox.expiresAt, nowMs) > 0) {
       return;
     }
@@ -704,6 +697,7 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
     () => (inbox ? getRemainingSeconds(inbox.expiresAt, nowMs) : 0),
     [inbox, nowMs],
   );
+  const refreshCooldownSeconds = Math.max(0, Math.ceil((refreshCooldownUntil - nowMs) / 1000));
   const selectedMessage = useMemo(
     () => messages.find((message) => message.id === selectedMessageId) ?? null,
     [messages, selectedMessageId],
@@ -817,10 +811,18 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
   };
 
   const handleRefresh = async () => {
-    if (!inbox?.token) {
+    const requestedAt = Date.now();
+    if (
+      !inbox?.token ||
+      isRefreshing ||
+      requestedAt - lastManualRefreshAtRef.current < 10_000
+    ) {
       return;
     }
 
+    lastManualRefreshAtRef.current = requestedAt;
+    setNowMs(requestedAt);
+    setRefreshCooldownUntil(requestedAt + 10_000);
     setStatusMessage('');
     await fetchMessages(inbox.token);
   };
@@ -884,7 +886,7 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
           </div>
           {inbox ? (
             <div className="flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-semibold text-emerald-200">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" aria-hidden="true" />
+              <span className="h-2 w-2 rounded-full bg-emerald-300" aria-hidden="true" />
               {ui.live}
             </div>
           ) : null}
@@ -965,7 +967,7 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <h2 className="text-sm font-semibold text-slate-800">{ui.inboxTitle}</h2>
-                  <span className="text-xs text-slate-500">{ui.autoRefresh}</span>
+                  <span className="text-xs text-slate-500">{ui.refreshHint}</span>
                 </div>
                 <div className="mt-2 flex min-w-0 items-center gap-2">
                   <p className="min-w-0 truncate font-mono text-base font-semibold text-slate-950" title={inbox.address}>
@@ -987,9 +989,18 @@ export function TempEmailTool({ locale = 'pt-br', domain = 'mail.lucasqc.com' }:
                 <span className="rounded-full border border-brand-200 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700">
                   {remainingSeconds > 0 ? `${ui.expiresIn} ${formatRemaining(remainingSeconds)}` : ui.expiredBadge}
                 </span>
-                <Button variant="secondary" onClick={handleRefresh} disabled={isRefreshing} className="gap-2">
+                <Button
+                  variant="secondary"
+                  onClick={handleRefresh}
+                  disabled={isRefreshing || refreshCooldownSeconds > 0}
+                  className="gap-2"
+                >
                   <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} aria-hidden="true" />
-                  {isRefreshing ? ui.refreshing : ui.refresh}
+                  {isRefreshing
+                    ? ui.refreshing
+                    : refreshCooldownSeconds > 0
+                      ? ui.refreshCooldown(refreshCooldownSeconds)
+                      : ui.refresh}
                 </Button>
                 <Button variant="secondary" onClick={() => void handleCreateInbox('')} disabled={isCreating} className="gap-2">
                   <Plus className="h-4 w-4" aria-hidden="true" />
