@@ -21,6 +21,7 @@ import {
 import { formatBytes } from '@/lib/file-size';
 import { downloadBlob } from '@/lib/download';
 import type { AppLocale } from '@/lib/i18n/config';
+import { ShareResultButton } from '@/components/tools/share-result-button';
 
 type TimelapseCreatorToolProps = Readonly<{ locale?: AppLocale }>;
 type ExportState = 'idle' | 'processing' | 'done' | 'error';
@@ -493,7 +494,10 @@ export function TimelapseCreatorTool({ locale = 'pt-br' }: TimelapseCreatorToolP
               <div className="space-y-3 border-t border-slate-200 pt-5">
                 <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-800"><Video size={16} className="text-brand-700" />{ui.ready}</h4>
                 <video src={resultUrl} controls playsInline className="aspect-video max-h-[420px] w-full rounded-xl bg-slate-900 object-contain" />
-                <Button className="w-full" onClick={downloadResult}><Download size={16} className="mr-2" />{ui.download}</Button>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Button className="w-full sm:flex-1" onClick={downloadResult}><Download size={16} className="mr-2" />{ui.download}</Button>
+                  <ShareResultButton file={resultFile} locale={locale} tool={TOOL_ID.timelapseCreator} format={format} className="w-full sm:flex-1" />
+                </div>
               </div>
             ) : null}
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,9 @@ type Ui = {
   analyze: string;
   analyzing: string;
   clear: string;
+  shareLink: string;
+  linkCopied: string;
+  shareFailed: string;
   detected: (name: string) => string;
   unsupportedHint: string;
   qualityLabel: string;
@@ -72,6 +76,9 @@ const en: Ui = {
   analyze: 'Analyze link',
   analyzing: 'Analyzing...',
   clear: 'Clear',
+  shareLink: 'Share link',
+  linkCopied: 'Link copied so you can share it.',
+  shareFailed: 'Could not share the link. You can copy it from the field above.',
   detected: (name) => `Detected: ${name}`,
   unsupportedHint: 'This link does not look like a supported platform (X or Pinterest).',
   qualityLabel: 'Quality',
@@ -124,6 +131,9 @@ const ptBr: Ui = {
   analyze: 'Analisar link',
   analyzing: 'Analisando...',
   clear: 'Limpar',
+  shareLink: 'Compartilhar link',
+  linkCopied: 'Link copiado para você compartilhar.',
+  shareFailed: 'Não foi possível compartilhar o link. Você pode copiá-lo do campo acima.',
   detected: (name) => `Detectado: ${name}`,
   unsupportedHint: 'Este link não parece ser de uma plataforma aceita (X ou Pinterest).',
   qualityLabel: 'Qualidade',
@@ -176,6 +186,9 @@ const es: Ui = {
   analyze: 'Analizar enlace',
   analyzing: 'Analizando...',
   clear: 'Limpiar',
+  shareLink: 'Compartir enlace',
+  linkCopied: 'Enlace copiado para compartirlo.',
+  shareFailed: 'No se pudo compartir el enlace. Puedes copiarlo del campo anterior.',
   detected: (name) => `Detectado: ${name}`,
   unsupportedHint: 'Este enlace no parece ser de una plataforma compatible (X o Pinterest).',
   qualityLabel: 'Calidad',
@@ -235,6 +248,8 @@ export function VideoDownloaderTool({ locale = 'pt-br', platform, placeholder, h
   const [audioPercent, setAudioPercent] = useState<number | null>(null);
   const [message, setMessage] = useState('');
   const [fallbackUrl, setFallbackUrl] = useState('');
+  const [sourceUrl, setSourceUrl] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
 
   const abortRef = useRef<AbortController | null>(null);
   const runIdRef = useRef(0);
@@ -275,7 +290,9 @@ export function VideoDownloaderTool({ locale = 'pt-br', platform, placeholder, h
 
     setStatus('analyzing');
     setMessage('');
+    setShareMessage('');
     setFallbackUrl('');
+    setSourceUrl(value);
     setResult(null);
     setProgress(null);
 
@@ -308,6 +325,31 @@ export function VideoDownloaderTool({ locale = 'pt-br', platform, placeholder, h
     }
   }, []);
 
+  const shareSourceLink = useCallback(async () => {
+    if (!result || !sourceUrl) return;
+    setShareMessage('');
+    try {
+      if (typeof navigator.share === 'function') {
+        await navigator.share({ title: result.title, url: sourceUrl });
+        trackEvent('result_shared', { tool: TOOL_ID.videoDownloader, locale, platform: result.platform, method: 'native' });
+        return;
+      }
+
+      await navigator.clipboard.writeText(sourceUrl);
+      setShareMessage(ui.linkCopied);
+      trackEvent('result_shared', { tool: TOOL_ID.videoDownloader, locale, platform: result.platform, method: 'clipboard' });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+      try {
+        await navigator.clipboard.writeText(sourceUrl);
+        setShareMessage(ui.linkCopied);
+        trackEvent('result_shared', { tool: TOOL_ID.videoDownloader, locale, platform: result.platform, method: 'clipboard' });
+      } catch {
+        setShareMessage(ui.shareFailed);
+      }
+    }
+  }, [locale, result, sourceUrl, ui]);
+
   const reset = useCallback(() => {
     abortRef.current?.abort();
     runIdRef.current += 1;
@@ -316,6 +358,8 @@ export function VideoDownloaderTool({ locale = 'pt-br', platform, placeholder, h
     setStatus('idle');
     setMessage('');
     setFallbackUrl('');
+    setSourceUrl('');
+    setShareMessage('');
     setProgress(null);
     setAudioPercent(null);
   }, []);
@@ -585,11 +629,16 @@ export function VideoDownloaderTool({ locale = 'pt-br', platform, placeholder, h
                     {ui.openMedia(result.mediaType)}
                   </a>
                 ) : null}
+                <Button variant="secondary" onClick={() => void shareSourceLink()} disabled={busy}>
+                  <Share2 className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                  {ui.shareLink}
+                </Button>
                 <Button variant="ghost" onClick={reset}>
                   {ui.clear}
                 </Button>
               </div>
               {openOnly ? <p className="text-xs text-slate-600">{ui.openHint(result.mediaType)}</p> : null}
+              {shareMessage ? <p role="status" className="text-sm text-slate-700">{shareMessage}</p> : null}
               {status === 'done' || (status === 'ready' && message) ? (
                 <p role="status" className="text-sm font-medium text-slate-800">
                   {message}

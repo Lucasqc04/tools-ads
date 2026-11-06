@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { type AppLocale } from '@/lib/i18n/config';
 import { formatClockTime } from '@/lib/transcription/timestamps';
 import { buildCaptionSegments } from '@/lib/transcription/caption-segments';
+import { ShareResultButton } from '@/components/tools/share-result-button';
+import { TOOL_ID } from '@/lib/analytics';
 import type { TranscriptSegment } from '@/lib/transcription/transcription-types';
 
 type CaptionPosition = 'bottom' | 'center' | 'top';
@@ -343,7 +345,7 @@ export function VideoSubtitleEditor({ file, mediaUrl, segments, locale, onDownlo
   const [isExporting, setIsExporting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [output, setOutput] = useState<{ url: string; name: string } | null>(null);
+  const [output, setOutput] = useState<{ url: string; name: string; file: File } | null>(null);
   const resourcesRef = useRef<ExportResources | null>(null);
   const cancelRequestedRef = useRef(false);
 
@@ -519,7 +521,8 @@ export function VideoSubtitleEditor({ file, mediaUrl, segments, locale, onDownlo
       }
 
       const extension = recorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
-      setOutput({ url: URL.createObjectURL(blob), name: makeOutputName(file.name, extension) });
+      const name = makeOutputName(file.name, extension);
+      setOutput({ url: URL.createObjectURL(blob), name, file: new File([blob], name, { type: blob.type }) });
       setProgress(100);
     } catch (error_) {
       if (!cancelRequestedRef.current) {
@@ -717,10 +720,13 @@ export function VideoSubtitleEditor({ file, mediaUrl, segments, locale, onDownlo
             {ui.generate}
           </Button>
           {output ? (
-            <Button variant="secondary" onClick={downloadVideo}>
-              <Download className="mr-1.5 h-4 w-4" aria-hidden="true" />
-              {ui.download}
-            </Button>
+            <>
+              <Button variant="secondary" onClick={downloadVideo}>
+                <Download className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                {ui.download}
+              </Button>
+              <ShareResultButton file={output.file} locale={locale} tool={TOOL_ID.audioVideoTranscription} format={output.name.endsWith('.mp4') ? 'mp4' : 'webm'} />
+            </>
           ) : null}
         </div>
       )}

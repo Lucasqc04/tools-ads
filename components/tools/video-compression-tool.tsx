@@ -19,6 +19,7 @@ import {
 import { calculateSavingsPercent, formatBytes } from '@/lib/file-size';
 import { downloadBlob } from '@/lib/image-conversion';
 import { trackEvent, TOOL_ID } from '@/lib/analytics';
+import { ShareResultButton } from '@/components/tools/share-result-button';
 
 type VideoCompressionToolProps = Readonly<{
   locale?: AppLocale;
@@ -917,6 +918,9 @@ export function VideoCompressionTool({ locale = 'pt-br' }: VideoCompressionToolP
                   >
                     {ui.downloadButton}
                   </Button>
+                  {item.resultFile ? (
+                    <ShareResultButton file={item.resultFile} locale={locale} tool={TOOL_ID.videoCompression} format="mp4" />
+                  ) : null}
                 </div>
               </article>
             );
